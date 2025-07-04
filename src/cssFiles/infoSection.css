@@ -1,0 +1,139 @@
+.info-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  padding: 60px 20px;
+  color: rgb(0, 0, 0);
+  border-radius: 16px;
+  max-width: 1200px;
+  margin: 40px auto;
+}
+.info-list li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+.info-left {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.info-image {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.info-right {
+  flex: 1;
+  text-align: left;
+}
+.info-right ul li {
+  background-color: #ffffff;
+  border-left: 4px solid rgb(11, 57, 184);
+  padding: 10px 16px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  transition: background-color 0.3s ease;
+}
+
+.info-right ul li:hover {
+  background-color: #fd9002;
+}
+
+.info-right h2 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: rgb(2, 20, 80);
+}
+
+.info-right p {
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+}
+
+.info-right ul {
+  font-size: 1.1rem;
+  list-style: none;
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+.info-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.info-button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: transform 0.2s ease, background-color 0.3s;
+  font-size: 1.2rem;
+}
+
+.info-button:hover {
+  transform: translateY(-2px);
+}
+
+.info-button.whatsapp {
+  background-color: #25D366;
+  color: white;
+}
+
+.info-button.whatsapp:hover {
+  background-color: #1ebe5d;
+}
+
+.info-button.more-info {
+  background-color: white;
+  color: #00073a;
+  border: 1px solid rgb(3, 2, 110);
+}
+
+.info-button.more-info:hover {
+  background-color: orange;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .info-section {
+    flex-direction: column;
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .info-left, .info-right {
+    flex: none;
+    width: 100%;
+  }
+
+  .info-buttons {
+    justify-content: center;
+  }
+
+  .info-button {
+    justify-content: center;
+  }
+
+  .info-right h2 {
+    font-size: 1.6rem;
+  }
+
+  .info-right p, .info-right ul {
+    font-size: 1rem;
+  }
+}

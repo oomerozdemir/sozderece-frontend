@@ -1,0 +1,206 @@
+/* payment.css */
+
+.payment-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 40px;
+  max-width: 1200px;
+  margin: auto;
+  font-family: 'Poppins', sans-serif;
+  
+}
+
+.payment-form {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #f9f9f9;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+.payment-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.payment-form-header h2 {
+  margin: 0;
+  color: #f35900;
+}
+
+.login-link {
+  font-size: 0.9rem;
+  color: #000000;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.login-link:hover {
+  color: #dd500f;
+}
+
+
+
+.payment-form input[type="email"] {
+  padding: 18px 12px;
+  height: 56px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 1rem;
+  background-color: #fff;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+h3 {
+  display: flex;
+  color: #f35900;
+  font-weight: normal;
+}
+
+.input-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.input-row input {
+  flex: 1 1 48%;
+  min-width: 140px;
+  padding: 18px 12px;
+  height: 56px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  border-radius: 20px;
+
+}
+
+.input-row-half {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.input-row-half input {
+  flex: 1 100%;
+   min-width: 140px;
+  padding: 18px 12px;
+  height: 56px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  border-radius: 20px;
+}
+
+.payment-form input:focus,
+.payment-form select:focus {
+  outline: none;
+  border-color: #f35900;
+  box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.1);
+}
+
+.payment-form input::placeholder {
+  color: #aaa;
+}
+
+.checkbox-line {
+  display: flex;
+  gap: 8px;
+  font-size: 0.9rem;
+  align-items: center;
+}
+
+.pay-button {
+  margin-top: 20px;
+  padding: 16px;
+  background: rgb(241, 90, 3);
+  color: white;
+  font-size: 1.3rem;
+  border: 1px #ccc;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.pay-button:hover {
+  background-color: #e44608;
+}
+
+h4 {
+  color: #e44608;
+  font-size: 1.5rem;
+  padding-bottom: 30px;
+}
+
+.payment-summary {
+  flex: 1;
+  background: #fff;
+  padding: 32px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  height: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: 16px;
+}
+
+.payment-summary h4 {
+  color: #d84207;
+  font-size: 1.5rem;
+}
+
+.summary-item {
+  padding: 8px 0;
+  font-size: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summary-item p {
+  margin: 0;
+  color: #666;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+
+.summary-note {
+  color: #333;
+  font-size: 0.9rem;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #fcd6b0;
+  line-height: 1.5;
+}
+
+.summary-total {
+  font-size: 1.5rem;
+  color: #000;
+  text-align: right;
+  margin-top: 10px;
+}
+
+
+
+.refund-note {
+  margin-top: 12px;
+  padding: 10px;
+  background-color: #e6f4ea;
+  border-radius: 6px;
+  color: #2e7d70;
+  font-size: 14px;
+  font-weight: 500;
+}

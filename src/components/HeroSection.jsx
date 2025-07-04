@@ -1,0 +1,40 @@
+import React from "react";
+import "../cssFiles/index.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRocket } from "@fortawesome/free-solid-svg-icons";
+import { motion } from "framer-motion";
+
+
+const HeroSection = () => {
+  return (
+    <motion.section
+    className="hero-section"
+  initial={{ opacity: 0, scale: 0.9 }}
+  whileInView={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 0.8 }}
+  viewport={{ once: true }}
+>
+  <div className="container">
+    <img
+      src="../images/hero-logo.png"
+      alt="Sözderece Logo"
+      className="hero-logo"
+    />
+    <div className="hero-content">
+      <h2 className="highlight">Söz veriyoruz ve derece getiriyoruz!</h2>
+      <p>
+        Alanında uzman hocalarımızla YKS ve LGS sürecinde birebir koçluk
+        hizmeti sunuyoruz.
+      </p>
+      <a href="#paketler" className="hero-button">
+        <FontAwesomeIcon icon={faRocket} style={{ marginRight: "8px" }} />
+        Hemen Başla
+      </a>
+    </div>
+  </div>
+  </motion.section>
+
+  );
+};
+
+export default HeroSection;

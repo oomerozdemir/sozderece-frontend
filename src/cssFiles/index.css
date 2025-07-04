@@ -1,0 +1,121 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #f8f9fb;
+}
+
+.hero-section {
+  background: linear-gradient(180deg, #00073a, #000024);
+  color: white;
+  padding: 40px 20px;
+  width: 100%;
+}
+
+.hero-logo {
+  width: 300px;
+  height: auto;
+  margin: 0 auto 30px;
+  display: block;
+}
+
+.hero-content h2 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: orange;
+}
+.hero-content p {
+  font-size: 1.3rem;
+}
+
+.hero-button {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 35px;
+  background-color: rgb(219, 117, 0);
+  color: whitesmoke;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.3rem;
+  transition: all 0.3s ease;
+}
+
+.hero-button:hover {
+  background-color: rgb(255, 140, 0);
+  transform: scale(1.05);
+  box-shadow: 0 0 10px orange;
+}
+
+/* Top bar css */
+
+.top-bar {
+  background: linear-gradient(180deg, #00073a, #000024);
+  color: white;
+  font-size: 1rem;
+  padding: 8px 0;
+}
+
+.top-bar .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.top-bar-left span {
+  margin-right: 20px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.top-bar-left i {
+  color: white;
+  margin-right: 8px;
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.top-bar-right i {
+  color: white;
+  font-size: 1.3rem;
+  transition: color 0.3s ease;
+}
+
+.top-bar-right i:hover {
+  color: #3b82f6; /* Hover rengi (Tailwind blue-500) */
+}
+
+.flag-icon {
+  width: 50px;
+  height: 30px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+  .top-bar {
+    text-align: center;
+  }
+
+  .top-bar .container {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+

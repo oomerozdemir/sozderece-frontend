@@ -1,0 +1,125 @@
+.footer {
+    background: linear-gradient(180deg, #00073a, #000024);
+    color: #fff;
+    padding: 40px 20px 20px;
+    font-family: 'Poppins', sans-serif;
+
+  }
+  
+  .footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  
+  .footer-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .footer-logo {
+    width: 200px;
+    margin-bottom: 20px;
+  }
+  
+  .social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  
+  .social-icons a {
+    font-size: 30px;
+    color: #fff;
+    transition: color 0.3s;
+  }
+  
+  .social-icons a:hover {
+    color: #FFA500; /* turuncu */
+  }
+  
+  .footer-columns {
+    display: flex;
+    flex-direction: row;
+    gap: 60px;
+    justify-content: center;
+    flex-wrap: wrap;
+    text-align: left;
+    font-size: 1.2rem;
+
+   
+  }
+  
+  .footer-columns h4 {
+    margin-bottom: 12px;
+    border-bottom: 2px solid #eb8a0b;
+    display: inline-block;
+    padding-bottom: 4px;
+    color: #fff;
+    font-size: 1.5rem;
+  }
+  
+  .footer-columns ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footer-columns ul li a {
+    cursor: pointer;
+    color: #ccc;
+    text-decoration: none;
+    transition: color 0.3s;
+    font-size: 1.3rem;
+
+}
+
+.footer-columns ul li a:hover {
+  color: #FFA500;
+}
+
+  
+  .footer-bottom {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 1.1rem;
+    border-top: 1px solid rgba(240, 113, 9, 0.781);
+    padding-top: 16px;
+    color: #ccc;
+  }
+  
+  /* Mobil uyumluluk */
+  @media (max-width: 768px) {
+    .footer-container {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  
+    .footer-columns {
+      flex-direction: column;
+      gap: 40px;
+      text-align: center;
+    }
+  
+    .footer-columns ul {
+      padding: 0;
+    }
+  
+    .footer-columns li {
+      font-size: 16px;
+    }
+  
+    .footer-logo {
+      width: 100px;
+    }
+  }
+  

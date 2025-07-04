@@ -1,0 +1,129 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  background-color: white;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  padding: 0 24px;
+}
+
+.login-form h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #100383;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.login-form input {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #000;
+  padding: 12px 8px;
+  font-size: 1rem;
+  margin-bottom: 24px;
+  background-color: transparent;
+  color: #000;
+}
+
+.login-form input:focus {
+  outline: none;
+  border-bottom-color: #1f2937;
+}
+
+.login-form button {
+  width: 100%;
+  padding: 14px;
+  background-color: #02095f;
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-form button:hover {
+  background-color: #ec5802;
+}
+
+.form-footer-links {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: #000;
+  padding: 0 4px;
+}
+
+.form-footer-links span {
+  cursor: pointer;
+  font-weight: 500;
+}
+
+
+
+.custom-footer {
+  margin-top: 120px;
+  padding: 40px 20px 20px;
+  border-top: 1px solid #ddd;
+  text-align: center;
+  background-color: #fafafa;
+}
+
+.footer-icons {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+}
+
+.footer-icons svg {
+  color: #010c69;
+  border: 1px solid #020074;
+  border-radius: 50%;
+  padding: 10px;
+  width: 44px;
+  height: 44px;
+  transition: all 0.3s ease;
+}
+
+.footer-icons svg:hover {
+  background-color: #e94b02;
+  border: 1px solid #e94b02;
+  color: #fff;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+}
+
+.footer-links a {
+  color: #222;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: #e5671e;
+}
+
+.footer-copy {
+  font-size: 0.85rem;
+  color: #666;
+}

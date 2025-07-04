@@ -1,0 +1,65 @@
+.coach-select-page {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.coach-select-title {
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.coach-select-note {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.coach-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  padding-bottom: 40px;
+}
+
+.coach-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  padding: 20px;
+  transition: transform 0.3s ease;
+}
+
+.coach-card:hover {
+  transform: translateY(-5px);
+}
+
+.coach-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.coach-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 5px;
+}
+
+.coach-subject {
+  font-size: 1rem;
+  color: #777;
+  margin-bottom: 10px;
+}
+
+.coach-description {
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.5;
+}

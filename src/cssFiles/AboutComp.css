@@ -1,0 +1,309 @@
+.about-page {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* === HERO === */
+.about-hero {
+  background: linear-gradient(180deg, #00073a, #000024);
+  color: white;
+  padding: 100px 20px;
+  text-align: center;
+}
+
+.about-hero .hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about-hero h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: #ffa500;
+}
+
+.about-hero p {
+  font-size: 1.25rem;
+  color: #ccc;
+}
+
+
+/* === MISSION & VISION === */
+.mission-vision-values {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  padding: 80px 20px;
+  background-color: #f4f4f4;
+}
+
+.info-card {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.info-card h2 {
+  color: #1e1e50;
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+}
+
+.info-card p {
+  font-size: 1rem;
+  color: #444;
+  line-height: 1.6;
+}
+
+/* === Coaching about SECTION === */
+.coaching-system {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 80px 20px;
+  gap: 40px;
+  background-color: #fff;
+}
+
+.coaching-image {
+  flex: 1 1 400px;
+  text-align: center;
+}
+
+.coaching-image img {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.coaching-text {
+  flex: 1 1 400px;
+}
+
+.coaching-text h2 {
+  font-size: 2rem;
+  color: #1e1e50;
+  margin-bottom: 20px;
+}
+
+.coaching-text p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #444;
+  margin-bottom: 25px;
+}
+
+.learn-more-btn {
+  background-color: #0057b8;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.learn-more-btn:hover {
+  background-color: #003d80;
+}
+
+
+/* === TimeLine Sections === */
+
+.timeline-section {
+  padding: 60px 20px;
+  background-color: #f5f9ff;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2rem;
+  color: #002855;
+  margin-bottom: 40px;
+}
+
+.timeline {
+  position: relative;
+  max-width: 800px;
+  margin: auto;
+  padding-left: 20px;
+  border-left: 3px solid #0057b8;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 40px;
+  padding-left: 40px;
+}
+
+.timeline-item .icon {
+  position: absolute;
+  left: -28px;
+  top: 0;
+  background-color: #0057b8;
+  color: #fff;
+  border-radius: 50%;
+  padding: 10px;
+  font-size: 1.2rem;
+  box-shadow: 0 0 0 4px #e3ecf8;
+}
+
+.timeline-item .content h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #002855;
+}
+
+.timeline-item .content p {
+  margin: 5px 0 0;
+  color: #444;
+}
+
+
+/* === Degerler === */
+.values {
+  padding: 80px 20px;
+  background-color: #fff;
+  text-align: center;
+}
+
+.values h2 {
+  color: #1e1e50;
+  font-size: 2.2rem;
+  margin-bottom: 40px;
+}
+
+.value-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 30px;
+}
+
+.value-card {
+  background-color: #f4f8ff;
+  padding: 30px 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease;
+}
+
+.value-card:hover {
+  transform: translateY(-5px);
+}
+
+.value-card h3 {
+  color: #0057b8;
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+}
+
+.value-card p {
+  color: #333;
+  font-size: 1rem;
+}
+.value-card .icon {
+  font-size: 2rem;
+  color: #0057b8;
+  margin-bottom: 15px;
+}
+
+  
+
+/* === CONTACT CTA === */
+.contact-section {
+  background-color: #f7f9fc;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  color: #1a1a1a;
+  margin-bottom: 10px;
+}
+
+.section-description {
+  color: #555;
+  font-size: 1.4rem;
+  margin-bottom: 40px;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.contact-info p {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.whatsapp-button {
+  display: inline-block;
+  margin-top: 20px;
+  background-color: #25d366;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: background-color 0.3s;
+}
+
+.whatsapp-button:hover {
+  background-color: #1ebe5f;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 14px;
+  font-size: 1.2rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: vertical;
+}
+
+.contact-form button {
+  padding: 14px;
+  font-size: 1.2rem;
+  background-color: #08035a;
+
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.contact-form button:hover {
+    background-color: #e46c0a;
+
+}
+
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+}
