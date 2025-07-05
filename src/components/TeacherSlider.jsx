@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import { motion } from "framer-motion";
@@ -119,7 +119,7 @@ const TeacherSlider = () => {
               <h3>{teacher.name}</h3>
               <p>{teacher.subject} Öğretmeni</p>
               <div className="teacher-socials">
-                {/* Sosyal medya ikonları buraya */}
+
               </div>
               <button className="more-info-btn" onClick={() => openModal(index)}>
                 Daha Fazla Bilgi
@@ -137,3 +137,4 @@ const TeacherSlider = () => {
 };
 
 export default TeacherSlider;
+*/

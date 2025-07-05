@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import "../cssFiles/index.css";
 import HeroSection from "../components/HeroSection";
 import InfoSection from "../components/InfoSection";
-import TeacherSlider from "../components/TeacherSlider";
+// import TeacherSlider from "../components/TeacherSlider";
 import PricingSection from "../components/PricingSection";
 import Navbar from "../components/navbar";
 import WhyChooseUs from "../components/WhyChooseUs";
@@ -27,7 +27,8 @@ export default function HomePage() {
     <Navbar />
       <HeroSection />
       <InfoSection />
-      <TeacherSlider />
+
+      {/*<TeacherSlider /> */}
       <PricingSection />
       <WhyChooseUs />
       <Testimonials />

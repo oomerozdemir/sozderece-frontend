@@ -1,4 +1,5 @@
-.teacher-card {
+/*
+.close-button {
     background: linear-gradient(180deg, #00073a, #000024);
 
   border-radius: 20px;
@@ -14,7 +15,7 @@
   overflow: hidden;
   cursor: pointer;
   width: 100%;
-  flex: 1 1 250px;  /* esnek davranması için bu da destekleyici */
+  flex: 1 1 250px; 
 }
 
 .teacher-slider-section {
@@ -24,7 +25,7 @@
   gap: 24px;
   margin: 0 auto;
   padding: 20px 0;
-  max-width: 1200px; /* ya da 1000px, 960px isteğine göre ayarlanabilir */
+  max-width: 1200px; 
 }
 .teacher-card:hover {
   transform: translateY(-6px);
@@ -55,7 +56,7 @@
 }
 
 
-/* Açıklama alanı */
+
 .teacher-bio {
   margin-top: 12px;
   background: #e0e0e0;
@@ -80,7 +81,7 @@
   }
 }
 
-/* Sosyal medya ikonları */
+
 .teacher-socials {
   display: flex;
   gap: 12px;
@@ -185,7 +186,7 @@
 }
 
 
-  /* Mobil Uyum */
+
   @media (max-width: 768px) {
     .section-title {
       font-size: 1.5rem;
@@ -206,4 +207,4 @@
       margin: 0 auto;
     }
   }
-  
+/*
