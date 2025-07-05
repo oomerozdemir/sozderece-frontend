@@ -42,7 +42,7 @@ const StudentDashboard = () => {
           {student.assignedCoach ? (
             <div className="coach-card-container">
               <img
-                src={`http://localhost:5000${student.assignedCoach.image}`}
+                src={student.assignedCoach.image}
                 alt="Koç Fotoğrafı"
                 className="coach-card-image"
               />

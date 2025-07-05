@@ -196,7 +196,7 @@ onChange={(e) => setFormData({ ...formData, name: e.target.value })}
         {currentCoaches.map((coach) => (
           <div key={coach.id} className="coach-card">
             <img
-              src={`http://localhost:5000${coach.image}`}
+              src={coach.image}
               alt={coach.name}
               className="coach-image"
             />

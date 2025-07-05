@@ -243,4 +243,21 @@ Projeyi ileride Vercel (frontend) + Render (backend) ya da Railway + PlanetScale
 
 🧪 Birim/test senaryoları yazma (isteğe bağlı)
 
+ Opsiyonel Güvenlik Adımları (İleri Seviye – Sonra Yapabilirsin)
+🔐 Şifre belirleme zorunluluğu ekle (şu an default123)
+
+📩 Kullanıcıya doğrulama e-postası gönder (mailgun/sendgrid)
+
+📊 Admin dashboard’a toplam öğrenci / koç / satış sayısı gibi özet veriler
+
+📁 Eski uploads/ klasöründeki dosyalar manuel Cloudinary’e yüklenebilir
+
+Projeyi canlı kullanıma açabilirsin.
+
+Yeni özellikler ekleyebilirsin (örneğin: PDF ödev ekleme, video dersler, öğrenci geri bildirim).
+
+Mobil uyumluluğu test et.
+
+SEO & paylaşım linklerini optimize et (og:image, title vs.)
+
 */
