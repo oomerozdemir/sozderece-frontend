@@ -5,7 +5,8 @@ import { CreateUser } from "../components/CreateUser";
 import { EditUser } from "../components/EditUser";
 import AdminDashboard from "../components/AdminDashboard";
 
-const dataProvider = simpleRestProvider("http://localhost:5000/api");
+const dataProvider = simpleRestProvider(`${process.env.REACT_APP_API_URL}/api`);
+
 
 const AdminApp = () => {
   return (
