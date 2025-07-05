@@ -1,6 +1,6 @@
 // 📁 src/pages/AccountPage.jsx
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../utils/axios";
 import "../cssFiles/account.css";
 
 const AccountPage = () => {

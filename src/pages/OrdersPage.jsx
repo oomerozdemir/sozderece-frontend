@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../utils/axios";
 import "../cssFiles/ordersPage.css";
 import { format } from "date-fns";
 import trLocale from "date-fns/locale/tr";

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
 
-import axios from "axios";
+import axios from "../utils/axios"
 import "../cssFiles/login.css";
 import Navbar from "../components/navbar";
 
@@ -20,7 +20,7 @@ const LoginPage = () => {
     try {
       if (isLogin) {
         // Giriş işlemi
-        const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
+        const res = await axios.post(`/api/auth/login`, {
           email: form.email,
           password: form.password,
         });
@@ -35,7 +35,7 @@ const LoginPage = () => {
         else navigate("/student/dashboard");
       } else {
         // Kayıt işlemi
-        await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, form);
+        await axios.post(`/api/auth/register`, form);
         setIsLogin(true);
       }
     } catch (err) {

@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import axios from "axios";
+import axios from "../utils/axios";
 import "../cssFiles/App.css";
 import { Link } from "react-router-dom";
 import { Bar } from "react-chartjs-2";
