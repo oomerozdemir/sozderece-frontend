@@ -41,7 +41,7 @@ const [editingClass, setEditingClass] = useState(false);
         email: userData.email,
         phone: userData.phone || "",
         grade: userData.grade || "",
-        track: userData.track || "", // Burada track doğru gelmeli
+        track: userData.track || "", 
       });
       setEmailVerified(userData.emailVerified || false);
       setPhoneVerified(userData.phoneVerified || false);
@@ -62,7 +62,7 @@ const handleUpdate = async (e) => {
   try {
     const token = localStorage.getItem("token");
 
-    // 🎯 Eğer sınıf 8 veya daha düşükse track boş olsun
+    
     const cleanedForm = {
       ...form,
   track: ["9", "10", "11", "12", "Mezun"].includes(form.grade) ? form.track : null,

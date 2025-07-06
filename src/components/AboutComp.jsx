@@ -2,7 +2,7 @@ import "../cssFiles/AboutComp.css";
 import { motion } from "framer-motion";
 import Footer from "./Footer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock, faEye, faUserGraduate, faChartLine } from "@fortawesome/free-solid-svg-icons";
+import { faLock, faEye, faUserGraduate, faChartLine, faUserFriends, faHandshake, faLightbulb} from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 
 
@@ -23,6 +23,7 @@ const AboutComp = () => {
       Koçluk sistemimizle öğrencilerimizin bireysel potansiyellerini ortaya çıkarmalarına, hedeflerine kararlı adımlarla ilerlemelerine ve potansiyellerini en üst seviyeye taşımalarına destek oluyoruz.
       Amacımız, her öğrenciyi kendi hedeflerine uygun şekilde yönlendirerek, başarıya giden yolda güvenilir bir yol arkadaşı olmaktır.</p>
   </div>
+ 
 </section>
 
       {/* === MISSION & VISION === */}
@@ -52,6 +53,20 @@ const AboutComp = () => {
       Öğrencilerimizin hedeflerini belirlemesine, plan yapmasına ve bu plana sadık kalmasına yardımcı oluyoruz. Haftalık takipler, birebir görüşmeler ve kişiye özel stratejilerle gelişimi sürekli kılıyoruz.
     </p>
   </div>
+   <div className="coaching-highlights">
+  <div className="highlight">
+    <FontAwesomeIcon icon={faUserFriends} className="highlight-icon" />
+    <p>Koçlarımız öğrencilere abi/abla şefkatiyle yaklaşır, güvenli bir iletişim ortamı sunar.</p>
+  </div>
+  <div className="highlight">
+    <FontAwesomeIcon icon={faHandshake} className="highlight-icon" />
+    <p>Her öğrenciyle birebir ilgileniriz; yol arkadaşlığı prensibimizdir.</p>
+  </div>
+  <div className="highlight">
+    <FontAwesomeIcon icon={faLightbulb} className="highlight-icon" />
+    <p>Motivasyon kaynağı olur, yalnız hissettikleri anlarda hep yanlarında oluruz.</p>
+  </div>
+</div>
 </section>
 
       {/* === Kurucu About Section === */}

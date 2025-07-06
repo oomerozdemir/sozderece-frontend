@@ -111,6 +111,38 @@
   margin-bottom: 25px;
 }
 
+.coaching-highlights {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.highlight {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.highlight-icon {
+  font-size: 1.8rem;
+  color: #f97316;
+  margin-top: 4px;
+}
+
+.highlight p {
+  margin: 0;
+  color: #444;
+  line-height: 1.5;
+}
+
+@media (min-width: 768px) {
+  .coaching-highlights {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+
 
 /* === Degerler === */
 .value-cards {
