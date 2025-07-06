@@ -9,7 +9,6 @@ const IletisimPage = () => {
     email: "",
     phone: "",
     userType: "",
-    date: "",
     message: "",
   });
 
@@ -31,7 +30,7 @@ const IletisimPage = () => {
       const response = await axios.post("/api/contact/trial", formData);
       if (response.data.success) {
         setSuccessMsg("Form başarıyla gönderildi! En kısa sürede sizinle iletişime geçeceğiz.");
-        setFormData({ name: "", email: "", phone: "", userType: "", date: "", message: "" });
+        setFormData({ name: "", email: "", phone: "", userType: "", message: "" });
       } else {
         setErrorMsg("Form gönderilirken bir hata oluştu.");
       }
@@ -83,15 +82,6 @@ const IletisimPage = () => {
           <option value="Öğrenci">Öğrenci</option>
           <option value="Veli">Veli</option>
         </select>
-
-        <input
-          type="datetime-local"
-          name="date"
-          value={formData.date}
-          onChange={handleChange}
-          required
-        />
-
         <textarea
           name="message"
           placeholder="Eklemek istediğiniz not..."
