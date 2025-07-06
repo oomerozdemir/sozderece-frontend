@@ -25,7 +25,7 @@
   }
   
   .footer-logo {
-    width: 200px;
+    width: 150px;
     margin-bottom: 20px;
   }
   
@@ -37,7 +37,7 @@
   }
   
   .social-icons a {
-    font-size: 30px;
+    font-size: 25px;
     color: #fff;
     transition: color 0.3s;
   }
@@ -53,9 +53,7 @@
     justify-content: center;
     flex-wrap: wrap;
     text-align: left;
-    font-size: 1.2rem;
-
-   
+    font-size: 5px;
   }
   
   .footer-columns h4 {
@@ -64,7 +62,7 @@
     display: inline-block;
     padding-bottom: 4px;
     color: #fff;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
   }
   
   .footer-columns ul {
@@ -78,7 +76,7 @@
     color: #ccc;
     text-decoration: none;
     transition: color 0.3s;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
 
 }
 
@@ -90,7 +88,7 @@
   .footer-bottom {
     text-align: center;
     margin-top: 40px;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     border-top: 1px solid rgba(240, 113, 9, 0.781);
     padding-top: 16px;
     color: #ccc;

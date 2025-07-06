@@ -3,6 +3,7 @@
   margin: 40px auto;
   padding: 0 20px;
   text-align: center;
+  min-height: 70vh;
 }
 
 .coach-select-title {

@@ -10,7 +10,9 @@ body {
   padding: 0;
   box-sizing: border-box;
   background-color: #f8f9fb;
+  height: 100%;
 }
+
 
 .hero-section {
   background: linear-gradient(180deg, #00073a, #000024);

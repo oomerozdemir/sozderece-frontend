@@ -29,7 +29,7 @@ const HeroSection = () => {
         <FontAwesomeIcon icon={faRocket} style={{ marginRight: "8px" }} />
         Hemen Başla
       </a>
-      <a href="#iletisim" className="hero-button outline">
+      <a href="/ucretsiz-on-gorusme" className="hero-button outline">
   <FontAwesomeIcon icon={faComments} style={{ marginRight: "8px" }} />Ücretsiz Ön Görüşme İçin
     </a>
     </div>

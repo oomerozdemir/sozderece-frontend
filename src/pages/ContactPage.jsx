@@ -1,6 +1,11 @@
-import axios from "../utils/axios";
-import { useState } from "react";
 import "../cssFiles/contactPage.css";
+import { useState } from "react";
+import axios from "../utils/axios";
+import Footer from "../components/Footer";
+import TopBar from "../components/TopBar";
+import Navbar from "../components/navbar";
+import FaqSection from "../components/FaqSection";
+import contactUsSvg from "../assets/undraw_contact-us_kcoa.svg";
 
 
 const IletisimPage = () => {
@@ -29,8 +34,14 @@ const IletisimPage = () => {
     try {
       const response = await axios.post("/api/contact/trial", formData);
       if (response.data.success) {
-        setSuccessMsg("Form başarıyla gönderildi! En kısa sürede sizinle iletişime geçeceğiz.");
-        setFormData({ name: "", email: "", phone: "", userType: "", message: "" });
+        setSuccessMsg("Form başarıyla gönderildi!");
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          userType: "",
+          message: "",
+        });
       } else {
         setErrorMsg("Form gönderilirken bir hata oluştu.");
       }
@@ -42,63 +53,48 @@ const IletisimPage = () => {
   };
 
   return (
-    <section className="iletisim-page">
-      <h2>Ücretsiz Ön Görüşme Formu</h2>
-      <p>Lütfen formu eksiksiz doldurun. Size kısa sürede geri dönüş yapacağız.</p>
+    <>
+      <TopBar />
+      <Navbar />
 
-      <form onSubmit={handleSubmit} className="trial-form">
-        <input
-          type="text"
-          name="name"
-          placeholder="Ad Soyad"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="E-posta"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Telefon"
-          value={formData.phone}
-          onChange={handleChange}
-          required
-        />
+      <section className="iletisim-page two-column">
+        <div className="info-panel">
+          <h2>Ücretsiz Ön Görüşme</h2>
+          <p>Size özel bir yol haritası belirlemek için hemen başvuru yapın.</p>
+          <img src={contactUsSvg} alt="iletisim-ucretsiz" />
 
-        <select
-          name="userType"
-          value={formData.userType}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Görüşme Kimin İçin?</option>
-          <option value="Öğrenci">Öğrenci</option>
-          <option value="Veli">Veli</option>
-        </select>
-        <textarea
-          name="message"
-          placeholder="Eklemek istediğiniz not..."
-          rows="5"
-          value={formData.message}
-          onChange={handleChange}
-          required
-        ></textarea>
+          <ul className="icon-info">
+            <li><span className="icon">🔒</span> Verileriniz gizli tutulur</li>
+            <li><span className="icon">⏱</span> 24 saat içinde geri dönüş</li>
+            <li><span className="icon">🎓</span> Öğrenci ve veli odaklı destek</li>
+          </ul>
+        </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Gönderiliyor..." : "Gönder"}
-        </button>
+        <form onSubmit={handleSubmit} className="trial-form">
+          <input type="text" name="name" placeholder="Ad Soyad" value={formData.name} onChange={handleChange} required />
+          <input type="email" name="email" placeholder="E-posta" value={formData.email} onChange={handleChange} required />
+          <input type="tel" name="phone" placeholder="Telefon" value={formData.phone} onChange={handleChange} required />
+          <select name="userType" value={formData.userType} onChange={handleChange} required>
+            <option value="">Görüşme Kimin İçin?</option>
+            <option value="Öğrenci">Öğrenci</option>
+            <option value="Veli">Veli</option>
+          </select>
+          <textarea name="message" placeholder="Eklemek istediğiniz not..." rows="5" value={formData.message} onChange={handleChange} required></textarea>
 
-        {successMsg && <p className="success">{successMsg}</p>}
-        {errorMsg && <p className="error">{errorMsg}</p>}
-      </form>
-    </section>
+          <button type="submit" disabled={loading}>
+            {loading ? "Gönderiliyor..." : "Gönder"}
+          </button>
+
+          {successMsg && <p className="success-alert">{successMsg}</p>}
+          {errorMsg && <p className="error-alert">{errorMsg}</p>}
+        </form>
+        
+      </section>
+      
+      <FaqSection />
+
+      <Footer />
+    </>
   );
 };
 
