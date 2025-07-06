@@ -44,7 +44,7 @@ const AboutComp = () => {
       {/* === Coaching About Section === */}
       <section className="coaching-system container">
   <div className="coaching-image">
-    <img src="/images/coaching-system.jpg" alt="Koçluk sistemi" />
+    <img src="/images/teaching.svg" alt="Koçluk sistemi" />
   </div>
   <div className="coaching-text">
     <h2>Koçluk Sistemimiz</h2>
