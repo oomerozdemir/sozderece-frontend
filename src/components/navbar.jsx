@@ -65,10 +65,9 @@ const Navbar = () => {
    <ul className={`navbar-menu ${menuOpen ? "active" : ""}`}>
   <li><NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>ANA SAYFA</NavLink></li>
   <li><NavLink to="/hakkimizda" className={({ isActive }) => isActive ? "active" : ""}>HAKKIMIZDA</NavLink></li>
-  <li><a href="#">HİZMETLERİMİZ</a></li>
   <li><NavLink to="/coach-detail" className={({ isActive }) => isActive ? "active" : ""}>EKİBİMİZ</NavLink></li>
   <li><NavLink to="/package-detail" className={({ isActive }) => isActive ? "active" : ""}>KOÇLUK AL!</NavLink></li>
-  <li><a href="#">İLETİŞİM</a></li>
+  <li><NavLink to="/ucretsiz-on-gorusme" className={({ isActive }) => isActive ? "active" : ""}>İLETİŞİM</NavLink></li>
 </ul>
 
 

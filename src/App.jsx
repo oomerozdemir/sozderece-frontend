@@ -20,6 +20,7 @@ import PackageDetail from "./pages/PackageDetail";
 import CoachDetail from "./pages/CoachDetailPage";
 import AdminCoachPage from "./pages/AdminCoachPage";
 import AdminCouponPage from "./pages/AdminCouponPage";
+import ContactPage from "./pages/ContactPage";
 import "./cssFiles/App.css";
 import "./cssFiles/index.css";
 
@@ -68,9 +69,7 @@ function App() {
           <Route path="/coach-detail" element={<CoachDetail />} />
           <Route path="/admin/coaches" element={<AdminCoachPage />} />
           <Route path="/admin/coupons" element={<AdminCouponPage />} />
-
-
-
+          <Route path="/ucretsiz-on-gorusme" element={<ContactPage />} />
 
             
         <Route path="/admin/refund-requests" element={<RefundRequests />} />
@@ -85,7 +84,7 @@ export default App;
 
 
 /*
-ucretsiz on gorusme form kismi
+ucretsiz on gorusme form kismi ıletısım sayfası form gonderınce maıl olarak gelmesı
 
 
 fatura bilgireinde hem admin hem kullanici tarafinda kac tl odendigi gozuksun paytr eklendikten sonra duruma gore de bakilir
@@ -98,10 +97,6 @@ ilerde paketler bolumunu admin panelinden ekleme özelliğini getirebliriz veya 
 
 sıparıslerım bolumunde suresı dolan paketın ıade talebı olusturma kısmını kaldıralım
 admın panelınde suresı gecmıs olsa bıle aktıf olarak gozukuyor
-
-
-SEO iyilestirmeleri
-
 
 
 İleride Eklenebilecek Özellikler
@@ -118,7 +113,6 @@ E-posta Hatırlatmaları	Bitmesine 3 gün kala kullanıcıya e-posta ile bilgile
 
 🕵️ Sipariş Geçmişi / Logları:
 
-Sipariş durum değişikliklerinin geçmişi (örneğin: “İade talep edildi → Onaylandı”)
 
 👁 Kullanıcı Kartında Sipariş Geçmişi Sekmesi:
 
@@ -213,14 +207,7 @@ Hatalar için winston veya pino ile backend loglama sistemi kurmak.
 
 Veritabanını haftalık/momentlik olarak yedekleyen bir otomasyon düşün.
 
-✅ 9. Gelişmiş Dosya Yükleme ve Medya Yönetimi
-Mevcut Durum: Multer kullanıyorsun ama resim yönetimi ileride büyüyebilir.
 
-Öneriler:
-
-Upload edilen koç resimleri için Cloudinary / Firebase Storage entegrasyonu.
-
-Dosya adı çakışmalarını önlemek için benzersiz dosya isimleri (UUID) üretimi.
 
 ✅ 10. Test & DevOps Hazırlığı
 Öneriler:
@@ -250,7 +237,7 @@ Projeyi ileride Vercel (frontend) + Render (backend) ya da Railway + PlanetScale
 
 📊 Admin dashboard’a toplam öğrenci / koç / satış sayısı gibi özet veriler
 
-📁 Eski uploads/ klasöründeki dosyalar manuel Cloudinary’e yüklenebilir
+
 
 Projeyi canlı kullanıma açabilirsin.
 

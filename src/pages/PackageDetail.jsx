@@ -7,12 +7,12 @@ import Topbar from "../components/TopBar";
 import useCart from "../hooks/useCart";
 
 const packageList = [
-  {
+  /*{
     slug: "tek-ders-paketi",
     name: "TEK DERS PAKETİ",
     price: "700₺ / ders",
     subtitle: "Sadece birebir özel derse odaklanan esnek paket."
-  },
+  },*/
   {
     slug: "lgs-2026-paketi",
     name: "LGS 2026 PAKETİ",

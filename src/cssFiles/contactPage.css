@@ -1,0 +1,38 @@
+.trial-form {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.trial-form input,
+.trial-form select,
+.trial-form textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.trial-form button {
+  background: #f97316;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.trial-form button:hover {
+  background: #ff8c3e;
+}
+
+.success {
+  color: green;
+}
+
+.error {
+  color: red;
+}

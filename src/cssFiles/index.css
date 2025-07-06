@@ -20,19 +20,19 @@ body {
 }
 
 .hero-logo {
-  width: 300px;
+  width: 280px;
   height: auto;
   margin: 0 auto 30px;
   display: block;
 }
 
 .hero-content h2 {
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin-bottom: 20px;
   color: orange;
 }
 .hero-content p {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
 }
 
 .hero-button {
@@ -44,7 +44,7 @@ body {
   border-radius: 20px;
   text-decoration: none;
   font-weight: bold;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   transition: all 0.3s ease;
 }
 
@@ -53,6 +53,29 @@ body {
   transform: scale(1.05);
   box-shadow: 0 0 10px orange;
 }
+
+.hero-button.outline {
+  background-color: transparent;
+  color: rgb(241, 241, 241);
+  border: 2px solid rgb(247, 247, 247);
+  margin-left: 15px;
+}
+
+.hero-button.outline:hover {
+  background-color: orange;
+  color: white;
+  box-shadow: 0 0 10px orange;
+}
+
+@media (max-width: 768px) {
+  .hero-button {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin: 10px auto;
+  }
+}
+
 
 /* Top bar css */
 

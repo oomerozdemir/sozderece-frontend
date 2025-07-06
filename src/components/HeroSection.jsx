@@ -1,7 +1,6 @@
-import React from "react";
 import "../cssFiles/index.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRocket } from "@fortawesome/free-solid-svg-icons";
+import { faRocket, faComments  } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 
 
@@ -21,7 +20,7 @@ const HeroSection = () => {
       className="hero-logo"
     />
     <div className="hero-content">
-      <h2 className="highlight">Söz veriyoruz ve derece getiriyoruz!</h2>
+      <h2 className="highlight">Söz veriyoruz,derece getiriyoruz!</h2>
       <p>
         Alanında uzman hocalarımızla YKS ve LGS sürecinde birebir koçluk
         hizmeti sunuyoruz.
@@ -30,6 +29,9 @@ const HeroSection = () => {
         <FontAwesomeIcon icon={faRocket} style={{ marginRight: "8px" }} />
         Hemen Başla
       </a>
+      <a href="#iletisim" className="hero-button outline">
+  <FontAwesomeIcon icon={faComments} style={{ marginRight: "8px" }} />Ücretsiz Ön Görüşme İçin
+    </a>
     </div>
   </div>
   </motion.section>

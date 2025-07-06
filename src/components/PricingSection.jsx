@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 
 const packages = [
-  {
+  /*{
     name: "TEK DERS PAKETİ",
     price: "700₺ / ders",
     subtitle: "Sadece birebir özel derse odaklanan esnek paket.",
@@ -20,7 +20,7 @@ const packages = [
     badge: null,
     highlight: false,
      icon: <FaChalkboardTeacher />,
-  },
+  },*/
   {
     name: "LGS 2026 PAKETİ",
     price: "3000₺ / ay",

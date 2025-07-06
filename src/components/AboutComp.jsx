@@ -20,7 +20,9 @@ const AboutComp = () => {
       <section className="about-hero">
   <div className="hero-content">
     <h1>Hakkımızda</h1>
-    <p>Koçluk sistemimizle öğrencilerimizin bireysel potansiyellerini keşfetmesine destek oluyoruz.</p>
+    <p>Sözderece Koçluk olarak, her öğrencinin benzersiz bir öğrenme yolculuğu olduğuna inanıyoruz. 
+      Koçluk sistemimizle öğrencilerimizin bireysel potansiyellerini ortaya çıkarmalarına, hedeflerine kararlı adımlarla ilerlemelerine ve potansiyellerini en üst seviyeye taşımalarına destek oluyoruz.
+      Amacımız, her öğrenciyi kendi hedeflerine uygun şekilde yönlendirerek, başarıya giden yolda güvenilir bir yol arkadaşı olmaktır.</p>
   </div>
 </section>
 
