@@ -1,10 +1,9 @@
-import React from "react";
 import "../cssFiles/AboutComp.css";
 import { motion } from "framer-motion";
 import Footer from "./Footer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock, faEye, faUserGraduate, faChartLine, faRocket, faUsers, faLaptopCode, faAward } from "@fortawesome/free-solid-svg-icons";
-
+import { faLock, faEye, faUserGraduate, faChartLine } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 
 const AboutComp = () => {
@@ -27,7 +26,7 @@ const AboutComp = () => {
 </section>
 
       {/* === MISSION & VISION === */}
-      <section className="mission-vision-values">
+      <section className="mission-vision-values container">
   <div className="info-card">
     <h2>Misyonumuz</h2>
     <p>Öğrencilerimizin bireysel potansiyellerini en üst düzeye çıkararak onların hedeflerine ulaşmalarını sağlamak.</p>
@@ -43,7 +42,7 @@ const AboutComp = () => {
 </section>
 
       {/* === Coaching About Section === */}
-      <section className="coaching-system">
+      <section className="coaching-system container">
   <div className="coaching-image">
     <img src="/images/coaching-system.jpg" alt="Koçluk sistemi" />
   </div>
@@ -52,73 +51,38 @@ const AboutComp = () => {
     <p>
       Öğrencilerimizin hedeflerini belirlemesine, plan yapmasına ve bu plana sadık kalmasına yardımcı oluyoruz. Haftalık takipler, birebir görüşmeler ve kişiye özel stratejilerle gelişimi sürekli kılıyoruz.
     </p>
-    <button className="learn-more-btn">Detaylı Bilgi</button>
   </div>
 </section>
+
+      {/* === Kurucu About Section === */}
+
+<div className="founder-message vertical container">
+  <img src="/images/kurucu.png" alt="Kurucu" />
+  <blockquote>
+    “Amacımız sadece başarı değil, öğrencinin kendine güvenini kazandırmak.”
+  </blockquote>
+  <cite>– Zeynep Hanım, Kurucu Koç</cite>
+</div>
+
+      {/* === Ekibimiz About Section === */}
+
+<section className="team-preview container">
+  <h2>Koçluk Ekibimiz</h2>
+  <p>
+    Sözderece Koçluk olarak, her biri alanında deneyimli, öğrenci odaklı ve 
+    eğitim koçluğu konusunda uzmanlaşmış bir ekip ile çalışıyoruz. 
+    Size en uygun yol haritasını birlikte planlıyoruz.
+  </p>
+
+  <Link to="/coach-detail" className="team-link">
+    Koçlarımız Hakkında Daha Fazla Bilgi
+  </Link>
+</section>
+
     
       
-
-      {/* === Timeline Section === */}
-      <section className="timeline-section">
-  <h2 className="section-title">Zaman Çizelgemiz</h2>
-  <div className="timeline">
-    <motion.div
-      className="timeline-item"
-      initial={{ opacity: 0, x: -50 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="icon"><FontAwesomeIcon icon={faRocket} /></div>
-      <div className="content">
-        <h3>Kurumun Kuruluşu</h3>
-        <p>2020 yılında eğitimde yeni bir soluk getirmek amacıyla kuruldu.</p>
-      </div>
-    </motion.div>
-
-    <motion.div
-      className="timeline-item"
-      initial={{ opacity: 0, x: 50 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-    >
-      <div className="icon"><FontAwesomeIcon icon={faUsers} /></div>
-      <div className="content">
-        <h3>İlk Öğrencilerimiz</h3>
-        <p>2021 yılında ilk 100 öğrenciyle güçlü bir başlangıç yaptık.</p>
-      </div>
-    </motion.div>
-
-    <motion.div
-      className="timeline-item"
-      initial={{ opacity: 0, x: -50 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5, delay: 0.4 }}
-    >
-      <div className="icon"><FontAwesomeIcon icon={faLaptopCode} /></div>
-      <div className="content">
-        <h3>Dijitalleşme</h3>
-        <p>2022'de online koçluk sistemimizi hayata geçirdik.</p>
-      </div>
-    </motion.div>
-
-    <motion.div
-      className="timeline-item"
-      initial={{ opacity: 0, x: 50 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5, delay: 0.6 }}
-    >
-      <div className="icon"><FontAwesomeIcon icon={faAward} /></div>
-      <div className="content">
-        <h3>Başarılarımız</h3>
-        <p>2023 yılında öğrencilerimizin %90’ı hedefledikleri üniversitelere yerleşti.</p>
-      </div>
-    </motion.div>
-  </div>
-</section>
-
-
       {/* === Degerler === */}
-      <div className="value-cards">
+      <div className="value-cards container">
   <div className="value-card">
     <FontAwesomeIcon icon={faLock} className="icon" />
     <h3>Gizlilik</h3>
@@ -141,36 +105,19 @@ const AboutComp = () => {
   </div>
 </div>
 
+      {/* === Joint Section === */}
 
-
-
-
-      {/* === İLETİŞİM CTA (Butonlar) === */}
-      <section className="contact-section">
-  <h2 className="section-title">Bize Ulaşın</h2>
-  <p className="section-description">Sorularınız, önerileriniz veya kayıt için bize ulaşabilirsiniz.</p>
-
-  <div className="contact-grid">
-    {/* Left - Info */}
-    <div className="contact-info">
-      <p><strong>Telefon:</strong> +90 530 000 0000</p>
-      <p><strong>E-posta:</strong> info@egitimplatformu.com</p>
-      <p><strong>Adres:</strong> İstanbul, Türkiye</p>
-      <a href="https://wa.me/905300000000" target="_blank" rel="noreferrer" className="whatsapp-button">
-        WhatsApp ile İletişime Geç
-      </a>
+      <section className="join-section">
+  <div className="container join-content">
+    <div className="join-text">
+      <h2>Hedeflerinize birlikte ulaşalım</h2>
+      <p>
+        Ücretsiz ön görüşme için formu doldurarak, size özel koçluk sürecinizi başlatalım.
+      </p>
     </div>
-
-    {/* Right - Form */}
-    <form className="contact-form">
-      <input type="text" placeholder="Adınız Soyadınız" required />
-      <input type="email" placeholder="E-posta Adresiniz" required />
-      <textarea placeholder="Mesajınız..." rows="5" required></textarea>
-      <button type="submit">Gönder</button>
-    </form>
+    <Link to="/ucretsiz-on-gorusme" className="cta-button">Ücretsiz Görüşme Talep Et</Link>
   </div>
 </section>
-
       <Footer />
     </motion.div>
   );

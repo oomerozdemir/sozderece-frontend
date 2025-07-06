@@ -22,7 +22,7 @@ body {
 }
 
 .hero-logo {
-  width: 280px;
+  width: 250px;
   height: auto;
   margin: 0 auto 30px;
   display: block;
@@ -69,14 +69,6 @@ body {
   box-shadow: 0 0 10px orange;
 }
 
-@media (max-width: 768px) {
-  .hero-button {
-    display: block;
-    width: 100%;
-    text-align: center;
-    margin: 10px auto;
-  }
-}
 
 
 /* Top bar css */
@@ -132,6 +124,94 @@ body {
   border-radius: 2px;
 }
 
+
+
+
+/* === CONTACT CTA === */
+.contact-section {
+  background-color: #f7f9fc;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  color: #1a1a1a;
+  margin-bottom: 10px;
+}
+
+.section-description {
+  color: #555;
+  font-size: 1.4rem;
+  margin-bottom: 40px;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.contact-info p {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.whatsapp-button {
+  display: inline-block;
+  margin-top: 20px;
+  background-color: #25d366;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: background-color 0.3s;
+}
+
+.whatsapp-button:hover {
+  background-color: #1ebe5f;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 14px;
+  font-size: 1.2rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: vertical;
+}
+
+.contact-form button {
+  padding: 14px;
+  font-size: 1.2rem;
+  background-color: #08035a;
+
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.contact-form button:hover {
+    background-color: #e46c0a;
+
+}
+
+
+
 @media (max-width: 768px) {
   .top-bar {
     text-align: center;
@@ -141,6 +221,14 @@ body {
     flex-direction: column;
     gap: 8px;
   }
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+ .hero-button {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin: 10px auto;
+  }
 }
-
 

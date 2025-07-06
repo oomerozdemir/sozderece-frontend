@@ -1,3 +1,11 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+}
+
+
 .about-page {
   display: flex;
   flex-direction: column;
@@ -7,6 +15,7 @@
 /* === HERO === */
 .about-hero {
   background: linear-gradient(180deg, #00073a, #000024);
+  
   color: white;
   padding: 100px 20px;
   text-align: center;
@@ -102,91 +111,13 @@
   margin-bottom: 25px;
 }
 
-.learn-more-btn {
-  background-color: #0057b8;
-  color: white;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.learn-more-btn:hover {
-  background-color: #003d80;
-}
-
-
-/* === TimeLine Sections === */
-
-.timeline-section {
-  padding: 60px 20px;
-  background-color: #f5f9ff;
-}
-
-.section-title {
-  text-align: center;
-  font-size: 2rem;
-  color: #002855;
-  margin-bottom: 40px;
-}
-
-.timeline {
-  position: relative;
-  max-width: 800px;
-  margin: auto;
-  padding-left: 20px;
-  border-left: 3px solid #0057b8;
-}
-
-.timeline-item {
-  position: relative;
-  margin-bottom: 40px;
-  padding-left: 40px;
-}
-
-.timeline-item .icon {
-  position: absolute;
-  left: -28px;
-  top: 0;
-  background-color: #0057b8;
-  color: #fff;
-  border-radius: 50%;
-  padding: 10px;
-  font-size: 1.2rem;
-  box-shadow: 0 0 0 4px #e3ecf8;
-}
-
-.timeline-item .content h3 {
-  margin: 0;
-  font-size: 1.2rem;
-  color: #002855;
-}
-
-.timeline-item .content p {
-  margin: 5px 0 0;
-  color: #444;
-}
-
 
 /* === Degerler === */
-.values {
-  padding: 80px 20px;
-  background-color: #fff;
-  text-align: center;
-}
-
-.values h2 {
-  color: #1e1e50;
-  font-size: 2.2rem;
-  margin-bottom: 40px;
-}
-
 .value-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 30px;
+  padding: 60px 20px;
 }
 
 .value-card {
@@ -219,91 +150,143 @@
 
   
 
-/* === CONTACT CTA === */
-.contact-section {
-  background-color: #f7f9fc;
+
+
+  /* === Kurucu About Section === */
+.founder-message.vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: #f9fafb;
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  margin-top: 60px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.founder-message.vertical img {
+  max-width: 200px;
+  border-radius: 100px;
+  margin-bottom: 20px;
+  object-fit: cover;
+}
+
+.founder-message.vertical blockquote {
+  font-style: italic;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  color: #1f2937;
+  max-width: 500px;
+}
+
+.founder-message.vertical cite {
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+
+
+
+  /* === Ekibimiz About Section === */
+.team-preview {
+  background-color: #f9fafb;
+  padding: 60px 20px;
+  text-align: center;
+  border-radius: 16px;
+  margin-top: 60px;
+}
+
+.team-preview h2 {
+  font-size: 2rem;
+  margin-bottom: 16px;
+  color: #1f2937;
+}
+
+.team-preview p {
+  font-size: 1rem;
+  color: #374151;
+  max-width: 700px;
+  margin: 0 auto 24px;
+  line-height: 1.6;
+}
+
+.team-link {
+  display: inline-block;
+  background-color: #000ed3;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.team-link:hover {
+  background-color: #ea580c;
+}
+
+      /* === Joint Section === */
+.join-section {
+  background: linear-gradient(135deg, #00073a, #1e3a8a);
   padding: 80px 20px;
+  color: white;
   text-align: center;
 }
 
-.section-title {
-  font-size: 2.5rem;
-  color: #1a1a1a;
-  margin-bottom: 10px;
-}
-
-.section-description {
-  color: #555;
-  font-size: 1.4rem;
-  margin-bottom: 40px;
-}
-
-.contact-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  max-width: 1000px;
-  margin: 0 auto;
-  text-align: left;
-}
-
-.contact-info p {
-  font-size: 1.2rem;
-  margin-bottom: 15px;
-  color: #333;
-}
-
-.whatsapp-button {
-  display: inline-block;
-  margin-top: 20px;
-  background-color: #25d366;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 1.2rem;
-  transition: background-color 0.3s;
-}
-
-.whatsapp-button:hover {
-  background-color: #1ebe5f;
-}
-
-.contact-form {
+.join-content {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 20px;
 }
 
-.contact-form input,
-.contact-form textarea {
-  padding: 14px;
+.join-section h2 {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.join-section p {
   font-size: 1.2rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  resize: vertical;
+  color: #d1d5db;
+  max-width: 600px;
 }
 
-.contact-form button {
-  padding: 14px;
-  font-size: 1.2rem;
-  background-color: #08035a;
-
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+.cta-button {
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: background-color 0.5s ease;
 }
 
-.contact-form button:hover {
-    background-color: #e46c0a;
-
-}
 
 @media (max-width: 768px) {
-  .contact-grid {
-    grid-template-columns: 1fr;
+ .founder-message.vertical{
+    flex-direction: column;
+    text-align: center;
   }
+
+  .founder-message.vertical img {
+    margin-bottom: 16px;
+  }
+
+ .join-content {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  .join-text {
+    max-width: 700px;
+  }
+
 }

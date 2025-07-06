@@ -42,7 +42,7 @@ export default function HomePage() {
     {/* Left - Info */}
     <div className="contact-info">
       <p><strong>Telefon:</strong> +90 530 000 0000</p>
-      <p><strong>E-posta:</strong> info@egitimplatformu.com</p>
+      <p><strong>E-posta:</strong> iletisim@sozderecekocluk.com</p>
       <p><strong>Adres:</strong> İstanbul, Türkiye</p>
       <a href="https://wa.me/905300000000" target="_blank" rel="noreferrer" className="whatsapp-button">
         WhatsApp ile İletişime Geç
