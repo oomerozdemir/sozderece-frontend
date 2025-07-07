@@ -1,16 +1,22 @@
-
-.coach-card-container {
+.student-page-wrapper{
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 20px;
-  background: #f9f9f9;
-  padding: 15px 25px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 60px 20px;
+  max-width: 1200px;
+}
+.studentPage-coach-card {
+  background: white;
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
 }
 
-.coach-card-image {
+
+.studentPage-coach-card-image {
   width: 100px;
   height: 100px;
   object-fit: cover;
@@ -18,20 +24,10 @@
   border: 2px solid #ccc;
 }
 
-.coach-card-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.coach-card-info h3 {
-  margin: 0;
-  font-size: 1.2rem;
-  color: #333;
-}
-
-.coach-card-info .subject {
-  font-weight: 500;
-  color: #0070f3;
+.studentPage-coach-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #1f2937;
 }
 
 .coach-card-actions {
@@ -41,21 +37,7 @@
   flex-wrap: wrap;
 }
 
-.contact-btn {
-  background-color: #2563eb;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 500;
-  transition: background-color 0.3s;
-}
-
-.contact-btn:hover {
-  background-color: #1d4ed8;
-}
-
-.coach-quote {
+.studentPage-coach-quote {
   font-style: italic;
   color: #444;
   margin-top: 16px;

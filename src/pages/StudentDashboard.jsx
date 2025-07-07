@@ -34,9 +34,9 @@ const StudentDashboard = () => {
   return (
     <>
       <Navbar />
-      <div className="coach-page-wrapper">
+      <div className="student-page-wrapper">
 
-   <div className="coach-card">
+   <div className="studentPage-coach-card">
     <h3>Atanmış Koçunuz</h3>
     <img
       src={student.assignedCoach.image}
@@ -49,7 +49,7 @@ const StudentDashboard = () => {
     <p><strong>Email:</strong> {student.assignedCoach?.user?.email}</p>
 <p><strong>Telefon:</strong> {student.assignedCoach?.user?.phone}</p>
 
-    <blockquote className="coach-quote">
+    <blockquote className="studentPage-coach-quote">
       “Her öğrenci parlamayı bekleyen bir yıldızdır.”
     </blockquote>
 </div>
