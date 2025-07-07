@@ -34,22 +34,25 @@ const StudentDashboard = () => {
   return (
     <>
       <Navbar />
-      <div className="coach-card">
-  <h3>Atanmış Koçunuz</h3>
-  <p><strong>Ad:</strong> {student.assignedCoach.name}</p>
-  <p><strong>Email:</strong> {student.assignedCoach.email}</p>
-  <p><strong>Telefon:</strong> {student.assignedCoach.phone}</p>
+      <div className="coach-page-wrapper">
 
-  {/* 💬 Koçtan alıntı */}
-  <blockquote className="coach-quote">
-    “Her öğrenci parlamayı bekleyen bir yıldızdır.”
-  </blockquote>
+   <div className="coach-card">
+    <h3>Atanmış Koçunuz</h3>
+    <img
+      src={student.assignedCoach.image}
+      alt="Koç Fotoğrafı"
+      className="coach-card-image"
+    />
+    <p><strong>Ad:</strong> {student.assignedCoach.name}</p>
+    <p><strong>Email:</strong> {student.assignedCoach.email}</p>
+    <p><strong>Telefon:</strong> {student.assignedCoach.phone}</p>
 
-  {/* 📞 İletişim Butonları */}
-  <div className="coach-card-actions">
-    <a href={`mailto:${student.assignedCoach.email}`} className="contact-btn">E-Posta Gönder</a>
-  </div>
+    <blockquote className="coach-quote">
+      “Her öğrenci parlamayı bekleyen bir yıldızdır.”
+    </blockquote>
 </div>
+  </div>
+
     </>
   );
 };
