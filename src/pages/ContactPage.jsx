@@ -60,7 +60,7 @@ const IletisimPage = () => {
       <section className="iletisim-page two-column">
         <div className="info-panel">
           <h2>Ücretsiz Ön Görüşme</h2>
-          <p>Size özel bir yol haritası belirlemek için hemen başvuru yapın.</p>
+          <p>Size özel bir yol haritası belirlemek için hemen formu doldurun,biz size en kısa sürede dönelim.</p>
           <img src={contactUsSvg} alt="iletisim-ucretsiz" />
 
           <ul className="icon-info">

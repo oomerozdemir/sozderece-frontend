@@ -33,3 +33,35 @@
   font-weight: 500;
   color: #0070f3;
 }
+
+.coach-card-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.contact-btn {
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.contact-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.coach-quote {
+  font-style: italic;
+  color: #444;
+  margin-top: 16px;
+  background-color: #f4f4f4;
+  padding: 10px 16px;
+  border-left: 4px solid #2563eb;
+  border-radius: 6px;
+}
+

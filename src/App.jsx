@@ -88,6 +88,7 @@ export default App;
 /*
 ucretsiz on gorusme form kismi ıletısım sayfası form gonderınce maıl olarak gelmesı
 
+koc hesabım kısmında alan secme yerı var o olmasın ayrıca sıparısler kısmı da bunlar sadece ogrencılere ozel
 
 fatura bilgireinde hem admin hem kullanici tarafinda kac tl odendigi gozuksun paytr eklendikten sonra duruma gore de bakilir
 

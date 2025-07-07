@@ -34,28 +34,30 @@ const StudentDashboard = () => {
   return (
     <>
       <Navbar />
-      <div className="student-dashboard">
-        <h1>🎓 Hoş geldin, {student.name}!</h1>
+      <div className="coach-card">
+  <h3>Atanmış Koçunuz</h3>
+  <p><strong>Ad:</strong> {student.assignedCoach.name}</p>
+  <p><strong>Email:</strong> {student.assignedCoach.email}</p>
+  <p><strong>Telefon:</strong> {student.assignedCoach.phone}</p>
 
-        <section style={{ marginTop: "20px" }}>
-          <h2>📘 Atanmış Koçun</h2>
-          {student.assignedCoach ? (
-            <div className="coach-card-container">
-              <img
-                src={student.assignedCoach.image}
-                alt="Koç Fotoğrafı"
-                className="coach-card-image"
-              />
-              <div className="coach-card-info">
-                <h3>{student.assignedCoach.name}</h3>
-                <p className="subject">{student.assignedCoach.subject || "Belirtilmemiş"}</p>
-              </div>
-            </div>
-          ) : (
-            <p>Şu anda atanmış bir koçun yok.</p>
-          )}
-        </section>
-      </div>
+  {/* 💬 Koçtan alıntı */}
+  <blockquote className="coach-quote">
+    “Her öğrenci parlamayı bekleyen bir yıldızdır.”
+  </blockquote>
+
+  {/* 📞 İletişim Butonları */}
+  <div className="coach-card-actions">
+    <a href={`mailto:${student.assignedCoach.email}`} className="contact-btn">E-Posta Gönder</a>
+    <a
+      href={`https://wa.me/${student.assignedCoach.phone.replace(/\D/g, '')}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="contact-btn"
+    >
+      WhatsApp
+    </a>
+  </div>
+</div>
     </>
   );
 };
