@@ -41,7 +41,7 @@ const StudentDashboard = () => {
     <img
       src={student.assignedCoach.image}
       alt="Koç Fotoğrafı"
-      className="coach-card-image"
+      className="studentPage-coach-card-image "
     />
     <p>{student.assignedCoach.subject}</p>
 
