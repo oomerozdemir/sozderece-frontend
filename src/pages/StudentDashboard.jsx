@@ -48,14 +48,6 @@ const StudentDashboard = () => {
   {/* 📞 İletişim Butonları */}
   <div className="coach-card-actions">
     <a href={`mailto:${student.assignedCoach.email}`} className="contact-btn">E-Posta Gönder</a>
-    <a
-      href={`https://wa.me/${student.assignedCoach.phone.replace(/\D/g, '')}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="contact-btn"
-    >
-      WhatsApp
-    </a>
   </div>
 </div>
     </>
