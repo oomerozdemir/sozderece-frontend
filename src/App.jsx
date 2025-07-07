@@ -23,7 +23,6 @@ import AdminCouponPage from "./pages/AdminCouponPage";
 import ContactPage from "./pages/ContactPage";
 import "./cssFiles/App.css";
 import "./cssFiles/index.css";
-import { Analytics } from "@vercel/analytics/react"
 
 function App() {
   const location = useLocation();
@@ -77,7 +76,6 @@ function App() {
 
         </Routes>
       </AnimatePresence>
-        <Analytics/>
       
     </div>
     
