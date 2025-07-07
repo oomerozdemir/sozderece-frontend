@@ -43,9 +43,11 @@ const StudentDashboard = () => {
       alt="Koç Fotoğrafı"
       className="coach-card-image"
     />
+    <p>{student.assignedCoach.subject}</p>
+
     <p><strong>Ad:</strong> {student.assignedCoach.name}</p>
-    <p><strong>Email:</strong> {student.assignedCoach.email}</p>
-    <p><strong>Telefon:</strong> {student.assignedCoach.phone}</p>
+    <p><strong>Email:</strong> {student.assignedCoach?.user?.email}</p>
+<p><strong>Telefon:</strong> {student.assignedCoach?.user?.phone}</p>
 
     <blockquote className="coach-quote">
       “Her öğrenci parlamayı bekleyen bir yıldızdır.”
