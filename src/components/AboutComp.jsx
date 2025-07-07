@@ -27,7 +27,7 @@ const AboutComp = () => {
 </section>
 
       {/* === MISSION & VISION === */}
-      <section className="mission-vision-values container">
+      <section className="mission-vision-values containers">
   <div className="info-card">
     <h2>Misyonumuz</h2>
     <p>Öğrencilerimizin bireysel potansiyellerini en üst düzeye çıkararak onların hedeflerine ulaşmalarını sağlamak.</p>
@@ -43,7 +43,7 @@ const AboutComp = () => {
 </section>
 
       {/* === Coaching About Section === */}
-      <section className="coaching-system container">
+      <section className="coaching-system containers">
   <div className="coaching-image">
     <img src="/images/teaching.svg" alt="Koçluk sistemi" />
   </div>
@@ -54,15 +54,15 @@ const AboutComp = () => {
     </p>
   </div>
    <div className="coaching-highlights">
-  <div className="highlight">
+  <div className="highlights">
     <FontAwesomeIcon icon={faUserFriends} className="highlight-icon" />
     <p>Koçlarımız öğrencilere abi/abla şefkatiyle yaklaşır, güvenli bir iletişim ortamı sunar.</p>
   </div>
-  <div className="highlight">
+  <div className="highlights">
     <FontAwesomeIcon icon={faHandshake} className="highlight-icon" />
     <p>Her öğrenciyle birebir ilgileniriz; yol arkadaşlığı prensibimizdir.</p>
   </div>
-  <div className="highlight">
+  <div className="highlights">
     <FontAwesomeIcon icon={faLightbulb} className="highlight-icon" />
     <p>Motivasyon kaynağı olur, yalnız hissettikleri anlarda hep yanlarında oluruz.</p>
   </div>
@@ -71,7 +71,7 @@ const AboutComp = () => {
 
       {/* === Kurucu About Section === */}
 
-<div className="founder-message vertical container">
+<div className="founder-message vertical containers">
   <img src="/images/kurucu.png" alt="Kurucu" />
   <blockquote>
     “Amacımız sadece başarı değil, öğrencinin kendine güvenini kazandırmak.”
@@ -81,7 +81,7 @@ const AboutComp = () => {
 
       {/* === Ekibimiz About Section === */}
 
-<section className="team-preview container">
+<section className="team-preview containers">
   <h2>Koçluk Ekibimiz</h2>
   <p>
     Sözderece Koçluk olarak, her biri alanında deneyimli, öğrenci odaklı ve 
@@ -97,7 +97,7 @@ const AboutComp = () => {
     
       
       {/* === Degerler === */}
-      <div className="value-cards container">
+      <div className="value-cards containers">
   <div className="value-card">
     <FontAwesomeIcon icon={faLock} className="icon" />
     <h3>Gizlilik</h3>
@@ -123,7 +123,7 @@ const AboutComp = () => {
       {/* === Joint Section === */}
 
       <section className="join-section">
-  <div className="container join-content">
+  <div className="containers join-content">
     <div className="join-text">
       <h2>Hedeflerinize birlikte ulaşalım</h2>
       <p>
