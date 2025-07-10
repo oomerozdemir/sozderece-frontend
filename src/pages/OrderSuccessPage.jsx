@@ -32,15 +32,12 @@ const OrderSuccessPage = () => {
         </p>
 
         <div className="button-group">
-          <button onClick={() => navigate("/")} className="success-btn">
-            🏠 Ana Sayfa
-          </button>
-          <button
-            onClick={() => navigate("/orders")}
-            className="success-btn secondary"
-          >
-            📦 Siparişlerim
-          </button>
+        <button type="button" onClick={() => navigate("/")} className="success-btn">
+  🏠 Ana Sayfa
+</button>
+<button type="button" onClick={() => navigate("/orders")} className="success-btn secondary">
+  📦 Siparişlerim
+</button>
         </div>
       </div>
     </div>
