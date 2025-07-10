@@ -21,6 +21,8 @@ import CoachDetail from "./pages/CoachDetailPage";
 import AdminCoachPage from "./pages/AdminCoachPage";
 import AdminCouponPage from "./pages/AdminCouponPage";
 import ContactPage from "./pages/ContactPage";
+import PaymentIframePage from "./pages/PaymentIframePage";
+import PaymentFailPage from "./pages/PaymentFailPage";
 import "./cssFiles/App.css";
 import "./cssFiles/index.css";
 
@@ -70,6 +72,9 @@ function App() {
           <Route path="/admin/coaches" element={<AdminCoachPage />} />
           <Route path="/admin/coupons" element={<AdminCouponPage />} />
           <Route path="/ucretsiz-on-gorusme" element={<ContactPage />} />
+          <Route path="/payment/:token" element={<PaymentIframePage />} />
+          <Route path="/payment-fail" element={<PaymentFailPage />} />
+
 
             
         <Route path="/admin/refund-requests" element={<RefundRequests />} />

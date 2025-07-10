@@ -11,23 +11,36 @@ const OrderSuccessPage = () => {
   const userName = user?.name || "Değerli öğrencimiz";
 
   useEffect(() => {
-    clearCart(); // 🔐 Sepeti sıfırla
+    clearCart(); // ✅ Ödeme başarıyla tamamlandığında sepeti temizle
     const timer = setTimeout(() => {
       navigate("/");
     }, 10000);
+
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, [navigate, clearCart]);
 
   return (
     <div className="order-success-container">
       <div className="order-success-card">
         <h2>🎉 Siparişiniz başarıyla tamamlandı!</h2>
-        <p>Teşekkürler <strong>{userName}</strong>, ödeme bilgileriniz başarıyla alındı.</p>
+        <p>
+          Teşekkürler <strong>{userName}</strong>, ödemeniz başarıyla alındı.
+        </p>
         <p>Destek ekibimiz en kısa sürede sizinle iletişime geçecektir.</p>
-        <p className="redirect-msg">10 saniye içinde ana sayfaya yönlendirileceksiniz...</p>
+        <p className="redirect-msg">
+          10 saniye içinde ana sayfaya yönlendirileceksiniz...
+        </p>
+
         <div className="button-group">
-          <button onClick={() => navigate("/")} className="success-btn">🏠 Ana Sayfa</button>
-          <button onClick={() => navigate("/orders")} className="success-btn secondary">📦 Siparişlerim</button>
+          <button onClick={() => navigate("/")} className="success-btn">
+            🏠 Ana Sayfa
+          </button>
+          <button
+            onClick={() => navigate("/orders")}
+            className="success-btn secondary"
+          >
+            📦 Siparişlerim
+          </button>
         </div>
       </div>
     </div>

@@ -56,7 +56,7 @@ const PaymentPage = () => {
     }
   };
 
- const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
   const token = localStorage.getItem("token");
 
@@ -86,8 +86,8 @@ const PaymentPage = () => {
     const paytrToken = response.data?.paytrToken;
 
     if (paytrToken) {
-      console.log("🔁 PayTR yönlendirmesi yapılıyor:", paytrToken);
-      window.location.href = `https://www.paytr.com/odeme/guvenli/${paytrToken}`;
+      console.log("✅ PayTR token alındı:", paytrToken);
+      navigate(`/payment/${paytrToken}`); // <-- iFrame sayfasına yönlendiriyoruz
     } else {
       alert("Sipariş oluşturuldu ama ödeme başlatılamadı.");
     }
@@ -97,6 +97,7 @@ const PaymentPage = () => {
     alert("Bir hata oluştu. Lütfen tekrar deneyin.");
   }
 };
+
 
   return (
     <div className="payment-container">
