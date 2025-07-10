@@ -8,17 +8,19 @@ const useCart = () => {
     if (storedCart) setCart(JSON.parse(storedCart));
   }, []);
 
-  // ✅ Sepette yalnızca 1 paket tutulsun
   const addToCart = (item) => {
-    const updated = [{ ...item, quantity: 1 }]; // sadece bir paket
+    const updated = [{ ...item, quantity: 1 }];
     setCart(updated);
     localStorage.setItem("cart", JSON.stringify(updated));
   };
 
-
-
-  // Paket zaten tek olduğu için her zaman index 0 kullanılacak
   const removeFromCart = () => {
+    setCart([]);
+    localStorage.removeItem("cart");
+  };
+
+
+  const clearCart = () => {
     setCart([]);
     localStorage.removeItem("cart");
   };
@@ -45,6 +47,7 @@ const useCart = () => {
     cart,
     addToCart,
     removeFromCart,
+    clearCart, 
     increaseQuantity,
     decreaseQuantity,
   };
