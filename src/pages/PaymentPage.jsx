@@ -68,7 +68,7 @@ const handleSubmit = async (e) => {
         }
       }
     );
-
+console.log("🚀 Gelen yanıt:", response.data);
     const paytrToken = response.data?.paytrToken;
 
     if (paytrToken) {

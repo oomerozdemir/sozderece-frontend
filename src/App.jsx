@@ -251,4 +251,12 @@ Mobil uyumluluğu test et.
 
 SEO & paylaşım linklerini optimize et (og:image, title vs.)
 
+
+ Ekstra Tavsiyeler:
+phone alanı mutlaka 10 veya 11 haneli ve sayısal olmalı (örneğin "05551234567").
+
+user_address düzgün bir adres olmalı, emoji vs. olmamalı.
+
+Tüm alanlarda null, undefined, "" gibi değerleri engelle.
+
 */
