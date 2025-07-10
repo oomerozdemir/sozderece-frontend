@@ -44,7 +44,6 @@ const useCart = () => {
   return {
     cart,
     addToCart,
-    clearCart,
     removeFromCart,
     increaseQuantity,
     decreaseQuantity,
