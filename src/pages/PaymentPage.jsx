@@ -38,45 +38,51 @@ const PaymentPage = () => {
     });
   };
 
+const [iframeToken, setIframeToken] = useState(null);
+
 const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
     const token = localStorage.getItem("token");
 
-   const response = await axios.post(
-  "/api/orders",
-  {
-    cart: cart.map(item => ({
-      name: item.name,
-      price: item.price,
-      quantity: item.quantity,
-      description: item.description
-    })),
-    billingInfo: {
-      ...formData
-    },
-    packageName: cart[0]?.name,  
-     discountRate: discountRate ,
+    const response = await axios.post(
+      "/api/orders",
+      {
+        cart: cart.map(item => ({
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          description: item.description
+        })),
+        billingInfo: {
+          ...formData
+        },
+        packageName: cart[0]?.name,
+        discountRate,
+        couponCode
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
 
-  },
-  {
-    headers: {
-      Authorization: `Bearer ${token}`
+    const paytrToken = response.data?.paytrToken;
+
+    if (paytrToken) {
+      setIframeToken(paytrToken); // iframe'i göstermek için
+    } else {
+      alert("Sipariş oluşturuldu ama ödeme başlatılamadı.");
     }
-  }
-);
-
-
-    clearCart();
-    alert("Sipariş başarıyla oluşturuldu!");
-    navigate("/order-success");
 
   } catch (error) {
     console.error("Sipariş oluşturulamadı:", error.response?.data || error.message);
     alert("Bir hata oluştu. Lütfen tekrar deneyin.");
   }
 };
+
 
 const [couponCode, setCouponCode] = useState("");
 const [discountRate, setDiscountRate] = useState(0);
@@ -138,9 +144,22 @@ const handleApplyCoupon = async () => {
 
        </div>
        
+     
 
         <button type="submit" className="pay-button">Şimdi öde</button>
       </form>
+         {iframeToken && (
+  <div style={{ marginTop: "2rem" }}>
+    <h3>Ödeme Sayfası</h3>
+    <iframe
+      src={`https://www.paytr.com/odeme/guvenli/${iframeToken}`}
+      id="paytriframe"
+      frameBorder="0"
+      scrolling="no"
+      style={{ width: "100%", height: "500px" }}
+    ></iframe>
+  </div>
+)}
 
 <div className="payment-summary">
   <h4>Sepet Özeti</h4>

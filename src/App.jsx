@@ -87,6 +87,7 @@ export default App;
 
 /*
 ucretsiz on gorusme form kismi ıletısım sayfası form gonderınce maıl olarak gelmesı
+css isimlerini kontrol et bazi yerlerde karisikliklar var
 
 koc hesabım kısmında alan secme yerı var o olmasın ayrıca sıparısler kısmı da bunlar sadece ogrencılere ozel
 

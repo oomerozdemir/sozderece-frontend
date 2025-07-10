@@ -13,7 +13,7 @@ return (
       <a href="https://facebook.com" target="_blank" rel="noreferrer">
         <i className="fab fa-facebook-f"></i>
       </a>
-      <a href="https://https://www.tiktok.com/@sozderece.com" target="_blank" rel="noreferrer">
+      <a href="https://www.tiktok.com/@sozderece.com" target="_blank" rel="noreferrer">
         <i className="fab fa-tiktok"></i>
       </a>
       <a href="https://www.instagram.com/sozderece/" target="_blank" rel="noreferrer">
