@@ -86,6 +86,10 @@ export default App;
 
 
 /*
+Hem ogrenci hem koc olarak panelleri incele duzenlemeleri yap
+
+console log lari kontrol et satirlardaki basta createOrderwithbilling
+
 ucretsiz on gorusme form kismi ıletısım sayfası form gonderınce maıl olarak gelmesı
 css isimlerini kontrol et bazi yerlerde karisikliklar var
 

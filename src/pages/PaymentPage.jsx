@@ -22,7 +22,6 @@ const PaymentPage = () => {
     allowEmails: false,
   });
 
-  const [iframeToken, setIframeToken] = useState(null);
   const [couponCode, setCouponCode] = useState("");
   const [discountRate, setDiscountRate] = useState(0);
   const [couponMessage, setCouponMessage] = useState("");
@@ -57,48 +56,47 @@ const PaymentPage = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  const token = localStorage.getItem("token");
 
-    try {
-      console.log("📤 Sipariş gönderiliyor...");
-      const response = await axios.post(
-        "/api/orders",
-        {
-          cart: cart.map((item) => ({
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            description: item.description,
-          })),
-          billingInfo: { ...formData },
-          packageName: cart[0]?.name,
-          discountRate,
-          couponCode,
+  try {
+    console.log("📤 Sipariş gönderiliyor...");
+    const response = await axios.post(
+      "/api/orders",
+      {
+        cart: cart.map((item) => ({
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          description: item.description,
+        })),
+        billingInfo: { ...formData },
+        packageName: cart[0]?.name,
+        discountRate,
+        couponCode,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      console.log("✅ Sipariş yanıtı:", response.data);
-
-      const paytrToken = response.data?.paytrToken;
-      if (paytrToken) {
-        console.log("🧾 PayTR Token alındı:", paytrToken);
-        setIframeToken(paytrToken);
-      } else {
-        console.warn("⚠️ Token alınamadı.");
-        alert("Sipariş oluşturuldu ama ödeme başlatılamadı.");
       }
-    } catch (error) {
-      console.error("❌ Sipariş oluşturulamadı:", error.response?.data || error.message);
-      alert("Bir hata oluştu. Lütfen tekrar deneyin.");
+    );
+
+    const paytrToken = response.data?.paytrToken;
+
+    if (paytrToken) {
+      console.log("🔁 PayTR yönlendirmesi yapılıyor:", paytrToken);
+      window.location.href = `https://www.paytr.com/odeme/guvenli/${paytrToken}`;
+    } else {
+      alert("Sipariş oluşturuldu ama ödeme başlatılamadı.");
     }
-  };
+
+  } catch (error) {
+    console.error("❌ Sipariş oluşturulamadı:", error.response?.data || error.message);
+    alert("Bir hata oluştu. Lütfen tekrar deneyin.");
+  }
+};
 
   return (
     <div className="payment-container">
@@ -134,19 +132,7 @@ const PaymentPage = () => {
         <button type="submit" className="pay-button">Şimdi öde</button>
       </form>
 
-      {iframeToken && (
-        <div style={{ marginTop: "2rem" }}>
-          <h3>Ödeme Sayfası</h3>
-          <iframe
-            src={`https://www.paytr.com/odeme/guvenli/${iframeToken}`}
-            id="paytriframe"
-            frameBorder="0"
-            scrolling="no"
-            style={{ width: "100%", height: "500px" }}
-          ></iframe>
-        </div>
-      )}
-
+    
       <div className="payment-summary">
         <h4>Sepet Özeti</h4>
         <ul>
