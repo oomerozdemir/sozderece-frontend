@@ -72,7 +72,8 @@ function App() {
           <Route path="/admin/coaches" element={<AdminCoachPage />} />
           <Route path="/admin/coupons" element={<AdminCouponPage />} />
           <Route path="/ucretsiz-on-gorusme" element={<ContactPage />} />
-          <Route path="/payment/:token" element={<PaymentIframePage />} />
+          <Route path="/payment/iframe/:token" element={<PaymentIframePage />} />
+
           <Route path="/payment-fail" element={<PaymentFailPage />} />
 
 
