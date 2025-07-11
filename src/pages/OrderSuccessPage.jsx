@@ -10,14 +10,15 @@ const OrderSuccessPage = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const userName = user?.name || "Değerli öğrencimiz";
 
-  useEffect(() => {
-    clearCart(); // ✅ Ödeme başarıyla tamamlandığında sepeti temizle
-    const timer = setTimeout(() => {
-      navigate("/");
-    }, 10000);
-
-    return () => clearTimeout(timer);
-  }, [navigate, clearCart]);
+useEffect(() => {
+  clearCart();
+  console.log("⏳ 10 saniyelik timer başladı");
+  const timer = setTimeout(() => {
+    console.log("➡️ Navigating to /");
+    navigate("/");
+  }, 10000);
+  return () => clearTimeout(timer);
+}, [navigate, clearCart]);
 
   return (
     <div className="order-success-container">

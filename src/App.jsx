@@ -92,6 +92,8 @@ export default App;
 
 
 /*
+ordersSuccessPage butonlari duzelt
+
 Hem ogrenci hem koc olarak panelleri incele duzenlemeleri yap
 
 console log lari kontrol et satirlardaki basta createOrderwithbilling
