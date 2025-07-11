@@ -373,3 +373,26 @@ body.modal-open {
 .modal-actions button:not(.primary):not(.danger) {
   background-color: #eee;
 }
+
+
+.paytr-status-btn {
+  margin-top: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.15s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.paytr-status-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+.paytr-status-btn:active {
+  transform: scale(0.97);
+}

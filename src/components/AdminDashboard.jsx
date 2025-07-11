@@ -333,6 +333,33 @@ const handleBillingUpdate = async (orderId) => {
                 
                 <div className="order-details">
                   <p><strong>Sipariş ID:</strong> {order.id}</p>
+                  {order.status === "pending_payment" && (
+  <button
+    onClick={async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const res = await axios.post(
+          "/api/admin/orders/check-payment",
+          { merchant_oid: order.merchantOid },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        alert(`Durum: ${res.data.status}`);
+        window.location.reload();
+      } catch (err) {
+        alert("Durum sorgusu başarısız.");
+        console.error("PayTR durum sorgu hatası:", err);
+      }
+    }}
+    className="paytr-status-btn"
+  >
+    🔄 Ödeme Durumunu Sorgula
+  </button>
+)}
+
                 <p><strong>Oluşturulma:</strong> {new Date(order.createdAt).toLocaleString("tr-TR")}</p>
                 <p><strong>Paket Adı:</strong> {order.package}</p>
                   {console.log("Order içeriği:", order)}
