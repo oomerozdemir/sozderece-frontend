@@ -11,6 +11,7 @@ const OrderSuccessPage = () => {
   const userName = user?.name || "Değerli öğrencimiz";
 
 useEffect(() => {
+  clearCart();
   // Eğer iframe içindeysek, parent'a mesaj gönder
   if (window.self !== window.top) {
     console.log("📤 Iframe içinde, ana sayfaya mesaj gönderiliyor...");
