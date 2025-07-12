@@ -11,9 +11,7 @@ const OrderSuccessPage = () => {
   const userName = user?.name || "Değerli öğrencimiz";
 
 useEffect(() => {
-  console.log("Iframe içinde mi?:", window.self !== window.top);
   clearCart();
-  console.log("⏳ 10 saniyelik timer başladı");
   const timer = setTimeout(() => {
     console.log("➡️ Navigating to /");
     navigate("/");
@@ -33,11 +31,11 @@ useEffect(() => {
           10 saniye içinde ana sayfaya yönlendirileceksiniz...
         </p>
 
-        <div className="button-group">
-        <button type="button" onClick={() => navigate("/")} className="success-btn">
+        <div className="order-success-button-group">
+        <button type="button" onClick={() => navigate("/")} className="order-success-btn">
   🏠 Ana Sayfa
 </button>
-<button type="button" onClick={() => navigate("/orders")} className="success-btn secondary">
+<button type="button" onClick={() => navigate("/orders")} className="order-success-btn secondary">
   📦 Siparişlerim
 </button>
         </div>

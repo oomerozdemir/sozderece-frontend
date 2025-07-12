@@ -38,14 +38,14 @@
   font-style: italic;
   color: #6b7280;
 }
-.button-group {
+.order-success-button-group {
   margin-top: 20px;
   display: flex;
   justify-content: center;
   gap: 12px;
 }
 
-.success-btn {
+.order-success-btn {
   background-color: #22c55e;
   color: white;
   padding: 10px 20px;
@@ -56,14 +56,14 @@
   transition: background 0.3s ease;
 }
 
-.success-btn:hover {
+.order-success-btn:hover {
   background-color: #16a34a;
 }
 
-.success-btn.secondary {
+.order-success-btn.secondary {
   background-color: #3b82f6;
 }
 
-.success-btn.secondary:hover {
+.order-success-btn.secondary:hover {
   background-color: #2563eb;
 }
