@@ -89,6 +89,7 @@ export default App;
 
 
 /*
+dogrulamalari kaldir simdilik mail ve telefon ya da gercekten tamamla
 ordersSuccessPage butonlari duzelt
 ordersPage de siparis numarasi gibi seylerde gozukmesi laizm ayrica iade talebini de koy
 

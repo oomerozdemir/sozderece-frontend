@@ -11,14 +11,19 @@ const OrderSuccessPage = () => {
   const userName = user?.name || "Değerli öğrencimiz";
 
 useEffect(() => {
-  clearCart();
-  const timer = setTimeout(() => {
-    console.log("➡️ Navigating to /");
-    navigate("/");
-  }, 10000);
-  return () => clearTimeout(timer);
+  // Eğer iframe içindeysek, parent'a mesaj gönder
+  if (window.self !== window.top) {
+    console.log("📤 Iframe içinde, ana sayfaya mesaj gönderiliyor...");
+    window.parent.postMessage("PAYMENT_SUCCESS", "*");
+  } else {
+    // Normal çalışıyorsa 10 saniye sonra yönlendir
+    const timer = setTimeout(() => {
+      console.log("➡️ Navigating to /");
+      navigate("/");
+    }, 10000);
+    return () => clearTimeout(timer);
+  }
 }, [navigate, clearCart]);
-
   return (
     <div className="order-success-container">
       <div className="order-success-card">
