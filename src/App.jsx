@@ -1,9 +1,7 @@
-import React from "react";
 import { AnimatePresence } from "framer-motion";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
-import ScrollToTop from "./components/ScrollToTop";
 import CoachDashboard from "./pages/CoachDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
 import LoginPage from "./pages/LoginPage";
@@ -34,7 +32,6 @@ function App() {
   return (
     <div className="App">
       <AnimatePresence mode="wait">
-        <ScrollToTop />
         <Routes location={location} key={location.pathname}>
           {/* Genel Sayfalar */}
           <Route path="/" element={<HomePage />} />
