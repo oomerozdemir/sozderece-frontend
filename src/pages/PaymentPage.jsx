@@ -11,7 +11,7 @@ const PaymentPage = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: "",
+    email: user?.email || "",
     name: "",
     surname: "",
     address: "",
@@ -111,8 +111,15 @@ const handleSubmit = async (e) => {
           )}
         </div>
 
-        <input type="email" name="email" placeholder="E-posta" required onChange={handleInputChange} />
-        <label>
+<input
+  type="email"
+  name="email"
+  value={formData.email}
+  placeholder="E-posta"
+  required
+  onChange={handleInputChange}
+/>        
+<label>
           <input type="checkbox" checked={formData.allowEmails} name="allowEmails" onChange={handleInputChange} />
           Bana e-posta gönderilmesine izin veriyorum.
         </label>
