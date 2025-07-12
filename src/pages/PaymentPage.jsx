@@ -118,7 +118,7 @@ const handleSubmit = async (e) => {
   placeholder="E-posta"
   required
   onChange={handleInputChange}
-/>        
+/>      
 <label>
           <input type="checkbox" checked={formData.allowEmails} name="allowEmails" onChange={handleInputChange} />
           Bana e-posta gönderilmesine izin veriyorum.

@@ -11,6 +11,7 @@ const OrderSuccessPage = () => {
   const userName = user?.name || "Değerli öğrencimiz";
 
 useEffect(() => {
+  console.log("Iframe içinde mi?:", window.self !== window.top);
   clearCart();
   console.log("⏳ 10 saniyelik timer başladı");
   const timer = setTimeout(() => {
