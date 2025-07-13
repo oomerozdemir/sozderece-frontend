@@ -73,3 +73,18 @@ h3 {
   margin: 0 0 6px;
   color: #558b2f;
 }
+.ordersPage-whatsapp-support-btn {
+  display: inline-block;
+  margin-top: 12px;
+  background-color: #25d366;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.ordersPage-whatsapp-support-btn:hover {
+  background-color: #1ebc59;
+}

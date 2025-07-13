@@ -85,6 +85,7 @@ const submitRefundRequest = async ({ orderId, reason, description }) => {
                 return (
                   <div className="order-card" key={order.id}>
                     <h3> <strong>{order.package}</strong></h3>
+                    <p>📄 <strong>Sipariş ID:</strong> {order.id}</p>
                     <p>🗓️ <strong>Satın Alma:</strong> {formatDate(order.createdAt)}</p>
                     <p>📅 <strong>Bitiş Tarihi:</strong> {formatDate(order.endDate)}</p>
                     <span className={`badge ${className}`}>{label}</span>
@@ -99,7 +100,12 @@ const submitRefundRequest = async ({ orderId, reason, description }) => {
                         <p><strong>E-posta:</strong> {order.billingInfo?.email}</p>
                       </div>
                     </details>
-
+                  {order.totalPrice && (
+  <p>💰 <strong>Toplam:</strong> ₺{order.totalPrice}</p>
+)}
+{order.couponCode && (
+  <p>🏷️ <strong>Kupon:</strong> {order.couponCode}</p>
+)}
                    {order.status === "paid" && (
   <button onClick={() => handleRefundRequest(order.id)} className="refund-btn">
     📝 İade Talebi Oluştur
@@ -116,6 +122,14 @@ const submitRefundRequest = async ({ orderId, reason, description }) => {
                     onSubmit={submitRefundRequest}
                   />
                 )}
+<a
+  href={`https://wa.me/905xxxxxxxxx?text=Merhaba, ${order.package} paketiyle ilgili bir sorum var. Sipariş ID: ${order.id}`}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="ordersPage-whatsapp-support-btn"
+>
+  💬 Destek Al (WhatsApp)
+</a>
 
                   </div>
                 );
