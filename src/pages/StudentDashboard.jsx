@@ -35,26 +35,33 @@ const StudentDashboard = () => {
     <>
       <Navbar />
       <div className="student-page-wrapper">
+        <div className="studentPage-coach-card">
+          <h3>Atanmış Koçunuz</h3>
 
-   <div className="studentPage-coach-card">
-    <h3>Atanmış Koçunuz</h3>
-    <img
-      src={student.assignedCoach.image}
-      alt="Koç Fotoğrafı"
-      className="studentPage-coach-card-image "
-    />
-    <p>{student.assignedCoach.subject}</p>
-
-    <p><strong>Ad:</strong> {student.assignedCoach.name}</p>
-    <p><strong>Email:</strong> {student.assignedCoach?.user?.email}</p>
-<p><strong>Telefon:</strong> {student.assignedCoach?.user?.phone}</p>
-
-    <blockquote className="studentPage-coach-quote">
-      “Her öğrenci parlamayı bekleyen bir yıldızdır.”
-    </blockquote>
-</div>
-  </div>
-
+          {student.assignedCoach ? (
+            <>
+              <img
+                src={student.assignedCoach.image}
+                alt="Koç Fotoğrafı"
+                className="studentPage-coach-card-image"
+              />
+              <p>{student.assignedCoach.subject}</p>
+              <p><strong>Ad:</strong> {student.assignedCoach.name}</p>
+              <p><strong>Email:</strong> {student.assignedCoach?.user?.email}</p>
+              <p><strong>Telefon:</strong> {student.assignedCoach?.user?.phone}</p>
+              <blockquote className="studentPage-coach-quote">
+                “Her öğrenci parlamayı bekleyen bir yıldızdır.”
+              </blockquote>
+            </>
+          ) : (
+            <>
+              <p>Hoş geldiniz! 👋</p>
+              <p>Henüz bir koç atamanız yapılmadı.</p>
+              <p>Koçunuz atandığında burada görüntülenecektir.</p>
+            </>
+          )}
+        </div>
+      </div>
     </>
   );
 };
