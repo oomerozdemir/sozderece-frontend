@@ -11,6 +11,7 @@ const OrderSuccessPage = () => {
   const userName = user?.name || "Değerli öğrencimiz";
 
 useEffect(() => {
+  localStorage.removeItem("cart");
   clearCart();
   // Eğer iframe içindeysek, parent'a mesaj gönder
   if (window.self !== window.top) {
