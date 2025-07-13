@@ -321,6 +321,21 @@
   .navbar-right-section {
     gap: 8px;
   }
+  .login-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+   .navbar-username {
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.85rem;
+    padding: 6px 10px;
+    border-radius: 4px;
+    background-color: #da680b;
+  }
 
   .login-button a {
     padding: 6px 12px;
@@ -328,6 +343,6 @@
   }
 
   .hamburger {
-    font-size: 32px;
+    font-size: 35px;
   }
 }
