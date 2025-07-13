@@ -99,7 +99,7 @@ const submitRefundRequest = async ({ orderId, reason, description }) => {
                       </div>
                     </details>
 
-                   {["paid", "active"].includes(order.status) && (
+                   {order.status === "paid" && (
   <button onClick={() => handleRefundRequest(order.id)} className="refund-btn">
     📝 İade Talebi Oluştur
   </button>
