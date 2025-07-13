@@ -81,7 +81,7 @@
   }
 
   .coach-detail-image {
-    max-height: 3000px;
+    max-height: 500px;
     object-fit: cover;
   }
 }
