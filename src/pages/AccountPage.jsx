@@ -194,7 +194,7 @@ const handlePasswordChange = async (e) => {
         <form onSubmit={handleUpdate} className="info-card modern-form">
           <h3>Kişisel Bilgiler</h3>
 
-          <div className="form-group">
+          <div className="accountPage-form-group">
             <label>Adınız&Soyadiniz</label>
             <input
               type="text"
@@ -204,7 +204,7 @@ const handlePasswordChange = async (e) => {
             />
           </div>
 
-          <div className="form-group">
+          <div className="accountPage-form-group">
             <label>Email Adresi</label>
             <div className="input-verify">
               <input
@@ -222,7 +222,7 @@ const handlePasswordChange = async (e) => {
             </div>
           </div>
 
-          <div className="form-group">
+          <div className="accountPage-form-group">
             <label>Telefon Numarası</label>
             <div className="input-verify">
               <input
@@ -249,7 +249,7 @@ const handlePasswordChange = async (e) => {
   </div>
 ) : (
   <>
-    <div className="form-group">
+    <div className="accountPage-form-group">
       <label>Sınıfınız</label>
       <select
         value={form.grade}
@@ -267,7 +267,7 @@ const handlePasswordChange = async (e) => {
     </div>
 
     {["9", "10", "11", "12", "Mezun"].includes(form.grade) && (
-      <div className="form-group">
+      <div className="accountPage-form-group">
         <label>Alanınız</label>
         <select
           value={form.track}
