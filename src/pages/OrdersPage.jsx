@@ -18,6 +18,7 @@ const OrdersPage = () => {
         const res = await axios.get("/api/my-orders", {
           headers: { Authorization: `Bearer ${token}` },
         });
+        console.log("🛍️ Siparişler:", res.data.orders);
         setOrders(res.data.orders);
       } catch {
         console.error("Siparişler alınamadı.");
