@@ -10,9 +10,6 @@ return (
       </span>
     </div>
     <div className="top-bar-right">
-      <a href="https://facebook.com" target="_blank" rel="noreferrer">
-        <i className="fab fa-facebook-f"></i>
-      </a>
       <a href="https://www.tiktok.com/@sozderece.com" target="_blank" rel="noreferrer">
         <i className="fab fa-tiktok"></i>
       </a>

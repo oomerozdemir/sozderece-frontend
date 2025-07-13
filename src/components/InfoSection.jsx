@@ -55,7 +55,7 @@ export default function InfoSection() {
 </p>
         <div className="info-buttons">
         <a
-            href="https://wa.me/905xxxxxxxxx"
+            href="https://wa.me/905312546701"
             className="info-button whatsapp"
             target="_blank"
             rel="noopener noreferrer"

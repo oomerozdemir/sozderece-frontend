@@ -162,9 +162,9 @@ const handlePasswordChange = async (e) => {
 };
 
   return (
-    <div className="account-layout">
-      <aside className="sidebar">
-        <ul className="sidebar-menu">
+    <div className="accountPage-layout">
+      <aside className="accountPage-sidebar">
+        <ul className="accountPage-sidebar-menu">
           <li><a href="/">🏠 Anasayfaya Dön</a></li>
           <li>👤 Hesap</li>
           <li>🔒 Şifre Değiştir</li>
@@ -179,13 +179,9 @@ const handlePasswordChange = async (e) => {
         </ul>
       </aside>
 
-      <main className="account-main">
-        <section className="profile-card">
-          <img
-            src= "../../public/images/hero-logo.png"
-            className="avatar"
-            alt="avatar"
-          />
+      <main className="accountPage-main">
+        <section className="accountPage-profile-card">
+          
           <div>
             <h2>{user.name}</h2>
             <p>{user.email}</p>
@@ -317,10 +313,10 @@ const handlePasswordChange = async (e) => {
             </div>
           </div>
         )}
-        <section className="info-card modern-form" style={{ marginTop: "40px" }}>
+        <section className="accountPage-info-card modern-form" style={{ marginTop: "40px" }}>
   <h3>🔒 Şifre Değiştir</h3>
   <form onSubmit={handlePasswordChange}>
-    <div className="form-group">
+    <div className="accountPage-form-group">
       <label>Mevcut Şifre</label>
       <input
         type="password"
@@ -329,7 +325,7 @@ const handlePasswordChange = async (e) => {
         required
       />
     </div>
-    <div className="form-group">
+    <div className="accountPage-form-group">
       <label>Yeni Şifre</label>
       <input
         type="password"
@@ -338,7 +334,7 @@ const handlePasswordChange = async (e) => {
         required
       />
     </div>
-    <div className="form-group">
+    <div className="accountPage-form-group">
       <label>Yeni Şifre (Tekrar)</label>
       <input
         type="password"
@@ -347,7 +343,7 @@ const handlePasswordChange = async (e) => {
         required
       />
     </div>
-    <button type="submit" className="update-button">Şifreyi Güncelle</button>
+    <button type="submit" className="accountPage-update-button">Şifreyi Güncelle</button>
     {passwordMsg && <p className="success-message">{passwordMsg}</p>}
   </form>
 </section>

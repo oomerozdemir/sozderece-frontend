@@ -91,7 +91,6 @@ const Navbar = () => {
                     {userRole === "student" && <Link to="/student/dashboard">Öğrenci Paneli</Link>}
                     {userRole === "coach" && <Link to="/coach/dashboard">Koç Paneli</Link>}
                     {userRole === "admin" && <Link to="/admin">Admin Paneli</Link>}
-                    <Link to="/contact">Destek</Link>
                     <Link to="/orders">Siparişlerim</Link>
                     <button onClick={() => {
                       localStorage.clear();
