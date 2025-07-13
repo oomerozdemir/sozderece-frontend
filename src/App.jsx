@@ -22,8 +22,8 @@ import ContactPage from "./pages/ContactPage";
 import PaymentIframePage from "./pages/PaymentIframePage";
 import PaymentFailPage from "./pages/PaymentFailPage";
 
-import PrivateRoute from "./components/PrivateRoute";
-import RoleRoute from "./components/RoleRoute";
+import PrivateRoute from "./components/PrivateRoute.jsx";
+import RoleRoute from "./components/RoleRoutes.jsx";
 
 import "./cssFiles/App.css";
 import "./cssFiles/index.css";
