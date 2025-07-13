@@ -46,7 +46,6 @@ export default function InfoSection() {
           <li>💡 Analiz odaklı gelişim planı ve geri bildirim</li>
           <li>🧠 Sınav kaygısına karşı çözüm odaklı yaklaşım</li>
           <li>✅ Güçlü bir topluluk duygusu ile yalnız hissetmeme desteği</li>
-          <li>🎯 İstenilen derste alanında uzman hocalardan haftalık özel ders imkanı</li>
 
 
         </ul>
