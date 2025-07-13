@@ -52,6 +52,7 @@ const OrdersPage = () => {
   setShowModal(true);
 };
 const submitRefundRequest = async ({ orderId, reason, description }) => {
+  console.log(`/api/orders/${orderId}/refund-request`);
   try {
     const token = localStorage.getItem("token");
     await axios.put(
