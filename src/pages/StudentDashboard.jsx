@@ -38,22 +38,26 @@ const StudentDashboard = () => {
         <div className="studentPage-coach-card">
           <h3>Atanmış Koçunuz</h3>
 
-          {student.assignedCoach ? (
-            <>
-              <img
-                src={student.assignedCoach.image}
-                alt="Koç Fotoğrafı"
-                className="studentPage-coach-card-image"
-              />
-              <p>{student.assignedCoach.subject}</p>
-              <p><strong>Ad:</strong> {student.assignedCoach.name}</p>
-              <p><strong>Email:</strong> {student.assignedCoach?.user?.email}</p>
-              <p><strong>Telefon:</strong> {student.assignedCoach?.user?.phone}</p>
-              <blockquote className="studentPage-coach-quote">
-                “Her öğrenci parlamayı bekleyen bir yıldızdır.”
-              </blockquote>
-            </>
-          ) : (
+          {!student.assignedCoach ? (
+  <>
+    <p>Hoş geldiniz! 👋</p>
+    <p>Henüz bir koç atamanız yapılmadı.</p>
+    <p>Koçunuz atandığında burada görüntülenecektir.</p>
+
+    <div className="studentPage-button-group">
+      <a href="/package-detail" className="studentPage-button">📦 Paketleri İncele</a>
+      <a href="/ucretsiz-on-gorusme" className="studentPage-button">🗓️ Ücretsiz Ön Görüşme</a>
+      <a
+        href="https://wa.me/905312546701" 
+        target="_blank"
+        rel="noopener noreferrer"
+        className="studentPage-button whatsapp"
+      >
+        💬 WhatsApp Destek
+      </a>
+    </div>
+  </>
+) : (
             <>
               <p>Hoş geldiniz! 👋</p>
               <p>Henüz bir koç atamanız yapılmadı.</p>

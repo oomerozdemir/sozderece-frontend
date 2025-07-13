@@ -47,3 +47,32 @@
   border-radius: 6px;
 }
 
+.studentPage-button-group {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.studentPage-button {
+  padding: 10px 16px;
+  background-color: #0059ff;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.studentPage-button:hover {
+  background-color: #003db3;
+}
+
+.studentPage-button.whatsapp {
+  background-color: #25D366;
+}
+
+.studentPage-button.whatsapp:hover {
+  background-color: #1ebe57;
+}
+
