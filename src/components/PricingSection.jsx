@@ -24,36 +24,51 @@ const packages = [
   {
     name: "LGS 2026 PAKETİ",
     price: "2800₺ / ay",
-    subtitle: "Disiplinli bir sınav süreci için ihtiyaç duyduğun temel destek burada!",
+    subtitle: "",
     features: [
-      "Haftalık birebir koçluk görüşmesi",
-      "Kişiye özel haftalık/günlük program",
-      "Sabah-akşam WhatsApp takibi",
-      "Her ay 4 deneme sınavı",
-      "1 hafta ücretsiz deneme",
-      "15 günde bir veliye gelişim raporu"
+      "Her Hafta Hedef Belirleme",
+      "Kişiye Özel Haftalık/Günlük program",
+      "Takip, Motivasyon ve Yönlendirme",
+      "Türkçe, Matematik, Fen, İnkılap, Din, İngilizce analizleri",
+      "Net gelişimi – Yanlış nedenleri – Süre kontrolü",
+      "Kaynak Takibi",
+      "Düzenli Veli Bilgilendirmesi",
+      "Tekrar planlaması",
+      "Motivasyon Takviyeleri",
+
+      
     ],
     badge: null,
-    highlight: false,
-    icon: <FaUserCheck />,
-  },
-  {
-    name: "YKS 2026 PAKETİ",
-    price: "2800₺ / ay",
-    subtitle: "Koçluk + birebir özel ders + 7/24 destek isteyenler için.",
-    features: [
-      "Öğrenciyi Derinlemesine Tanıma ve Seviye Belirleme",
-      "Kişiye Özel Haftalık Ders ve Çalışma Programı",
-      "Her Gün Birebir Takip ve Günlük Destek",
-      "Haftalık Önerilen Yayından Deneme Sınavları ve Detaylı Geri Bildirim",
-      "Veliyle Şeffaf ve Sürekli İletişim",
-      " Seviyeye Uygun Kaynak ve İçerik Önerileri",
-      " Sınav Öncesi Yoğun Prova ve Strateji Desteği",
-
-    ],
     highlight: true,
     icon: <FaStar />,
   },
+ {
+  name: "YKS 2026 PAKETİ",
+  price: "2800₺ / ay",
+  subtitle: "",
+  features: [
+    " Haftalık Koçluk Görüşmeleri",
+    "  Birebir takip sistemi",
+  
+    " Kişiye Özel Ders ve Soru Dağılım Planı",
+    " Eksik–güçlü ders analizine göre haftalık program",
+    " Deneme sonuçlarına göre dinamik güncellemeler",
+
+    " TYT–AYT deneme analizleri",
+    " Net sayısı ve zaman yönetimi takibi",
+    " Gelişim çizelgesi",
+
+    " Soru Takibi ve Kaynak Yönetimi",
+    " Eksik kalan konulara göre yönlendirme",
+    " Düzenli Birebir İletişim (WhatsApp–Telefon)",
+    " Koç–öğrenci–veli üçgeninde güçlü iletişim",
+    " Sınav Haftalarında Psikolojik Destek",
+    " Sınav öncesi stres yönetimi",
+    " Sınav günü taktikleri ve rahatlama önerileri",
+  ],
+  highlight: true,
+  icon: <FaStar />,
+},
   
 ];
 
@@ -92,7 +107,7 @@ const navigate = useNavigate();
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}
     >
-      <motion.h2 className="section-title" variants={cardVariants}>
+      <motion.h2 className="pricing-section-title" variants={cardVariants}>
         Koçluk Paketlerimiz
       </motion.h2>
       <div className="pricing-cards">
