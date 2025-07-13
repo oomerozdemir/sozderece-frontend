@@ -4,7 +4,7 @@ import "../cssFiles/WhatsappButton.css";
 
 const WhatsAppButton = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const phoneNumber = "905xxxxxxxxx"; // Numaranı buraya yaz
+  const phoneNumber = "905312546701"; // Numaranı buraya yaz
 
   return (
     <div className="wa-wrapper">

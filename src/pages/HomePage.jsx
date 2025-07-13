@@ -41,10 +41,10 @@ export default function HomePage() {
   <div className="contact-grid">
     {/* Left - Info */}
     <div className="contact-info">
-      <p><strong>Telefon:</strong> +90 530 000 0000</p>
+      <p><strong>Telefon:</strong> +90 531 254 6701</p>
       <p><strong>E-posta:</strong> iletisim@sozderecekocluk.com</p>
       <p><strong>Adres:</strong> İstanbul, Türkiye</p>
-      <a href="https://wa.me/905300000000" target="_blank" rel="noreferrer" className="whatsapp-button">
+      <a href="https://wa.me/905312546701" target="_blank" rel="noreferrer" className="whatsapp-button">
         WhatsApp ile İletişime Geç
       </a>
     </div>

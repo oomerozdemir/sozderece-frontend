@@ -21,13 +21,15 @@ import AdminCouponPage from "./pages/AdminCouponPage";
 import ContactPage from "./pages/ContactPage";
 import PaymentIframePage from "./pages/PaymentIframePage";
 import PaymentFailPage from "./pages/PaymentFailPage";
+
+import PrivateRoute from "./components/PrivateRoute";
+import RoleRoute from "./components/RoleRoute";
+
 import "./cssFiles/App.css";
 import "./cssFiles/index.css";
 
 function App() {
   const location = useLocation();
-
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   return (
     <div className="App">
@@ -37,65 +39,123 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/hakkimizda" element={<AboutPage />} />
 
-          {/* Admin Panel */}
-          <Route
-            path="/admin/*"
-            element={
-              user.role === "admin" ? (
-                <AdminApp />
-              ) : (
-                <Navigate to="/" replace />
-              )
-            }
-          />
-
           {/* Kimlik Doğrulama */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* Kullanıcı Panelleri */}
-          <Route path="/coach/dashboard" element={<CoachDashboard />} />
-          <Route path="/student/dashboard" element={<StudentDashboard />} />
+          {/* Korunan Sayfalar */}
+          <Route
+            path="/coach/dashboard"
+            element={
+              <RoleRoute allowedRoles={["coach"]}>
+                <CoachDashboard />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="/student/dashboard"
+            element={
+              <RoleRoute allowedRoles={["student"]}>
+                <StudentDashboard />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="/account"
+            element={
+              <PrivateRoute>
+                <AccountPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <PrivateRoute>
+                <OrdersPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/payment"
+            element={
+              <PrivateRoute>
+                <PaymentPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/order-success"
+            element={
+              <PrivateRoute>
+                <OrderSuccessPage />
+              </PrivateRoute>
+            }
+          />
 
-          {/* Kullanıcı İşlemleri */}
-          <Route path="/account" element={<AccountPage />} />
-          <Route path="/orders" element={<OrdersPage />} />
+          {/* Sepet ve Detay Sayfaları */}
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/payment" element={<PaymentPage />} />
-          <Route path="/order-success" element={<OrderSuccessPage />} />
           <Route path="/package-detail" element={<PackageDetail />} />
           <Route path="/coach-detail" element={<CoachDetail />} />
-          <Route path="/admin/coaches" element={<AdminCoachPage />} />
-          <Route path="/admin/coupons" element={<AdminCouponPage />} />
           <Route path="/ucretsiz-on-gorusme" element={<ContactPage />} />
           <Route path="/payment/iframe/:token" element={<PaymentIframePage />} />
-
           <Route path="/payment-fail" element={<PaymentFailPage />} />
 
+          {/* Admin Panel */}
+          <Route
+            path="/admin/*"
+            element={
+              <RoleRoute allowedRoles={["admin"]}>
+                <AdminApp />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="/admin/coaches"
+            element={
+              <RoleRoute allowedRoles={["admin"]}>
+                <AdminCoachPage />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="/admin/coupons"
+            element={
+              <RoleRoute allowedRoles={["admin"]}>
+                <AdminCouponPage />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="/admin/refund-requests"
+            element={
+              <RoleRoute allowedRoles={["admin"]}>
+                <RefundRequests />
+              </RoleRoute>
+            }
+          />
 
-            
-        <Route path="/admin/refund-requests" element={<RefundRequests />} />
-
+          {/* Yetkisiz erişim mesajı */}
+          <Route path="/unauthorized" element={<div>Erişim izniniz yok.</div>} />
         </Routes>
       </AnimatePresence>
-      
     </div>
-    
   );
 }
 
 export default App;
 
 
+
 /*
+iade talebi gonderilemiyor ona bak ayrica sureli yap 5 gunluk olucak
+
+sozlesmeleri duzenle
+
 dogrulamalari kaldir simdilik mail ve telefon ya da gercekten tamamla
-ordersSuccessPage butonlari duzelt
-ordersPage de siparis numarasi gibi seylerde gozukmesi laizm ayrica iade talebini de koy
 
 Hem ogrenci hem koc olarak panelleri incele duzenlemeleri yap
-
-console log lari kontrol et satirlardaki basta createOrderwithbilling
 
 
 css isimlerini kontrol et bazi yerlerde karisikliklar var

@@ -6,17 +6,17 @@ const testimonials = [
   {
     name: "Ayşe K.",
     text: "Bu eğitim sayesinde sınavlarımda büyük başarı elde ettim. Kesinlikle tavsiye ederim!",
-    title: "Üniversite Öğrencisi",
+    title: "",
   },
   {
     name: "Mehmet B.",
     text: "Etkili koçluk sistemi ve profesyonel rehberlik sayesinde hedefime ulaştım.",
-    title: "TYT-Hedefli Öğrenci",
+    title: "",
   },
   {
     name: "Zeynep D.",
     text: "Kariyer yolculuğumda yanımda oldular. Gerçekten çok şey öğrendim.",
-    title: "Mezun Adayı",
+    title: "",
   },
 ];
 
