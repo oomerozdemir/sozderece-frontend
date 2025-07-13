@@ -79,15 +79,15 @@ const handleContinue = () => {
     },
     {
       title: "Whatsapp İletişiminde Farkımız",
-      content: "Koçlarımız haftanın 7 günü sabah 08:00 - akşam 22:00 saatleri arasında birebir takip sağlar."
+      content: "Koçlarımız 7/24 birebir takip sağlar."
     },
     {
       title: "İptal ve İade Koşulları",
-      content: "Paket başladıktan sonraki ilk 3 gün içinde koşulsuz iade hakkınız vardır."
+      content: "Paket başladıktan sonraki ilk 5 gün içinde koşulsuz iade hakkınız vardır."
     },
     {
       title: "Diğer Sorular",
-      content: "Tüm diğer sorularınız için destek@sozderece.com adresine ulaşabilirsiniz."
+      content: "Tüm diğer sorularınız için iletisim@sozderecekocluk.com adresine ulaşabilir veya whatsapp üzerinden mesaj atabilirsiniz."
     }
   ];
 
