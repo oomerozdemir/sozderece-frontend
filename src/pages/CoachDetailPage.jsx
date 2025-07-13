@@ -31,16 +31,16 @@ const CoachDetailPage = () => {
     <>
     <TopBar />
     <Navbar />
-    <div className="coach-select-page">
-      <h2 className="coach-select-title">Koçlarımız</h2>
-      <p className="coach-select-note">Koçlarımızı aşağıda inceleyebilirsiniz.</p>
-      <div className="coach-list">
+    <div className="coach-detail-page">
+      <h2 className="coach-detail-title">Koçlarımız</h2>
+      <p className="coach-detail-note">Koçlarımızı aşağıda inceleyebilirsiniz.</p>
+      <div className="coach-detail-list">
         {coaches.map((coach) => (
-          <div key={coach.id} className="coach-card">
-            <img src={coach.image} alt={coach.name} className="coach-image" />
-            <h3 className="coach-name">{coach.name}</h3>
-            <p className="coach-subject">{coach.subject}</p>
-            <p className="coach-description">{coach.description}</p>
+          <div key={coach.id} className="coach-detail-card">
+            <img src={coach.image} alt={coach.name} className="coach-detail-image" />
+            <h3 className="coach-detail-name">{coach.name}</h3>
+            <p className="coach-detail-subject">{coach.subject}</p>
+            <p className="coach-detail-description">{coach.description}</p>
           </div>
         ))}
       </div>
