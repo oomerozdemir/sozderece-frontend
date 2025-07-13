@@ -61,7 +61,6 @@ const handleSubmit = async (e) => {
   const token = localStorage.getItem("token");
 
   try {
-    console.log("📤 Sipariş gönderiliyor...");
     const response = await axios.post(
       "/api/orders",
       {

@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../cssFiles/paymentIframe.css";
+import axios from "../utils/axios";
+
 
 const PaymentIframePage = () => {
   const { token } = useParams();

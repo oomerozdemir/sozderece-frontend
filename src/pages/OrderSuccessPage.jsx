@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useCart from "../hooks/useCart";
 import "../cssFiles/orderSuccess.css";
+import axios from "../utils/axios";
 
 const OrderSuccessPage = () => {
   const navigate = useNavigate();
