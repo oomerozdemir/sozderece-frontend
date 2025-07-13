@@ -167,9 +167,7 @@ const handlePasswordChange = async (e) => {
         <ul className="accountPage-sidebar-menu">
           <li><a href="/">🏠 Anasayfaya Dön</a></li>
           <li>👤 Hesap</li>
-          <li>🔒 Şifre Değiştir</li>
           <li><a href="/orders">📦 Siparişlerim</a></li>
-          <li>📞 Destek</li>
           <li style={{ color: "red", marginTop: "20px" }}>
             <button onClick={() => {
               localStorage.clear();

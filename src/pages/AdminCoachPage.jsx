@@ -47,7 +47,7 @@ const AdminCoachPage = () => {
     fetchStudents();
   }, []);
 
- const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
   const token = localStorage.getItem("token");
 
@@ -61,14 +61,27 @@ const AdminCoachPage = () => {
       data.append("image", formData.imageFile);
     }
 
-    const res = await axios.post("/api/admin/coaches", data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    if (editingCoach) {
+      // GÜNCELLEME
+      await axios.put(`/api/admin/coaches/${editingCoach.id}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      alert("Koç başarıyla güncellendi.");
+    } else {
+      // YENİ OLUŞTURMA
+      await axios.post("/api/admin/coaches", data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      alert("Koç başarıyla oluşturuldu.");
+    }
 
-    alert("Koç başarıyla oluşturuldu.");
+    // Temizle ve listeyi güncelle
     setFormData({
       name: "",
       email: "",
@@ -76,18 +89,21 @@ const AdminCoachPage = () => {
       description: "",
       imageFile: null,
     });
+    setEditingCoach(null);
     fetchCoaches();
   } catch (err) {
-    console.error("Koç oluşturulamadı:", err.response?.data || err.message);
-    alert("Koç oluşturulurken bir hata oluştu.");
+    console.error("Koç işlemi hatası:", err.response?.data || err.message);
+    alert("Koç işlemi sırasında bir hata oluştu.");
   }
 };
+
 
 
   const handleEdit = (coach) => {
     setEditingCoach(coach);
     setFormData({
       name: coach.name,
+      email: coach.email, 
       subject: coach.subject,
       description: coach.description,
       imageFile: null,
