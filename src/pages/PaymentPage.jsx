@@ -91,7 +91,7 @@ const handleSubmit = async (e) => {
     }
 
   } catch (error) {
-    console.error("❌ Sipariş oluşturulamadı:", error.response?.data || error.message);
+    console.error("❌ Sipariş oluşturulamadı:");
     alert("Bir hata oluştu. Lütfen tekrar deneyin.");
   }
 };

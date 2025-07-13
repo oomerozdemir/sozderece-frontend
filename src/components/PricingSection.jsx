@@ -23,7 +23,7 @@ const packages = [
   },*/
   {
     name: "LGS 2026 PAKETİ",
-    price: "3000₺ / ay",
+    price: "2800₺ / ay",
     subtitle: "Disiplinli bir sınav süreci için ihtiyaç duyduğun temel destek burada!",
     features: [
       "Haftalık birebir koçluk görüşmesi",
@@ -39,7 +39,7 @@ const packages = [
   },
   {
     name: "YKS 2026 PAKETİ",
-    price: "3000₺ / ay",
+    price: "2800₺ / ay",
     subtitle: "Koçluk + birebir özel ders + 7/24 destek isteyenler için.",
     features: [
       "Öğrenciyi Derinlemesine Tanıma ve Seviye Belirleme",

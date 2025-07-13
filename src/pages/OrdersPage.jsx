@@ -18,7 +18,6 @@ const OrdersPage = () => {
         const res = await axios.get("/api/my-orders", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log("🛍️ Siparişler:", res.data.orders);
         setOrders(res.data.orders);
       } catch {
         console.error("Siparişler alınamadı.");
@@ -52,7 +51,6 @@ const OrdersPage = () => {
   setShowModal(true);
 };
 const submitRefundRequest = async ({ orderId, reason, description }) => {
-  console.log(`/api/orders/${orderId}/refund-request`);
   try {
     const token = localStorage.getItem("token");
     await axios.put(
@@ -64,7 +62,7 @@ const submitRefundRequest = async ({ orderId, reason, description }) => {
     setShowModal(false);
     window.location.reload();
   } catch (err) {
-    console.error("İade talebi oluşturulamadı:", err);
+    console.error("İade talebi oluşturulamadı:");
     alert("Bir hata oluştu, lütfen tekrar deneyin.");
   }
 };

@@ -15,10 +15,9 @@ const CoachDashboard = () => {
           },
         });
         setStudents(res.data.students);
-        console.log("Gelen öğrenci listesi:", res.data.students);
 
       } catch (err) {
-        console.error("Öğrenciler alınamadı:", err);
+        console.error("Öğrenciler alınamadı:");
       }
     };
 

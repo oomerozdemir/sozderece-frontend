@@ -18,7 +18,7 @@ const StudentDashboard = () => {
         });
         setStudent(res.data);
       } catch (error) {
-        console.error("Öğrenci verisi alınamadı:", error);
+        console.error("Öğrenci verisi alınamadı:");
       } finally {
         setLoading(false);
       }

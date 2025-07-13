@@ -13,7 +13,7 @@ const RefundRequests = () => {
       });
       setRefundOrders(res.data.refundOrders);
     } catch (err) {
-      console.error("İade talepleri alınamadı:", err);
+      console.error("İade talepleri alınamadı:");
     }
   };
 

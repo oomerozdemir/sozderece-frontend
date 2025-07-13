@@ -16,7 +16,7 @@ useEffect(() => {
     clearCart(); // güvenli çalışıyor mu test et
     console.log("🧹 Sepet temizlendi.");
   } catch (err) {
-    console.error("❌ clearCart hatası:", err);
+    console.error("❌ clearCart hatası:");
   }
 
   if (window.self !== window.top) {

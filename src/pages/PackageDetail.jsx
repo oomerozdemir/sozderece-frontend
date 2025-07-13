@@ -16,13 +16,13 @@ const packageList = [
   {
     slug: "lgs-2026-paketi",
     name: "LGS 2026 PAKETİ",
-    price: "3000₺ / ay",
+    price: "2800₺ / ay",
     subtitle: "Disiplinli bir sınav süreci için ihtiyaç duyduğun temel destek burada!"
   },
   {
     slug: "yks-2026-paketi",
     name: "YKS 2026 PAKETİ",
-    price: "3000₺ / ay",
+    price: "2800₺ / ay",
     subtitle: "Koçluk + birebir özel ders + 7/24 destek isteyenler için."
   }
 ];
@@ -32,9 +32,14 @@ const PackageDetail = () => {
   const [selected, setSelected] = useState(null);
   const [activeIndex, setActiveIndex] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const isPaymentDisabled = true;
   const { addToCart } = useCart();
 
 const handleContinue = () => {
+   if (isPaymentDisabled) {
+    alert("Sipariş vermek istiyorsanız lütfen WhatsApp üzerinden destek ekibimizle görüşün.Şu anda ödeme sistemiyle alakalı bir sorun üzerinde uğraşıyoruz.Bu sorun en kısa sürede çözülecektir.Anlayışınız için teşekkürler.");
+    return;
+  }
   const userData = localStorage.getItem("user");
   if (!userData) {
     alert("Devam etmek için giriş yapmanız gereklidir.");

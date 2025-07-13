@@ -16,7 +16,7 @@ const CoachDetailPage = () => {
         const res = await axios.get("/api/coaches/public-coach");
         setCoaches(res.data);
       } catch (error) {
-        console.error("Koçlar yüklenemedi:", error);
+        console.error("Koçlar yüklenemedi:");
       } finally {
         setLoading(false);
       }

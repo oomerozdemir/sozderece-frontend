@@ -350,7 +350,7 @@ const handleBillingUpdate = async (orderId) => {
         window.location.reload();
       } catch (err) {
         alert("Durum sorgusu başarısız.");
-        console.error("PayTR durum sorgu hatası:", err);
+        console.error("PayTR durum sorgu hatası:");
       }
     }}
     className="paytr-status-btn"
