@@ -91,7 +91,6 @@ const AdminDashboard = () => {
 
 const handleUserUpdate = async () => {
   try {
-    console.log("🟡 Güncellenecek kullanıcı ID:", editingUser?.id);
 
     const token = localStorage.getItem("token");
 
@@ -362,7 +361,6 @@ const handleBillingUpdate = async (orderId) => {
 
                 <p><strong>Oluşturulma:</strong> {new Date(order.createdAt).toLocaleString("tr-TR")}</p>
                 <p><strong>Paket Adı:</strong> {order.package}</p>
-                  {console.log("Order içeriği:", order)}
                   <details style={{ marginTop: "10px" }}>
   <summary style={{ cursor: "pointer", color: "#007bff" }}>
     Fatura Bilgilerini Göster

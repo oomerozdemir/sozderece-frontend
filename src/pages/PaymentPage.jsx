@@ -86,7 +86,6 @@ const handleSubmit = async (e) => {
     const paytrToken = response.data?.paytrToken;
 
     if (paytrToken) {
-      console.log("✅ PayTR token alındı:", paytrToken);
       navigate(`/payment/iframe/${paytrToken}`); 
     } else {
       alert("Sipariş oluşturuldu ama ödeme başlatılamadı.");

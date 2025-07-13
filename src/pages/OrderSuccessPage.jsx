@@ -11,21 +11,25 @@ const OrderSuccessPage = () => {
   const userName = user?.name || "Değerli öğrencimiz";
 
 useEffect(() => {
-  localStorage.removeItem("cart");
-  clearCart();
-  // Eğer iframe içindeysek, parent'a mesaj gönder
+  try {
+    clearCart(); // güvenli çalışıyor mu test et
+    console.log("🧹 Sepet temizlendi.");
+  } catch (err) {
+    console.error("❌ clearCart hatası:", err);
+  }
+
   if (window.self !== window.top) {
     console.log("📤 Iframe içinde, ana sayfaya mesaj gönderiliyor...");
     window.parent.postMessage("PAYMENT_SUCCESS", "*");
   } else {
-    // Normal çalışıyorsa 10 saniye sonra yönlendir
     const timer = setTimeout(() => {
       console.log("➡️ Navigating to /");
       navigate("/");
     }, 10000);
     return () => clearTimeout(timer);
   }
-}, [navigate, clearCart]);
+}, []);
+
   return (
     <div className="order-success-container">
       <div className="order-success-card">
