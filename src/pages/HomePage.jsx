@@ -7,7 +7,7 @@ import InfoSection from "../components/InfoSection";
 import PricingSection from "../components/PricingSection";
 import Navbar from "../components/navbar";
 import WhyChooseUs from "../components/WhyChooseUs";
-import Testimonials from "../components/Testimonials";
+// import Testimonials from "../components/Testimonials";
 import FaqSection from "../components/FaqSection";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";
@@ -31,7 +31,7 @@ export default function HomePage() {
       {/*<TeacherSlider /> */}
       <PricingSection />
       <WhyChooseUs />
-      <Testimonials />
+      {/* <Testimonials /> */}
       <FaqSection />
           {/* === İLETİŞİM CTA (Butonlar) === */}
       <section className="contact-section">

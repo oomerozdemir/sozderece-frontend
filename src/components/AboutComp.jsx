@@ -70,14 +70,14 @@ const AboutComp = () => {
 </section>
 
       {/* === Kurucu About Section === */}
-
+{/*
 <div className="founder-message vertical containers">
   <img src="/images/kurucu.png" alt="Kurucu" />
   <blockquote>
     “Amacımız sadece başarı değil, öğrencinin kendine güvenini kazandırmak.”
   </blockquote>
   <cite>– Zeynep Hanım, Kurucu Koç</cite>
-</div>
+</div> */}
 
       {/* === Ekibimiz About Section === */}
 

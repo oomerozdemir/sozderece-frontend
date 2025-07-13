@@ -154,6 +154,7 @@ iade talebi gonderilemiyor ona bak ayrica sureli yap 5 gunluk olucak
 sozlesmeleri duzenle
 
 dogrulamalari kaldir simdilik mail ve telefon ya da gercekten tamamla
+sifremi unuttum gibi yerlerde kod gidiyor onlari mail ve sms e bagla
 
 Hem ogrenci hem koc olarak panelleri incele duzenlemeleri yap
 
@@ -164,9 +165,6 @@ koc hesabım kısmında alan secme yerı var o olmasın ayrıca sıparısler kı
 
 fatura bilgireinde hem admin hem kullanici tarafinda kac tl odendigi gozuksun paytr eklendikten sonra duruma gore de bakilir
 
-5- onemli sayfalari sifreleme url kismina yazdiginda direkt acilmamasi.Ornegin;/payment 
-yazdiginda direkt ulasilmamasi gerek boyle bir yere bunlari 
-duzeltelim(bunu en son yapabılırız her sey tamam dendıgınde)
 
 ilerde paketler bolumunu admin panelinden ekleme özelliğini getirebliriz veya farklı bir sistem
 
@@ -222,14 +220,6 @@ Koç geçmişi veya öğrenci-koç eşleşme geçmişi gibi bir assignment_log t
 
 E-posta ya da telefon doğrulaması için verification tablosu ve JWT Refresh Token yapısı düşünebilirsin.
 
-✅ 3. Gelişmiş Yetkilendirme ve Rol Yönetimi
-Mevcut Durum: Rol bazlı yönetim var, ama daha da genişletilebilir.
-
-Öneriler:
-
-Rol bazlı farklı paneller (admin, öğrenci, koç) için özel route guard sistemi ekleyebilirsin.
-
-Admin dışında koçların da bazı kullanıcıları görmesi gibi izin bazlı yetkilendirme (permissions) yapısı eklenebilir.
 
 ✅ 4. UI / UX Geliştirmeleri
 Mevcut Durum: İşlevsel, ama daha profesyonel bir his için bazı iyileştirmeler gerekebilir.
@@ -308,13 +298,10 @@ Projeyi ileride Vercel (frontend) + Render (backend) ya da Railway + PlanetScale
  Opsiyonel Güvenlik Adımları (İleri Seviye – Sonra Yapabilirsin)
 🔐 Şifre belirleme zorunluluğu ekle (şu an default123)
 
-📩 Kullanıcıya doğrulama e-postası gönder (mailgun/sendgrid)
-
-📊 Admin dashboard’a toplam öğrenci / koç / satış sayısı gibi özet veriler
 
 
 
-Projeyi canlı kullanıma açabilirsin.
+
 
 Yeni özellikler ekleyebilirsin (örneğin: PDF ödev ekleme, video dersler, öğrenci geri bildirim).
 
