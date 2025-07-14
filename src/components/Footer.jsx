@@ -52,7 +52,7 @@ const Footer = () => {
 
       {/* Alt metin */}
       <div className="footer-bottom">
-        © 2025 Sözderece Koçluk
+        © 2025 Sözderece Koçluk Her Hakkı Saklıdır.
       </div>
     </motion.footer>
   );

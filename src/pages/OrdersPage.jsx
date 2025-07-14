@@ -4,7 +4,8 @@ import "../cssFiles/ordersPage.css";
 import { format } from "date-fns";
 import trLocale from "date-fns/locale/tr";
 import RefundModal from "../components/RefundModal";
-
+import TopBar from "../components/TopBar";
+import Navbar from "../components/navbar";
 
 
 const OrdersPage = () => {
@@ -69,6 +70,9 @@ const submitRefundRequest = async ({ orderId, reason, description }) => {
 
 
   return (
+    <>
+    <TopBar />
+    <Navbar />
     <div className="account-layout">
       <main className="account-main">
         <section className="info-card modern-form">
@@ -137,6 +141,7 @@ const submitRefundRequest = async ({ orderId, reason, description }) => {
         </section>
       </main>
     </div>
+    </>
   );
 };
 

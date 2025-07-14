@@ -213,12 +213,11 @@ const handleContinue = () => {
             <FaYoutube />
           </div>
           <div className="footer-links">
-            <a href="#">Hakkımızda</a>
-            <a href="#">Kullanım Koşulları</a>
-            <a href="#">Gizlilik</a>
-            <a href="#">Satış Sözleşmeleri</a>
-            <a href="#">İade Politikası</a>
-            <a href="#">Mağaza Blog</a>
+            <a href="/hakkimizda">Hakkımızda</a>
+            <a href="/ucretsiz-on-gorusme">İletişim</a>
+            <a href="/gizlilik-politikasi-kvkk">Gizlilik ve KVKK</a>
+            <a href="/mesafeli-hizmet-sozlesmesi">Mesafeli Hizmet Sözleşmesi</a>
+            <a href="/iade-ve-cayma-politikasi">İade Politikası</a>
           </div>
           <div className="footer-copy">© 2025 SÖZDERECE KOÇLUK Her Hakkı Saklıdır</div>
         </footer>
