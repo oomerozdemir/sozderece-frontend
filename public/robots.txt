@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 
-Sitemap: https://www.SozDereceKocluk.com/sitemap.xml
+Sitemap: https://www.sozderecekocluk.com/sitemap.xml
