@@ -11,51 +11,49 @@
   font-weight: 700;
 }
 
-.pricing-cards {
+.pricing-card-horizontal.no-image {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: stretch;
-  gap: 2rem;
-}
-
-.pricing-card {
-  background: #f9fafb;
-  border-radius: 16px;
-  padding: 2rem;
-  width: 320px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: relative;
-}
-
-.pricing-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
-}
-
-.pricing-card.highlight {
-  background-color: #fff7e6;
+  background: #fff7e6;
   border: 3px solid #fbbf24;
-  /*transform: scale(1.05);*/
+  border-radius: 20px;
+  padding: 30px 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+  margin: 0 auto 4rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-.pricing-card h3 {
+.pricing-card-content {
+  flex: 1;
+  max-width: 600px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.package-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  font-size: 1.2rem;
+  border-radius: 50%;
+  background-color: #fef3c7;
+  color: #f59e0b;
+  margin-right: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+.pricing-card-content h3 {
   font-size: 1.4rem;
   color: #030b53;
   margin-bottom: 0.5rem;
-}
-
-.pricing-card .badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: #fbbf24;
-  color: #fff;
-  font-size: 0.9rem;
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 1rem;
+  display: flex;
+  align-items: center;
 }
 
 .pricing-subtitle {
@@ -73,14 +71,14 @@
   margin: 0.5rem 0 1rem;
 }
 
-.pricing-card ul {
-  text-align: left;
+.pricing-card-content ul {
+  text-align: center;
   list-style: none;
   padding: 0;
   margin-bottom: 1.5rem;
 }
 
-.pricing-card ul li {
+.pricing-card-content ul li {
   position: relative;
   padding-left: 1.5rem;
   margin-bottom: 0.75rem;
@@ -88,10 +86,9 @@
   color: #1e293b;
 }
 
-.pricing-card ul li::before {
+.pricing-card-content ul li::before {
   content: "✔";
-  position: absolute;
-  left: 0;
+  margin-right: 5px;
   color: #10b981;
   font-weight: bold;
 }
@@ -112,75 +109,73 @@
   background-color: #011546;
   color: white;
 }
-.package-icon {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  font-size: 1.2rem;
-  border-radius: 50%;
-  background-color: #fef3c7;
+
+.benefit-title {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #0f172a;
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.benefit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.benefit-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.benefit-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+}
+
+.benefit-icon {
+  font-size: 2rem;
   color: #f59e0b;
-  margin-right: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, color 0.3s ease;
-  z-index: 1;
+  margin-bottom: 10px;
 }
 
-/* Öne çıkan kartlarda ikon arka planı daha canlı */
-.pricing-card.highlight .package-icon {
-  background-color: #fde047;
+.benefit-card h4 {
+  font-size: 1.1rem;
+  font-weight: bold;
   color: #1e293b;
+  margin-bottom: 10px;
 }
 
-/* Hover durumunda animasyonlu renk geçişi */
-.pricing-card:hover .package-icon {
-  background-color: #011647;
-  color: white;
+.benefit-card ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  text-align: left;
 }
 
-/* Dekoratif dış halka efekti */
-.package-icon::after {
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: -8px;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #fcd34d40 0%, transparent 70%);
-  z-index: -1;
-  animation: pulse 2.5s infinite;
-  opacity: 0.7;
-}
-
-/* Yumuşak nabız animasyonu */
-@keyframes pulse {
-  0% {
-    transform: scale(0.95);
-    opacity: 0.6;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0.95);
-    opacity: 0.6;
-  }
-}
-
-
-/* Responsive */
 @media (max-width: 768px) {
-  .pricing-cards {
+  .pricing-card-horizontal.no-image {
     flex-direction: column;
-    align-items: center;
+    padding: 20px;
   }
 
-  .pricing-card {
-    width: 90%;
+  .pricing-card-content {
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  .pricing-card-content ul {
+    text-align: center;
   }
 }

@@ -1,144 +1,125 @@
 import "../cssFiles/PricingSection.css";
 import { motion } from "framer-motion";
-import { FaUserCheck, FaStar, FaChalkboardTeacher } from "react-icons/fa";
-// import useCart from "../hooks/useCart";
+import { FaUserCheck, FaChalkboardTeacher, FaCalendarCheck, FaChartLine, FaClipboardList, FaUsers, FaSmile } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-
-const packages = [
-  /*{
-    name: "TEK DERS PAKETİ",
-    price: "700₺ / ders",
-    subtitle: "Sadece birebir özel derse odaklanan esnek paket.",
-    features: [
-      "Alanında uzman öğretmen ile 1:1 özel ders",
-      "40–60 dakikalık birebir online görüşme",
-      "Eksik analizi + konu anlatımı + uygulama",
-      "Ders sonunda gelişim değerlendirmesi",
-      "Koçluk ve takip içermez"
-    ],
-    badge: null,
-    highlight: false,
-     icon: <FaChalkboardTeacher />,
-  },*/
-  {
-    name: "LGS 2026 PAKETİ",
-    price: "2800₺ / ay",
-    subtitle: "",
-    features: [
-      "Her Hafta Hedef Belirleme",
-      "Kişiye Özel Haftalık/Günlük program",
-      "Takip, Motivasyon ve Yönlendirme",
-      "Türkçe, Matematik, Fen, İnkılap, Din, İngilizce analizleri",
-      "Net gelişimi – Yanlış nedenleri – Süre kontrolü",
-      "Kaynak Takibi",
-      "Düzenli Veli Bilgilendirmesi",
-      "Tekrar planlaması",
-      "Motivasyon Takviyeleri",
-
-      
-    ],
-    badge: null,
-    highlight: true,
-    icon: <FaStar />,
-  },
- {
-  name: "YKS 2026 PAKETİ",
+const packageData = {
+  name: "Koçluk Paketi (LGS/YKS 2026)",
   price: "2800₺ / ay",
-  subtitle: "",
+  subtitle:
+    "Hedefe yönelik birebir koçluk, programlama, deneme takibi ve veli bilgilendirmesi.",
   features: [
-    " Haftalık Koçluk Görüşmeleri",
-    "  Birebir takip sistemi",
-  
-    " Kişiye Özel Ders ve Soru Dağılım Planı",
-    " Eksik–güçlü ders analizine göre haftalık program",
-    " Deneme sonuçlarına göre dinamik güncellemeler",
-
-    " TYT–AYT deneme analizleri",
-    " Net sayısı ve zaman yönetimi takibi",
-    " Gelişim çizelgesi",
-
-    " Soru Takibi ve Kaynak Yönetimi",
-    " Eksik kalan konulara göre yönlendirme",
-    " Düzenli Birebir İletişim (WhatsApp–Telefon)",
-    " Koç–öğrenci–veli üçgeninde güçlü iletişim",
-    " Sınav Haftalarında Psikolojik Destek",
-    " Sınav öncesi stres yönetimi",
-    " Sınav günü taktikleri ve rahatlama önerileri",
+    "Haftalık birebir koçluk görüşmeleri",
+    "Kişiye özel haftalık/günlük program",
+    "Deneme analizi ve net gelişimi takibi",
+    "Soru takibi ve kaynak yönlendirmesi",
+    "Düzenli veli bilgilendirmesi",
   ],
-  highlight: true,
-  icon: <FaStar />,
-},
-  
+  icon: <FaUserCheck />,
+};
+
+const benefitItems = [
+  {
+    title: "Koçluk Görüşmeleri",
+    icon: <FaChalkboardTeacher />,
+    points: [
+      "Birebir takip sistemi",
+      "Planlama & geri bildirim",
+      "Motivasyon desteği"
+    ]
+  },
+  {
+    title: "Kişiye Özel Planlama",
+    icon: <FaCalendarCheck />,
+    points: [
+      "Haftalık/derslik program",
+      "Deneme sonuçlarına göre güncelleme"
+    ]
+  },
+  {
+    title: "Deneme Analizi",
+    icon: <FaChartLine />,
+    points: [
+      "Net-zaman takibi",
+      "Gelişim çizelgesi"
+    ]
+  },
+  {
+    title: "Soru & Kaynak Takibi",
+    icon: <FaClipboardList />,
+    points: [
+      "Yayın takibi",
+      "Eksik konu yönlendirmesi"
+    ]
+  },
+  {
+    title: "Veliyle Etkileşim",
+    icon: <FaUsers />,
+    points: [
+      "Aylık geri bildirim",
+      "Veli–koç iletişimi"
+    ]
+  },
+  {
+    title: "Psikolojik Destek",
+    icon: <FaSmile />,
+    points: [
+      "Stres yönetimi",
+      "Sınav taktikleri"
+    ]
+  }
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: "easeOut",
-      staggerChildren: 0.2
-    }
-  }
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-};
-
-
-
 function PricingSection() {
-// const { addToCart } = useCart();
-const navigate = useNavigate();
-
+  const navigate = useNavigate();
 
   return (
-    
     <motion.div
       className="pricing-section"
       id="paketler"
-      variants={containerVariants}
-      initial="hidden"
-      whileInView="visible"
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
       viewport={{ once: true, amount: 0.3 }}
     >
-      <motion.h2 className="pricing-section-title" variants={cardVariants}>
-        Koçluk Paketlerimiz
+      <motion.h2 className="pricing-section-title">
+        Koçluk Paketimiz
       </motion.h2>
-      <div className="pricing-cards">
-        {packages.map((pkg, index) => (
-          <motion.div
-            key={index}
-            className={`pricing-card ${pkg.highlight ? "highlight" : ""}`}
-            variants={cardVariants}
+
+      <div className="pricing-card-horizontal no-image">
+        <div className="pricing-card-content">
+          <h3>
+            <span className="package-icon">{packageData.icon}</span>{" "}
+            {packageData.name}
+          </h3>
+          <p className="pricing-subtitle">{packageData.subtitle}</p>
+          <p className="price">{packageData.price}</p>
+          <ul>
+            {packageData.features.map((feature, i) => (
+              <li key={i}>{feature}</li>
+            ))}
+          </ul>
+          <button
+            className="pricing-button"
+            onClick={() => navigate("/package-detail")}
           >
-            {pkg.badge && <div className="badge">{pkg.badge}</div>}
-            <h3>
-              <span className="package-icon">{pkg.icon}</span> {pkg.name}
-            </h3>
-            <p className="pricing-subtitle">{pkg.subtitle}</p>
-            <p className="price">{pkg.price}</p>
+            Hemen Başla!
+          </button>
+        </div>
+      </div>
+
+      <h3 className="benefit-title">Bu Paket Size Ne Kazandırır?</h3>
+      <div className="benefit-grid">
+        {benefitItems.map((item, index) => (
+          <div className="benefit-card" key={index}>
+            <div className="benefit-icon">{item.icon}</div>
+            <h4>{item.title}</h4>
             <ul>
-              {pkg.features.map((feature, i) => (
-                <li key={i}>{feature}</li>
+              {item.points.map((point, idx) => (
+                <li key={idx}>{point}</li>
               ))}
             </ul>
-<button
-  className="pricing-button"
-  onClick={() => navigate(`/package-detail`)}
->
-  Hemen Başla
-</button>
-
-
-
-
-          </motion.div>
+          </div>
         ))}
       </div>
     </motion.div>

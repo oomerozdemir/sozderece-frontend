@@ -149,6 +149,8 @@ export default App;
 
 
 /*
+paytr logoları falan da ekle
+
 iade talebi gonderilemiyor ona bak ayrica sureli yap 5 gunluk olucak
 
 sozlesmeleri duzenle
