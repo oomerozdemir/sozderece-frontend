@@ -287,6 +287,23 @@
 }
 
 
+.payment-methods {
+  display: flex;
+  justify-content: center;
+  padding: 4px;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.payment-logos {
+  max-width: 80px;
+  height: auto;
+  opacity: 0.9;
+  filter: grayscale(0.2);
+}
+
+
+
 /* Masaüstü için (min-width: 769px) resimler dikey sıralansın */
 /* Varsayılan olarak masaüstü listesi gizli */
 .desktop-image-list {

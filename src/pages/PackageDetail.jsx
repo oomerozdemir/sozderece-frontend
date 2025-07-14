@@ -23,7 +23,7 @@ const packageList = [
     slug: "yks-2026-paketi",
     name: "YKS 2026 PAKETİ",
     price: "2800₺ / ay",
-    subtitle: "Koçluk + birebir özel ders + 7/24 destek isteyenler için."
+    subtitle: "Disiplinli bir sınav süreci için ihtiyaç duyduğun temel destek burada!"
   }
 ];
 
@@ -162,6 +162,28 @@ const handleContinue = () => {
               <FaLock style={{ marginRight: "6px" }} /> Güvenli Ödeme
             </div>
           </div>
+
+          <div className="payment-methods">
+          <img
+            src="/images/kare-logo-mastercard.jpg"
+            alt="Ödeme Yöntemleri"
+            className="payment-logos"
+          />
+          <img
+            src="/images/kare-logo-visa.jpg"
+            alt="Ödeme Yöntemleri"
+            className="payment-logos"
+          /><img
+            src="/images/kare-logo-troy.jpg"
+            alt="Ödeme Yöntemleri"
+            className="payment-logos"
+          /><img
+            src="/images/kare-logo-paytr.jpg"
+            alt="Ödeme Yöntemleri"
+            className="payment-logos"
+          />
+        </div>
+
 
           <button className="choose-coach-button" onClick={handleContinue}>
             Devam Et
