@@ -191,7 +191,7 @@ const handleSubmit = async (e) => {
         </div>
 
         <div className="refund-note">
-          📝 Siparişinizi teslim aldıktan sonra <strong>14 gün içinde</strong> iade etme hakkınız bulunmaktadır.
+          📝 Siparişinizi teslim aldıktan sonra <strong>5 gün içinde</strong>Koşulsuz cayma hakkınız bulunmaktadır.
         </div>
       </div>
     </div>

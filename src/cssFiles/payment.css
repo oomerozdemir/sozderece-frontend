@@ -204,3 +204,46 @@ h4 {
   font-size: 14px;
   font-weight: 500;
 }
+
+@media (max-width: 768px) {
+  .payment-container {
+    flex-direction: column;
+    padding: 20px;
+    gap: 24px;
+  }
+
+  .payment-form,
+  .payment-summary {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .payment-form-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .input-row input {
+    flex: 1 1 100%;
+  }
+
+  .summary-total {
+    text-align: left;
+  }
+
+  .refund-note {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .pay-button {
+    font-size: 1.1rem;
+    padding: 14px;
+  }
+
+  .payment-summary h4 {
+    font-size: 1.3rem;
+  }
+}
