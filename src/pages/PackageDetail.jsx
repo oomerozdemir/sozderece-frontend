@@ -136,7 +136,7 @@ const handleContinue = () => {
         <div className="package-detail-content">
           <h1 className="package-title">{selected.name}</h1>
           <p className="package-price">{selected.price}</p>
-          <p className="package-note">Tüm vergiler dahildir. <a href="#" className="underline">Kargo politikasını inceleyin.</a></p>
+          <p className="package-note">Tüm vergiler dahildir. <a href="/mesafeli-hizmet-sozlesmesi" className="underline">Mesafeli Hizmet Sözleşmesini İnceleyin.</a></p>
 
           <label htmlFor="package-dropdown" className="dropdown-label">Hizmet Paketi</label>
           <select id="package-dropdown" value={selected.slug} onChange={handleDropdownChange} className="package-dropdown">
