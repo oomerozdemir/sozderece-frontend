@@ -21,6 +21,9 @@ import AdminCouponPage from "./pages/AdminCouponPage";
 import ContactPage from "./pages/ContactPage";
 import PaymentIframePage from "./pages/PaymentIframePage";
 import PaymentFailPage from "./pages/PaymentFailPage";
+import MesafeliSozlesme from "./pages/MesafeliSozlesme.jsx";
+import IadeVeCaymaPolitikasi from "./pages/IadeVeCayma.jsx";
+import GizlilikPolitikasiKvkk from "./pages/GizlilikPolitikasi.jsx";
 
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import RoleRoute from "./components/RoleRoutes.jsx";
@@ -38,6 +41,10 @@ function App() {
           {/* Genel Sayfalar */}
           <Route path="/" element={<HomePage />} />
           <Route path="/hakkimizda" element={<AboutPage />} />
+          <Route path="/mesafeli-hizmet-sozlesmesi" element={<MesafeliSozlesme />} />
+          <Route path="/iade-ve-cayma-politikasi" element={<IadeVeCaymaPolitikasi />} />
+          <Route path="/gizlilik-politikasi-kvkk" element={<GizlilikPolitikasiKvkk />} />
+
 
           {/* Kimlik Doğrulama */}
           <Route path="/login" element={<LoginPage />} />
@@ -149,7 +156,7 @@ export default App;
 
 
 /*
-paytr logoları falan da ekle
+info section yerine koc slider i
 
 iade talebi gonderilemiyor ona bak ayrica sureli yap 5 gunluk olucak
 

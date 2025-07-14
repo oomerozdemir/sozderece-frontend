@@ -94,7 +94,6 @@ const handleContinue = () => {
   const images = [
     "/images/detailPageImage1.png",
     "/images/detailPageImage2.png",
-    "/images/detailPageImage1.png",
     "/images/detailPageImage4.png"
   ];
 
@@ -184,7 +183,9 @@ const handleContinue = () => {
           />
         </div>
 
-
+        <p style={{ fontSize: "0.9rem", color: "#64748b", marginTop: "8px" }}>
+        Tüm ödemeler 256-bit SSL sertifikası ile güvence altındadır.
+        </p>
           <button className="choose-coach-button" onClick={handleContinue}>
             Devam Et
           </button>

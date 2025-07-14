@@ -1,7 +1,7 @@
 import "../cssFiles/Footer.css";
 import { FaInstagram, FaLinkedin } from "react-icons/fa";
 import { motion } from "framer-motion";
-
+import { Link } from "react-router-dom";
 
 
 const Footer = () => {
@@ -32,18 +32,19 @@ const Footer = () => {
           <div>
             <h4>Kurumsal</h4>
             <ul>
-              <li><a href="#">İletişim</a></li>
+              <li><Link to="/ucretsiz-on-gorusme">İletişim</Link></li>
               <li><a href="/hakkimizda">Hakkimizda</a></li>
-              <li><a href="#">Mesafeli Satış Sözleşmesi</a></li>
-              <li><a href="#">Teslimat ve İade</a></li>
+              <li><Link to="/mesafeli-hizmet-sozlesmesi">Mesafeli Hizmet Sözleşmesi</Link></li>
+              <li><Link to="/iade-ve-cayma-politikasi">İade ve Cayma Politikası</Link></li>
+              <li><Link to="/gizlilik-politikasi-kvkk">Gizlilik ve KVKK</Link></li>
             </ul>
           </div>
 
           <div>
             <h4>Kategoriler</h4>
             <ul>
-              <li><a href="#">YKS 2026</a></li>
-              <li><a href="#">LGS 2026</a></li>
+              <li><a href="/package-detail">YKS 2026</a></li>
+              <li><a href="/package-detail">LGS 2026</a></li>
             </ul>
           </div>
         </div>
@@ -51,7 +52,7 @@ const Footer = () => {
 
       {/* Alt metin */}
       <div className="footer-bottom">
-        © 2025 SözDerece Koçluk – Kullanım Koşulları – Gizlilik – Aydınlatma Metni
+        © 2025 Sözderece Koçluk
       </div>
     </motion.footer>
   );
