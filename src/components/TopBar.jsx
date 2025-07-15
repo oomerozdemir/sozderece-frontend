@@ -9,7 +9,7 @@ return (
         <i className="fas fa-envelope"></i> iletisim@sozderecekocluk.com
       </span>
         <span>
-        <i className="fas fa-envelope"></i> <a href="https://wa.me/905312546701">+90 531 254 67 01</a>
+        <i className="fas fa-phone"></i> <a href="https://wa.me/905312546701">+90 531 254 67 01</a>
       </span>
     </div>
     <div className="top-bar-right">
