@@ -1,6 +1,7 @@
 import Navbar from "../components/navbar";
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
+import "../cssFiles/CoachDashboard.css"; // Yeni CSS
 
 const CoachDashboard = () => {
   const [students, setStudents] = useState([]);
@@ -15,7 +16,6 @@ const CoachDashboard = () => {
           },
         });
         setStudents(res.data.students);
-
       } catch (err) {
         console.error("Öğrenciler alınamadı:");
       }
@@ -27,16 +27,13 @@ const CoachDashboard = () => {
   return (
     <>
       <Navbar />
-      <div className="p-4">
-        <h2 className="text-xl font-bold mb-6">📚 Atanmış Öğrenciler</h2>
+      <div className="dashboard-container">
+        <h2 className="dashboard-title">📚 Atanmış Öğrenciler</h2>
 
         {students.length > 0 ? (
-          <ul className="space-y-4">
+          <div className="student-grid">
             {students.map((student) => (
-              <li
-                key={student.id}
-                className="border border-gray-300 bg-gray-50 rounded-md p-4 shadow-sm"
-              >
+              <div key={student.id} className="student-card">
                 <p><strong>👤 İsim:</strong> {student.name}</p>
                 <p><strong>📧 Email:</strong> {student.email}</p>
                 <p><strong>📞 Telefon:</strong> {student.phone || "Yok"}</p>
@@ -44,12 +41,14 @@ const CoachDashboard = () => {
                 {["9", "10", "11", "12", "Mezun"].includes(student.grade) && (
                   <p><strong>📚 Alan:</strong> {student.track || "Belirtilmemiş"}</p>
                 )}
-                <p><strong>📅 Oluşturulma:</strong> {new Date(student.createdAt).toLocaleDateString("tr-TR")}</p>
-              </li>
+                <p><strong>📅 Atanma Tarihi:</strong> {new Date(student.createdAt).toLocaleDateString("tr-TR")}</p>
+              <p><strong>📆 Bitiş:</strong> {new Date(student.orders[0].endDate).toLocaleDateString("tr-TR")}</p>
+            <p><strong>🔄 Durum:</strong> {student.orders[0].status}</p>
+              </div>
             ))}
-          </ul>
+          </div>
         ) : (
-          <p className="text-gray-500 italic">Henüz size atanmış öğrenci bulunmamaktadır.</p>
+          <p className="empty-state">Henüz size atanmış öğrenci bulunmamaktadır.</p>
         )}
       </div>
     </>
