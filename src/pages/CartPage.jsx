@@ -118,7 +118,7 @@ const CartPage = () => {
                   onChange={() => setIsAgreed(!isAgreed)}
                 />
                 <label htmlFor="agreement">
-                  Okudum ve onaylıyorum: <a href="#">Mesafeli Satış Sözleşmesi</a>
+                  Okudum ve onaylıyorum: <a href="/mesafeli-hizmet-sozlesmesi">Mesafeli Satış Sözleşmesi</a>
                 </label>
               </div>
 
