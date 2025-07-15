@@ -1,7 +1,7 @@
 import Navbar from "../components/navbar";
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
-import "../cssFiles/CoachDashboard.css"; // Yeni CSS
+import "../cssFiles/CoachDashboard.css";
 
 const CoachDashboard = () => {
   const [students, setStudents] = useState([]);
