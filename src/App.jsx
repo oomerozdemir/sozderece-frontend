@@ -156,11 +156,14 @@ export default App;
 
 
 /*
+koc panelınde ogrencının sıparıs detayları da gozuksun
+ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
+otomatık odeme/abonelık sıstemını ekle
+
 info section yerine koc slider i
 
 iade talebi gonderilemiyor ona bak ayrica sureli yap 5 gunluk olucak
 
-sozlesmeleri duzenle
 
 dogrulamalari kaldir simdilik mail ve telefon ya da gercekten tamamla
 sifremi unuttum gibi yerlerde kod gidiyor onlari mail ve sms e bagla
@@ -315,8 +318,6 @@ Projeyi ileride Vercel (frontend) + Render (backend) ya da Railway + PlanetScale
 Yeni özellikler ekleyebilirsin (örneğin: PDF ödev ekleme, video dersler, öğrenci geri bildirim).
 
 Mobil uyumluluğu test et.
-
-SEO & paylaşım linklerini optimize et (og:image, title vs.)
 
 
  Ekstra Tavsiyeler:
