@@ -13,12 +13,17 @@ return (
       </span>
     </div>
     <div className="top-bar-right">
-      <a href="https://www.tiktok.com/@sozderece.com" target="_blank" rel="noreferrer">
-        <i className="fab fa-tiktok"></i>
-      </a>
       <a href="https://www.instagram.com/sozderece/" target="_blank" rel="noreferrer">
         <i className="fab fa-instagram"></i>
       </a>
+      <a href="https://www.tiktok.com/@sozderece.com" target="_blank" rel="noreferrer">
+        <i className="fab fa-tiktok"></i>
+      </a>
+      <a href="https://www.youtube.com/@sozderecekoclukk" target="_blank" rel="noreferrer">
+        <i className="fab fa-youtube"></i>
+      </a>
+      
+      
     </div>
   </div>
 </div>

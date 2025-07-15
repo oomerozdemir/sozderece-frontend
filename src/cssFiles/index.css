@@ -263,9 +263,13 @@ body {
   }
 
   .top-bar .container {
-    flex-direction: column;
     gap: 8px;
   }
+.top-bar-left span, .top-bar-left span a {
+  display: flex;
+}
+
+
   .contact-grid {
     grid-template-columns: 1fr;
   }
