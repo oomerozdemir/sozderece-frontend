@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import "../cssFiles/index.css";
 import HeroSection from "../components/HeroSection";
-import InfoSection from "../components/InfoSection";
+// import InfoSection from "../components/InfoSection";
 // import TeacherSlider from "../components/TeacherSlider";
 import PricingSection from "../components/PricingSection";
 import Navbar from "../components/navbar";
@@ -12,6 +12,7 @@ import FaqSection from "../components/FaqSection";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";
 import WhatsappButton from "../components/WhatsappButton";
+import HomeCoachSlider from "../components/HomeCoachSlider";
 
 export default function HomePage() {
   return (
@@ -26,7 +27,8 @@ export default function HomePage() {
     <TopBar />
     <Navbar />
       <HeroSection />
-      <InfoSection />
+      {/*<InfoSection /> */}
+      <HomeCoachSlider />
 
       {/*<TeacherSlider /> */}
       <PricingSection />

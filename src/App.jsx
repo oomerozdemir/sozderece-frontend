@@ -25,11 +25,15 @@ import MesafeliSozlesme from "./pages/MesafeliSozlesme.jsx";
 import IadeVeCaymaPolitikasi from "./pages/IadeVeCayma.jsx";
 import GizlilikPolitikasiKvkk from "./pages/GizlilikPolitikasi.jsx";
 
+
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import RoleRoute from "./components/RoleRoutes.jsx";
 
 import "./cssFiles/App.css";
 import "./cssFiles/index.css";
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
+
 
 function App() {
   const location = useLocation();
@@ -156,7 +160,6 @@ export default App;
 
 
 /*
-koc panelınde ogrencının sıparıs detayları da gozuksun
 ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
 otomatık odeme/abonelık sıstemını ekle
 
