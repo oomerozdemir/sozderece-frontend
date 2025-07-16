@@ -44,6 +44,8 @@ const HomeCoachSlider = () => {
             <img src={coach.image} alt={coach.name} />
             <h3>{coach.name}</h3>
             <p>{coach.subject}</p>
+            <p>{coach.description}</p>
+
           </div>
         ))}
       </Slider>
