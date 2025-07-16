@@ -45,3 +45,17 @@
   color: #64748b;
   font-style: italic;
 }
+
+.order-info {
+  margin-top: 0.75rem;
+  background-color: #f9f9f9;
+  border-left: 4px solid #4CAF50;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+}
+
+.no-order {
+  margin-top: 0.5rem;
+  font-style: italic;
+  color: #888;
+}

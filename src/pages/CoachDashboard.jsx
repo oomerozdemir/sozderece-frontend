@@ -32,20 +32,33 @@ const CoachDashboard = () => {
 
         {students.length > 0 ? (
           <div className="student-grid">
-            {students.map((student) => (
-              <div key={student.id} className="student-card">
-                <p><strong>👤 İsim:</strong> {student.name}</p>
-                <p><strong>📧 Email:</strong> {student.email}</p>
-                <p><strong>📞 Telefon:</strong> {student.phone || "Yok"}</p>
-                <p><strong>🎓 Sınıf:</strong> {student.grade || "Belirtilmemiş"}</p>
-                {["9", "10", "11", "12", "Mezun"].includes(student.grade) && (
-                  <p><strong>📚 Alan:</strong> {student.track || "Belirtilmemiş"}</p>
-                )}
-                <p><strong>📅 Atanma Tarihi:</strong> {new Date(student.createdAt).toLocaleDateString("tr-TR")}</p>
-              <p><strong>📆 Bitiş:</strong> {new Date(student.orders[0].endDate).toLocaleDateString("tr-TR")}</p>
-            <p><strong>🔄 Durum:</strong> {student.orders[0].status}</p>
-              </div>
-            ))}
+            {students.map((student) => {
+              const latestOrder = student.orders?.[0];
+
+              return (
+                <div key={student.id} className="student-card">
+                  <p><strong>👤 İsim:</strong> {student.name}</p>
+                  <p><strong>📧 Email:</strong> {student.email}</p>
+                  <p><strong>📞 Telefon:</strong> {student.phone || "Yok"}</p>
+                  <p><strong>🎓 Sınıf:</strong> {student.grade || "Belirtilmemiş"}</p>
+                  {["9", "10", "11", "12", "Mezun"].includes(student.grade) && (
+                    <p><strong>📚 Alan:</strong> {student.track || "Belirtilmemiş"}</p>
+                  )}
+                  <p><strong>📅 Atanma Tarihi:</strong> {new Date(student.createdAt).toLocaleDateString("tr-TR")}</p>
+
+                  {latestOrder ? (
+                    <div className="order-info">
+                      <p><strong>📦 Paket:</strong> {latestOrder.package}</p>
+                      <p><strong>🟢 Başlangıç:</strong> {new Date(latestOrder.startDate).toLocaleDateString("tr-TR")}</p>
+                      <p><strong>📆 Bitiş:</strong> {new Date(latestOrder.endDate).toLocaleDateString("tr-TR")}</p>
+                      <p><strong>🔄 Durum:</strong> {latestOrder.status}</p>
+                    </div>
+                  ) : (
+                    <p className="no-order">📭 Sipariş bilgisi bulunamadı.</p>
+                  )}
+                </div>
+              );
+            })}
           </div>
         ) : (
           <p className="empty-state">Henüz size atanmış öğrenci bulunmamaktadır.</p>
