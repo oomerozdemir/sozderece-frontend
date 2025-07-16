@@ -22,8 +22,12 @@ const HeroSection = () => {
     <div className="hero-content">
       <h2 className="highlight">Söz veriyoruz,derece getiriyoruz!</h2>
       <p>
-        Alanında uzman hocalarımızla YKS ve LGS sürecinde birebir koçluk
+        Derece yapmış koçlarımızla YKS ve LGS sürecinde birebir koçluk
         hizmeti sunuyoruz.
+        Koçluk sistemimizle öğrencilerimizin 
+        bireysel potansiyellerini ortaya çıkarmalarına, 
+        hedeflerine kararlı adımlarla ilerlemelerine ve potansiyellerini 
+        en üst seviyeye taşımalarına destek oluyoruz.
       </p>
       <a href="#paketler" className="hero-button">
         <FontAwesomeIcon icon={faRocket} style={{ marginRight: "8px" }} />

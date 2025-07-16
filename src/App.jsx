@@ -163,7 +163,8 @@ export default App;
 ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
 otomatık odeme/abonelık sıstemını ekle
 
-info section yerine koc slider i
+ogrencı panelınde atanmıs koc olmasına ragmen gozukmuyor bunu duzelt
+
 
 iade talebi gonderilemiyor ona bak ayrica sureli yap 5 gunluk olucak
 
