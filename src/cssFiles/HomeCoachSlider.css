@@ -8,12 +8,18 @@
   background: white;
   padding: 1rem;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+/* Görseli düzgün oranla göstermek için güncellendi */
 .coach-slide-card img {
-  width: 60%;
-  height: 320px;
-  object-fit: cover;
+  width: 100%;               /* Kartın genişliğine tam oturur */
+  max-width: 240px;          /* Max genişlik sınırı */
+  height: 320px;             /* Sabit yükseklik */
+  object-fit: cover;         /* Oranı koru, gerekirse kırp */
   border-radius: 10px;
+  display: block;
 }
