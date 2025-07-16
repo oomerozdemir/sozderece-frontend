@@ -17,7 +17,6 @@
 /* Görseli düzgün oranla göstermek için güncellendi */
 .coach-slide-card img {
   width: 100%;               /* Kartın genişliğine tam oturur */
-  max-width: 240px;          /* Max genişlik sınırı */
   height: 320px;             /* Sabit yükseklik */
   object-fit: cover;         /* Oranı koru, gerekirse kırp */
   border-radius: 10px;
