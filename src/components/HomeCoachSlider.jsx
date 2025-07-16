@@ -37,7 +37,7 @@ const HomeCoachSlider = () => {
 
   return (
     <div className="home-coach-slider">
-      <h2 className="section-title">Birbirinden Değerli Derece Öğrencisi Koçlarımız</h2>
+      <h2 className="coachSlider-section-title ">Birbirinden Değerli Derece Öğrencisi Koçlarımız</h2>
       <Slider {...settings}>
         {coaches.map((coach) => (
           <div key={coach.id} className="coach-slide-card">
