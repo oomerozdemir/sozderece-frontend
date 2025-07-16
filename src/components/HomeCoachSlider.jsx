@@ -22,11 +22,11 @@ const HomeCoachSlider = () => {
   const settings = {
   dots: true,
   infinite: true,
-  speed: 5000,              // Geçiş animasyonu süresi (ms)
+  speed: 800,              // Geçiş animasyonu süresi (ms)
   slidesToShow: 3,
   slidesToScroll: 1,
   autoplay: true,          // Otomatik kaydırma aktif
-  autoplaySpeed: 0,     // 4 saniyede bir kayar
+  autoplaySpeed: 2000,     // 4 saniyede bir kayar
   cssEase: "linear",       // Düzgün geçiş
   responsive: [
     {
