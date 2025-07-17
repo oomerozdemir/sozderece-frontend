@@ -58,6 +58,7 @@ const StudentDashboard = () => {
 ) : (
   <>
     <p>Hoş geldiniz! 👋</p>
+    <img src={student.assignedCoach.image} alt={student.assignedCoach.name} className="student-dashboard-coach-image"/>
     <p><strong>👨‍🏫 Koç Adı:</strong> {student.assignedCoach.name}</p>
     <p><strong>📘 Alan:</strong> {student.assignedCoach.subject}</p>
     <p><strong>📝 Açıklama:</strong> {student.assignedCoach.description}</p>
