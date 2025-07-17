@@ -40,11 +40,13 @@ const OrdersPage = () => {
   };
 
   const getStatusLabel = (status, endDate) => {
-    if (status === "refunded") return { label: "İade Edildi", className: "badge-refunded" };
-    if (status === "refund_requested") return { label: "İade Talep Edildi", className: "badge-requested" };
-    if (new Date(endDate) < new Date()) return { label: "Süresi Dolmuş", className: "badge-expired" };
-    return { label: "Aktif", className: "badge-active" };
-  };
+  if (status === "refunded") return { label: "İade Edildi", className: "badge-refunded" };
+  if (status === "refund_requested") return { label: "İade Talep Edildi", className: "badge-requested" };
+  if (status === "failed") return { label: "Ödeme Başarısız", className: "badge-failed" };
+  if (new Date(endDate) < new Date()) return { label: "Süresi Dolmuş", className: "badge-expired" };
+  return { label: "Aktif", className: "badge-active" };
+};
+
 
   const handleRefundRequest = (orderId) => {
     setSelectedOrderId(orderId);

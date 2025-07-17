@@ -23,7 +23,9 @@ h3 {
 .badge-active { background-color: #0ead33; color: white; }
 .badge-expired { background-color: #dc3545; color: white; }
 .badge-requested { background-color: #fd7e14; color: white; }
-.badge-refunded { background-color: #e70303; color: white; }
+.badge-refunded { background-color: #f01607; color: white; }
+.badge-failed {background-color: #db0700; color: white;}
+
 
 .billing-accordion summary {
   cursor: pointer;
