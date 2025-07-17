@@ -110,11 +110,12 @@ const OrdersPage = () => {
                         <p>🏷️ <strong>Kupon:</strong> {order.couponCode}</p>
                       )}
 
-                      {["paid", "active"].includes(order.status) && (
-                        <button onClick={() => handleRefundRequest(order.id)} className="refund-btn">
-                          📝 İade Talebi Oluştur
-                        </button>
-                      )}
+                      {order.status === "paid" && (
+    <button onClick={() => handleRefundRequest(order.id)} className="refund-btn">
+      📝 İade Talebi Oluştur
+    </button>
+  )}
+
 
                       {order.status === "refund_requested" && (
                         <p className="refund-waiting">⏳ İade talebiniz için cevap bekleniyor.</p>
