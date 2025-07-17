@@ -163,7 +163,7 @@ export default App;
 ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
 otomatık odeme/abonelık sıstemını ekle
 
-ogrencı panelınde atanmıs koc olmasına ragmen gozukmuyor bunu duzelt
+
 
 iade talebi gonderilemiyor ona bak ayrica sureli yap 5 gunluk olucak
 
@@ -172,9 +172,6 @@ dogrulamalari kaldir simdilik mail ve telefon ya da gercekten tamamla
 sifremi unuttum gibi yerlerde kod gidiyor onlari mail ve sms e bagla
 
 Hem ogrenci hem koc olarak panelleri incele duzenlemeleri yap
-
-
-
 
 koc hesabım kısmında alan secme yerı var o olmasın ayrıca sıparısler kısmı da bunlar sadece ogrencılere ozel
 

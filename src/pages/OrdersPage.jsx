@@ -108,7 +108,7 @@ const submitRefundRequest = async ({ orderId, reason, description }) => {
 {order.couponCode && (
   <p>🏷️ <strong>Kupon:</strong> {order.couponCode}</p>
 )}
-                   {order.status === "paid" && (
+                  {["paid", "active"].includes(order.status) && (
   <button onClick={() => handleRefundRequest(order.id)} className="refund-btn">
     📝 İade Talebi Oluştur
   </button>

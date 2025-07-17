@@ -9,6 +9,8 @@ const RefundModal = ({ orderId, onClose, onSubmit }) => {
   const [confirm, setConfirm] = useState(false);
 
   const handleSubmit = () => {
+    console.log({ orderId, reason, description });
+
     if (!reason || !confirm) {
       alert("Lütfen bir neden seçin ve onay kutusunu işaretleyin.");
       return;
@@ -22,6 +24,7 @@ const RefundModal = ({ orderId, onClose, onSubmit }) => {
   };
 
   return (
+    
     <div className="refund-modal-overlay">
       <div className="refund-modal">
         <h3>📝 İade Talep Formu</h3>
@@ -57,6 +60,7 @@ const RefundModal = ({ orderId, onClose, onSubmit }) => {
 
         <div className="refund-modal-buttons">
           <button className="cancel-btn" onClick={onClose}>İptal</button>
+          
           <button className="submit-btn" onClick={handleSubmit}>Gönder</button>
         </div>
       </div>
