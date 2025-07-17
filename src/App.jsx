@@ -165,7 +165,6 @@ otomatık odeme/abonelık sıstemını ekle
 
 ogrencı panelınde atanmıs koc olmasına ragmen gozukmuyor bunu duzelt
 
-
 iade talebi gonderilemiyor ona bak ayrica sureli yap 5 gunluk olucak
 
 
@@ -175,7 +174,7 @@ sifremi unuttum gibi yerlerde kod gidiyor onlari mail ve sms e bagla
 Hem ogrenci hem koc olarak panelleri incele duzenlemeleri yap
 
 
-css isimlerini kontrol et bazi yerlerde karisikliklar var
+
 
 koc hesabım kısmında alan secme yerı var o olmasın ayrıca sıparısler kısmı da bunlar sadece ogrencılere ozel
 

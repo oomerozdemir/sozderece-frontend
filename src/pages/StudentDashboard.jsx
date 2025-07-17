@@ -38,12 +38,10 @@ const StudentDashboard = () => {
         <div className="studentPage-coach-card">
           <h3>Atanmış Koçunuz</h3>
 
-          {!student.assignedCoach ? (
+      {!student.assignedCoach ? (
   <>
     <p>Hoş geldiniz! 👋</p>
     <p>Henüz bir koç atamanız yapılmadı.</p>
-    <p>Koçunuz atandığında burada görüntülenecektir.</p>
-
     <div className="studentPage-button-group">
       <a href="/package-detail" className="studentPage-button">📦 Paketleri İncele</a>
       <a href="/ucretsiz-on-gorusme" className="studentPage-button">🗓️ Ücretsiz Ön Görüşme</a>
@@ -58,12 +56,12 @@ const StudentDashboard = () => {
     </div>
   </>
 ) : (
-            <>
-              <p>Hoş geldiniz! 👋</p>
-              <p>Henüz bir koç atamanız yapılmadı.</p>
-              <p>Koçunuz atandığında burada görüntülenecektir.</p>
-            </>
-          )}
+  <>
+    <p><strong>👨‍🏫 Koç Adı:</strong> {student.assignedCoach.name}</p>
+    <p><strong>📘 Alan:</strong> {student.assignedCoach.subject}</p>
+    <p><strong>📝 Açıklama:</strong> {student.assignedCoach.description}</p>
+  </>
+)}
         </div>
       </div>
     </>
