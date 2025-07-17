@@ -57,13 +57,14 @@ const StudentDashboard = () => {
   </>
 ) : (
   <>
-    <p>Hoş geldiniz! 👋</p>
+    <p className="student-welcome">Hoş geldiniz! 👋</p>
     <img src={student.assignedCoach.image} alt={student.assignedCoach.name} className="student-dashboard-coach-image"/>
-    <p><strong>👨‍🏫 Koç Adı:</strong> {student.assignedCoach.name}</p>
-    <p><strong>📘 Alan:</strong> {student.assignedCoach.subject}</p>
-    <p><strong>📝 Açıklama:</strong> {student.assignedCoach.description}</p>
-    <p><strong>📧 Email:</strong> {student.assignedCoach.user?.email}</p>
-    <p><strong>📞 Telefon:</strong> {student.assignedCoach.user?.phone || "Belirtilmemiş"}</p>
+    <p className="student-info-item"><strong>👨‍🏫 Koç Adı:</strong> {student.assignedCoach.name}</p>
+    <p className="student-info-item"><strong>📘 Alan:</strong> {student.assignedCoach.subject}</p>
+    <p className="student-info-item"><strong>📝 Açıklama:</strong> {student.assignedCoach.description}</p>
+    <p className="student-info-item"><strong>📧 Email:</strong> {student.assignedCoach.user?.email}</p>
+    <p className="student-info-item"><strong>📞 Telefon:</strong> {student.assignedCoach.user?.phone || "Belirtilmemiş"}</p>
+
   </>
 )}
         </div>

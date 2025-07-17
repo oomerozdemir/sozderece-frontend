@@ -76,3 +76,52 @@
   background-color: #1ebe57;
 }
 
+.student-dashboard-coach-image {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #2563eb;
+  margin: 0 auto 16px auto;
+  display: block;
+}
+
+.student-info-item {
+  background-color: #f9fafb;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+
+.student-welcome {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #2563eb;
+  margin-bottom: 12px;
+}
+
+
+@media screen and (max-width: 600px) {
+  .studentPage-coach-card {
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .studentPage-button {
+    flex: 1 1 100%;
+    text-align: center;
+  }
+
+  .studentPage-button-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .studentPage-coach-card h3 {
+    font-size: 1.25rem;
+  }
+}
