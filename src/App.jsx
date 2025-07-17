@@ -327,4 +327,6 @@ user_address düzgün bir adres olmalı, emoji vs. olmamalı.
 
 Tüm alanlarda null, undefined, "" gibi değerleri engelle.
 
+
+bildirim sistemiini ekle tum deneyimler icin
 */

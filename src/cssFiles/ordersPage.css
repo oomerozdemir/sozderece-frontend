@@ -23,7 +23,7 @@ h3 {
 .badge-active { background-color: #0ead33; color: white; }
 .badge-expired { background-color: #dc3545; color: white; }
 .badge-requested { background-color: #fd7e14; color: white; }
-.badge-refunded { background-color: #6c757d; color: white; }
+.badge-refunded { background-color: #e70303; color: white; }
 
 .billing-accordion summary {
   cursor: pointer;
@@ -76,9 +76,9 @@ h3 {
 .ordersPage-whatsapp-support-btn {
   display: inline-block;
   margin-top: 12px;
-  background-color: #25d366;
+  background-color: #025721;
   color: white;
-  padding: 8px 14px;
+  padding: 4px 6px;
   border-radius: 6px;
   text-decoration: none;
   font-weight: bold;

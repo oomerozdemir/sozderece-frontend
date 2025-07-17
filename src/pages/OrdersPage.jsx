@@ -135,7 +135,7 @@ const OrdersPage = () => {
                         rel="noopener noreferrer"
                         className="ordersPage-whatsapp-support-btn"
                       >
-                        💬 Destek Al (WhatsApp)
+                        💬 Destek İçin (WhatsApp)
                       </a>
                     </div>
                   );
