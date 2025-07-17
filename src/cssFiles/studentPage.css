@@ -1,27 +1,23 @@
-.student-page-wrapper{
+.student-page-wrapper {
   display: flex;
   justify-content: center;
-  align-items: center;
   padding: 60px 20px;
-  max-width: 1200px;
 }
+
+.student-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  max-width: 1100px;
+  width: 100%;
+}
+
 .studentPage-coach-card {
   background: white;
   padding: 30px 40px;
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
-  max-width: 500px;
-  width: 100%;
   text-align: center;
-}
-
-
-.studentPage-coach-card-image {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 2px solid #ccc;
 }
 
 .studentPage-coach-card h3 {
@@ -30,21 +26,31 @@
   color: #1f2937;
 }
 
-.coach-card-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 16px;
-  flex-wrap: wrap;
+.student-dashboard-coach-image {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #2563eb;
+  margin: 0 auto 16px auto;
+  display: block;
 }
 
-.studentPage-coach-quote {
-  font-style: italic;
-  color: #444;
-  margin-top: 16px;
-  background-color: #f4f4f4;
-  padding: 10px 16px;
-  border-left: 4px solid #2563eb;
+.student-info-item {
+  background-color: #f9fafb;
   border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.student-welcome {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #2563eb;
+  margin-bottom: 12px;
 }
 
 .studentPage-button-group {
@@ -76,50 +82,18 @@
   background-color: #1ebe57;
 }
 
-.student-dashboard-coach-image {
-  width: 140px;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 3px solid #2563eb;
-  margin: 0 auto 16px auto;
-  display: block;
-}
-
-.student-info-item {
-  background-color: #f9fafb;
-  border-radius: 6px;
-  padding: 10px;
-  margin-bottom: 10px;
-  text-align: left;
-  font-size: 0.95rem;
-  color: #333;
-}
-
-
-.student-welcome {
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #2563eb;
-  margin-bottom: 12px;
-}
-
-.studentPage-info-box {
+.studentPage-side-info {
   background-color: #f0f4ff;
   border-left: 6px solid #3b82f6;
-  padding: 20px;
-  margin-top: 30px;
+  padding: 24px;
   border-radius: 12px;
-  text-align: left;
   color: #1e3a8a;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
-.studentPage-info-box h4 {
-  margin-bottom: 10px;
+.studentPage-side-info h4 {
+  font-size: 1.1rem;
   color: #1d4ed8;
+  margin-bottom: 10px;
 }
 
 .studentPage-info-note {
@@ -127,6 +101,7 @@
   color: #1e40af;
   margin-top: 10px;
 }
+
 .badge-upcoming {
   display: inline-block;
   background-color: #10b981;
@@ -137,17 +112,35 @@
   margin-bottom: 10px;
 }
 
+.studentPage-side-info ul {
+  list-style: none;
+  padding-left: 0;
+}
 
+.studentPage-side-info ul li {
+  margin-bottom: 8px;
+  padding-left: 20px;
+  position: relative;
+}
 
-@media screen and (max-width: 600px) {
-  .studentPage-coach-card {
-    padding: 20px;
-    border-radius: 12px;
+.studentPage-side-info ul li::before {
+  content: "✔";
+  position: absolute;
+  left: 0;
+  color: #10b981;
+}
+
+@media screen and (max-width: 768px) {
+  .student-dashboard-grid {
+    grid-template-columns: 1fr;
   }
 
-  .studentPage-button {
-    flex: 1 1 100%;
-    text-align: center;
+  .studentPage-coach-card {
+    padding: 20px;
+  }
+
+  .studentPage-side-info {
+    margin-top: 24px;
   }
 
   .studentPage-button-group {
@@ -155,7 +148,8 @@
     align-items: stretch;
   }
 
-  .studentPage-coach-card h3 {
-    font-size: 1.25rem;
+  .studentPage-button {
+    flex: 1 1 100%;
+    text-align: center;
   }
 }
