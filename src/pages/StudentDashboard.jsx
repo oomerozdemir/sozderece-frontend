@@ -60,8 +60,8 @@ const StudentDashboard = () => {
     <p className="student-welcome">Hoş geldiniz! 👋</p>
     <img src={student.assignedCoach.image} alt={student.assignedCoach.name} className="student-dashboard-coach-image"/>
     <p className="student-info-item"><strong>👨‍🏫 Koç Adı:</strong> {student.assignedCoach.name}</p>
-    <p className="student-info-item"><strong>📘 Alan:</strong> {student.assignedCoach.subject}</p>
-    <p className="student-info-item"><strong>📝 Açıklama:</strong> {student.assignedCoach.description}</p>
+    <p className="student-info-item"><strong>📘 Üniversite:</strong> {student.assignedCoach.subject}</p>
+    <p className="student-info-item"><strong>📝 Alanı ve Derecesi:</strong> {student.assignedCoach.description}</p>
     <p className="student-info-item"><strong>📧 Email:</strong> {student.assignedCoach.user?.email}</p>
     <p className="student-info-item"><strong>📞 Telefon:</strong> {student.assignedCoach.user?.phone || "Belirtilmemiş"}</p>
 
