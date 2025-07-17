@@ -157,6 +157,16 @@ const handleUserUpdate = async () => {
     }
   };
 
+const getOrderStatusLabel = (order) => {
+  if (order.status === "refunded") return { label: "İade Edildi", color: "red" };
+  if (order.status === "refund_requested") return { label: "İade Talep Edildi", color: "orange" };
+  if (order.status === "failed") return { label: "Ödeme Başarısız", color: "darkred" };
+  if (new Date(order.endDate) < new Date()) return { label: "Süresi Dolmuş", color: "gray" };
+  return { label: "Aktif", color: "green" };
+};
+
+
+
   const handleApproveRefund = async (orderId) => {
     try {
       const token = localStorage.getItem("token");
@@ -405,21 +415,15 @@ const handleBillingUpdate = async (orderId) => {
             value={order.endDate ? new Date(order.endDate).toISOString().split("T")[0] : ""}
             onChange={(e) => handleOrderUpdate(order.id, e.target.value)}
           />
-                    <p>
-                    <strong>Durum:</strong>{" "}
-                    <span style={{
-                      color:
-                        order.status === "refunded" ? "red" :
-                        order.status === "refund_requested" ? "orange" :
-                        "green"
-                    }}>
-                      {order.status === "refunded"
-                        ? "İade Edildi"
-                        : order.status === "refund_requested"
-                        ? "İade Talep Edildi"
-                        : "Aktif"}
-                    </span>
-                  </p>
+                    {(() => {
+  const { label, color } = getOrderStatusLabel(order);
+  return (
+    <p>
+      <strong>Durum:</strong>{" "}
+      <span style={{ color }}>{label}</span>
+    </p>
+  );
+})()}
                   <button onClick={() => handleDeleteOrder(order.id)} className="delete-btn">❌ Bu Siparişi Sil</button>
                 </div>
                 {order.status === "refund_requested" && (
