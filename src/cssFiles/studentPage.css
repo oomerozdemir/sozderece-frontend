@@ -101,6 +101,19 @@
   color: #1e40af;
   margin-top: 10px;
 }
+.studentPage-info-box {
+  background-color: #f0f4ff;
+  border-left: 6px solid #3b82f6;
+  padding: 24px;
+  margin-top: 40px; /* Daha net ayırmak için artırıldı */
+  border-radius: 12px;
+  text-align: center;
+  color: #1e3a8a;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 
 .badge-upcoming {
   display: inline-block;
@@ -110,6 +123,13 @@
   padding: 4px 8px;
   border-radius: 999px;
   margin-bottom: 10px;
+  margin-top: 6px; /* Yukarıdan boşluk bırak */
+}
+.studentPage-side-info h4 {
+  font-size: 1.25rem;
+  margin: 12px 0 14px 0; /* üst-alt boşluk dengelendi */
+  color: #e65100;
+  font-weight: bold;
 }
 
 .studentPage-side-info ul {
