@@ -57,9 +57,12 @@ const StudentDashboard = () => {
   </>
 ) : (
   <>
+    <p>Hoş geldiniz! 👋</p>
     <p><strong>👨‍🏫 Koç Adı:</strong> {student.assignedCoach.name}</p>
     <p><strong>📘 Alan:</strong> {student.assignedCoach.subject}</p>
     <p><strong>📝 Açıklama:</strong> {student.assignedCoach.description}</p>
+    <p><strong>📧 Email:</strong> {student.assignedCoach.user?.email}</p>
+    <p><strong>📞 Telefon:</strong> {student.assignedCoach.user?.phone || "Belirtilmemiş"}</p>
   </>
 )}
         </div>
