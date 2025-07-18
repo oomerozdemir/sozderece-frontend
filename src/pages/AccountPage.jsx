@@ -118,8 +118,8 @@ const submitCode = async () => {
       "/api/verification/verify-code",
       {
         type: verifyTarget,
-        target: targetValue,
-        code: verificationCode
+        target: verifyTarget === "email" ? form.email : form.phone,
+        code: verificationCode.trim()
       },
       {
         headers: { Authorization: `Bearer ${token}` }

@@ -164,12 +164,12 @@ ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
 otomatık odeme/abonelık sıstemını ekle
 
 
-
-iade talebi gonderilemiyor ona bak ayrica sureli yap 5 gunluk olucak
-
-
 dogrulamalari kaldir simdilik mail ve telefon ya da gercekten tamamla
 sifremi unuttum gibi yerlerde kod gidiyor onlari mail ve sms e bagla
+
+mail gonderimlerindeki mail iceriginni daha profesyonel yapalim
+sifre sifirlama kullanici girisi gibi yerlerde kod gonderimi de onemli guvenlik icin 
+siparis vermeden email dogrulamasini yapmis olmali kullanici
 
 Hem ogrenci hem koc olarak panelleri incele duzenlemeleri yap
 
