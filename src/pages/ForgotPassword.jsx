@@ -13,7 +13,7 @@ const ForgotPassword = () => {
     setError("");
 
     try {
-      const res = await axios.post("/api/auth/forgot-password", { email: input });
+      const res = await axios.post("/api/auth/forgot-password", { input });
       setMessage(res.data.message || "Şifre sıfırlama bağlantısı e-postanıza gönderildi.");
     } catch (err) {
       setError("Gönderim başarısız. Lütfen e-posta adresinizi kontrol edin.");
