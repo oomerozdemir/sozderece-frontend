@@ -111,11 +111,14 @@ const handleUpdate = async (e) => {
 const submitCode = async () => {
   try {
     const token = localStorage.getItem("token");
+
+    const targetValue = verifyTarget === "email" ? form.email : form.phone;
+
     const res = await axios.post(
       "/api/verification/verify-code",
       {
         type: verifyTarget,
-        target: form.email,
+        target: targetValue,
         code: verificationCode
       },
       {
@@ -123,7 +126,6 @@ const submitCode = async () => {
       }
     );
 
-    // Güncel kullanıcı bilgilerini tekrar al
     const meRes = await axios.get("/api/auth/me", {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -139,6 +141,7 @@ const submitCode = async () => {
     setVerifying("Kod doğrulanamadı.");
   }
 };
+
 
 
 
@@ -229,6 +232,13 @@ const handlePasswordChange = async (e) => {
               >
                 {emailVerified ? "✔ Doğrulandı" : "✉ Doğrula"}
               </span>
+              <label>Telefon Numarası</label>
+  <input
+    type="tel"
+    value={form.phone}
+    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+    placeholder="Telefon"
+  />
             </div>
           </div>
 
