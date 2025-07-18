@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import "../cssFiles/login.css";
 
 const ResetPassword = () => {
   const location = useLocation();
-  const email = location.state?.email || "";
+  const navigate = useNavigate();
+  const email = location.state?.email || ""; // ← gelen eposta
 
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -19,16 +20,14 @@ const ResetPassword = () => {
 
     try {
       const res = await axios.post("/api/auth/reset-password", {
-        email,
         code,
         newPassword,
+        email, // ← backend'e gönderiyoruz
       });
-
-      setMessage(res.data.message || "Şifre başarıyla güncellendi.");
-      setError("");
+      setMessage(res.data.message || "Şifreniz başarıyla güncellendi.");
+      setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
       setError("Kod geçersiz veya süresi dolmuş.");
-      setMessage("");
     }
   };
 

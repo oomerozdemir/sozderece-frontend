@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import "../cssFiles/login.css";
-import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
   const [input, setInput] = useState("");
@@ -16,17 +16,14 @@ const ForgotPassword = () => {
 
     try {
       const res = await axios.post("/api/auth/forgot-password", { input });
-
       setMessage(res.data.message || "Doğrulama kodu gönderildi.");
-      setError("");
 
-      // Başarılıysa reset-password sayfasına email ile yönlendir
+      // → Kullanıcıyı reset-password sayfasına yönlendiriyoruz
       setTimeout(() => {
         navigate("/reset-password", { state: { email: input } });
       }, 1000);
     } catch (err) {
       setError("Kod gönderilemedi. Bilgileri kontrol edin.");
-      setMessage("");
     }
   };
 
@@ -39,7 +36,7 @@ const ForgotPassword = () => {
         {error && <p className="error-message">{error}</p>}
 
         <input
-          type="email"
+          type="text"
           placeholder="E-posta adresiniz"
           value={input}
           onChange={(e) => setInput(e.target.value)}
