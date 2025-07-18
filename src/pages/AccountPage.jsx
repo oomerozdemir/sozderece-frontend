@@ -88,37 +88,37 @@ const handleUpdate = async (e) => {
     setVerifying("");
   };
 
-  const sendCode = async () => {
+const sendCode = async () => {
   try {
-    const token = localStorage.getItem("token");
-    const res = await axios.post(
-      "/api/verification/send-code",
-      {
-        type: verifyTarget,
-        target: verifyTarget === "email" ? form.email : form.phone
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
-    );
-    setVerifying(res.data.message || "Doğrulama kodu gönderildi.");
+    const actualTarget = verifyTarget === "email"
+      ? document.querySelector("input[type=email]").value
+      : form.phone;
+
+    await axios.post("/api/verification/send-code", {
+      type: verifyTarget,
+      target: actualTarget
+    });
+
+    setVerifying("Doğrulama kodu gönderildi.");
     setCodeSent(true);
-  } catch (err) {
+  } catch {
     setVerifying("Kod gönderilemedi.");
   }
 };
 
+
 const submitCode = async () => {
   try {
+    const actualTarget = verifyTarget === "email"
+      ? document.querySelector("input[type=email]").value
+      : form.phone;
+
     const token = localStorage.getItem("token");
-
-    const targetValue = verifyTarget === "email" ? form.email : form.phone;
-
     const res = await axios.post(
       "/api/verification/verify-code",
       {
         type: verifyTarget,
-        target: verifyTarget === "email" ? form.email : form.phone,
+        target: actualTarget,
         code: verificationCode.trim()
       },
       {
@@ -126,6 +126,7 @@ const submitCode = async () => {
       }
     );
 
+    // kullanıcı bilgilerini güncelle
     const meRes = await axios.get("/api/auth/me", {
       headers: { Authorization: `Bearer ${token}` }
     });
