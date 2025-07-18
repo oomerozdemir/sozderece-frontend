@@ -89,7 +89,6 @@ const handleUpdate = async (e) => {
   };
 
 const sendCode = async () => {
-  console.log("Frontend'e gelen kod:", code); // geçici debug için
 
   try {
     const actualTarget = verifyTarget === "email"
