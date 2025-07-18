@@ -1,6 +1,14 @@
 import "../cssFiles/PricingSection.css";
 import { motion } from "framer-motion";
-import { FaUserCheck, FaChalkboardTeacher, FaCalendarCheck, FaChartLine, FaClipboardList, FaUsers, FaSmile } from "react-icons/fa";
+import {
+  FaUserCheck,
+  FaChalkboardTeacher,
+  FaCalendarCheck,
+  FaChartLine,
+  FaClipboardList,
+  FaUsers,
+  FaSmile,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const packageData = {
@@ -22,52 +30,33 @@ const benefitItems = [
   {
     title: "Koçluk Görüşmeleri",
     icon: <FaChalkboardTeacher />,
-    points: [
-      "Birebir takip sistemi",
-      "Planlama & geri bildirim",
-      "Motivasyon desteği"
-    ]
+    points: ["Birebir takip sistemi", "Planlama & geri bildirim", "Motivasyon desteği"],
   },
   {
     title: "Kişiye Özel Planlama",
     icon: <FaCalendarCheck />,
-    points: [
-      "Haftalık/derslik program",
-      "Deneme sonuçlarına göre güncelleme"
-    ]
+    points: ["Haftalık/derslik program", "Deneme sonuçlarına göre güncelleme"],
   },
   {
     title: "Deneme Analizi",
     icon: <FaChartLine />,
-    points: [
-      "Net-zaman takibi",
-      "Gelişim çizelgesi"
-    ]
+    points: ["Net-zaman takibi", "Gelişim çizelgesi"],
   },
   {
     title: "Soru & Kaynak Takibi",
     icon: <FaClipboardList />,
-    points: [
-      "Yayın takibi",
-      "Eksik konu yönlendirmesi"
-    ]
+    points: ["Yayın takibi", "Eksik konu yönlendirmesi"],
   },
   {
     title: "Veliyle Etkileşim",
     icon: <FaUsers />,
-    points: [
-      "Aylık geri bildirim",
-      "Veli–koç iletişimi"
-    ]
+    points: ["Aylık geri bildirim", "Veli–koç iletişimi"],
   },
   {
     title: "Psikolojik Destek",
     icon: <FaSmile />,
-    points: [
-      "Stres yönetimi",
-      "Sınav taktikleri"
-    ]
-  }
+    points: ["Stres yönetimi", "Sınav taktikleri"],
+  },
 ];
 
 function PricingSection() {
@@ -82,15 +71,15 @@ function PricingSection() {
       transition={{ duration: 0.8 }}
       viewport={{ once: true, amount: 0.3 }}
     >
-      <motion.h2 className="pricing-section-title">
-        Koçluk Paketimiz
-      </motion.h2>
+      <motion.h2 className="pricing-section-title">Koçluk Paketimiz</motion.h2>
 
       <div className="pricing-card-horizontal no-image">
+        <div className="grade-badge" title="5–7: Ara sınıf, 8–12 ve Mezun: Sınav grubu">
+          🎓 8-12-Mezun Ve Ara Sınıflar
+        </div>
         <div className="pricing-card-content">
           <h3>
-            <span className="package-icon">{packageData.icon}</span>{" "}
-            {packageData.name}
+            <span className="package-icon">{packageData.icon}</span> {packageData.name}
           </h3>
           <p className="pricing-subtitle">{packageData.subtitle}</p>
           <p className="price">{packageData.price}</p>
@@ -99,10 +88,7 @@ function PricingSection() {
               <li key={i}>{feature}</li>
             ))}
           </ul>
-          <button
-            className="pricing-button"
-            onClick={() => navigate("/package-detail")}
-          >
+          <button className="pricing-button" onClick={() => navigate("/package-detail")}>
             Hemen Başla!
           </button>
         </div>

@@ -12,6 +12,7 @@
 }
 
 .pricing-card-horizontal.no-image {
+  position: relative; /* 🔧 Bunu ekliyoruz */
   display: flex;
   background: #fff7e6;
   border: 3px solid #fbbf24;
@@ -24,6 +25,7 @@
   align-items: center;
   flex-wrap: wrap;
 }
+
 
 .pricing-card-content {
   flex: 1;
@@ -163,6 +165,21 @@
   line-height: 1.5;
   text-align: left;
 }
+.grade-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: #f59e0b;
+  color: white;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 5;
+}
+
+
 
 @media (max-width: 768px) {
   .pricing-card-horizontal.no-image {
