@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import "../cssFiles/login.css";
 
@@ -7,7 +6,6 @@ const ForgotPassword = () => {
   const [input, setInput] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,15 +13,10 @@ const ForgotPassword = () => {
     setError("");
 
     try {
-      const res = await axios.post("/api/auth/forgot-password", { input });
-      setMessage(res.data.message || "Doğrulama kodu gönderildi.");
-
-      // → Kullanıcıyı reset-password sayfasına yönlendiriyoruz
-      setTimeout(() => {
-        navigate("/reset-password", { state: { email: input } });
-      }, 1000);
+      const res = await axios.post("/api/auth/forgot-password", { email: input });
+      setMessage(res.data.message || "Şifre sıfırlama bağlantısı e-postanıza gönderildi.");
     } catch (err) {
-      setError("Kod gönderilemedi. Bilgileri kontrol edin.");
+      setError("Gönderim başarısız. Lütfen e-posta adresinizi kontrol edin.");
     }
   };
 
@@ -36,14 +29,14 @@ const ForgotPassword = () => {
         {error && <p className="error-message">{error}</p>}
 
         <input
-          type="text"
+          type="email"
           placeholder="E-posta adresiniz"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           required
         />
 
-        <button type="submit">Kod Gönder</button>
+        <button type="submit">Bağlantı Gönder</button>
       </form>
     </div>
   );
