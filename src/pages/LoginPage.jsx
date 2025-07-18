@@ -126,7 +126,7 @@ const LoginPage = () => {
     {isLogin ? "Hesabın yok mu? Kayıt Ol" : "Zaten hesabın var mı? Giriş Yap"}
   </span>
   {isLogin && (
-    <span onClick={() => navigate("/forgot-password")}>Şifremi mi unuttun?</span>
+    <span onClick={() => navigate("/forgot-password")}>Şifreni mi unuttun?</span>
   )}
 </div>
 
@@ -135,19 +135,17 @@ const LoginPage = () => {
     </div>
 <footer className="custom-footer">
               <div className="footer-icons">
-                <FaInstagram />
+                <a href="https://www.instagram.com/sozderece/"><FaInstagram/></a>
                 <FaTiktok />
                 <FaYoutube />
               </div>
               <div className="footer-links">
-                <a href="#">Hakkımızda</a>
-                <a href="#">Kullanım Koşulları</a>
-                <a href="#">Gizlilik</a>
-                <a href="#">Satış Sözleşmeleri</a>
-                <a href="#">İade Politikası</a>
-                <a href="#">Mağaza Blog</a>
+                <a href="/hakkimizda">Hakkımızda</a>
+                <a href="/mesafeli-hizmet-sozlesmesi">Mesafeli Hizmet Sözleşmesi</a>
+                <a href="/gizlilik-politikasi-kvkk">Gizlilik ve KVKK</a>
+                <a href="/iade-ve-cayma-politikasi">İade ve Cayma Politikası</a>
               </div>
-              <div className="footer-copy">© 2025 SÖZDERECE KOÇLUK Her Hakkı Saklıdır</div>
+              <div className="footer-copy">© 2025 Sözderece Koçluk Her Hakkı Saklıdır</div>
             </footer>
     
     </>

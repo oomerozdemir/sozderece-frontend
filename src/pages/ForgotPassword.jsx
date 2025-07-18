@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "../utils/axios";
-import "../cssFiles/login.css"; // login.css ile stil uyumlu olsun
+import "../cssFiles/login.css"; 
 
 const ForgotPassword = () => {
   const [input, setInput] = useState("");
@@ -30,7 +30,7 @@ const ForgotPassword = () => {
 
         <input
           type="text"
-          placeholder="Telefon numaranız veya e-posta"
+          placeholder="E-posta adresiniz"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           required
