@@ -14,7 +14,6 @@ const AccountPage = () => {
   const [verificationCode, setVerificationCode] = useState("");
   const [codeSent, setCodeSent] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
-  const [phoneVerified, setPhoneVerified] = useState(false);
   const [passwords, setPasswords] = useState({
   current: "",
   new1: "",
@@ -44,7 +43,6 @@ const [editingClass, setEditingClass] = useState(false);
         track: userData.track || "", 
       });
       setEmailVerified(userData.emailVerified || false);
-      setPhoneVerified(userData.phoneVerified || false);
     } catch (err) {
       setError("Kullanıcı bilgisi alınamadı.");
     }
@@ -75,7 +73,6 @@ const handleUpdate = async (e) => {
     setUser(res.data.user);
     setSuccess("Bilgiler güncellendi.");
     setEmailVerified(res.data.user.emailVerified || false);
-    setPhoneVerified(res.data.user.phoneVerified || false);
     localStorage.setItem("user", JSON.stringify(res.data.user));
   } catch {
     setError("Güncelleme başarısız.");
@@ -92,35 +89,49 @@ const handleUpdate = async (e) => {
   };
 
   const sendCode = async () => {
-    try {
-      const input = verifyTarget === "email" ? form.email : form.phone;
-      await axios.post("/api/auth/forgot-password", { input });
-      setVerifying("Doğrulama kodu gönderildi.");
-      setCodeSent(true);
-    } catch {
-      setVerifying("Kod gönderilemedi.");
-    }
-  };
-
-  const submitCode = async () => {
   try {
-    await axios.post("/api/auth/reset-password", { code: verificationCode });
-
-    // Yeni doğrulama işlemini kalıcı hale getir
     const token = localStorage.getItem("token");
-    const res = await axios.post("/api/auth/verify-contact", {
-      type: verifyTarget
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`
+    const res = await axios.post(
+      "/api/verification/send-code",
+      {
+        type: verifyTarget,
+        target: verifyTarget === "email" ? form.email : form.phone
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` }
       }
+    );
+    setVerifying(res.data.message || "Doğrulama kodu gönderildi.");
+    setCodeSent(true);
+  } catch (err) {
+    setVerifying("Kod gönderilemedi.");
+  }
+};
+
+const submitCode = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await axios.post(
+      "/api/verification/verify-code",
+      {
+        type: verifyTarget,
+        target: form.email,
+        code: verificationCode
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    );
+
+    // Güncel kullanıcı bilgilerini tekrar al
+    const meRes = await axios.get("/api/auth/me", {
+      headers: { Authorization: `Bearer ${token}` }
     });
 
-    // Güncel kullanıcı bilgileri ile güncelle
-    setUser(res.data.user);
-    setEmailVerified(res.data.user.emailVerified || false);
-    setPhoneVerified(res.data.user.phoneVerified || false);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
+    const updatedUser = meRes.data.user;
+    setUser(updatedUser);
+    setEmailVerified(updatedUser.emailVerified || false);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
 
     setShowVerifyBox(false);
     setVerifying("Doğrulama başarılı.");
@@ -128,6 +139,7 @@ const handleUpdate = async (e) => {
     setVerifying("Kod doğrulanamadı.");
   }
 };
+
 
 
   if (!user && !error) return <p>Yükleniyor...</p>;
@@ -220,23 +232,7 @@ const handlePasswordChange = async (e) => {
             </div>
           </div>
 
-          <div className="accountPage-form-group">
-            <label>Telefon Numarası</label>
-            <div className="input-verify">
-              <input
-                type="tel"
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                placeholder="Telefon"
-              />
-              <span
-                className={phoneVerified ? "verified" : "not-verified"}
-                onClick={() => !phoneVerified && handleVerify("phone")}
-              >
-                {phoneVerified ? "✔ Doğrulandı" : "📞 Doğrula"}
-              </span>
-            </div>
-          </div>
+         
 
       {!editingClass && user.grade && user.track ? (
   <div style={{ marginBottom: "12px", padding: "10px", background: "#f8f8f8", borderRadius: "8px" }}>
