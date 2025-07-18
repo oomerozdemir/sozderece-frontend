@@ -234,14 +234,15 @@ const handlePasswordChange = async (e) => {
               >
                 {emailVerified ? "✔ Doğrulandı" : "✉ Doğrula"}
               </span>
-              <label>Telefon Numarası</label>
+         
+            </div>
+                 <label>Telefon Numarası</label>
   <input
     type="tel"
     value={form.phone}
     onChange={(e) => setForm({ ...form, phone: e.target.value })}
     placeholder="Telefon"
   />
-            </div>
           </div>
 
          

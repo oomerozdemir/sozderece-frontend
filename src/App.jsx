@@ -164,7 +164,7 @@ ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
 otomatık odeme/abonelık sıstemını ekle
 
 
-dogrulamalari kaldir simdilik mail ve telefon ya da gercekten tamamla
+
 sifremi unuttum gibi yerlerde kod gidiyor onlari mail ve sms e bagla
 
 mail gonderimlerindeki mail iceriginni daha profesyonel yapalim
@@ -294,6 +294,18 @@ API testleri için Jest, Supertest ile basit test altyapısı kurabilirsin.
 Frontend testleri için React Testing Library başlangıç seviyesinde yeterli olur.
 
 Projeyi ileride Vercel (frontend) + Render (backend) ya da Railway + PlanetScale gibi ortamlara taşıyabilirsin.
+
+Eğer ileride:
+
+🔐 IP bazlı koruma,
+
+🔁 Kod tekrar gönderme sınırı,
+
+🧠 Kod brute-force engelleme,
+
+📬 Bildirim sistemi entegrasyonu,
+
+🔔 Admin paneline doğrulama geçmişi loglama
 
 
  İlerleyebileceğimiz bazı adımlar:
