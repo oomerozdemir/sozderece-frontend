@@ -162,21 +162,11 @@ export default App;
 /*
 ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
 otomatık odeme/abonelık sıstemını ekle
-
-
-
-
+Ilerde bu guvenlı gırısı gelıstırırız sımdılık sadece e posta dogrulaması yeterlı
 
 mail gonderimlerindeki mail iceriginni daha profesyonel yapalim
-sifre sifirlama kullanici girisi gibi yerlerde kod gonderimi de onemli guvenlik icin 
-siparis vermeden email dogrulamasini yapmis olmali kullanici
 
-Hem ogrenci hem koc olarak panelleri incele duzenlemeleri yap
-
-koc hesabım kısmında alan secme yerı var o olmasın ayrıca sıparısler kısmı da bunlar sadece ogrencılere ozel
-
-fatura bilgireinde hem admin hem kullanici tarafinda kac tl odendigi gozuksun paytr eklendikten sonra duruma gore de bakilir
-
+fatura bilgilerinde hem admin hem kullanici tarafinda kac tl odendigi gozuksun paytr eklendikten sonra duruma gore de bakilir
 
 ilerde paketler bolumunu admin panelinden ekleme özelliğini getirebliriz veya farklı bir sistem
 
