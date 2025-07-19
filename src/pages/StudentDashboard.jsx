@@ -41,7 +41,7 @@ const StudentDashboard = () => {
             {!student.assignedCoach ? (
               <>
                 <p>Hoş geldiniz! 👋</p>
-                <p>Henüz bir koç atamanız yapılmadı.</p>
+                <p>Henüz bir koç atamanız yapılmadı.Aşşağıdaki butonları kullanarak paketlerimizi inceleyebilir,detaylı bilgi almak için ücretsiz ön görüşme yapabilir veya whatsapp üzerinden destek alabilirsiniz.</p>
                 <div className="studentPage-button-group">
                   <a href="/package-detail" className="studentPage-button">📦 Paketleri İncele</a>
                   <a href="/ucretsiz-on-gorusme" className="studentPage-button">🗓️ Ücretsiz Ön Görüşme</a>

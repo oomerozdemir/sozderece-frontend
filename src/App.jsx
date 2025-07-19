@@ -165,7 +165,7 @@ otomatık odeme/abonelık sıstemını ekle
 
 
 
-sifremi unuttum gibi yerlerde kod gidiyor onlari mail ve sms e bagla
+
 
 mail gonderimlerindeki mail iceriginni daha profesyonel yapalim
 sifre sifirlama kullanici girisi gibi yerlerde kod gonderimi de onemli guvenlik icin 

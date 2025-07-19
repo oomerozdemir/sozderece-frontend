@@ -13,15 +13,21 @@ import { useNavigate } from "react-router-dom";
 
 const packageData = {
   name: "Koçluk Paketi (LGS/YKS 2026)",
-  price: "2800₺ / ay",
+  price: "2500₺ / ay",
   subtitle:
     "Hedefe yönelik birebir koçluk, programlama, deneme takibi ve veli bilgilendirmesi.",
   features: [
-    "Haftalık birebir koçluk görüşmeleri",
+    "Hedefe yönelik birebir koçluk",
+    "Haftalık birebir görüşmeler",
     "Kişiye özel haftalık/günlük program",
+    "Tüm haftayı analiz ederek her hafta yenilenen özel programlar",
     "Deneme analizi ve net gelişimi takibi",
     "Soru takibi ve kaynak yönlendirmesi",
-    "Düzenli veli bilgilendirmesi",
+    "Saat saat bilgi alma ve plan kontrolü",
+    " Öğrenciye disiplin kazandırma",
+    "Sürekli psikolojik destek ve motivasyon",
+    "Planlı, takipli ve sonuç odaklı süreç",
+
   ],
   icon: <FaUserCheck />,
 };
