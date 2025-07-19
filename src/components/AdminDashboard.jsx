@@ -371,6 +371,7 @@ const handleBillingUpdate = async (orderId) => {
 
                 <p><strong>Oluşturulma:</strong> {new Date(order.createdAt).toLocaleString("tr-TR")}</p>
                 <p><strong>Paket Adı:</strong> {order.package}</p>
+                  <p><strong>Toplam Fiyat:</strong> ₺{order.totalPrice}</p>
                   <details style={{ marginTop: "10px" }}>
   <summary style={{ cursor: "pointer", color: "#007bff" }}>
     Fatura Bilgilerini Göster
