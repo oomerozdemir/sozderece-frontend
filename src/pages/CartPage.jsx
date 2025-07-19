@@ -22,23 +22,25 @@ const CartPage = () => {
     return sum + priceNumber * (item.quantity || 1);
   }, 0);
 
-  const handleCheckout = () => {
-    if (!isAgreed) {
-      alert("Lütfen sözleşmeyi onaylayın.");
-      return;
-    }
+ const handleCheckout = () => {
+  if (!isAgreed) {
+    alert("Lütfen sözleşmeyi onaylayın.");
+    return;
+  }
 
-    if (cart.length === 0) {
-      alert("Lütfen önce bir paket seçin.");
-      return;
-    }
+  if (cart.length === 0) {
+    alert("Lütfen önce bir paket seçin.");
+    return;
+  }
 
-    const hasOnlySingleLessonPackage =
-      cart.length === 1 && cart[0].name.toLowerCase().includes("tek ders");
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user || !user.emailVerified) {
+    alert("Devam etmeden önce e-posta adresinizi doğrulamanız gerekiyor.");
+    return;
+  }
 
-
-    navigate("/payment");
-  };
+  navigate("/payment");
+};
 
   const handleContinueShopping = () => {
     window.location.href = "/#paketler";
