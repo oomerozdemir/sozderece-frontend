@@ -106,7 +106,7 @@ const OrdersPage = () => {
                       </details>
 
                       {order.totalPrice && (
-                        <p>💰 <strong>Toplam:</strong> ₺{order.totalPrice}</p>
+                        <p><strong>Toplam Ödenen Miktar:</strong> ₺{order.totalPrice}</p>
                       )}
                       {order.couponCode && (
                         <p>🏷️ <strong>Kupon:</strong> {order.couponCode}</p>
