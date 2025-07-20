@@ -69,7 +69,7 @@ function PricingSection() {
   const navigate = useNavigate();
 
   return (
-    <motion.div
+    <div
       className="pricing-section"
       id="paketler"
       initial={{ opacity: 0, y: 50 }}
@@ -77,7 +77,7 @@ function PricingSection() {
       transition={{ duration: 0.8 }}
       viewport={{ once: true, amount: 0.3 }}
     >
-      <motion.h2 className="pricing-section-title">Koçluk Paketimiz</motion.h2>
+      <h2 className="pricing-section-title">Koçluk Paketimiz</h2>
 
       <div className="pricing-card-horizontal no-image">
         <div className="grade-badge" title="5–7: Ara sınıf, 8–12 ve Mezun: Sınav grubu">
@@ -114,7 +114,7 @@ function PricingSection() {
           </div>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }
 

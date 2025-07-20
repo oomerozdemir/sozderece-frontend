@@ -166,12 +166,12 @@ Ilerde bu guvenlı gırısı gelıstırırız sımdılık sadece e posta dogrula
 
 mail gonderimlerindeki mail iceriginni daha profesyonel yapalim
 
-fatura bilgilerinde hem admin hem kullanici tarafinda kac tl odendigi gozuksun paytr eklendikten sonra duruma gore de bakilir
+ONEMLI!!! Odeme sonrası fatura gonderımı yapacagız
+KDV GEREKLI MI GEREKSIZ MI FATURA DA BUNU SOR
 
 ilerde paketler bolumunu admin panelinden ekleme özelliğini getirebliriz veya farklı bir sistem
 
-sıparıslerım bolumunde suresı dolan paketın ıade talebı olusturma kısmını kaldıralım
-admın panelınde suresı gecmıs olsa bıle aktıf olarak gozukuyor
+
 
 
 İleride Eklenebilecek Özellikler
