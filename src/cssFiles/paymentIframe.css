@@ -8,6 +8,7 @@
   margin: 0;
   overflow: auto;           /* ✔️ scroll için gerekli */
   box-sizing: border-box;
+   -webkit-overflow-scrolling: touch; /* iOS scroll için */
 }
 
 /* Iframe */
@@ -15,6 +16,8 @@
   width: 100%;
   min-height: 100vh;        /* Veya istersen daha büyük (örneğin 1200px) */
   border: none;
+    height: 1500px; /* iPhone için sabit uzunluk */
+
   display: block;
 }
 
