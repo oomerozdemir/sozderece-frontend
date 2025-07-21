@@ -1,26 +1,23 @@
 /* Temel stil */
 .iframe-container {
   width: 100vw;
-  min-height: 100vh;        /* vh kullanmak burada sorun değil */
+  height: 100vh;
   background-color: #f8f9fa;
-  display: block;           /* flex yerine block */
+  display: block;
   padding: 0;
   margin: 0;
-  overflow: auto;           /* ✔️ scroll için gerekli */
+  overflow: auto;
+  -webkit-overflow-scrolling: touch; /* iOS için momentum scroll */
   box-sizing: border-box;
-   -webkit-overflow-scrolling: touch; /* iOS scroll için */
 }
 
 /* Iframe */
 #paytriframe {
   width: 100%;
-  min-height: 100vh;        /* Veya istersen daha büyük (örneğin 1200px) */
+  height: 1500px;  /* Mobilde butonun dışarı taşmaması için sabit */
   border: none;
-    height: 1500px; /* iPhone için sabit uzunluk */
-
   display: block;
 }
-
 /* Hata mesajı */
 .error-message {
   color: #d9534f;
@@ -29,22 +26,3 @@
   padding: 2rem;
 }
 
-/* Mobil için */
-@media (max-width: 768px) {
-  .iframe-container {
-    padding: 0;
-    min-height: auto;
-    height: auto;
-  }
-
-  #paytriframe {
-    min-height: 1500px; 
-    border: none; 
-    width: 100%; /* Mobilde içeriği sığdırmak için sabit yükseklik */
-  }
-
-  .error-message {
-    font-size: 1rem;
-    padding: 1.5rem;
-  }
-}
