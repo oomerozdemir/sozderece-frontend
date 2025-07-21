@@ -42,22 +42,7 @@ const PaymentIframePage = () => {
         <div className="error-message">⚠️ Ödeme sayfası yüklenemedi.</div>
       )}
     </div>
-    <footer className="custom-footer">
-              <div className="footer-icons">
-                <FaInstagram />
-                <FaTiktok />
-                <FaYoutube />
-              </div>
-              <div className="footer-links">
-                <a href="/hakkimizda">Hakkımızda</a>
-                <a href="/ucretsiz-on-gorusme">İletişim</a>
-                <a href="/gizlilik-politikasi-kvkk">Gizlilik ve KVKK</a>
-                <a href="/mesafeli-hizmet-sozlesmesi">Mesafeli Hizmet Sözleşmesi</a>
-                <a href="/iade-ve-cayma-politikasi">İade Politikası</a>
-              </div>
-              <div className="footer-copy">© 2025 SÖZDERECE KOÇLUK Her Hakkı Saklıdır</div>
-            </footer>
-    
+   
     </>
   );
 };
