@@ -7,23 +7,22 @@ const PaymentIframePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!token) {
-      console.error("⚠️ Ödeme token'ı bulunamadı.");
-      return;
-    }
+    if (!token) return;
 
-    // Eğer mobil cihazsa yönlendirme yap
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (isMobile) {
+      // iOS cihazlarda iframe sorun çıkardığı için direkt yönlendirme yap
       window.location.href = `https://www.paytr.com/odeme/guvenli/${token}`;
     }
   }, [token]);
 
-  // 🔁 Iframe'den gelen başarı mesajını dinle
   useEffect(() => {
     const handleMessage = (event) => {
+      // Güvenlik: Sadece PayTR'den gelen mesajı işleyelim
+      if (event.origin !== "https://www.paytr.com") return;
+
       if (event.data === "PAYMENT_SUCCESS") {
-        console.log("✅ Ana sayfa: Ödeme başarılı mesajı alındı. /order-success sayfasına yönlendiriliyor");
+        console.log("✅ Ödeme başarılı, yönlendiriliyor");
         navigate("/order-success");
       }
     };
@@ -40,13 +39,13 @@ const PaymentIframePage = () => {
           id="paytriframe"
           title="Ödeme Sayfası"
           allowFullScreen
+          scrolling="yes"
           style={{
             width: "100%",
             height: "1500px",
             border: "none",
-            overflow: "auto",
-            WebkitOverflowScrolling: "touch",
             display: "block",
+            WebkitOverflowScrolling: "touch",
           }}
         />
       ) : (

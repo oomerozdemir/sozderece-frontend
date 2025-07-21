@@ -56,45 +56,38 @@ const PaymentPage = () => {
     }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const token = localStorage.getItem("token");
+ const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
 
-  try {
-    const response = await axios.post(
-      "/api/orders",
-      {
-        cart: cart.map((item) => ({
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity,
-          description: item.description,
-        })),
-        billingInfo: { ...formData },
-        packageName: cart[0]?.name,
-        discountRate,
-        couponCode,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+    try {
+      const response = await axios.post(
+        "/api/orders/prepare",
+        {
+          cart,
+          billingInfo: formData,
+          packageName: cart[0]?.name,
+          discountRate,
+          couponCode,
         },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const paytrToken = response.data?.paytrToken;
+      if (paytrToken) {
+        navigate(`/payment/iframe/${paytrToken}`);
+      } else {
+        alert("Ödeme başlatılamadı.");
       }
-    );
-
-    const paytrToken = response.data?.paytrToken;
-
-    if (paytrToken) {
-      navigate(`/payment/iframe/${paytrToken}`); 
-    } else {
-      alert("Sipariş oluşturuldu ama ödeme başlatılamadı.");
+    } catch (error) {
+      console.error("❌ Ödeme hazırlanırken hata:", error);
+      alert("Sipariş hazırlığı sırasında hata oluştu.");
     }
-
-  } catch (error) {
-    console.error("❌ Sipariş oluşturulamadı:");
-    alert("Bir hata oluştu. Lütfen tekrar deneyin.");
-  }
-};
+  };
 
 
   return (

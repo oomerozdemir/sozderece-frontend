@@ -110,7 +110,9 @@ function App() {
           <Route path="/package-detail" element={<PackageDetail />} />
           <Route path="/coach-detail" element={<CoachDetail />} />
           <Route path="/ucretsiz-on-gorusme" element={<ContactPage />} />
+          <PrivateRoute>
           <Route path="/payment/iframe/:token" element={<PaymentIframePage />} />
+          </PrivateRoute>
           <Route path="/payment-fail" element={<PaymentFailPage />} />
 
           {/* Admin Panel */}
@@ -160,15 +162,21 @@ export default App;
 
 
 /*
-ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
-otomatık odeme/abonelık sıstemını ekle
-Ilerde bu guvenlı gırısı gelıstırırız sımdılık sadece e posta dogrulaması yeterlı
-telefona sms ı de ekleyelım
+ONEMLI
+Sıparısler ıframe sayfasına gırdıgınde paytr ye gondermıyor
+ancak sıparıs olusturulmus gıbı gozukuyor odemesı basarısız bır sekılde
 
-ONEMLI!!! Odeme sonrası fatura gonderımı yapacagız
-KDV GEREKLI MI GEREKSIZ MI FATURA DA BUNU SOR
 
-ilerde paketler bolumunu admin panelinden ekleme özelliğini getirebliriz veya farklı bir sistem
+2-odeme durumunu sorgula butonu admın panelınde her sıparıs de cıkmıyor bunu arastır
+1-koclara ogrencı atandıgında bıldırım gıtsın aynı sekılde ogrencıye de
+-ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
+-otomatık odeme/abonelık sıstemını ekle
+-Ilerde bu guvenlı gırısı gelıstırırız sımdılık sadece e posta dogrulaması yeterlı
+-telefona sms ı de ekleyelım gıt push yapmadan dıkkat et backend de createVerıfıcatıon fonksıyonu degıstı
+
+-ONEMLI!!! Odeme sonrası fatura gonderımı yapacagız.KDV GEREKLI MI GEREKSIZ MI FATURA DA BUNU SOR
+
+-ilerde paketler bolumunu admin panelinden ekleme özelliğini getirebliriz veya farklı bir sistem
 
 
 İleride Eklenebilecek Özellikler
