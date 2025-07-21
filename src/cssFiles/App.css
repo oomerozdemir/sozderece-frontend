@@ -105,9 +105,7 @@
 }
 
 
-body.modal-open {
-  overflow: hidden;
-}
+
 
 .modal-overlay {
   position: fixed;
