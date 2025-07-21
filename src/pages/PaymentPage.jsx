@@ -64,14 +64,7 @@ const PaymentPage = () => {
   e.preventDefault();
   const token = localStorage.getItem("token");
 
-   console.log("🔍 Gönderilen veriler:", {
-  cart,
-  billingInfo: formData,
-  packageName: cart[0]?.name,
-  discountRate,
-  couponCode,
-  totalPrice,
-});
+;
 
   const totalPrice = cart.reduce(
     (acc, item) => acc + item.price * (item.quantity || 1),
@@ -83,6 +76,14 @@ const PaymentPage = () => {
     : totalPrice;
 
   try {
+       console.log("🔍 Gönderilen veriler:", {
+  cart,
+  billingInfo: formData,
+  packageName: cart[0]?.name,
+  discountRate,
+  couponCode,
+  totalPrice,
+})
     const response = await axios.post(
       "/api/orders/prepare",
       {
