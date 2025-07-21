@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../cssFiles/paymentIframe.css";
+import Footer from "../components/Footer";
 import axios from "../utils/axios";
 
 
@@ -28,6 +29,7 @@ const PaymentIframePage = () => {
   }, [navigate]);
 
   return (
+    <>
     <div className="iframe-container">
       {token ? (
         <iframe
@@ -41,6 +43,8 @@ const PaymentIframePage = () => {
         <div className="error-message">⚠️ Ödeme sayfası yüklenemedi.</div>
       )}
     </div>
+    <Footer />
+    </>
   );
 };
 
