@@ -97,10 +97,15 @@ const PaymentPage = () => {
     } else {
       alert("Ödeme başlatılamadı.");
     }
-  } catch (error) {
-    console.error("❌ Ödeme hazırlanırken hata:", error);
+ } catch (error) {
+  console.error("❌ Ödeme hazırlanırken hata:", error);
+  if (error.response?.data) {
+    console.error("🧠 Detaylı hata:", error.response.data); // bu satır eklendi
+    alert(error.response.data.error || "Sipariş hazırlığı sırasında hata oluştu.");
+  } else {
     alert("Sipariş hazırlığı sırasında hata oluştu.");
   }
+}
 };
 
 
