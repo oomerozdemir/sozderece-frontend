@@ -31,6 +31,8 @@ const PaymentPage = () => {
     return sum + price * (item.quantity || 1);
   }, 0);
 
+
+
   const discountedTotal =
     discountRate > 0 ? total - (total * discountRate) / 100 : total;
 
@@ -38,6 +40,8 @@ const PaymentPage = () => {
     const { name, value, type, checked } = e.target;
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
+
+  
 
   const handleApplyCoupon = async () => {
     try {
@@ -57,37 +61,48 @@ const PaymentPage = () => {
   };
 
  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
+  e.preventDefault();
+  const token = localStorage.getItem("token");
 
-    try {
-      const response = await axios.post(
-        "/api/orders/prepare",
-        {
-          cart,
-          billingInfo: formData,
-          packageName: cart[0]?.name,
-          discountRate,
-          couponCode,
+  const totalPrice = cart.reduce(
+    (acc, item) => acc + item.price * (item.quantity || 1),
+    0
+  );
+
+  const discountedTotal = discountRate
+    ? totalPrice * (1 - discountRate / 100)
+    : totalPrice;
+
+  try {
+    const response = await axios.post(
+      "/api/orders/prepare",
+      {
+        cart,
+        billingInfo: formData,
+        packageName: cart[0]?.name,
+        discountRate,
+        couponCode,
+        totalPrice: discountedTotal, // ✅ eklendi
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const paytrToken = response.data?.paytrToken;
-      if (paytrToken) {
-        navigate(`/payment/iframe/${paytrToken}`);
-      } else {
-        alert("Ödeme başlatılamadı.");
       }
-    } catch (error) {
-      console.error("❌ Ödeme hazırlanırken hata:", error);
-      alert("Sipariş hazırlığı sırasında hata oluştu.");
+    );
+
+    const paytrToken = response.data?.token;
+    if (paytrToken) {
+      navigate(`/payment/iframe/${paytrToken}`);
+    } else {
+      alert("Ödeme başlatılamadı.");
     }
-  };
+  } catch (error) {
+    console.error("❌ Ödeme hazırlanırken hata:", error);
+    alert("Sipariş hazırlığı sırasında hata oluştu.");
+  }
+};
+
 
 
   return (
