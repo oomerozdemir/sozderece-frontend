@@ -61,6 +61,15 @@ const PaymentPage = () => {
   };
 
  const handleSubmit = async (e) => {
+  console.log("🔍 Gönderilen veriler:", {
+  cart,
+  billingInfo: formData,
+  packageName: cart[0]?.name,
+  discountRate,
+  couponCode,
+  totalPrice,
+});
+
   e.preventDefault();
   const token = localStorage.getItem("token");
 
