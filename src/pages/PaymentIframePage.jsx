@@ -32,12 +32,20 @@ const PaymentIframePage = () => {
     <div className="iframe-container">
       {token ? (
         <iframe
-          src={`https://www.paytr.com/odeme/guvenli/${token}`}
-          id="paytriframe"
-          scrolling="yes"
-          allowFullScreen
-          title="Ödeme Sayfası"
-        ></iframe>
+  src={`https://www.paytr.com/odeme/guvenli/${token}`}
+  id="paytriframe"
+  title="Ödeme Sayfası"
+  allowFullScreen
+  style={{
+    width: "100%",
+    height: "100vh",
+    minHeight: "1500px",
+    border: "none",
+    overflow: "auto",
+    WebkitOverflowScrolling: "touch",
+    display: "block"
+  }}
+/>
       ) : (
         <div className="error-message">⚠️ Ödeme sayfası yüklenemedi.</div>
       )}
