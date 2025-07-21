@@ -60,30 +60,34 @@ const PaymentPage = () => {
     }
   };
 
- const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
   const token = localStorage.getItem("token");
 
-;
+  const totalPrice = cart.reduce((acc, item) => {
+    const numericPrice = parseFloat(item.price.toString().replace("₺", "").replace(/[^\d.]/g, ""));
+    return acc + numericPrice * (item.quantity || 1);
+  }, 0);
 
-  const totalPrice = cart.reduce(
-    (acc, item) => acc + item.price * (item.quantity || 1),
-    0
-  );
+  if (!totalPrice || isNaN(totalPrice)) {
+    alert("Geçersiz fiyat bilgisi, ödeme başlatılamadı.");
+    return;
+  }
 
-  const discountedTotal = discountRate
+  const finalPrice = discountRate
     ? totalPrice * (1 - discountRate / 100)
     : totalPrice;
 
   try {
-       console.log("🔍 Gönderilen veriler:", {
-  cart,
-  billingInfo: formData,
-  packageName: cart[0]?.name,
-  discountRate,
-  couponCode,
-  totalPrice,
-})
+    console.log("🔍 Gönderilen veriler:", {
+      cart,
+      billingInfo: formData,
+      packageName: cart[0]?.name,
+      discountRate,
+      couponCode,
+      totalPrice: finalPrice,
+    });
+
     const response = await axios.post(
       "/api/orders/prepare",
       {
@@ -92,7 +96,7 @@ const PaymentPage = () => {
         packageName: cart[0]?.name,
         discountRate,
         couponCode,
-        totalPrice: discountedTotal, // ✅ eklendi
+        totalPrice: finalPrice,
       },
       {
         headers: {
@@ -107,16 +111,17 @@ const PaymentPage = () => {
     } else {
       alert("Ödeme başlatılamadı.");
     }
- } catch (error) {
-  console.error("❌ Ödeme hazırlanırken hata:", error);
-  if (error.response?.data) {
-    console.error("🧠 Detaylı hata:", error.response.data); // bu satır eklendi
-    alert(error.response.data.error || "Sipariş hazırlığı sırasında hata oluştu.");
-  } else {
-    alert("Sipariş hazırlığı sırasında hata oluştu.");
+  } catch (error) {
+    console.error("❌ Ödeme hazırlanırken hata:", error);
+    if (error.response?.data) {
+      console.error("🧠 Detaylı hata:", error.response.data);
+      alert(error.response.data.error || "Sipariş hazırlığı sırasında hata oluştu.");
+    } else {
+      alert("Sipariş hazırlığı sırasında hata oluştu.");
+    }
   }
-}
 };
+
 
 
 
