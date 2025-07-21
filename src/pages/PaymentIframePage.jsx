@@ -2,8 +2,6 @@ import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../cssFiles/paymentIframe.css";
 
-
-
 const PaymentIframePage = () => {
   const { token } = useParams();
   const navigate = useNavigate();
@@ -11,6 +9,13 @@ const PaymentIframePage = () => {
   useEffect(() => {
     if (!token) {
       console.error("⚠️ Ödeme token'ı bulunamadı.");
+      return;
+    }
+
+    // Eğer mobil cihazsa yönlendirme yap
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      window.location.href = `https://www.paytr.com/odeme/guvenli/${token}`;
     }
   }, [token]);
 
@@ -28,30 +33,26 @@ const PaymentIframePage = () => {
   }, [navigate]);
 
   return (
-    <>
     <div className="iframe-container">
       {token ? (
         <iframe
-  src={`https://www.paytr.com/odeme/guvenli/${token}`}
-  id="paytriframe"
-  title="Ödeme Sayfası"
-  allowFullScreen
-  style={{
-    width: "100%",
-    height: "100vh",
-    minHeight: "1500px",
-    border: "none",
-    overflow: "auto",
-    WebkitOverflowScrolling: "touch",
-    display: "block"
-  }}
-/>
+          src={`https://www.paytr.com/odeme/guvenli/${token}`}
+          id="paytriframe"
+          title="Ödeme Sayfası"
+          allowFullScreen
+          style={{
+            width: "100%",
+            height: "1500px",
+            border: "none",
+            overflow: "auto",
+            WebkitOverflowScrolling: "touch",
+            display: "block",
+          }}
+        />
       ) : (
         <div className="error-message">⚠️ Ödeme sayfası yüklenemedi.</div>
       )}
     </div>
-   
-    </>
   );
 };
 
