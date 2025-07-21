@@ -36,6 +36,7 @@ const PaymentIframePage = () => {
           id="paytriframe"
           scrolling="yes"
           allowFullScreen
+          title="Ödeme Sayfası"
         ></iframe>
       ) : (
         <div className="error-message">⚠️ Ödeme sayfası yüklenemedi.</div>
