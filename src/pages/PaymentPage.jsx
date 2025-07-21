@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
 import { useNavigate } from "react-router-dom";
@@ -26,32 +26,33 @@ const PaymentPage = () => {
   const [discountRate, setDiscountRate] = useState(0);
   const [couponMessage, setCouponMessage] = useState("");
 
-  const total = cart.reduce((sum, item) => {
-    const price = parseFloat(item.price.replace("₺", "").replace(/[^\d.]/g, ""));
-    return sum + price * (item.quantity || 1);
-  }, 0);
+  const total = useMemo(() => {
+    return cart.reduce((sum, item) => {
+      const price = parseFloat(item.price?.toString().replace("₺", "").replace(/[^\d.]/g, ""));
+      return sum + price * (item.quantity || 1);
+    }, 0);
+  }, [cart]);
 
-
-
-  const discountedTotal =
-    discountRate > 0 ? total - (total * discountRate) / 100 : total;
+  const discountedTotal = useMemo(() => {
+    return discountRate > 0 ? total * (1 - discountRate / 100) : total;
+  }, [total, discountRate]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
 
-  
-
   const handleApplyCoupon = async () => {
     try {
       const token = localStorage.getItem("token");
       const userId = JSON.parse(atob(token.split(".")[1])).id;
+
       const res = await axios.post(
         "/api/coupon/validate",
         { code: couponCode, userId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       setDiscountRate(res.data.discountRate);
       setCouponMessage("✅ Kupon başarıyla uygulandı");
     } catch (err) {
@@ -60,92 +61,70 @@ const PaymentPage = () => {
     }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const token = localStorage.getItem("token");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
 
-  const totalPrice = cart.reduce((acc, item) => {
-    const numericPrice = parseFloat(item.price.toString().replace("₺", "").replace(/[^\d.]/g, ""));
-    return acc + numericPrice * (item.quantity || 1);
-  }, 0);
+    if (!discountedTotal || isNaN(discountedTotal)) {
+      alert("Geçersiz fiyat bilgisi, ödeme başlatılamadı.");
+      return;
+    }
 
-  if (!totalPrice || isNaN(totalPrice)) {
-    alert("Geçersiz fiyat bilgisi, ödeme başlatılamadı.");
-    return;
-  }
-
-  const finalPrice = discountRate
-    ? totalPrice * (1 - discountRate / 100)
-    : totalPrice;
-
-  try {
-    console.log("🔍 Gönderilen veriler:", {
-      cart,
-      billingInfo: formData,
-      packageName: cart[0]?.name,
-      discountRate,
-      couponCode,
-      totalPrice: finalPrice,
-    });
-
-    const response = await axios.post(
-      "/api/orders/prepare",
-      {
+    try {
+      console.log("🔍 Gönderilen veriler:", {
         cart,
         billingInfo: formData,
         packageName: cart[0]?.name,
         discountRate,
         couponCode,
-        totalPrice: finalPrice,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+        totalPrice: discountedTotal,
+      });
+
+      const response = await axios.post(
+        "/api/orders/prepare",
+        {
+          cart,
+          billingInfo: formData,
+          packageName: cart[0]?.name,
+          discountRate,
+          couponCode,
+          totalPrice: discountedTotal,
         },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const paytrToken = response.data?.token;
+      if (paytrToken) {
+        navigate(`/payment/iframe/${paytrToken}`);
+      } else {
+        alert("Ödeme başlatılamadı.");
       }
-    );
-
-    const paytrToken = response.data?.token;
-    if (paytrToken) {
-      navigate(`/payment/iframe/${paytrToken}`);
-    } else {
-      alert("Ödeme başlatılamadı.");
+    } catch (error) {
+      console.error("❌ Ödeme hazırlanırken hata:", error);
+      if (error.response?.data) {
+        console.error("🧠 Detaylı hata:", error.response.data);
+        alert(error.response.data.error || "Sipariş hazırlığı sırasında hata oluştu.");
+      } else {
+        alert("Sipariş hazırlığı sırasında hata oluştu.");
+      }
     }
-  } catch (error) {
-    console.error("❌ Ödeme hazırlanırken hata:", error);
-    if (error.response?.data) {
-      console.error("🧠 Detaylı hata:", error.response.data);
-      alert(error.response.data.error || "Sipariş hazırlığı sırasında hata oluştu.");
-    } else {
-      alert("Sipariş hazırlığı sırasında hata oluştu.");
-    }
-  }
-};
-
-
-
+  };
 
   return (
     <div className="payment-container">
       <form className="payment-form" onSubmit={handleSubmit}>
         <div className="payment-form-header">
           <h2>İletişim</h2>
-          {user ? (
-            <span className="login-link">{user.name}</span>
-          ) : (
-            <a href="/login" className="login-link">Oturum aç</a>
-          )}
+          {user ? <span className="login-link">{user.name}</span> : <a href="/login">Oturum aç</a>}
         </div>
 
-<input
-  type="email"
-  name="email"
-  value={formData.email}
-  placeholder="E-posta"
-  required
-  onChange={handleInputChange}
-/>      
-<label>
+        <input type="email" name="email" value={formData.email} placeholder="E-posta" required onChange={handleInputChange} />
+
+        <label>
           <input type="checkbox" checked={formData.allowEmails} name="allowEmails" onChange={handleInputChange} />
           Bana e-posta gönderilmesine izin veriyorum.
         </label>
@@ -166,7 +145,6 @@ const handleSubmit = async (e) => {
         <button type="submit" className="pay-button">Şimdi öde</button>
       </form>
 
-    
       <div className="payment-summary">
         <h4>Sepet Özeti</h4>
         <ul>
@@ -177,10 +155,7 @@ const handleSubmit = async (e) => {
                 <p>{item.description}</p>
               </div>
               <div>
-                ₺{(
-                  parseFloat(item.price.replace("₺", "").replace(/[^\d.]/g, "")) *
-                  item.quantity
-                ).toFixed(2)}
+                ₺{(parseFloat(item.price.replace("₺", "").replace(/[^\d.]/g, "")) * item.quantity).toFixed(2)}
               </div>
             </li>
           ))}
@@ -200,9 +175,7 @@ const handleSubmit = async (e) => {
               Uygula
             </button>
           </div>
-          {couponMessage && (
-            <p className="mt-1 text-sm text-gray-700">{couponMessage}</p>
-          )}
+          {couponMessage && <p className="mt-1 text-sm text-gray-700">{couponMessage}</p>}
         </div>
 
         <div className="summary-total">
@@ -219,7 +192,7 @@ const handleSubmit = async (e) => {
         </div>
 
         <div className="refund-note">
-          📝 Siparişinizi teslim aldıktan sonra <strong>5 gün içinde</strong>Koşulsuz cayma hakkınız bulunmaktadır.
+          📝 Siparişinizi teslim aldıktan sonra <strong>5 gün içinde</strong> koşulsuz cayma hakkınız bulunmaktadır.
         </div>
       </div>
     </div>
