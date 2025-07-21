@@ -105,14 +105,22 @@ function App() {
             }
           />
 
+            <Route
+            path="/payment/iframe/:token"
+            element={
+              <PrivateRoute>
+                <PaymentIframePage />
+              </PrivateRoute>
+            }
+          />
+          
+
           {/* Sepet ve Detay Sayfaları */}
           <Route path="/cart" element={<CartPage />} />
           <Route path="/package-detail" element={<PackageDetail />} />
           <Route path="/coach-detail" element={<CoachDetail />} />
           <Route path="/ucretsiz-on-gorusme" element={<ContactPage />} />
-          <PrivateRoute>
-          <Route path="/payment/iframe/:token" element={<PaymentIframePage />} />
-          </PrivateRoute>
+        
           <Route path="/payment-fail" element={<PaymentFailPage />} />
 
           {/* Admin Panel */}
