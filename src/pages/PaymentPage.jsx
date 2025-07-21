@@ -7,7 +7,7 @@ import "../cssFiles/payment.css";
 const user = JSON.parse(localStorage.getItem("user"));
 
 const PaymentPage = () => {
-  const { cart, clearCart } = useCart();
+  const { cart } = useCart();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
