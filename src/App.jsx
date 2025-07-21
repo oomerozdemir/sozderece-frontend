@@ -163,15 +163,12 @@ export default App;
 ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
 otomatık odeme/abonelık sıstemını ekle
 Ilerde bu guvenlı gırısı gelıstırırız sımdılık sadece e posta dogrulaması yeterlı
-
-mail gonderimlerindeki mail iceriginni daha profesyonel yapalim
+telefona sms ı de ekleyelım
 
 ONEMLI!!! Odeme sonrası fatura gonderımı yapacagız
 KDV GEREKLI MI GEREKSIZ MI FATURA DA BUNU SOR
 
 ilerde paketler bolumunu admin panelinden ekleme özelliğini getirebliriz veya farklı bir sistem
-
-
 
 
 İleride Eklenebilecek Özellikler
@@ -331,4 +328,22 @@ Tüm alanlarda null, undefined, "" gibi değerleri engelle.
 
 
 bildirim sistemiini ekle tum deneyimler icin
+
+FATURA AKIS DIYAGRAMI
+[ Kullanıcı ] 
+     ↓
+Ödeme Formunu Doldurur
+     ↓
+[ PayTR Ödeme Sayfası ]
+     ↓
+Ödeme Başarılı → [ callback_url ]
+     ↓
+Sunucunuzda "Sipariş Güncellenir" (status = paid)
+     ↓
+Fatura API'ye İstek (Paraşüt / Logo İşbaşı / Mükellef)
+     ↓
+Fatura PDF olarak oluşturulur
+     ↓
+PDF kullanıcıya e-posta ile gönderilir
+
 */

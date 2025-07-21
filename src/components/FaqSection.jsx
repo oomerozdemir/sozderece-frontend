@@ -14,21 +14,10 @@ const faqs = [
     answer: "Tüm birebir görüşmelerimiz Zoom veya Google Meet üzerinden online olarak gerçekleşir.Görüşme sırasında öğrenci ve koç birlikte haftalık program hazırlar, hedefler belirlenir, motivasyon desteği sağlanır.",
   },
   {
-    question: "Ne sıklıkla görüşülüyor?",
-    answer: "Tüm paketlerde haftada 1 kez birebir online görüşme yapılır.Premium pakette buna ek olarak haftada 1 özel ders vardır.Ayrıca öğrenci, WhatsApp üzerinden gün içinde istediği an koçuna ulaşabilir.",
-  },
-  {
     question: "Veli bilgilendirmesi yapılıyor mu?",
     answer: "Evet, 15 günde bir veliyle birebir görüşme yapılır.Öğrencinin gelişimi, motivasyonu ve ihtiyaçları detaylı olarak paylaşılır.Koç–öğrenci–veli üçgeninde şeffaf ve güvenli bir iletişim kurulur.",
   },
-  {
-   question: "Özel dersleri kim veriyor?",
-   answer: "Özel dersler, alanında uzman, sınav sistemine hâkim öğretmenler tarafından birebir şekilde online yapılır.Öğrenci ihtiyacına göre dersi (TYT, AYT, LGS) kendisi belirler.",
-  },
-  {
-    question: "Hangi derslerde destek alabilirim?",
-    answer: "YKS için: Türkçe, Matematik, Geometri, Fizik, Kimya, Biyoloji, Tarih, Coğrafya LGS için: Türkçe, Matematik, Fen Bilimleri, İnkılap Tarihi, Din Kültürü",
-  },
+
   {
     question:  "Programlar hazır mı veriliyor, kişiye özel mi hazırlanıyor?",
     answer: "Tüm programlar öğrenciyle birlikte, bireysel ihtiyaçlara göre hazırlanır.Hiçbir plan otomatik ya da hazır değildir.",
@@ -36,14 +25,6 @@ const faqs = [
   {
     question: "Motivasyon desteği nasıl sağlanıyor?",
     answer:   "Koçlar öğrencilerle sadece ders değil, duygu bazlı iletişim de kurar.Motivasyon eksikliğinde yönlendirici olur, öğrenciyi “başarabilirim” inancına geri getirir.",
-  },
-  {
-    question: "Deneme sınavları nasıl gönderiliyor?",
-    answer: "Sözderece’nin anlaşmalı olduğu kaliteli yayınlardan seçilen denemeler, öğrenciye dijital veya basılı şekilde ulaştırılır.Her ay 4 adet gönderim yapılır.",
-  },
-  {
-    question:"1 hafta ücretsiz deneme nedir?",
-    answer: "Sözderece’ye başlamadan önce öğrencinin sistemi deneyimleyebilmesi için 1 hafta ücretsiz olarak birebir koçluk sunulur.Bu sayede öğrenci doğru sistemle başlayıp başlamadığını hissedebilir.",
   },
 ];
 
