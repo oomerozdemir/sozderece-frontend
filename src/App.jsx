@@ -178,6 +178,9 @@ export default App;
 -Ilerde bu guvenlı gırısı gelıstırırız sımdılık sadece e posta dogrulaması yeterlı
 -telefona sms ı de ekleyelım gıt push yapmadan dıkkat et backend de createVerıfıcatıon fonksıyonu degıstı
 
+iade talebi gonderildiginde bana mail gelsin ayrica iade talebi yerinde siparisle ilgili fiyat bilgisi de olsun
+
+
 -ONEMLI!!! Odeme sonrası fatura gonderımı yapacagız.KDV GEREKLI MI GEREKSIZ MI FATURA DA BUNU SOR
 
 -ilerde paketler bolumunu admin panelinden ekleme özelliğini getirebliriz veya farklı bir sistem

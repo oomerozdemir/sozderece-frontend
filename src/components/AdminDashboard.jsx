@@ -342,7 +342,7 @@ const handleBillingUpdate = async (orderId) => {
                 
                 <div className="order-details">
                   <p><strong>Sipariş ID:</strong> {order.id}</p>
-                  {order.status === "pending" && (
+               {["pending", "pending_payment"].includes(order.status) && (
   <button
     onClick={async () => {
       const token = localStorage.getItem("token");
@@ -360,7 +360,7 @@ const handleBillingUpdate = async (orderId) => {
         window.location.reload();
       } catch (err) {
         alert("Durum sorgusu başarısız.");
-        console.error("PayTR durum sorgu hatası:");
+        console.error("PayTR durum sorgu hatası:", err);
       }
     }}
     className="paytr-status-btn"
@@ -368,6 +368,7 @@ const handleBillingUpdate = async (orderId) => {
     🔄 Ödeme Durumunu Sorgula
   </button>
 )}
+
 
                 <p><strong>Oluşturulma:</strong> {new Date(order.createdAt).toLocaleString("tr-TR")}</p>
                 <p><strong>Paket Adı:</strong> {order.package}</p>
