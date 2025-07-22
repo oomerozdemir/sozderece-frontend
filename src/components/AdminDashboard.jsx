@@ -342,7 +342,7 @@ const handleBillingUpdate = async (orderId) => {
                 
                 <div className="order-details">
                   <p><strong>Sipariş ID:</strong> {order.id}</p>
-                  {order.status === "pending_payment" && (
+                  {order.status === "pending" && (
   <button
     onClick={async () => {
       const token = localStorage.getItem("token");
