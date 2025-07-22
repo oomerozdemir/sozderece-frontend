@@ -42,24 +42,32 @@ const PaymentPage = () => {
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
 
-  const handleApplyCoupon = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const userId = JSON.parse(atob(token.split(".")[1])).id;
-
-      const res = await axios.post(
-        "/api/coupon/validate",
-        { code: couponCode, userId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      setDiscountRate(res.data.discountRate);
-      setCouponMessage("✅ Kupon başarıyla uygulandı");
-    } catch (err) {
-      setDiscountRate(0);
-      setCouponMessage(err.response?.data?.error || "Kupon doğrulanamadı");
+ const handleApplyCoupon = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setCouponMessage("🔒 Giriş yapmanız gerekiyor");
+      return;
     }
-  };
+
+    const res = await axios.post(
+      "/api/coupon/validate",
+      { code: couponCode },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setDiscountRate(res.data.discountRate);
+    setCouponMessage("✅ Kupon başarıyla uygulandı");
+  } catch (err) {
+    setDiscountRate(0);
+    setCouponMessage(err.response?.data?.error || "❌ Kupon doğrulanamadı");
+  }
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
