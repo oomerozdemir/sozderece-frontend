@@ -170,10 +170,6 @@ export default App;
 
 
 /*
-ONEMLI
-Sıparısler ıframe sayfasına gırdıgınde paytr ye gondermıyor
-ancak sıparıs olusturulmus gıbı gozukuyor odemesı basarısız bır sekılde
-
 
 2-odeme durumunu sorgula butonu admın panelınde her sıparıs de cıkmıyor bunu arastır
 1-koclara ogrencı atandıgında bıldırım gıtsın aynı sekılde ogrencıye de
