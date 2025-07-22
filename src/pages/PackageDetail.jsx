@@ -32,7 +32,7 @@ const PackageDetail = () => {
   const [selected, setSelected] = useState(null);
   const [activeIndex, setActiveIndex] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const isPaymentDisabled = true;
+  const isPaymentDisabled = false;
   const { addToCart } = useCart();
 
 const handleContinue = () => {
