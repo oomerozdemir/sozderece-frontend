@@ -342,6 +342,8 @@ const handleBillingUpdate = async (orderId) => {
                 
                 <div className="order-details">
                   <p><strong>Sipariş ID:</strong> {order.id}</p>
+                  <p><strong>Status Debug:</strong> {order.status}</p>
+
                {["pending", "pending_payment"].includes(order.status) && (
   <button
     onClick={async () => {
