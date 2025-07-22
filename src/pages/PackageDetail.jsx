@@ -22,7 +22,7 @@ const packageList = [
   {
     slug: "yks-2026-paketi",
     name: "YKS 2026 PAKETİ",
-    price: "25₺ / ay",
+    price: "2500₺ / ay",
     subtitle: "Disiplinli bir sınav süreci için ihtiyaç duyduğun temel destek burada!"
   }
 ];
