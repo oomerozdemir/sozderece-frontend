@@ -179,6 +179,17 @@
   z-index: 5;
 }
 
+.verified-paragraph {
+  color: #201932a6;
+  padding-top: 8px;
+}
+
+.verified-paragraph img {
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
 
 
 @media (max-width: 768px) {

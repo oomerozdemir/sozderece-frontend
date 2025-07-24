@@ -170,8 +170,9 @@ export default App;
 
 
 /*
+paymentPage de mobıl ıcın sepet ozetı yukarda kalsın
+fatura bılgılerınde tcnoyu da al
 
-2-odeme durumunu sorgula butonu admın panelınde her sıparıs de cıkmıyor bunu arastır
 1-koclara ogrencı atandıgında bıldırım gıtsın aynı sekılde ogrencıye de
 -ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
 -otomatık odeme/abonelık sıstemını ekle
