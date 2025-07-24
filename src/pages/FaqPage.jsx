@@ -3,7 +3,10 @@ import "../cssFiles/FaqSection.css";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { motion } from "framer-motion";
 import coachImage from "../assets/manager.svg";
-
+import { Helmet } from "react-helmet";
+import TopBar from "../components/TopBar";
+import Footer from "../components/Footer";
+import Navbar from "../components/navbar";
 
 const faqs = [
   {
@@ -76,8 +79,25 @@ export default function FaqSection() {
 
   return (
     
-
-
+    <>
+    <Helmet>
+  <script type="application/ld+json">
+    {JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": faqs.map((item) => ({
+        "@type": "Question",
+        "name": item.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.answer,
+        },
+      })),
+    })}
+  </script>
+</Helmet>
+ <TopBar />
+ <Navbar />
     <motion.section
   className="faq-section"
   variants={containerVariants}
@@ -130,6 +150,8 @@ export default function FaqSection() {
         transition={{ duration: 1.2, ease: "easeOut" }}
       />
     </motion.section>
+    <Footer />
 
+    </>
   );
 }

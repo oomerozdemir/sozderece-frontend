@@ -68,6 +68,8 @@ const Navbar = () => {
   <li><NavLink to="/coach-detail" className={({ isActive }) => isActive ? "active" : ""}>EKİBİMİZ</NavLink></li>
   <li><NavLink to="/package-detail" className={({ isActive }) => isActive ? "active" : ""}>KOÇLUK AL!</NavLink></li>
   <li><NavLink to="/ucretsiz-on-gorusme" className={({ isActive }) => isActive ? "active" : ""}>İLETİŞİM</NavLink></li>
+  <li><NavLink to="/sss" className={({ isActive }) => isActive ? "active" : ""}>SSS</NavLink></li>
+
 </ul>
 
 

@@ -35,6 +35,7 @@ const PaymentFailPage = lazy(() => import("./pages/PaymentFailPage"));
 const MesafeliSozlesme = lazy(() => import("./pages/MesafeliSozlesme"));
 const IadeVeCaymaPolitikasi = lazy(() => import("./pages/IadeVeCayma"));
 const GizlilikPolitikasiKvkk = lazy(() => import("./pages/GizlilikPolitikasi"));
+const FaqPage = lazy(() => import("./pages/FaqPage.jsx"));
 
 function App() {
   const location = useLocation();
@@ -52,6 +53,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/sss" element={<FaqPage/>} />
 
             {/* Korunan sayfalar */}
             <Route path="/coach/dashboard" element={<RoleRoute allowedRoles={["coach"]}><CoachDashboard /></RoleRoute>} />
