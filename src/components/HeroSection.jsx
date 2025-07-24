@@ -24,10 +24,6 @@ const HeroSection = () => {
       <p>
         Derece yapmış koçlarımızla YKS ve LGS sürecinde birebir koçluk
         hizmeti sunuyoruz.
-        Koçluk sistemimizle öğrencilerimizin 
-        bireysel potansiyellerini ortaya çıkarmalarına, 
-        hedeflerine kararlı adımlarla ilerlemelerine ve potansiyellerini 
-        en üst seviyeye taşımalarına destek oluyoruz.
       </p>
       <a href="#paketler" className="hero-button">
         <FontAwesomeIcon icon={faRocket} style={{ marginRight: "8px" }} />

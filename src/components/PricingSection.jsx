@@ -87,6 +87,7 @@ function PricingSection() {
           <h3>
             <span className="package-icon">{packageData.icon}</span> {packageData.name}
           </h3>
+          <p className="kontenjan-bilgi-pricingSection">Sınırlı kontenjan — Erkenden başvurun!</p>
           <p className="pricing-subtitle">{packageData.subtitle}</p>
           <p className="price">{packageData.price}</p>
           <ul>

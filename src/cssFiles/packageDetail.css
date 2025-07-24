@@ -302,6 +302,41 @@
   filter: grayscale(0.2);
 }
 
+.kontenjan-bilgi-blok {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.kontenjan-title {
+  font-size: 0.9rem;
+  color: #64748b; /* Silik gri */
+  margin-bottom: 4px;
+}
+
+.kontenjan-bilgi {
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #16a34a; /* Yeşil */
+}
+
+.yanip-sonen-simge {
+  width: 10px;
+  height: 10px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  margin-right: 8px;
+  animation: yan-son 1s infinite;
+}
+
+@keyframes yan-son {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 
 
 /* Masaüstü için (min-width: 769px) resimler dikey sıralansın */

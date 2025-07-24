@@ -17,13 +17,15 @@ const packageList = [
     slug: "lgs-2026-paketi",
     name: "LGS 2026 PAKETİ",
     price: "2500₺ / ay",
-    subtitle: "Disiplinli bir sınav süreci için ihtiyaç duyduğun temel destek burada!"
+    subtitle: "Disiplinli bir sınav süreci için ihtiyaç duyduğun temel destek burada!",
+    kontenjan: 89,
   },
   {
     slug: "yks-2026-paketi",
     name: "YKS 2026 PAKETİ",
     price: "2500₺ / ay",
-    subtitle: "Disiplinli bir sınav süreci için ihtiyaç duyduğun temel destek burada!"
+    subtitle: "Disiplinli bir sınav süreci için ihtiyaç duyduğun temel destek burada!",
+    kontenjan: 87,
   }
 ];
 
@@ -147,8 +149,18 @@ const handleContinue = () => {
 
           <p className="package-info">
             <FaMedal style={{ marginRight: "8px", color: "#f4b400" }} />
-            Size özel dünya standartlarında profesyonel programlama ve sınırsız Whatsapp iletişimi. 12 aya kadar taksitle, güvenli ödeme imkanıyla.
+            Size özel programlama ve sınırsız Whatsapp iletişimi. 12 aya kadar taksitle, güvenli ödeme imkanıyla.
           </p>
+          {selected?.kontenjan !== undefined && (
+  <div className="kontenjan-bilgi-blok">
+    <p className="kontenjan-title">Kontenjan durumu</p>
+    <div className="kontenjan-bilgi">
+      <span className="yanip-sonen-simge"></span>
+      SON {selected.kontenjan} KİŞİ
+    </div>
+  </div>
+)}
+          
 
           <div className="package-guarantees">
             <div className="guarantee-item">

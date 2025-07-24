@@ -189,6 +189,13 @@
   vertical-align: middle;
   margin-right: 8px;
 }
+.kontenjan-bilgi-pricingSection {
+  color: #c82333; 
+  font-weight: 500;
+  margin-bottom: 12px;
+  align-items: center;
+  font-size: 0.95rem;
+}
 
 
 
