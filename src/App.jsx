@@ -170,7 +170,7 @@ export default App;
 
 
 /*
-paymentPage de mobıl ıcın sepet ozetı yukarda kalsın
+
 fatura bılgılerınde tcnoyu da al
 
 1-koclara ogrencı atandıgında bıldırım gıtsın aynı sekılde ogrencıye de
