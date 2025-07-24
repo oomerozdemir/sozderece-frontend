@@ -207,7 +207,7 @@ h4 {
 
 @media (max-width: 768px) {
   .payment-container {
-    flex-direction: column;
+    flex-direction: column-reverse;
     padding: 20px;
     gap: 24px;
   }
