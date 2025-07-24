@@ -199,24 +199,3 @@
 
 
 
-@media (max-width: 768px) {
-  .pricing-card-horizontal.no-image {
-    flex-direction: column;
-    padding: 20px;
-  }
-
-  .pricing-card-content {
-    text-align: center;
-    margin: 0 auto;
-  }
-
-  .pricing-card-content ul {
-    text-align: center;
-  }
-   .grade-badge {
-    top: 6px; 
-    right: 10px;
-    font-size: 0.7rem;
-    padding: 3px 8px;
-  }
-}
