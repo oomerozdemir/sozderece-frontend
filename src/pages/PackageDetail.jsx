@@ -5,6 +5,7 @@ import "../cssFiles/packageDetail.css";
 import Navbar from "../components/navbar";
 import Topbar from "../components/TopBar";
 import useCart from "../hooks/useCart";
+import { Helmet } from "react-helmet";
 
 const packageList = [
   /*{
@@ -112,7 +113,16 @@ const handleContinue = () => {
   
 
   return (
+    
     <>
+    <Helmet>
+  <title>{selected.name} | Sözderece Koçluk</title>
+  <meta name="description" content={selected.subtitle} />
+  <meta property="og:title" content={`${selected.name} | Sözderece Koçluk`} />
+  <meta property="og:description" content={selected.subtitle} />
+  <meta property="og:url" content={`https://sozderecekocluk.com/package-detail?paket=${selected.slug}`} />
+</Helmet>
+
       <Topbar />
       <Navbar />
       <div className="package-detail-layout">
@@ -199,7 +209,7 @@ const handleContinue = () => {
         Tüm ödemeler 256-bit SSL sertifikası ile güvence altındadır.
         </p>
           <button className="choose-coach-button" onClick={handleContinue}>
-            Devam Et
+           Hemen Süreci Başlat!
           </button>
 
           <div className="accordion-container">

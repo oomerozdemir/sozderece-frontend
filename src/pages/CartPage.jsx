@@ -2,7 +2,6 @@ import { useState } from "react";
 import useCart from "../hooks/useCart";
 import "../cssFiles/cart.css";
 import { CgTrash } from "react-icons/cg";
-import { TbRefresh } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";

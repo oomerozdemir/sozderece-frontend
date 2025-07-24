@@ -1,30 +1,6 @@
 import { AnimatePresence } from "framer-motion";
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import AboutPage from "./pages/AboutPage";
-import CoachDashboard from "./pages/CoachDashboard";
-import StudentDashboard from "./pages/StudentDashboard";
-import LoginPage from "./pages/LoginPage";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-import AccountPage from "./pages/AccountPage";
-import OrdersPage from "./pages/OrdersPage";
-import CartPage from "./pages/CartPage";
-import AdminApp from "./pages/AdminApp";
-import PaymentPage from "./pages/PaymentPage";
-import OrderSuccessPage from "./pages/OrderSuccessPage";
-import RefundRequests from "./pages/RefundRequest";
-import PackageDetail from "./pages/PackageDetail";
-import CoachDetail from "./pages/CoachDetailPage";
-import AdminCoachPage from "./pages/AdminCoachPage";
-import AdminCouponPage from "./pages/AdminCouponPage";
-import ContactPage from "./pages/ContactPage";
-import PaymentIframePage from "./pages/PaymentIframePage";
-import PaymentFailPage from "./pages/PaymentFailPage";
-import MesafeliSozlesme from "./pages/MesafeliSozlesme.jsx";
-import IadeVeCaymaPolitikasi from "./pages/IadeVeCayma.jsx";
-import GizlilikPolitikasiKvkk from "./pages/GizlilikPolitikasi.jsx";
-
+import { Routes, Route, useLocation } from "react-router-dom";
+import { lazy, Suspense } from "react";
 
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import RoleRoute from "./components/RoleRoutes.jsx";
@@ -34,6 +10,31 @@ import "./cssFiles/index.css";
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 
+// Lazy yüklenen sayfalar
+const HomePage = lazy(() => import("./pages/HomePage"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const CoachDashboard = lazy(() => import("./pages/CoachDashboard"));
+const StudentDashboard = lazy(() => import("./pages/StudentDashboard"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const AccountPage = lazy(() => import("./pages/AccountPage"));
+const OrdersPage = lazy(() => import("./pages/OrdersPage"));
+const CartPage = lazy(() => import("./pages/CartPage"));
+const AdminApp = lazy(() => import("./pages/AdminApp"));
+const PaymentPage = lazy(() => import("./pages/PaymentPage"));
+const OrderSuccessPage = lazy(() => import("./pages/OrderSuccessPage"));
+const RefundRequests = lazy(() => import("./pages/RefundRequest"));
+const PackageDetail = lazy(() => import("./pages/PackageDetail"));
+const CoachDetail = lazy(() => import("./pages/CoachDetailPage"));
+const AdminCoachPage = lazy(() => import("./pages/AdminCoachPage"));
+const AdminCouponPage = lazy(() => import("./pages/AdminCouponPage"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
+const PaymentIframePage = lazy(() => import("./pages/PaymentIframePage"));
+const PaymentFailPage = lazy(() => import("./pages/PaymentFailPage"));
+const MesafeliSozlesme = lazy(() => import("./pages/MesafeliSozlesme"));
+const IadeVeCaymaPolitikasi = lazy(() => import("./pages/IadeVeCayma"));
+const GizlilikPolitikasiKvkk = lazy(() => import("./pages/GizlilikPolitikasi"));
 
 function App() {
   const location = useLocation();
@@ -41,125 +42,40 @@ function App() {
   return (
     <div className="App">
       <AnimatePresence mode="wait">
-        <Routes location={location} key={location.pathname}>
-          {/* Genel Sayfalar */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/hakkimizda" element={<AboutPage />} />
-          <Route path="/mesafeli-hizmet-sozlesmesi" element={<MesafeliSozlesme />} />
-          <Route path="/iade-ve-cayma-politikasi" element={<IadeVeCaymaPolitikasi />} />
-          <Route path="/gizlilik-politikasi-kvkk" element={<GizlilikPolitikasiKvkk />} />
+        <Suspense fallback={<div className="loading">Yükleniyor...</div>}>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/hakkimizda" element={<AboutPage />} />
+            <Route path="/mesafeli-hizmet-sozlesmesi" element={<MesafeliSozlesme />} />
+            <Route path="/iade-ve-cayma-politikasi" element={<IadeVeCaymaPolitikasi />} />
+            <Route path="/gizlilik-politikasi-kvkk" element={<GizlilikPolitikasiKvkk />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
+            {/* Korunan sayfalar */}
+            <Route path="/coach/dashboard" element={<RoleRoute allowedRoles={["coach"]}><CoachDashboard /></RoleRoute>} />
+            <Route path="/student/dashboard" element={<RoleRoute allowedRoles={["student"]}><StudentDashboard /></RoleRoute>} />
+            <Route path="/account" element={<PrivateRoute><AccountPage /></PrivateRoute>} />
+            <Route path="/orders" element={<PrivateRoute><OrdersPage /></PrivateRoute>} />
+            <Route path="/payment" element={<PrivateRoute><PaymentPage /></PrivateRoute>} />
+            <Route path="/order-success" element={<PrivateRoute><OrderSuccessPage /></PrivateRoute>} />
+            <Route path="/payment/iframe/:token" element={<PrivateRoute><PaymentIframePage /></PrivateRoute>} />
 
-          {/* Kimlik Doğrulama */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/package-detail" element={<PackageDetail />} />
+            <Route path="/coach-detail" element={<CoachDetail />} />
+            <Route path="/ucretsiz-on-gorusme" element={<ContactPage />} />
+            <Route path="/payment-fail" element={<PaymentFailPage />} />
 
-          {/* Korunan Sayfalar */}
-          <Route
-            path="/coach/dashboard"
-            element={
-              <RoleRoute allowedRoles={["coach"]}>
-                <CoachDashboard />
-              </RoleRoute>
-            }
-          />
-          <Route
-            path="/student/dashboard"
-            element={
-              <RoleRoute allowedRoles={["student"]}>
-                <StudentDashboard />
-              </RoleRoute>
-            }
-          />
-          <Route
-            path="/account"
-            element={
-              <PrivateRoute>
-                <AccountPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/orders"
-            element={
-              <PrivateRoute>
-                <OrdersPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/payment"
-            element={
-              <PrivateRoute>
-                <PaymentPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/order-success"
-            element={
-              <PrivateRoute>
-                <OrderSuccessPage />
-              </PrivateRoute>
-            }
-          />
+            <Route path="/admin/*" element={<RoleRoute allowedRoles={["admin"]}><AdminApp /></RoleRoute>} />
+            <Route path="/admin/coaches" element={<RoleRoute allowedRoles={["admin"]}><AdminCoachPage /></RoleRoute>} />
+            <Route path="/admin/coupons" element={<RoleRoute allowedRoles={["admin"]}><AdminCouponPage /></RoleRoute>} />
+            <Route path="/admin/refund-requests" element={<RoleRoute allowedRoles={["admin"]}><RefundRequests /></RoleRoute>} />
 
-            <Route
-            path="/payment/iframe/:token"
-            element={
-              <PrivateRoute>
-                <PaymentIframePage />
-              </PrivateRoute>
-            }
-          />
-          
-
-          {/* Sepet ve Detay Sayfaları */}
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/package-detail" element={<PackageDetail />} />
-          <Route path="/coach-detail" element={<CoachDetail />} />
-          <Route path="/ucretsiz-on-gorusme" element={<ContactPage />} />
-        
-          <Route path="/payment-fail" element={<PaymentFailPage />} />
-
-          {/* Admin Panel */}
-          <Route
-            path="/admin/*"
-            element={
-              <RoleRoute allowedRoles={["admin"]}>
-                <AdminApp />
-              </RoleRoute>
-            }
-          />
-          <Route
-            path="/admin/coaches"
-            element={
-              <RoleRoute allowedRoles={["admin"]}>
-                <AdminCoachPage />
-              </RoleRoute>
-            }
-          />
-          <Route
-            path="/admin/coupons"
-            element={
-              <RoleRoute allowedRoles={["admin"]}>
-                <AdminCouponPage />
-              </RoleRoute>
-            }
-          />
-          <Route
-            path="/admin/refund-requests"
-            element={
-              <RoleRoute allowedRoles={["admin"]}>
-                <RefundRequests />
-              </RoleRoute>
-            }
-          />
-
-          {/* Yetkisiz erişim mesajı */}
-          <Route path="/unauthorized" element={<div>Erişim izniniz yok.</div>} />
-        </Routes>
+            <Route path="/unauthorized" element={<div>Erişim izniniz yok.</div>} />
+          </Routes>
+        </Suspense>
       </AnimatePresence>
     </div>
   );

@@ -1,10 +1,8 @@
-import React from "react";
 import "../cssFiles/mesafeliSozlesme.css";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";
 import Navbar from "../components/navbar";
 
-const today = new Date().toLocaleDateString("tr-TR");
 
 const MesafeliHizmetSozlesmesi = () => {
   return (
@@ -15,7 +13,7 @@ const MesafeliHizmetSozlesmesi = () => {
       <h1>📝 MESAFELİ KOÇLUK HİZMET SÖZLEŞMESİ</h1>
 
       <p className="sozlesme-note">
-        🔒 <strong>Önemli Not:</strong> Bu sözleşme, hizmet satın alma işlemi öncesinde kullanıcıya elektronik ortamda sunulmuştur. Kullanıcı, satın alma işlemini tamamlayarak işbu sözleşmeyi okuduğunu, anladığını ve tüm hükümlerini kabul ettiğini beyan eder.
+       <strong>Önemli Not:</strong> Bu sözleşme, hizmet satın alma işlemi öncesinde kullanıcıya elektronik ortamda sunulmuştur. Kullanıcı, satın alma işlemini tamamlayarak işbu sözleşmeyi okuduğunu, anladığını ve tüm hükümlerini kabul ettiğini beyan eder.
       </p>
 
       <p>

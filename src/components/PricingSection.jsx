@@ -1,5 +1,4 @@
 import "../cssFiles/PricingSection.css";
-import { motion } from "framer-motion";
 import {
   FaUserCheck,
   FaChalkboardTeacher,
