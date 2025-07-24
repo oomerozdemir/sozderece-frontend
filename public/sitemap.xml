@@ -4,56 +4,63 @@
   <!-- Ana Sayfa -->
   <url>
     <loc>https://www.sozderecekocluk.com/</loc>
-    <lastmod>2025-07-14</lastmod>
+    <lastmod>2025-07-25</lastmod>
     <priority>1.0</priority>
   </url>
 
   <!-- Hakkımızda -->
   <url>
     <loc>https://www.sozderecekocluk.com/hakkimizda</loc>
-    <lastmod>2025-07-14</lastmod>
+    <lastmod>2025-07-25</lastmod>
     <priority>0.8</priority>
   </url>
 
   <!-- Paketler -->
   <url>
     <loc>https://www.sozderecekocluk.com/paketler</loc>
-    <lastmod>2025-07-14</lastmod>
+    <lastmod>2025-07-25</lastmod>
     <priority>0.9</priority>
   </url>
 
   <!-- Koçlar -->
   <url>
     <loc>https://www.sozderecekocluk.com/coach-detail</loc>
-    <lastmod>2025-07-14</lastmod>
+    <lastmod>2025-07-25</lastmod>
     <priority>0.7</priority>
   </url>
 
   <!-- Paket Detay -->
   <url>
     <loc>https://www.sozderecekocluk.com/package-detail</loc>
-    <lastmod>2025-07-14</lastmod>
+    <lastmod>2025-07-25</lastmod>
     <priority>0.7</priority>
   </url>
 
   <!-- Mesafeli Hizmet Sözleşmesi -->
   <url>
     <loc>https://www.sozderecekocluk.com/mesafeli-sozlesme</loc>
-    <lastmod>2025-07-14</lastmod>
+    <lastmod>2025-07-25</lastmod>
     <priority>0.6</priority>
   </url>
 
   <!-- İade ve Cayma Politikası -->
   <url>
     <loc>https://www.sozderecekocluk.com/iade-ve-cayma-politikasi</loc>
-    <lastmod>2025-07-14</lastmod>
+    <lastmod>2025-07-25</lastmod>
     <priority>0.6</priority>
   </url>
 
   <!-- Gizlilik Politikası ve KVKK -->
   <url>
     <loc>https://www.sozderecekocluk.com/gizlilik-politikasi-kvkk</loc>
-    <lastmod>2025-07-14</lastmod>
+    <lastmod>2025-07-25</lastmod>
+    <priority>0.6</priority>
+  </url>
+
+   <!-- SSS -->
+  <url>
+    <loc>https://www.sozderecekocluk.com/sss</loc>
+    <lastmod>2025-07-25</lastmod>
     <priority>0.6</priority>
   </url>
 
