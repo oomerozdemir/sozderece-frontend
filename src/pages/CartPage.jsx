@@ -32,11 +32,7 @@ const CartPage = () => {
     return;
   }
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user || !user.emailVerified) {
-    alert("Devam etmeden önce hesabım sayfasından e-posta adresinizi doğrulamanız gerekiyor.");
-    return;
-  }
+
 
   navigate("/payment");
 };
