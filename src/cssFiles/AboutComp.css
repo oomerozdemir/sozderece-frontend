@@ -14,7 +14,8 @@
 
 /* === HERO === */
 .about-hero {
-  background: linear-gradient(180deg, #00073a, #000024);
+    background: linear-gradient(180deg, #b89f9f, #080894);
+
   
   color: white;
   padding: 100px 20px;
@@ -27,13 +28,13 @@
 }
 
 .about-hero h1 {
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin-bottom: 20px;
-  color: #ffa500;
+  color: #031083;
 }
 
 .about-hero p {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   color: #ccc;
 }
 

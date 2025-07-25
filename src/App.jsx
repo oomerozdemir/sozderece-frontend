@@ -88,6 +88,8 @@ export default App;
 
 
 /*
+yukleniyor sayfasi ayarla
+packageDetail de resimleri duzenle
 
 fatura bılgılerınde tcnoyu da al
 
@@ -95,7 +97,11 @@ fatura bılgılerınde tcnoyu da al
 -ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
 -otomatık odeme/abonelık sıstemını ekle
 -Ilerde bu guvenlı gırısı gelıstırırız sımdılık sadece e posta dogrulaması yeterlı
--telefona sms ı de ekleyelım gıt push yapmadan dıkkat et backend de createVerıfıcatıon fonksıyonu degıstı
+
+
+
+
+
 
 iade talebi gonderildiginde bana mail gelsin ayrica iade talebi yerinde siparisle ilgili fiyat bilgisi de olsun
 
@@ -279,5 +285,18 @@ Fatura API'ye İstek (Paraşüt / Logo İşbaşı / Mükellef)
 Fatura PDF olarak oluşturulur
      ↓
 PDF kullanıcıya e-posta ile gönderilir
+
+
+
+
+
+*************************************************************************************
+!!!Sms Eklentisi!!! Sımdılık vazgecıldı ılerde yogunlasırsak eklıcem
+Başlangıç için İletiMerkezi veya NetGSM + basit bir Node.js API yeterli.
+
+Pazarlama amaçlı gönderim yapacaksan, KVKK uyumu ve “onay” sistemi çok önemli.
+
+Sistem büyürse, webhook ve mesaj takibi ekleyerek tam bir CRM benzeri yapı kurabilirsin.
+**********************************************************************************************
 
 */

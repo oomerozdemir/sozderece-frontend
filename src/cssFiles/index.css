@@ -17,14 +17,14 @@ body {
 
 
 .hero-section {
-  background: linear-gradient(180deg, #00073a, #000024);
+  background: linear-gradient(180deg, #b89f9f, #080894);
   color: white;
   padding: 40px 20px;
   width: 100%;
 }
 
 .hero-logo {
-  width: 250px;
+  width: 150px;
   height: auto;
   margin: 0 auto 30px;
   display: block;
@@ -85,9 +85,11 @@ body {
 
 /* Top bar css */
 
+/* Top bar css */
+
 .top-bar {
-  background: linear-gradient(180deg, #00073a, #000024);
-  color: white;
+  background: linear-gradient(180deg,  #da6b21, #b89f9f);
+  color: rgb(255, 255, 255);
   font-size: 1rem;
   padding: 8px 0;
 }
@@ -106,19 +108,12 @@ body {
   margin-right: 20px;
   display: inline-flex;
   align-items: center;
+  gap: 8px; /* ikon ile yazı arası boşluk */
 }
 
 .top-bar-left span a {
-  margin-right: 20px;
-  display: inline-flex;
-  align-items: center;
   color: white;
   text-decoration: none;
-}
-
-.top-bar-left i {
-  color: white;
-  margin-right: 8px;
 }
 
 .top-bar-right {
@@ -127,12 +122,15 @@ body {
   gap: 15px;
 }
 
-.top-bar-right i {
-  color: white;
+.top-bar-right a {
+  color: rgb(255, 255, 255);
   font-size: 1.3rem;
   transition: color 0.3s ease;
 }
 
+.top-bar-right a:hover {
+  color: #0509d4; /* ikon hover efekti */
+}
 
 
 
