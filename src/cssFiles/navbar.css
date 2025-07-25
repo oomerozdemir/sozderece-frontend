@@ -21,12 +21,16 @@
 .navbar-left-group {
   display: flex;
   align-items: center;
-  gap: 30px;
 }
+
+.navbar-logo {
+  padding-right: 20px;
+}
+
 .navbar-logo-img {
   height: 80px;
   object-fit: contain;
-}
+} 
 .navbar-inner {
   display: flex;
   align-items: center;
@@ -179,7 +183,7 @@
     grid-template-columns: 1fr auto auto;
     grid-template-areas: "logo hamburger right";
     align-items: center;
-    padding: 14px 20px;
+    padding: 0px 20px;
   }
 
   .navbar-logo {
@@ -259,6 +263,13 @@
   animation: dropdownFadeDown 0.8s ease;
   
 }
+
+   
+
+    .navbar-logo-img {
+  height: 70px;
+}
+
 @keyframes dropdownFadeDown {
   from {
     opacity: 0;
@@ -273,6 +284,10 @@
 
 
 @media (max-width: 768px) {
+.navbar {
+    padding: 0px 16px;
+  }
+
   .navbar-menu {
     flex-direction: column;
     align-items: flex-start;
@@ -284,9 +299,15 @@
 
   .navbar-menu li {
     width: 100%;
-    text-align: left;
     justify-content: flex-start;
   }
+   .hamburger {
+    font-size: 40px;
+  }
+
+    .navbar-logo-img {
+  height: 70px;
+}
 }
 
 @media (max-width: 500px) {
@@ -294,7 +315,7 @@
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
-    padding: 10px 16px;
+    padding: 0px 16px;
   }
   .navbar-menu {
     flex-direction: column;
@@ -310,24 +331,10 @@
     justify-content: flex-start;
   }
 
-  .navbar-right-section {
-    gap: 8px;
-  }
-  .login-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-   .navbar-username {
-    max-width: 100px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 0.85rem;
-    padding: 6px 10px;
-    border-radius: 4px;
-    background-color: #da680b;
-  }
+
+  .navbar-logo-img {
+  height: 60px;
+}
 
   .login-button a {
     padding: 6px 12px;
@@ -335,6 +342,6 @@
   }
 
   .hamburger {
-    font-size: 35px;
+    font-size: 40px;
   }
 }

@@ -120,12 +120,16 @@
 
 /* Mobil görünüm */
 @media (max-width: 768px) {
+
+
   .iletisim-page {
     flex-direction: column;
     gap: 20px;
   }
 
   .info-panel {
+    margin-top: 100px;
+
     text-align: center;
     align-items: center;
   }
