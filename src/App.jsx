@@ -43,7 +43,7 @@ function App() {
   return (
     <div className="App">
       <AnimatePresence mode="wait">
-        <Suspense fallback={<div className="loading">Yükleniyor...</div>}>
+        <Suspense fallback={<div className="loading-spinner"><span></span>Yükleniyor...</div>}>
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<HomePage />} />
             <Route path="/hakkimizda" element={<AboutPage />} />
