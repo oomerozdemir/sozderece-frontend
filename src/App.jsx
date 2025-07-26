@@ -99,7 +99,7 @@ fatura bılgılerınde tcnoyu da al
 
 
 
-
+HAVALE ıle odeme yontemını sısteme ekle nehır kocluktakı gıbı bunu bı arastır.
 
 
 iade talebi gonderildiginde bana mail gelsin ayrica iade talebi yerinde siparisle ilgili fiyat bilgisi de olsun
