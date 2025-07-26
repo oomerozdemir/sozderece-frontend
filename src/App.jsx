@@ -88,7 +88,6 @@ export default App;
 
 
 /*
-yukleniyor sayfasi ayarla
 packageDetail de resimleri duzenle
 
 fatura bılgılerınde tcnoyu da al
