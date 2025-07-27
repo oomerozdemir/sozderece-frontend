@@ -18,6 +18,7 @@ const PaymentPage = () => {
     district: "",
     city: "",
     postalCode: "",
+    tcNo: "",
     phone: "",
     allowEmails: false,
   });
@@ -77,6 +78,12 @@ const PaymentPage = () => {
       alert("Geçersiz fiyat bilgisi, ödeme başlatılamadı.");
       return;
     }
+
+     // TC Kimlik No geçerlilik kontrolü
+  if (!/^[1-9][0-9]{10}$/.test(formData.tcno)) {
+    alert("Lütfen geçerli bir 11 haneli TC Kimlik Numarası girin.");
+    return;
+  }
 
     try {
      
@@ -139,6 +146,10 @@ const PaymentPage = () => {
           <input name="surname" value={formData.surname} placeholder="Soyad" onChange={handleInputChange} required />
         </div>
         <div className="input-row-half">
+          <input name="tcno" value={formData.tcNo} placeholder="TC Kimlik Numarası" maxLength="11"onChange={handleInputChange} required/>
+<p className="info-text">
+  Fatura düzenlemek için TC Kimlik Numaranız yasal zorunluluktur. Bilgileriniz gizli tutulur.
+</p>
           <input name="address" value={formData.address} placeholder="Adres" onChange={handleInputChange} required />
           <input name="district" value={formData.district} placeholder="İlçe" onChange={handleInputChange} required />
           <input name="postalCode" value={formData.postalCode} placeholder="Posta Kodu" onChange={handleInputChange} />
@@ -146,7 +157,7 @@ const PaymentPage = () => {
           <input name="phone" value={formData.phone} placeholder="Telefon" onChange={handleInputChange} required />
         </div>
 
-        <button type="submit" className="pay-button">Şimdi öde</button>
+        <button type="submit" className="pay-button">Güvenli Ödemeye Geç</button>
       </form>
 
       <div className="payment-summary">

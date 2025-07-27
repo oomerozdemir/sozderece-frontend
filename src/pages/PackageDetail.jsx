@@ -95,9 +95,9 @@ const handleContinue = () => {
   ];
 
   const images = [
-    "/images/detailPageImage1.png",
-    "/images/detailPageImage2.png",
-    "/images/detailPageImage4.png"
+    "/images/packageDetailImageFirst.png",
+    "/images/PackageDetailImage2.png",
+    "/images/packageDetailImage3.png"
   ];
 
   const handlePrev = () => {

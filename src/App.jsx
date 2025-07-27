@@ -92,9 +92,16 @@ packageDetail de resimleri duzenle
 
 fatura bılgılerınde tcnoyu da al
 
+kullanıcıdan bilgi aldığımız yerlerin doğru harfleri kelimeleri girdiğinden emin olmak için kontrolleri yap.
+
+heroSectıon a ınteraktıf bır şeyler ekle reels vıdeosu nasıl ilerleriz gibi 
+ekstra olarak resimlerle nasıl ilerlediğimizi anlatan bir bölüm sayfa yapabiliriz görsellerle.Görsel solda yazı sonra saga görsel sola yazı seklınde
+
+
 1-koclara ogrencı atandıgında bıldırım gıtsın aynı sekılde ogrencıye de
 -ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
 -otomatık odeme/abonelık sıstemını ekle
+
 -Ilerde bu guvenlı gırısı gelıstırırız sımdılık sadece e posta dogrulaması yeterlı
 
 
@@ -102,7 +109,8 @@ fatura bılgılerınde tcnoyu da al
 HAVALE ıle odeme yontemını sısteme ekle nehır kocluktakı gıbı bunu bı arastır.
 
 
-iade talebi gonderildiginde bana mail gelsin ayrica iade talebi yerinde siparisle ilgili fiyat bilgisi de olsun
+iade talebi gonderildiginde bana mail gelsin ayrica iade talebi yerinde 
+siparisle ilgili fiyat bilgisi de olsun
 
 
 -ONEMLI!!! Odeme sonrası fatura gonderımı yapacagız.KDV GEREKLI MI GEREKSIZ MI FATURA DA BUNU SOR
@@ -117,10 +125,7 @@ Abonelik İptal Et	Süresi dolmadan kullanıcı iptal butonuna basarak ödemeyi 
 E-posta Hatırlatmaları	Bitmesine 3 gün kala kullanıcıya e-posta ile bilgilendirme
 🧾 Sipariş geçmişi: Öğrenci, geçmiş siparişlerini görebiliyor mu?
 
-
  admin panelinde 
-
-
 
 🕵️ Sipariş Geçmişi / Logları:
 
