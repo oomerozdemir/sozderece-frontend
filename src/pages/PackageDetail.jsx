@@ -126,12 +126,12 @@ const handleContinue = () => {
       <Topbar />
       <Navbar />
       <div className="package-detail-layout">
-        <div className="package-image-placeholder">
-          <div className="image-carousel">
+        {/* <div className="package-image-placeholder">
+         <div className="image-carousel">
             <button className="carousel-arrow left" onClick={handlePrev}>‹</button>
             <img src={images[currentIndex]} alt={`Görsel ${currentIndex + 1}`} className="carousel-image" />
             <button className="carousel-arrow right" onClick={handleNext}>›</button>
-          </div>
+          </div> 
 
           <div className="desktop-image-list">
             {images.map((src, index) => (
@@ -143,7 +143,7 @@ const handleContinue = () => {
               />
             ))}
           </div>
-        </div>
+        </div>*/}
 
         <div className="package-detail-content">
           <h1 className="package-title">{selected.name}</h1>
