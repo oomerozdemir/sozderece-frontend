@@ -228,7 +228,7 @@ const handleContinue = () => {
           </div>
         </div>
 
-        <footer className="custom-footer">
+       {/*  <footer className="custom-footer">
           <div className="footer-icons">
             <FaInstagram />
             <FaTiktok />
@@ -243,6 +243,7 @@ const handleContinue = () => {
           </div>
           <div className="footer-copy">© 2025 SÖZDERECE KOÇLUK Her Hakkı Saklıdır</div>
         </footer>
+        */}
       </div>
     </>
   );
