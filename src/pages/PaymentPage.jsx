@@ -68,7 +68,10 @@ const PaymentPage = () => {
     setCouponMessage(err.response?.data?.error || "❌ Kupon doğrulanamadı");
   }
 };
-
+const isValidName = (name) => /^[a-zA-ZçÇğĞıİöÖşŞüÜ\s'-]+$/.test(name.trim());
+const isValidPhone = (phone) => /^05\d{9}$/.test(phone);
+const isValidPostalCode = (postalCode) => /^\d{5}$/.test(postalCode);
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,9 +82,32 @@ const PaymentPage = () => {
       return;
     }
 
-     // TC Kimlik No geçerlilik kontrolü
-  if (!/^[1-9][0-9]{10}$/.test(formData.tcNo)) {
-    alert("Lütfen geçerli bir 11 haneli TC Kimlik Numarası girin.");
+    if (!isValidEmail(formData.email)) {
+  alert("Geçerli bir e-posta adresi girin.");
+  return;
+}
+
+if (!isValidName(formData.name) || !isValidName(formData.surname)) {
+  alert("Ad ve soyad sadece harf içermelidir.");
+  return;
+}
+
+if (!/^[1-9][0-9]{10}$/.test(formData.tcNo)) {
+  alert("Lütfen geçerli bir 11 haneli TC Kimlik Numarası girin.");
+  return;
+}
+
+if (!isValidPhone(formData.phone)) {
+  alert("Lütfen geçerli bir telefon numarası girin (05XXXXXXXXX).");
+  return;
+}
+
+if (!formData.address.trim() || !formData.city.trim() || !formData.district.trim()) {
+  alert("Adres, ilçe ve şehir alanları boş bırakılamaz.");
+  return;
+}
+  if (formData.postalCode && !isValidPostalCode(formData.postalCode)) {
+    alert("Lütfen geçerli bir posta kodu girin (5 haneli).");
     return;
   }
 
