@@ -3,6 +3,7 @@ import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 import "../cssFiles/payment.css";
+import { isValidEmail, isValidName,isValidPhone,isValidTcNo,isValidPostalCode } from "../utils/validation";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
@@ -26,7 +27,7 @@ const PaymentPage = () => {
   const [couponCode, setCouponCode] = useState("");
   const [discountRate, setDiscountRate] = useState(0);
   const [couponMessage, setCouponMessage] = useState("");
-
+  const [errors, setErrors] = useState({});
   const total = useMemo(() => {
     return cart.reduce((sum, item) => {
       const price = parseFloat(item.price?.toString().replace("₺", "").replace(/[^\d.]/g, ""));
@@ -41,6 +42,7 @@ const PaymentPage = () => {
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
+    setErrors((prev) => ({ ...prev, [name]: ""}));
   };
 
  const handleApplyCoupon = async () => {
@@ -68,46 +70,32 @@ const PaymentPage = () => {
     setCouponMessage(err.response?.data?.error || "❌ Kupon doğrulanamadı");
   }
 };
-const isValidName = (name) => /^[a-zA-ZçÇğĞıİöÖşŞüÜ\s'-]+$/.test(name.trim());
-const isValidPhone = (phone) => /^05\d{9}$/.test(phone);
-const isValidPostalCode = (postalCode) => /^\d{5}$/.test(postalCode);
-const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
+    const newErrors = {};
+
 
     if (!discountedTotal || isNaN(discountedTotal)) {
       alert("Geçersiz fiyat bilgisi, ödeme başlatılamadı.");
       return;
     }
 
-    if (!isValidEmail(formData.email)) {
-  alert("Geçerli bir e-posta adresi girin.");
-  return;
-}
 
-if (!isValidName(formData.name) || !isValidName(formData.surname)) {
-  alert("Ad ve soyad sadece harf içermelidir.");
-  return;
-}
+  if (!isValidEmail(formData.email)) newErrors.email = "Geçerli bir e-posta girin.";
+  if (!isValidName(formData.name)) newErrors.name = "Ad sadece harf içermelidir.";
+  if (!isValidName(formData.surname)) newErrors.surname = "Soyad sadece harf içermelidir.";
+  if (!isValidTcNo(formData.tcNo)) newErrors.tcNo = "11 haneli geçerli TC Kimlik No girin.";
+  if (!isValidPhone(formData.phone)) newErrors.phone = "Telefon numarası 05XXXXXXXXX formatında olmalı.";
+  if (!formData.address.trim()) newErrors.address = "Adres boş bırakılamaz.";
+  if (!formData.city.trim()) newErrors.city = "Şehir boş bırakılamaz.";
+  if (!formData.district.trim()) newErrors.district = "İlçe boş bırakılamaz.";
+  if (formData.postalCode && !isValidPostalCode(formData.postalCode)) newErrors.postalCode = "5 haneli posta kodu girin.";
 
-if (!/^[1-9][0-9]{10}$/.test(formData.tcNo)) {
-  alert("Lütfen geçerli bir 11 haneli TC Kimlik Numarası girin.");
-  return;
-}
-
-if (!isValidPhone(formData.phone)) {
-  alert("Lütfen geçerli bir telefon numarası girin (05XXXXXXXXX).");
-  return;
-}
-
-if (!formData.address.trim() || !formData.city.trim() || !formData.district.trim()) {
-  alert("Adres, ilçe ve şehir alanları boş bırakılamaz.");
-  return;
-}
-  if (formData.postalCode && !isValidPostalCode(formData.postalCode)) {
-    alert("Lütfen geçerli bir posta kodu girin (5 haneli).");
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
     return;
   }
 
