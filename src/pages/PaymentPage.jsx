@@ -146,7 +146,7 @@ const PaymentPage = () => {
           <input name="surname" value={formData.surname} placeholder="Soyad" onChange={handleInputChange} required />
         </div>
         <div className="input-row-half">
-          <input name="tcno" value={formData.tcNo} placeholder="TC Kimlik Numarası" maxLength="11"onChange={handleInputChange} required/>
+          <input name="tcNo" value={formData.tcNo} placeholder="TC Kimlik Numarası" maxLength="11"onChange={handleInputChange} required/>
 <p className="info-text">
   Fatura düzenlemek için TC Kimlik Numaranız yasal zorunluluktur. Bilgileriniz gizli tutulur.
 </p>
