@@ -90,7 +90,7 @@ export default App;
 /*
 packageDetail de resimleri duzenle
 
-fatura bılgılerınde tcnoyu da al
+fatura bılgılerınde tcnoyu admin panelinde de goster
 
 kullanıcıdan bilgi aldığımız yerlerin doğru harfleri kelimeleri girdiğinden emin olmak için kontrolleri yap.
 
@@ -98,9 +98,18 @@ heroSectıon a ınteraktıf bır şeyler ekle reels vıdeosu nasıl ilerleriz gi
 ekstra olarak resimlerle nasıl ilerlediğimizi anlatan bir bölüm sayfa yapabiliriz görsellerle.Görsel solda yazı sonra saga görsel sola yazı seklınde
 
 
+blog uretilecek
+linkedinde web síten icin post paylas linki koymayi unutma backlink icin
+(navbar ortalamak gpt sohbetine bak bu konular icin)
+
 1-koclara ogrencı atandıgında bıldırım gıtsın aynı sekılde ogrencıye de
 -ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
 -otomatık odeme/abonelık sıstemını ekle
+
+sepete urun eklemek icin giris yapilmasina gerek olmazsa hangi kullanicinin sepete urun ekledigini nasil ogrenicez bunu arastir eger bir yolu varsa
+sepete urun eklemek icin giris yapilmasina gerek olmasin
+
+kullaniciyi sitede tutmak giris yapmasini saglamak icin yontemler bul(belki giris yapmasini kolaylastirabiliriz)
 
 -Ilerde bu guvenlı gırısı gelıstırırız sımdılık sadece e posta dogrulaması yeterlı
 

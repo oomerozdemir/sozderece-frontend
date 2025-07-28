@@ -382,6 +382,8 @@ const handleBillingUpdate = async (orderId) => {
   {order.billingInfo ? (
     <div style={{ paddingLeft: "10px", marginTop: "5px" }}>
      <p><strong>Ad Soyad:</strong> {order.billingInfo?.name} {order.billingInfo?.surname}</p>
+     <p><strong>Tc No:</strong> {order.billingInfo?.tcno}</p>
+
         <p><strong>Adres:</strong> {order.billingInfo.address}, {order.billingInfo.district}</p>
         <p><strong>Şehir:</strong> {order.billingInfo.city} - {order.billingInfo.postalCode}</p>
         <p><strong>Telefon:</strong> {order.billingInfo.phone}</p>
