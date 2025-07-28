@@ -147,29 +147,130 @@ const PaymentPage = () => {
           {user ? <span className="login-link">{user.name}</span> : <a href="/login">Oturum aç</a>}
         </div>
 
-        <input type="email" name="email" value={formData.email} placeholder="E-posta" required onChange={handleInputChange} />
+       <input
+  type="email"
+  name="email"
+  value={formData.email}
+  placeholder="E-posta"
+  onChange={handleInputChange}
+  className={errors.email ? "error-input" : ""}
+  required
+/>
+{errors.email && <span className="error-text">{errors.email}</span>}
 
-        <label>
-          <input type="checkbox" checked={formData.allowEmails} name="allowEmails" onChange={handleInputChange} />
-          Bana e-posta gönderilmesine izin veriyorum.
-        </label>
+<label>
+  <input
+    type="checkbox"
+    checked={formData.allowEmails}
+    name="allowEmails"
+    onChange={handleInputChange}
+  />
+  Bana e-posta gönderilmesine izin veriyorum.
+</label>
 
-        <h3>Fatura Adresi</h3>
-        <div className="input-row">
-          <input name="name" value={formData.name} placeholder="Ad" onChange={handleInputChange} required />
-          <input name="surname" value={formData.surname} placeholder="Soyad" onChange={handleInputChange} required />
-        </div>
-        <div className="input-row-half">
-          <input name="tcNo" value={formData.tcNo} placeholder="TC Kimlik Numarası" maxLength="11"onChange={handleInputChange} required/>
-<p className="info-text">
-  Fatura düzenlemek için TC Kimlik Numaranız yasal zorunluluktur. Bilgileriniz gizli tutulur.
-</p>
-          <input name="address" value={formData.address} placeholder="Adres" onChange={handleInputChange} required />
-          <input name="district" value={formData.district} placeholder="İlçe" onChange={handleInputChange} required />
-          <input name="postalCode" value={formData.postalCode} placeholder="Posta Kodu" onChange={handleInputChange} />
-          <input name="city" value={formData.city} placeholder="Şehir - İl" onChange={handleInputChange} required />
-          <input name="phone" value={formData.phone} placeholder="Telefon" onChange={handleInputChange} required />
-        </div>
+<h3>Fatura Adresi</h3>
+<div className="input-row">
+  <div>
+    <input
+      name="name"
+      value={formData.name}
+      placeholder="Ad"
+      onChange={handleInputChange}
+      className={errors.name ? "error-input" : ""}
+      required
+    />
+    {errors.name && <span className="error-text">{errors.name}</span>}
+  </div>
+  <div>
+    <input
+      name="surname"
+      value={formData.surname}
+      placeholder="Soyad"
+      onChange={handleInputChange}
+      className={errors.surname ? "error-input" : ""}
+      required
+    />
+    {errors.surname && <span className="error-text">{errors.surname}</span>}
+  </div>
+</div>
+
+<div className="input-row-half">
+  <div>
+    <input
+      name="tcNo"
+      value={formData.tcNo}
+      placeholder="TC Kimlik Numarası"
+      maxLength="11"
+      onChange={handleInputChange}
+      className={errors.tcNo ? "error-input" : ""}
+      required
+    />
+    {errors.tcNo && <span className="error-text">{errors.tcNo}</span>}
+    <p className="info-text">
+      Fatura düzenlemek için TC Kimlik Numaranız yasal zorunluluktur. Bilgileriniz gizli tutulur.
+    </p>
+  </div>
+
+  <div>
+    <input
+      name="address"
+      value={formData.address}
+      placeholder="Adres"
+      onChange={handleInputChange}
+      className={errors.address ? "error-input" : ""}
+      required
+    />
+    {errors.address && <span className="error-text">{errors.address}</span>}
+  </div>
+
+  <div>
+    <input
+      name="district"
+      value={formData.district}
+      placeholder="İlçe"
+      onChange={handleInputChange}
+      className={errors.district ? "error-input" : ""}
+      required
+    />
+    {errors.district && <span className="error-text">{errors.district}</span>}
+  </div>
+
+  <div>
+    <input
+      name="postalCode"
+      value={formData.postalCode}
+      placeholder="Posta Kodu"
+      onChange={handleInputChange}
+      className={errors.postalCode ? "error-input" : ""}
+    />
+    {errors.postalCode && <span className="error-text">{errors.postalCode}</span>}
+  </div>
+
+  <div>
+    <input
+      name="city"
+      value={formData.city}
+      placeholder="Şehir - İl"
+      onChange={handleInputChange}
+      className={errors.city ? "error-input" : ""}
+      required
+    />
+    {errors.city && <span className="error-text">{errors.city}</span>}
+  </div>
+
+  <div>
+    <input
+      name="phone"
+      value={formData.phone}
+      placeholder="Telefon"
+      onChange={handleInputChange}
+      className={errors.phone ? "error-input" : ""}
+      required
+    />
+    {errors.phone && <span className="error-text">{errors.phone}</span>}
+  </div>
+</div>
+
 
         <button type="submit" className="pay-button">Güvenli Ödemeye Geç</button>
       </form>

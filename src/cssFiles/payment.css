@@ -208,6 +208,17 @@ h4 {
   font-size: 14px;
   font-weight: 500;
 }
+.error-input {
+  border: 1px solid red;
+  background-color: #fff0f0;
+}
+
+.error-text {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 2px;
+  display: block;
+}
 
 @media (max-width: 768px) {
   .payment-container {
