@@ -80,7 +80,7 @@ const PaymentPage = () => {
     }
 
      // TC Kimlik No geçerlilik kontrolü
-  if (!/^[1-9][0-9]{10}$/.test(formData.tcno)) {
+  if (!/^[1-9][0-9]{10}$/.test(formData.tcNo)) {
     alert("Lütfen geçerli bir 11 haneli TC Kimlik Numarası girin.");
     return;
   }

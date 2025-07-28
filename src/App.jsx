@@ -90,12 +90,12 @@ export default App;
 /*
 packageDetail de resimleri duzenle
 
-fatura bılgılerınde tcnoyu admin panelinde de goster
-
 kullanıcıdan bilgi aldığımız yerlerin doğru harfleri kelimeleri girdiğinden emin olmak için kontrolleri yap.
 
 heroSectıon a ınteraktıf bır şeyler ekle reels vıdeosu nasıl ilerleriz gibi 
 ekstra olarak resimlerle nasıl ilerlediğimizi anlatan bir bölüm sayfa yapabiliriz görsellerle.Görsel solda yazı sonra saga görsel sola yazı seklınde
+
+bazi sayfalarda conatiner kaymis sayfaya ortalamasi
 
 
 blog uretilecek
