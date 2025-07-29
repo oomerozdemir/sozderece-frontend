@@ -1,6 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "../utils/axios";
+import "../cssFiles/login.css";
+
 
 const ResetPassword = () => {
   const navigate = useNavigate();

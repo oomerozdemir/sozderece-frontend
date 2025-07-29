@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+
 
 import axios from "../utils/axios"
 import "../cssFiles/login.css";
@@ -13,6 +15,7 @@ const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [showPassword, setPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -111,13 +114,24 @@ const LoginPage = () => {
           required
         />
 
-        <input
-          type="password"
-          placeholder="Şifre"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-          required
-        />
+<div className="password-wrapper">
+  <input
+    type={showPassword ? "text" : "password"}
+    placeholder="Şifre"
+    value={form.password}
+    onChange={(e) => setForm({ ...form, password: e.target.value })}
+    required
+  />
+  <span
+    onClick={() => setPassword(!showPassword)}
+    className="eye-toggle"
+  >
+    {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
+  </span>
+</div>
+
+
+
 
         <button type="submit">{isLogin ? "Giriş Yap" : "Kayıt Ol"}</button>
 
