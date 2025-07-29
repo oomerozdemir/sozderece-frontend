@@ -58,7 +58,7 @@ const CartPage = () => {
     <p className="empty-message">Sepetiniz boş.</p>
     <button
       className="browse-packages-button"
-      onClick={() => navigate("/package-detail")}
+      onClick={() => navigate("/paket-detay")}
     >
       Paketlere Göz At
     </button>

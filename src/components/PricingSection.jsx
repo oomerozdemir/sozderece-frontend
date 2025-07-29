@@ -94,7 +94,7 @@ function PricingSection() {
               <li key={i}>{feature}</li>
             ))}
           </ul>
-          <button className="pricing-button" onClick={() => navigate("/package-detail")}>
+          <button className="pricing-button" onClick={() => navigate("/paket-detay")}>
             Hemen Başla!
           </button>
           <p className="verified-paragraph"><img src="/images/verified.png" alt="doğrulama simgesi"></img>5 gün içinde koşulsuz cayma hakkı</p>

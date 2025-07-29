@@ -24,14 +24,14 @@
 
   <!-- Koçlar -->
   <url>
-    <loc>https://www.sozderecekocluk.com/coach-detail</loc>
+    <loc>https://www.sozderecekocluk.com/ekibimiz</loc>
     <lastmod>2025-07-25</lastmod>
     <priority>0.7</priority>
   </url>
 
   <!-- Paket Detay -->
   <url>
-    <loc>https://www.sozderecekocluk.com/package-detail</loc>
+    <loc>https://www.sozderecekocluk.com/paket-detay</loc>
     <lastmod>2025-07-25</lastmod>
     <priority>0.7</priority>
   </url>

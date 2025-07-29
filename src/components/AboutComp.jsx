@@ -112,7 +112,7 @@ const AboutComp = () => {
           Size en uygun yol haritasını birlikte planlıyoruz.
         </p>
 
-        <Link to="/coach-detail" className="team-link">
+        <Link to="/ekibimiz" className="team-link">
           Koçlarımız Hakkında Daha Fazla Bilgi
         </Link>
       </section>

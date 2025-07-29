@@ -43,8 +43,8 @@ const Footer = () => {
           <div>
             <h4>Kategoriler</h4>
             <ul>
-              <li><a href="/package-detail">YKS 2026</a></li>
-              <li><a href="/package-detail">LGS 2026</a></li>
+              <li><a href="/paket-detay">YKS 2026</a></li>
+              <li><a href="/paket-detay">LGS 2026</a></li>
             </ul>
           </div>
         </div>

@@ -57,7 +57,7 @@ const handleContinue = () => {
   };
 
   addToCart(item);
-  navigate("/cart"); 
+  navigate("/sepet"); 
 };
 
 
@@ -120,7 +120,7 @@ const handleContinue = () => {
   <meta name="description" content={selected.subtitle} />
   <meta property="og:title" content={`${selected.name} | Sözderece Koçluk`} />
   <meta property="og:description" content={selected.subtitle} />
-  <meta property="og:url" content={`https://sozderecekocluk.com/package-detail?paket=${selected.slug}`} />
+  <meta property="og:url" content={`https://sozderecekocluk.com/paket-detay?paket=${selected.slug}`} />
 </Helmet>
 
       <Topbar />

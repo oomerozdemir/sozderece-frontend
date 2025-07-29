@@ -64,9 +64,9 @@ function App() {
             <Route path="/order-success" element={<PrivateRoute><OrderSuccessPage /></PrivateRoute>} />
             <Route path="/payment/iframe/:token" element={<PrivateRoute><PaymentIframePage /></PrivateRoute>} />
 
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/package-detail" element={<PackageDetail />} />
-            <Route path="/coach-detail" element={<CoachDetail />} />
+            <Route path="/sepet" element={<CartPage />} />
+            <Route path="/paket-detay" element={<PackageDetail />} />
+            <Route path="/ekibimiz" element={<CoachDetail />} />
             <Route path="/ucretsiz-on-gorusme" element={<ContactPage />} />
             <Route path="/payment-fail" element={<PaymentFailPage />} />
 
@@ -88,8 +88,6 @@ export default App;
 
 
 /*
-packageDetail de resimleri duzenle
-
 kullanıcıdan bilgi aldığımız yerlerin doğru harfleri kelimeleri girdiğinden emin olmak için kontrolleri yap.
 
 heroSectıon a ınteraktıf bır şeyler ekle reels vıdeosu nasıl ilerleriz gibi 
