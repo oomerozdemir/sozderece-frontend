@@ -64,7 +64,6 @@ export default function HomePage() {
       exit={{ opacity: 0, y: -50 }}
       transition={{ duration: 0.5 }}
     >
-      <Suspense fallback={<div>Yükleniyor...</div>}>
         <TopBar />
         <Navbar />
         <HeroSection />
@@ -115,7 +114,6 @@ export default function HomePage() {
 
         <Footer />
         <WhatsappButton />
-      </Suspense>
     </motion.div>
     </>
   );
