@@ -6,6 +6,7 @@ import TopBar from "../components/TopBar";
 import Navbar from "../components/navbar";
 import FaqSection from "../components/FaqSection";
 import contactUsSvg from "../assets/undraw_contact-us_kcoa.svg";
+import { Helmet } from "react-helmet";
 
 
 const IletisimPage = () => {
@@ -54,6 +55,24 @@ const IletisimPage = () => {
 
   return (
     <>
+    <Helmet>
+  <title>Ücretsiz Ön Görüşme | Sözderece Koçluk</title>
+  <meta
+    name="description"
+    content="Koçluk sistemimiz hakkında ücretsiz ön görüşme formunu doldurun, size özel eğitim planlamasına başlayalım. Öğrenci ve veli odaklı birebir destek."
+  />
+  <meta property="og:title" content="Ücretsiz Ön Görüşme | Sözderece Koçluk" />
+  <meta
+    property="og:description"
+    content="Hemen formu doldurun, uzman koçlarımız size özel planlamayla iletişime geçsin. Öğrenci ve veli destekli ön görüşmeler ücretsizdir."
+  />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://sozderecekocluk.com/ucretsiz-on-gorusme" />
+  <meta property="og:image" content="https://sozderecekocluk.com/static/hero-logo.png" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://sozderecekocluk.com/ucretsiz-on-gorusme" />
+</Helmet>
+
       <TopBar />
       <Navbar />
 

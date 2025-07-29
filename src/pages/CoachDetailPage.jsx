@@ -4,6 +4,7 @@ import "../cssFiles/CoachDetail.css";
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
+import { Helmet } from "react-helmet";
 
 
 const CoachDetailPage = () => {
@@ -29,6 +30,16 @@ const CoachDetailPage = () => {
 
   return (
     <>
+    <Helmet>
+  <title>Ekibimiz | Sözderece Koçluk</title>
+  <meta name="description" content="Sözderece Koçluk ekibinde yer alan uzman koçlarımızı yakından tanıyın. Alanında deneyimli eğitim koçlarımızla başarıya bir adım daha yaklaşın." />
+  <meta property="og:title" content="Koçlarımız | Sözderece Koçluk" />
+  <meta property="og:description" content="Sözderece Koçluk ekibinde yer alan alanında uzman koçlarımızı bu sayfadan inceleyin. Her biri öğrencilerin motivasyon ve başarısına odaklıdır." />
+  <meta property="og:url" content="https://sozderecekocluk.com/koclar" />
+  <meta property="og:image" content="https://sozderecekocluk.com/hero-logo.png" />
+  <link rel="canonical" href="https://sozderecekocluk.com/koclar" />
+</Helmet>
+
     <TopBar />
     <Navbar />
     <div className="coach-detail-page">

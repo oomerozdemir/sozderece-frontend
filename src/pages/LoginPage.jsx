@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-
+import { Helmet } from "react-helmet";
 
 import axios from "../utils/axios"
 import "../cssFiles/login.css";
@@ -47,7 +47,12 @@ const LoginPage = () => {
   };
 
   return (
-    <><Navbar />
+    <>
+    <Helmet>
+  <title>Giriş Yap | Sözderece Koçluk</title>
+  <meta name="robots" content="noindex, nofollow" />
+</Helmet>
+    <Navbar />
     <div className="login-container">
       <form onSubmit={handleSubmit} className="login-form">
         <h2>{isLogin ? "Giriş Yap" : "Kayıt Ol"}</h2>

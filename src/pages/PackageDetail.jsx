@@ -115,13 +115,18 @@ const handleContinue = () => {
   return (
     
     <>
-    <Helmet>
+  <Helmet>
   <title>{selected.name} | Sözderece Koçluk</title>
   <meta name="description" content={selected.subtitle} />
   <meta property="og:title" content={`${selected.name} | Sözderece Koçluk`} />
   <meta property="og:description" content={selected.subtitle} />
-  <meta property="og:url" content={`https://sozderecekocluk.com/paket-detay?paket=${selected.slug}`} />
+  <meta property="og:type" content="product" />
+  <meta property="og:url" content={`https://sozderecekocluk.com/paket/${selected.slug}`} />
+  <meta property="og:image" content="https://sozderecekocluk.com/static/hero-logo.png" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href={`https://sozderecekocluk.com/paket/${selected.slug}`} />
 </Helmet>
+
 
       <Topbar />
       <Navbar />

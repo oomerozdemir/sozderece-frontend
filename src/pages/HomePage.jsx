@@ -1,6 +1,8 @@
 import React, { Suspense, lazy } from "react";
 import { motion } from "framer-motion";
 import "../cssFiles/index.css";
+import { Helmet } from "react-helmet";
+
 
 // Lazy-load bileşenler
 const HeroSection = lazy(() => import("../components/HeroSection"));
@@ -36,6 +38,25 @@ export default function HomePage() {
   };
 
   return (
+    <>
+    <Helmet>
+  <title>Ana Sayfa | Sözderece Koçluk</title>
+  <meta
+    name="description"
+    content="LGS ve YKS öğrencilerine özel birebir online koçluk sistemi. Disiplinli çalışma, motivasyon, program takibi ve veli bilgilendirmesi ile başarıya ulaşın."
+  />
+  <meta property="og:title" content="Sözderece Koçluk | LGS & YKS Online Koçluk" />
+  <meta
+    property="og:description"
+    content="LGS ve YKS'ye hazırlanan öğrencilere birebir online koçluk desteği. Hemen ücretsiz ön görüşme yapın!"
+  />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://sozderecekocluk.com/" />
+  <meta property="og:image" content="https://sozderecekocluk.com/static/hero-logo.png" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://sozderecekocluk.com/" />
+</Helmet>
+
     <motion.div
       className="page"
       initial={{ opacity: 0, y: 50 }}
@@ -96,5 +117,6 @@ export default function HomePage() {
         <WhatsappButton />
       </Suspense>
     </motion.div>
+    </>
   );
 }
