@@ -6,19 +6,24 @@ const ForgotPassword = () => {
   const [input, setInput] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage("");
-    setError("");
+  e.preventDefault();
+  setMessage("");
+  setError("");
+  setIsLoading(true); // Başlarken yükleniyor
 
-    try {
-      const res = await axios.post("/api/auth/forgot-password", { input });
-      setMessage(res.data.message || "Şifre sıfırlama bağlantısı e-postanıza gönderildi.");
-    } catch (err) {
-      setError("Gönderim başarısız. Lütfen e-posta adresinizi kontrol edin.");
-    }
-  };
+  try {
+    const res = await axios.post("/api/auth/forgot-password", { input });
+    setMessage(res.data.message || "Şifre sıfırlama bağlantısı e-postanıza gönderildi.Lütfen spam dosyanızı kontrol etmeyi unutmayın");
+  } catch (err) {
+    setError("Gönderim başarısız. Lütfen e-posta adresinizi kontrol edin.");
+  } finally {
+    setIsLoading(false); // Her durumda durdur
+  }
+};
+
 
   return (
     <div className="login-container">
@@ -36,7 +41,10 @@ const ForgotPassword = () => {
           required
         />
 
-        <button type="submit">Bağlantı Gönder</button>
+        <button type="submit" disabled={isLoading}>
+  {isLoading ? "Gönderiliyor..." : "Bağlantı Gönder"}
+</button>
+
       </form>
     </div>
   );
