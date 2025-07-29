@@ -95,9 +95,9 @@ const handleContinue = () => {
   ];
 
   const images = [
-    "/images/packageDetailImageFirst.png",
-    "/images/PackageDetailImage2.png",
-    "/images/packageDetailImage3.png"
+    "/images/paketlerImage1.png",
+    "/images/paketlerImage2.png",
+    "/images/paketlerImage3.png"
   ];
 
   const handlePrev = () => {
@@ -126,7 +126,7 @@ const handleContinue = () => {
       <Topbar />
       <Navbar />
       <div className="package-detail-layout">
-        {/* <div className="package-image-placeholder">
+         <div className="package-image-placeholder">
          <div className="image-carousel">
             <button className="carousel-arrow left" onClick={handlePrev}>‹</button>
             <img src={images[currentIndex]} alt={`Görsel ${currentIndex + 1}`} className="carousel-image" />
@@ -143,7 +143,7 @@ const handleContinue = () => {
               />
             ))}
           </div>
-        </div>*/}
+        </div>
 
         <div className="package-detail-content">
           <h1 className="package-title">{selected.name}</h1>
@@ -228,7 +228,7 @@ const handleContinue = () => {
           </div>
         </div>
 
-       {/*  <footer className="custom-footer">
+         <footer className="custom-footer">
           <div className="footer-icons">
             <FaInstagram />
             <FaTiktok />
@@ -243,7 +243,7 @@ const handleContinue = () => {
           </div>
           <div className="footer-copy">© 2025 SÖZDERECE KOÇLUK Her Hakkı Saklıdır</div>
         </footer>
-        */}
+
       </div>
     </>
   );
