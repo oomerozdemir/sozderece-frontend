@@ -74,13 +74,19 @@ if (!res.data.user.isVerified) {
     }
 
     try {
-      await axios.post(`/api/auth/register`, form);
-navigate(`/verify-email?email=${form.email}`);
-      setIsLogin(true);
-    } catch (err) {
-      setError("Kayıt başarısız. Bilgileri kontrol edin veya e-posta daha önce alınmış olabilir.");
-    }
+    // ✅ Kayıt isteği
+    const response = await axios.post(`/api/auth/register`, form);
+
+    // ✅ Doğrulama için bilgileri localStorage'a kaydet
+    localStorage.setItem("pending_email", form.email);
+    localStorage.setItem("pending_userId", response.data.user.id);
+
+    // ✅ Doğrulama sayfasına yönlendir
+    navigate("/verify-email");
+  } catch (err) {
+    setError("Kayıt başarısız. Bilgileri kontrol edin veya e-posta daha önce alınmış olabilir.");
   }
+}
 };
 
   return (
