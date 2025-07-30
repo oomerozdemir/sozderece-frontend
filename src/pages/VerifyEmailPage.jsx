@@ -30,7 +30,7 @@ const VerifyEmailPage = () => {
     setSuccessMsg("");
 
     try {
-      await axios.post("/api/verify-code", {
+      await axios.post("/api/verification/verify-code", {
         type: "email",
         code: code.trim(),
         userId,
