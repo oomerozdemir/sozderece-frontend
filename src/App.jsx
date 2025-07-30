@@ -35,7 +35,6 @@ const PaymentFailPage = lazy(() => import("./pages/PaymentFailPage"));
 const MesafeliSozlesme = lazy(() => import("./pages/MesafeliSozlesme"));
 const IadeVeCaymaPolitikasi = lazy(() => import("./pages/IadeVeCayma"));
 const GizlilikPolitikasiKvkk = lazy(() => import("./pages/GizlilikPolitikasi"));
-const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"));
 
 const FaqPage = lazy(() => import("./pages/FaqPage.jsx"));
 
@@ -55,7 +54,6 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/sss" element={<FaqPage/>} />
 
             {/* Korunan sayfalar */}
