@@ -35,7 +35,10 @@ const LoginPage = () => {
         email: form.email,
         password: form.password,
       });
-
+if (!res.data.user.isVerified) {
+  setError("Hesabınız henüz doğrulanmadı. Lütfen e-postanızı kontrol edin.");
+  return;
+}
       const token = res.data.token;
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -72,6 +75,7 @@ const LoginPage = () => {
 
     try {
       await axios.post(`/api/auth/register`, form);
+navigate(`/verify-email?email=${form.email}`);
       setIsLogin(true);
     } catch (err) {
       setError("Kayıt başarısız. Bilgileri kontrol edin veya e-posta daha önce alınmış olabilir.");

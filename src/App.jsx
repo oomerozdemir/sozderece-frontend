@@ -35,6 +35,8 @@ const PaymentFailPage = lazy(() => import("./pages/PaymentFailPage"));
 const MesafeliSozlesme = lazy(() => import("./pages/MesafeliSozlesme"));
 const IadeVeCaymaPolitikasi = lazy(() => import("./pages/IadeVeCayma"));
 const GizlilikPolitikasiKvkk = lazy(() => import("./pages/GizlilikPolitikasi"));
+const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"));
+
 const FaqPage = lazy(() => import("./pages/FaqPage.jsx"));
 
 function App() {
@@ -53,6 +55,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/sss" element={<FaqPage/>} />
 
             {/* Korunan sayfalar */}
@@ -88,13 +91,12 @@ export default App;
 
 
 /*
+kayit olurken dogrulama maili gitsin
 
 heroSectıon a ınteraktıf bır şeyler ekle reels vıdeosu nasıl ilerleriz gibi 
 ekstra olarak resimlerle nasıl ilerlediğimizi anlatan bir bölüm sayfa yapabiliriz görsellerle.Görsel solda yazı sonra saga görsel sola yazı seklınde
 
-bazi sayfalarda conatiner kaymis sayfaya ortalamasi
 
-regıster ve logını kolaylastırmak adına gmaıl ıle gırıs ekleyebılır mıyız bır bak
 kullaniciyi sitede tutmak giris yapmasini saglamak icin yontemler bul(belki giris yapmasini kolaylastirabiliriz)
 
 blog uretilecek
@@ -108,17 +110,10 @@ sepete urun eklemek icin giris yapilmasina gerek olmasin
 
 
 
--Ilerde bu guvenlı gırısı gelıstırırız sımdılık sadece e posta dogrulaması yeterlı
-
-
-
 iade talebi gonderildiginde bana mail gelsin ayrica iade talebi yerinde 
 siparisle ilgili fiyat bilgisi de olsun
 
 
--ONEMLI!!! Odeme sonrası fatura gonderımı yapacagız.KDV GEREKLI MI GEREKSIZ MI FATURA DA BUNU SOR
-
--ilerde paketler bolumunu admin panelinden ekleme özelliğini getirebliriz veya farklı bir sistem
 
 
 İleride Eklenebilecek Özellikler
@@ -143,28 +138,6 @@ ayni email ile farkli hesap olusturamama
 
 tum sayfalarin mobilde nasil gorundugunu kontrol et
 
-
-✅ 1. Kod Yapısı ve Dosya Organizasyonu
-Mevcut Durum: Kodlar genelde işlevsel ama büyüdükçe karmaşık hale gelebilir.
-
-Öneriler:
-
-controllers, routes, middlewares, utils, services gibi alt klasörleri modülerleştir (örneğin: userService.js, coachService.js).
-
-Modal, kart ve tab gibi bileşenleri components klasörüne alarak tekrar kullanılabilir hale getir.
-
-AdminDashboard.jsx çok büyük bir bileşen — Custom hook veya bölünmüş child component’ler ile okunabilirliği artırabilirsin.
-
-✅ 2. Veritabanı ve Backend Geliştirmeleri
-Mevcut Durum: Prisma ile çalışıyorsun, bu harika. Ancak ilişkiler daha da güçlendirilebilir.
-
-Öneriler:
-
-User ile Coach arasında atanmış koç ilişkisini assignedCoachId yerine assignedCoach olarak include ile getirmek yerine Prisma ile relation tanımı yapabilirsin.
-
-Koç geçmişi veya öğrenci-koç eşleşme geçmişi gibi bir assignment_log tablosu ekleyebilirsin (özellikle uzun vadeli sistemler için).
-
-E-posta ya da telefon doğrulaması için verification tablosu ve JWT Refresh Token yapısı düşünebilirsin.
 
 
 ✅ 4. UI / UX Geliştirmeleri
@@ -191,23 +164,6 @@ Her request’te tüm kullanıcıları değil, sadece gerekli alanları getirmek
 
 React bileşenlerini memo, useCallback, useMemo ile optimize et.
 
-✅ 6. Gelişmiş Bildirim Sistemi
-Mevcut Durum: Sınırlı sayıda mesaj sistemi var.
-
-Öneriler:
-
-Kullanıcılara bildirim geçmişi sunulabilir. (örn: size bir koç atandı / siparişiniz iade edildi).
-
-Bu yapı için notifications tablosu ve frontend’de dropdown bildirim kutusu (🔔 simgesi) ekleyebilirsin.
-
-✅ 7. Analitik & Yönetim Raporları
-Mevcut Durum: Aylık sipariş grafiği güzel bir başlangıç.
-
-Öneriler:
-
-Öğrenci başına aktif sipariş sayısı, en çok tercih edilen koç, iade oranları gibi daha fazla gösterge paneli ekleyebilirsin.
-
-Bunları Recharts, Chart.js veya Nivo gibi araçlarla geliştirebilirsin.
 
 ✅ 8. Yedekleme ve Loglama
 Öneriler:
@@ -220,50 +176,8 @@ Veritabanını haftalık/momentlik olarak yedekleyen bir otomasyon düşün.
 
 
 
-✅ 10. Test & DevOps Hazırlığı
-Öneriler:
-
-API testleri için Jest, Supertest ile basit test altyapısı kurabilirsin.
-
-Frontend testleri için React Testing Library başlangıç seviyesinde yeterli olur.
-
-Projeyi ileride Vercel (frontend) + Render (backend) ya da Railway + PlanetScale gibi ortamlara taşıyabilirsin.
-
-Eğer ileride:
-
-🔐 IP bazlı koruma,
-
-🔁 Kod tekrar gönderme sınırı,
-
-🧠 Kod brute-force engelleme,
-
-📬 Bildirim sistemi entegrasyonu,
-
-🔔 Admin paneline doğrulama geçmişi loglama
-
-
- İlerleyebileceğimiz bazı adımlar:
-🔍 Koç detay sayfasına "detayları görüntüle" özelliği (modal veya yeni sayfa)
-
-🧑‍🎓 Öğrenci detay sayfası
-
-🗓️ Koç ve öğrenci için randevu planlama modülü
-
-🛡️ Role bazlı yetkilendirme ve route koruma (örn. öğrenci admin paneline giremesin)
-
-🧪 Birim/test senaryoları yazma (isteğe bağlı)
-
- Opsiyonel Güvenlik Adımları (İleri Seviye – Sonra Yapabilirsin)
-🔐 Şifre belirleme zorunluluğu ekle (şu an default123)
-
-
-
-
-
 
 Yeni özellikler ekleyebilirsin (örneğin: PDF ödev ekleme, video dersler, öğrenci geri bildirim).
-
-Mobil uyumluluğu test et.
 
 
  Ekstra Tavsiyeler:
@@ -274,7 +188,6 @@ user_address düzgün bir adres olmalı, emoji vs. olmamalı.
 Tüm alanlarda null, undefined, "" gibi değerleri engelle.
 
 
-bildirim sistemiini ekle tum deneyimler icin
 
 FATURA AKIS DIYAGRAMI
 [ Kullanıcı ] 
