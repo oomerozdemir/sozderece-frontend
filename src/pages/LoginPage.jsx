@@ -4,7 +4,6 @@ import { jwtDecode } from "jwt-decode";
 import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Helmet } from "react-helmet";
-import { isValidPhone,isValidEmail } from "../utils/validation.js";
 
 import axios from "../utils/axios"
 import "../cssFiles/login.css";
@@ -18,67 +17,34 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [showPassword, setPassword] = useState(false);
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-
-  // Genel boşluk ve format kontrolleri
-  if (!form.email || !isValidEmail(form.email)) {
-    setError("Geçerli bir e-posta adresi girin.");
-    return;
-  }
-
-  if (isLogin) {
-    // Giriş işlemi
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
     try {
-      const res = await axios.post(`/api/auth/login`, {
-        email: form.email,
-        password: form.password,
-      });
+      if (isLogin) {
+        // Giriş işlemi
+        const res = await axios.post(`/api/auth/login`, {
+          email: form.email,
+          password: form.password,
+        });
 
-      const token = res.data.token;
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      const role = jwtDecode(token).role;
+        const token = res.data.token;
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        const role = jwtDecode(token).role;
 
-      if (role === "admin") navigate("/admin");
-      else if (role === "coach") navigate("/coach/dashboard");
-      else navigate("/student/dashboard");
+        if (role === "admin") navigate("/admin");
+        else if (role === "coach") navigate("/coach/dashboard");
+        else navigate("/student/dashboard");
+      } else {
+        // Kayıt işlemi
+        await axios.post(`/api/auth/register`, form);
+        setIsLogin(true);
+      }
     } catch (err) {
-      setError("Giriş başarısız. Bilgilerinizi kontrol edin.");
+      setError("İşlem başarısız! Bilgileri kontrol edin.");
     }
-  } else {
-    // Kayıt işlemi - tüm alanları kontrol et
-    if (!form.name || form.name.trim().length < 2) {
-      setError("İsminizi eksiksiz girin.");
-      return;
-    }
-
-    if (!isValidPhone(form.phone)) {
-      setError("Geçerli bir telefon numarası girin (05XXXXXXXXX)");
-      return;
-    }
-
-    if (!form.grade) {
-      setError("Lütfen sınıfınızı seçin.");
-      return;
-    }
-
-    const requiresTrack = ["9", "10", "11", "12", "Mezun"];
-    if (requiresTrack.includes(form.grade) && !form.track) {
-      setError("Lütfen alanınızı seçin.");
-      return;
-    }
-
-    try {
-    // ✅ Kayıt isteği
-    const response = await axios.post(`/api/auth/register`, form);
-    navigate("/Login");
-  } catch (err) {
-    setError("Kayıt başarısız. Bilgileri kontrol edin veya e-posta daha önce alınmış olabilir.");
-  }
-}
-};
+  };
 
   return (
     <>
