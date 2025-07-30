@@ -3,7 +3,7 @@ import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 import "../cssFiles/payment.css";
-import { isValidEmail, isValidName,isValidPhone,isValidTcNo,isValidPostalCode } from "../utils/validation";
+import { isValidEmail, isValidName,isValidPhone,isValidTcNo,isValidPostalCode,isValidAddress } from "../utils/validation";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
@@ -89,7 +89,7 @@ const PaymentPage = () => {
   if (!isValidName(formData.surname)) newErrors.surname = "Soyad sadece harf içermelidir.";
   if (!isValidTcNo(formData.tcNo)) newErrors.tcNo = "11 haneli geçerli TC Kimlik No girin.";
   if (!isValidPhone(formData.phone)) newErrors.phone = "Telefon numarası 05XXXXXXXXX formatında olmalı.";
-  if (!formData.address.trim()) newErrors.address = "Adres boş bırakılamaz.";
+  if (!isValidAddress(formData.address)) newErrors.address = "Lütfen geçerli bir adres girin. Emoji veya anlamsız karakter içermemelidir.";
   if (!formData.city.trim()) newErrors.city = "Şehir boş bırakılamaz.";
   if (!formData.district.trim()) newErrors.district = "İlçe boş bırakılamaz.";
   if (formData.postalCode && !isValidPostalCode(formData.postalCode)) newErrors.postalCode = "5 haneli posta kodu girin.";

@@ -88,32 +88,28 @@ export default App;
 
 
 /*
-kullanıcıdan bilgi aldığımız yerlerin doğru harfleri kelimeleri girdiğinden emin olmak için kontrolleri yap.
 
 heroSectıon a ınteraktıf bır şeyler ekle reels vıdeosu nasıl ilerleriz gibi 
 ekstra olarak resimlerle nasıl ilerlediğimizi anlatan bir bölüm sayfa yapabiliriz görsellerle.Görsel solda yazı sonra saga görsel sola yazı seklınde
 
 bazi sayfalarda conatiner kaymis sayfaya ortalamasi
 
+regıster ve logını kolaylastırmak adına gmaıl ıle gırıs ekleyebılır mıyız bır bak
+kullaniciyi sitede tutmak giris yapmasini saglamak icin yontemler bul(belki giris yapmasini kolaylastirabiliriz)
 
 blog uretilecek
-linkedinde web síten icin post paylas linki koymayi unutma backlink icin
-(navbar ortalamak gpt sohbetine bak bu konular icin)
 
-1-koclara ogrencı atandıgında bıldırım gıtsın aynı sekılde ogrencıye de
+
 -ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
 -otomatık odeme/abonelık sıstemını ekle
 
 sepete urun eklemek icin giris yapilmasina gerek olmazsa hangi kullanicinin sepete urun ekledigini nasil ogrenicez bunu arastir eger bir yolu varsa
 sepete urun eklemek icin giris yapilmasina gerek olmasin
 
-kullaniciyi sitede tutmak giris yapmasini saglamak icin yontemler bul(belki giris yapmasini kolaylastirabiliriz)
+
 
 -Ilerde bu guvenlı gırısı gelıstırırız sımdılık sadece e posta dogrulaması yeterlı
 
-
-
-HAVALE ıle odeme yontemını sısteme ekle nehır kocluktakı gıbı bunu bı arastır.
 
 
 iade talebi gonderildiginde bana mail gelsin ayrica iade talebi yerinde 
