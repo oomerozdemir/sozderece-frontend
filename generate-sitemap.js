@@ -1,7 +1,11 @@
+import { writeFileSync, existsSync, mkdirSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+import { blogPosts } from "./src/components/posts.js";
 
-import { writeFileSync } from "fs";
-import { join } from "path";
-const { blogPosts } = require(join(__dirname, "src", "components", "posts.js"));
+// __dirname alternatifi (ESM için)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const baseUrl = "https://www.sozderecekocluk.com";
 const today = new Date().toISOString().split("T")[0];
@@ -33,15 +37,23 @@ staticRoutes.forEach(({ loc, priority }) => {
 
 // Blog yazıları
 blogPosts.forEach((post) => {
-  xml += `  <url>
-    <loc>${baseUrl}/blog/${post.slug}</loc>
-    <lastmod>${post.date}</lastmod>
-    <priority>0.8</priority>
-  </url>\n`;
+  if (post.slug && post.date) {
+    xml += `  <url>
+      <loc>${baseUrl}/blog/${post.slug}</loc>
+      <lastmod>${post.date}</lastmod>
+      <priority>0.8</priority>
+    </url>\n`;
+  }
 });
 
 xml += `</urlset>`;
 
-writeFileSync(join(__dirname, "public", "sitemap.xml"), xml);
+// public klasörünü oluştur (yoksa)
+const publicDir = join(__dirname, "public");
+if (!existsSync(publicDir)) {
+  mkdirSync(publicDir);
+}
 
+// sitemap'i kaydet
+writeFileSync(join(publicDir, "sitemap.xml"), xml);
 console.log("✅ sitemap.xml başarıyla oluşturuldu.");
