@@ -56,20 +56,5 @@ export const blogPosts = [
   <p><a href="https://sozderecekocluk.com/ucretsiz-on-gorusme" target="_blank" style="color: #f58025; font-weight: bold;">👉 Ücretsiz Ön Görüşme Almak İçin Tıklayın</a></p>
 `
 
-  },
-  {
-    id: "2",
-    slug: "lgs-icin-en-etkili-kaynaklar",
-    title: "LGS İçin En Etkili Kaynaklar",
-    description: "2025 LGS için öne çıkan yayınları derledik.",
-    date: "2025-06-30",
-    tags: ["LGS", "kaynak önerisi"],
-    image: "/images/blogImage1.jpg",
-    content: `
-      <h2>1. Matematik İçin Yayınlar</h2>
-      <ul><li>3D Yayınları</li><li>Apotemi</li></ul>
-      <h2>2. Türkçe İçin</h2>
-      <p>Paragraf canavarı gibi çözümlerle hız kazanabilirsiniz.</p>
-    `
   }
 ];
