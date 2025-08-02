@@ -1,6 +1,7 @@
-const fs = require("fs");
-const path = require("path");
-const { blogPosts } = require("/src/components/posts.jsx");
+
+import { writeFileSync } from "fs";
+import { join } from "path";
+const { blogPosts } = require(join(__dirname, "src", "components", "posts.js"));
 
 const baseUrl = "https://www.sozderecekocluk.com";
 const today = new Date().toISOString().split("T")[0];
@@ -41,6 +42,6 @@ blogPosts.forEach((post) => {
 
 xml += `</urlset>`;
 
-fs.writeFileSync(path.join(__dirname, "public", "sitemap.xml"), xml);
+writeFileSync(join(__dirname, "public", "sitemap.xml"), xml);
 
 console.log("✅ sitemap.xml başarıyla oluşturuldu.");
