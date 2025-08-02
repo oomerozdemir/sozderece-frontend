@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { blogPosts } = require("/src/components/posts.js");
+const { blogPosts } = require("/src/components/posts.jsx");
 
 const baseUrl = "https://www.sozderecekocluk.com";
 const today = new Date().toISOString().split("T")[0];
