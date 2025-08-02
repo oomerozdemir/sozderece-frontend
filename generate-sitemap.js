@@ -1,7 +1,7 @@
 import { writeFileSync, existsSync, mkdirSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
-import {blogPosts} from "./src/components/posts";
+import {blogPosts} from "./src/components/posts.jsx";
 
 // __dirname alternatifi (ESM için)
 const __filename = fileURLToPath(import.meta.url);
