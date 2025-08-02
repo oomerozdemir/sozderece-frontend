@@ -12,7 +12,7 @@ export default function AboutPage() {
   <title>Hakkımızda | Sözderece Koçluk</title>
   <meta
     name="description"
-    content="Sözderece Koçluk; öğrenci koçluğu, akademik rehberlik ve bireysel gelişim alanlarında uzmanlaşmış bir eğitim platformudur. Misyonumuzu, vizyonumuzu ve ekibimizi tanıyın."
+    content="Sözderece Koçluk; yks öğrenci koçluğu, akademik rehberlik ve bireysel gelişim alanlarında uzmanlaşmış bir eğitim platformudur. Misyonumuzu, vizyonumuzu ve ekibimizi tanıyın."
   />
   <meta property="og:title" content="Hakkımızda | Sözderece Koçluk" />
   <meta

@@ -86,7 +86,7 @@ export default function FaqSection() {
     name="description"
     content="Sözderece Koçluk sistemi, koç değişikliği, veli bilgilendirmesi, program özelleştirmesi ve daha fazlası hakkında sıkça sorulan soruları bu sayfada yanıtlıyoruz."
   />
-  <meta property="og:title" content="SSS | Sözderece Koçluk" />
+  <meta property="og:title" content="Sıkça Sorulan Sorular-SSS| Sözderece Koçluk" />
   <meta
     property="og:description"
     content="Sözderece Koçluk hakkında en çok merak edilen soruları ve detaylı cevaplarını bu sayfada bulabilirsiniz. Öğrenci ve veli odaklı eğitim sistemi hakkında bilgi alın."

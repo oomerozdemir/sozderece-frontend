@@ -35,6 +35,10 @@ const PaymentFailPage = lazy(() => import("./pages/PaymentFailPage"));
 const MesafeliSozlesme = lazy(() => import("./pages/MesafeliSozlesme"));
 const IadeVeCaymaPolitikasi = lazy(() => import("./pages/IadeVeCayma"));
 const GizlilikPolitikasiKvkk = lazy(() => import("./pages/GizlilikPolitikasi"));
+const BlogList = lazy(() => import("./pages/BlogList"));
+const BlogDetail = lazy(() => import("./pages/BlogDetail"));
+
+
 
 const FaqPage = lazy(() => import("./pages/FaqPage.jsx"));
 
@@ -55,6 +59,9 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/sss" element={<FaqPage/>} />
+            <Route path="/blog" element={<BlogList/>} />
+            <Route path="/blog/:slug" element={<BlogDetail/>} />
+
 
             {/* Korunan sayfalar */}
             <Route path="/coach/dashboard" element={<RoleRoute allowedRoles={["coach"]}><CoachDashboard /></RoleRoute>} />
@@ -89,17 +96,12 @@ export default App;
 
 
 /*
-kayit olurken dogrulama maili gitsin
-mail-telefon tekrarini engelleyelim
+kayıt olurken parolayı tekrar gırmesı gereksın
 
 heroSectıon a ınteraktıf bır şeyler ekle reels vıdeosu nasıl ilerleriz gibi 
 ekstra olarak resimlerle nasıl ilerlediğimizi anlatan bir bölüm sayfa yapabiliriz görsellerle.Görsel solda yazı sonra saga görsel sola yazı seklınde
 
-
-kullaniciyi sitede tutmak giris yapmasini saglamak icin yontemler bul(belki giris yapmasini kolaylastirabiliriz)
-
 blog uretilecek
-
 
 -ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
 -otomatık odeme/abonelık sıstemını ekle
@@ -107,7 +109,7 @@ blog uretilecek
 sepete urun eklemek icin giris yapilmasina gerek olmazsa hangi kullanicinin sepete urun ekledigini nasil ogrenicez bunu arastir eger bir yolu varsa
 sepete urun eklemek icin giris yapilmasina gerek olmasin
 
-
+deneme analızı hesaplama net hesaplama gıbı seylerı ekle araç olarak
 
 iade talebi gonderildiginde bana mail gelsin ayrica iade talebi yerinde 
 siparisle ilgili fiyat bilgisi de olsun
@@ -139,18 +141,6 @@ tum sayfalarin mobilde nasil gorundugunu kontrol et
 
 
 
-✅ 4. UI / UX Geliştirmeleri
-Mevcut Durum: İşlevsel, ama daha profesyonel bir his için bazı iyileştirmeler gerekebilir.
-
-Öneriler:
-
-Modal geçişlerine fade/slide geçiş animasyonu ekleyebilirsin (Framer Motion gibi).
-
-Koç seçimi için kart/küçük profil fotoğraflı gösterim gibi daha görsel bir yapı kullanabilirsin.
-
-Geri bildirim mesajlarını (başarılı, hatalı) Toastify, React Hot Toast gibi kütüphanelerle daha etkili göster.
-
-Karanlık mod / açık mod desteği düşünülebilir.
 
 ✅ 5. Performans İyileştirmeleri
 Mevcut Durum: Çok sayfalı veriler yok ama ileride olabilir.

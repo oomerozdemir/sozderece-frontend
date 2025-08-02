@@ -16,13 +16,13 @@ const HeroSection = () => {
   <div className="container">
     <img
       src="../images/hero-logo.png"
-      alt="Sözderece Logo"
+      alt="Sözderece Koçluk Logo"
       className="hero-logo"
     />
     <div className="hero-content">
       <h2 className="highlight">Söz veriyoruz,derece getiriyoruz!</h2>
       <p>
-        Derece yapmış koçlarımızla YKS ve LGS sürecinde birebir koçluk
+        Derece yapmış koçlarımızla YKS ve LGS sürecinde online koçluk
         hizmeti sunuyoruz.
       </p>
       <a href="#paketler" className="hero-button">

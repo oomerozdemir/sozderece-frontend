@@ -95,7 +95,7 @@ const WhyChooseUs = () => {
 >
   <div className="container">
     <motion.h2 className="modern-title" variants={cardVariants}>
-      Neden Bizi Tercih Etmelisiniz?
+      Neden Sözderece Koçluk?
     </motion.h2>
 
     <div className="card-grid">

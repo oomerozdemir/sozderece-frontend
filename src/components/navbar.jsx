@@ -61,12 +61,14 @@ const Navbar = () => {
               )}
 
               <ul className={`navbar-menu ${menuOpen ? "active" : ""}`}>
-                <li><NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>ANA SAYFA</NavLink></li>
-                <li><NavLink to="/hakkimizda" className={({ isActive }) => isActive ? "active" : ""}>HAKKIMIZDA</NavLink></li>
-                <li><NavLink to="/ekibimiz" className={({ isActive }) => isActive ? "active" : ""}>EKİBİMİZ</NavLink></li>
-                <li><NavLink to="/paket-detay" className={({ isActive }) => isActive ? "active" : ""}>KOÇLUK AL!</NavLink></li>
-                <li><NavLink to="/ucretsiz-on-gorusme" className={({ isActive }) => isActive ? "active" : ""}>İLETİŞİM</NavLink></li>
-                <li><NavLink to="/sss" className={({ isActive }) => isActive ? "active" : ""}>SSS</NavLink></li>
+                <li><NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>Ana Sayfa</NavLink></li>
+                <li><NavLink to="/hakkimizda" className={({ isActive }) => isActive ? "active" : ""}>Hakkımızda</NavLink></li>
+                <li><NavLink to="/ekibimiz" className={({ isActive }) => isActive ? "active" : ""}>Ekibimiz</NavLink></li>
+                <li><NavLink to="/paket-detay" className={({ isActive }) => isActive ? "active" : ""}>Koçluk Al!</NavLink></li>
+                <li><NavLink to="/ucretsiz-on-gorusme" className={({ isActive }) => isActive ? "active" : ""}>İletişim</NavLink></li>
+                <li><NavLink to="/sss" className={({ isActive }) => isActive ? "active" : ""}>Sss</NavLink></li>
+                <li><NavLink to="/blog" className={({ isActive }) => isActive ? "active" : ""}>Blog</NavLink></li>
+
               </ul>
             </div>
 

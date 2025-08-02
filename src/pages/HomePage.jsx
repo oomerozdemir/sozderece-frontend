@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React, { lazy } from "react";
 import { motion } from "framer-motion";
 import "../cssFiles/index.css";
 import { Helmet } from "react-helmet";
@@ -48,11 +48,11 @@ export default function HomePage() {
   <meta property="og:title" content="Sözderece Koçluk | LGS & YKS Online Koçluk" />
   <meta
     property="og:description"
-    content="LGS ve YKS'ye hazırlanan öğrencilere birebir online koçluk desteği. Hemen ücretsiz ön görüşme yapın!"
+    content="LGS ve YKS'ye hazırlanan öğrencilere online koçluk desteği.Hemen YKS-LGS koçluk sistemimizi inceleyi,formu doldurun ve hayalinizdeki üniversite için süreci başlatın!"
   />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://sozderecekocluk.com/" />
-  <meta property="og:image" content="https://sozderecekocluk.com/static/hero-logo.png" />
+  <meta property="og:image" content="https://sozderecekocluk.com/hero-logo.png" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://sozderecekocluk.com/" />
 </Helmet>

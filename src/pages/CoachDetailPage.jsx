@@ -32,8 +32,8 @@ const CoachDetailPage = () => {
     <>
     <Helmet>
   <title>Ekibimiz | Sözderece Koçluk</title>
-  <meta name="description" content="Sözderece Koçluk ekibinde yer alan uzman koçlarımızı yakından tanıyın. Alanında deneyimli eğitim koçlarımızla başarıya bir adım daha yaklaşın." />
-  <meta property="og:title" content="Koçlarımız | Sözderece Koçluk" />
+  <meta name="description" content="Sözderece Koçluk ekibinde yer alan uzman koçlarımızı yakından tanıyın. YKS ve LGS alanında derece yapmış eğitim koçlarımızla başarıya bir adım daha yaklaşın." />
+  <meta property="og:title" content="Ekibimiz | Sözderece Koçluk" />
   <meta property="og:description" content="Sözderece Koçluk ekibinde yer alan alanında uzman koçlarımızı bu sayfadan inceleyin. Her biri öğrencilerin motivasyon ve başarısına odaklıdır." />
   <meta property="og:url" content="https://sozderecekocluk.com/koclar" />
   <meta property="og:image" content="https://sozderecekocluk.com/hero-logo.png" />

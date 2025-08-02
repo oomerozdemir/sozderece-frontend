@@ -11,7 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const packageData = {
-  name: "Koçluk Paketi (LGS/YKS 2026)",
+  name: "Koçluk Paketi (YKS/LGS 2026)",
   price: "2500₺ / ay",
   subtitle:
     "Hedefe yönelik birebir koçluk, programlama, deneme takibi ve veli bilgilendirmesi.",
@@ -101,7 +101,7 @@ function PricingSection() {
         </div>
       </div>
 
-      <h3 className="benefit-title">Bu Paket Size Ne Kazandırır?</h3>
+      <h3 className="benefit-title">YKS/LGS Koçluk Paketi Size Ne Kazandırır?</h3>
       <div className="benefit-grid">
         {benefitItems.map((item, index) => (
           <div className="benefit-card" key={index}>

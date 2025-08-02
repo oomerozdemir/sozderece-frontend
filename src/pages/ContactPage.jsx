@@ -61,10 +61,10 @@ const IletisimPage = () => {
     name="description"
     content="Koçluk sistemimiz hakkında ücretsiz ön görüşme formunu doldurun, size özel eğitim planlamasına başlayalım. Öğrenci ve veli odaklı birebir destek."
   />
-  <meta property="og:title" content="Ücretsiz Ön Görüşme | Sözderece Koçluk" />
+  <meta property="og:title" content="Ücretsiz Ön Görüşme İçin Hemen Formu Doldur! | Sözderece Koçluk" />
   <meta
     property="og:description"
-    content="Hemen formu doldurun, uzman koçlarımız size özel planlamayla iletişime geçsin. Öğrenci ve veli destekli ön görüşmeler ücretsizdir."
+    content="Hemen formu doldurun, uzman koçlarımız size özel planlamayla iletişime geçsin."
   />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://sozderecekocluk.com/ucretsiz-on-gorusme" />
