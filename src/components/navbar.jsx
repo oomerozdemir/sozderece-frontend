@@ -11,6 +11,9 @@ const Navbar = () => {
   const [userRole, setUserRole] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const { cart } = useCart();
@@ -62,11 +65,19 @@ const Navbar = () => {
 
               <ul className={`navbar-menu ${menuOpen ? "active" : ""}`}>
                 <li><NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>Ana Sayfa</NavLink></li>
-                <li><NavLink to="/hakkimizda" className={({ isActive }) => isActive ? "active" : ""}>Hakkımızda</NavLink></li>
+          <li className="dropdown-parent">
+          <span className="dropdown-toggle" onClick={toggleDropdown}>
+            Hakkımızda <span className="dropdown-arrow">▼</span>
+          </span>
+          <ul className={`dropdown-content ${dropdownOpen ? "open" : ""}`}>
+            <li><NavLink to="/Hakkimizda">Hakkimizda</NavLink></li>
+            <li><NavLink to="/ucretsiz-on-gorusme">İletişim</NavLink></li>
+            <li><NavLink to="/sss">S.S.S</NavLink></li>
+          </ul>
+        </li>
+
                 <li><NavLink to="/ekibimiz" className={({ isActive }) => isActive ? "active" : ""}>Ekibimiz</NavLink></li>
                 <li><NavLink to="/paket-detay" className={({ isActive }) => isActive ? "active" : ""}>Koçluk Al!</NavLink></li>
-                <li><NavLink to="/ucretsiz-on-gorusme" className={({ isActive }) => isActive ? "active" : ""}>İletişim</NavLink></li>
-                <li><NavLink to="/sss" className={({ isActive }) => isActive ? "active" : ""}>Sss</NavLink></li>
                 <li><NavLink to="/blog" className={({ isActive }) => isActive ? "active" : ""}>Blog</NavLink></li>
 
               </ul>

@@ -8,9 +8,9 @@
   position: relative;
   z-index: 999;
   height: 80px;
-  background: linear-gradient(180deg,  #b89f9f);
-  max-width: 1200px;       /* Max genişlik */
-  margin: 0 auto;          /* Ortalamak için */
+  background: linear-gradient(180deg, #b89f9f);
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .navbar-wrapper {
@@ -176,6 +176,95 @@
   transition: opacity 0.3s ease;
 }
 
+/* Dropdown parent */
+.dropdown-parent {
+  position: relative;
+  list-style: none;
+}
+
+/* Toggle buton */
+.dropdown-toggle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #f8f8f8;
+  font-weight: bold;
+}
+
+/* Ok simgesi */
+.dropdown-arrow {
+  font-size: 0.7rem;
+}
+
+/* Normal dropdown */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  padding: 10px 0;
+  border-radius: 4px;
+  min-width: 160px;
+  z-index: 10;
+}
+
+/* Masaüstü hover */
+.dropdown-parent:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content li {
+  padding: 8px 16px;
+  white-space: nowrap;
+}
+
+.dropdown-content li a {
+  color: #333;
+  text-decoration: none;
+}
+
+.dropdown-content li:hover {
+  background-color: #f5f5f5;
+}
+
+
+/* Navbar menu open class (mobilde görünürlük) */
+.navbar-menu.open {
+  max-height: 500px;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  flex-direction: column;
+  background: #fff;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 999;
+}
+
+.dropdown-content.open {
+  display: block;
+  position: static;
+  background: transparent;
+  box-shadow: none;
+  padding-left: 10px;
+}
+.dropdown-content.open li a {
+  color: #f8f8f8;
+}
+
+.dropdown-content.open li a:hover {
+  color: #0a0091;
+}
+
+
+/* Hover ile açılma */
+.dropdown-parent:hover .dropdown-content {
+  display: block;
+}
+
+
 /* Responsive - 1300px altı */
 @media (max-width: 1300px) {
   .navbar {
@@ -209,25 +298,26 @@
     width: auto;
   }
 
-  .navbar-menu {
+.navbar-menu {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   position: absolute;
-  top: 64px;
+  top: 80px;
   left: 0;
   width: 100%;
-  max-height: 0;
+  max-height: 100vh; /* Tüm ekran kadar yükseklik */
+  overflow-y: auto;  /* Taşan içeriği kaydır */
   opacity: 0;
-  overflow: hidden;
   transform: translateY(-10px);
   pointer-events: none;
   transition: max-height 0.8s ease, opacity 0.6s ease, transform 0.8s ease;
+  background: #b89f9f;
   z-index: 998;
 }
 
 
 .navbar-menu.active {
-  max-height: 500px; /* yeterli yüksekliği bırak */
+  max-height: 100vh;
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
@@ -236,11 +326,68 @@
   -webkit-backdrop-filter: blur(6px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   margin-top: 17px;
+  overflow-y: auto;
 }
 
+
   .navbar-menu li {
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
     margin: 12px 0;
-    justify-content: center;
+    display: flex;
+    flex-direction: column;
+  }
+    .dropdown-content li a {
+    color: #f8f8f8;
+    font-size: 0.95rem;
+    padding-left: 16px;
+    display: block;
+    transition: background 0.3s, color 0.3s;
+  }
+
+ .dropdown-content li a:hover {
+    background-color: transparent;
+    color: inherit;
+    cursor: default;
+  }
+
+  .dropdown-parent {
+    width: 100%;
+    padding-left: 0;
+    margin-left: 0;
+  }
+
+  .dropdown-content {
+    display: block !important;
+    position: static !important;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+
+  .dropdown-content li {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  .dropdown-content li a {
+    display: block;
+    padding: 10px 0;
+    padding-left: 24px;
+    color: #f8f8f8;
+    font-weight: 500;
+  }
+
+  .dropdown-content li a:hover {
+    color: #0a0091;
+  }
+
+  .dropdown-arrow {
+    display: none;
   }
 
   .login-button {
@@ -248,67 +395,87 @@
   }
 
   .dropdown-menu {
-  position: absolute;
-  top: 100%; /* bulunduğu öğeden hemen sonra başlasın */
-  right: 0;
-  margin-top: 10px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  z-index: 99;
-  display: flex;
-  flex-direction: column;
-  min-width: 180px;
-  overflow: hidden;
-  animation: dropdownFadeDown 0.8s ease;
-  
-}
-
-   
-
-    .navbar-logo-img {
-  height: 70px;
-}
-
-@keyframes dropdownFadeDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px) scale(0.98);
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 10px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    min-width: 180px;
+    overflow: hidden;
+    animation: dropdownFadeDown 0.8s ease;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+
+  .navbar-logo-img {
+    height: 70px;
   }
-}
+
+  @keyframes dropdownFadeDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
 }
 
 
 @media (max-width: 768px) {
-.navbar {
-    padding: 0px 16px;
+  .navbar-menu li {
+    width: 100%;
+    justify-content: flex-start;
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    padding-left: 0;
+    margin-left: 0;
+  }
+
+  .dropdown-parent {
+    width: 100%;
+    padding-left: 0;
+    margin-left: 0;
+  }
+
+  .dropdown-content {
+    display: block !important;
+    position: static !important;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+
+  .dropdown-content li {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  .dropdown-content li a {
+    display: block;
+    padding: 10px 0;
+    padding-left: 24px;
+    color: #f8f8f8;
+    font-weight: 500;
   }
 
   .navbar-menu {
     flex-direction: column;
     align-items: flex-start;
     padding: 80px 20px 20px;
-    gap: 20px;
-    overflow-y: auto;
-    max-height: 90vh;
+    gap: 0px;
   }
-
-  .navbar-menu li {
-    width: 100%;
-    justify-content: flex-start;
-  }
-   .hamburger {
-    font-size: 40px;
-  }
-
-    .navbar-logo-img {
-  height: 70px;
 }
-}
+
 
 @media (max-width: 500px) {
   .navbar {
@@ -344,4 +511,6 @@
   .hamburger {
     font-size: 40px;
   }
+
+
 }
