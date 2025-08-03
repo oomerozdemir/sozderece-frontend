@@ -34,6 +34,21 @@ const [dropdownOpen, setDropdownOpen] = useState(false);
     return () => window.removeEventListener("storage", handleUser);
   }, []);
 
+  // Kullanıcı menüsü dışına tıklanınca kapat
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+
   return (
     <>
       <motion.div className="navbar-wrapper">
@@ -112,17 +127,22 @@ const [dropdownOpen, setDropdownOpen] = useState(false);
 >
   {username}
 </span>
-                    <div className="dropdown-menu">
-                      <Link to="/account">Hesabım</Link>
-                      {userRole === "student" && <Link to="/student/dashboard">Öğrenci Paneli</Link>}
-                      {userRole === "coach" && <Link to="/coach/dashboard">Koç Paneli</Link>}
-                      {userRole === "admin" && <Link to="/admin">Admin Paneli</Link>}
-                      <Link to="/orders">Siparişlerim</Link>
-                      <button onClick={() => {
-                        localStorage.clear();
-                        navigate("/login");
-                      }}>Çıkış Yap</button>
-                    </div>
+
+                {dropdownOpen && (
+  <div className="dropdown-menu">
+    <Link to="/account">Hesabım</Link>
+    {userRole === "student" && <Link to="/student/dashboard">Öğrenci Paneli</Link>}
+    {userRole === "coach" && <Link to="/coach/dashboard">Koç Paneli</Link>}
+    {userRole === "admin" && <Link to="/admin">Admin Paneli</Link>}
+    <Link to="/orders">Siparişlerim</Link>
+    <button onClick={() => {
+      localStorage.clear();
+      navigate("/login");
+    }}>
+      Çıkış Yap
+    </button>
+  </div>
+)}
                   </div>
                 ) : (
                   <Link to="/login">GİRİŞ YAP</Link>
