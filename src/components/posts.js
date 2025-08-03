@@ -103,7 +103,7 @@ export const blogPosts = [
     <div style="margin-top: 40px; padding: 24px; background-color: #f9f9f9; border-left: 5px solid #f58025;">
   <h3 style="margin-bottom: 12px;">YKS Hazırlığınızda Yanınızdayız</h3>
   <p>Sınav sürecinizi profesyonel destekle yönetmek ister misiniz? Öğrenciye özel koçluk hizmetlerimizle tanışın.</p>
-  <a href="/paketler" style="display: inline-block; margin-top: 12px; background-color: #f58025; color: white; padding: 10px 16px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+  <a href="/paket-detay" style="display: inline-block; margin-top: 12px; background-color: #f58025; color: white; padding: 10px 16px; text-decoration: none; border-radius: 6px; font-weight: bold;">
     🎯 Paketlerimizi İncele
   </a>
 </div>
