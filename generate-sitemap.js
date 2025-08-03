@@ -20,9 +20,6 @@ const staticRoutes = [
   { loc: "/paketler", priority: 0.9 },
   { loc: "/ekibimiz", priority: 0.7 },
   { loc: "/paket-detay", priority: 0.7 },
-  { loc: "/mesafeli-sozlesme", priority: 0.6 },
-  { loc: "/iade-ve-cayma-politikasi", priority: 0.6 },
-  { loc: "/gizlilik-politikasi-kvkk", priority: 0.6 },
   { loc: "/sss", priority: 0.6 },
   { loc: "/blog", priority: 0.9 }
 ];

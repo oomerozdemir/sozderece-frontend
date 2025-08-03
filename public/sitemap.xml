@@ -36,26 +36,7 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- Mesafeli Hizmet Sözleşmesi -->
-  <url>
-    <loc>https://www.sozderecekocluk.com/mesafeli-sozlesme</loc>
-    <lastmod>2025-07-25</lastmod>
-    <priority>0.6</priority>
-  </url>
 
-  <!-- İade ve Cayma Politikası -->
-  <url>
-    <loc>https://www.sozderecekocluk.com/iade-ve-cayma-politikasi</loc>
-    <lastmod>2025-07-25</lastmod>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Gizlilik Politikası ve KVKK -->
-  <url>
-    <loc>https://www.sozderecekocluk.com/gizlilik-politikasi-kvkk</loc>
-    <lastmod>2025-07-25</lastmod>
-    <priority>0.6</priority>
-  </url>
 
    <!-- SSS -->
   <url>
