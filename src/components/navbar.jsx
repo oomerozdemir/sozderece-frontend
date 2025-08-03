@@ -9,14 +9,11 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [username, setUsername] = useState(null);
   const [userRole, setUserRole] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  const toggleMenu = () => setMenuOpen(!menuOpen);
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
-
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const { cart } = useCart();
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
 
   useEffect(() => {
     const handleUser = () => {
@@ -64,22 +61,38 @@ const Navbar = () => {
               )}
 
               <ul className={`navbar-menu ${menuOpen ? "active" : ""}`}>
-                <li><NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>Ana Sayfa</NavLink></li>
-          <li className="dropdown-parent">
-          <span className="dropdown-toggle" onClick={toggleDropdown}>
-            Hakkımızda <span className="dropdown-arrow">▼</span>
-          </span>
-          <ul className={`dropdown-content ${dropdownOpen ? "open" : ""}`}>
-            <li><NavLink to="/Hakkimizda">Hakkimizda</NavLink></li>
-            <li><NavLink to="/ucretsiz-on-gorusme">İletişim</NavLink></li>
-            <li><NavLink to="/sss">S.S.S</NavLink></li>
-          </ul>
-        </li>
+                <li>
+                  <NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>
+                    Ana Sayfa
+                  </NavLink>
+                </li>
 
-                <li><NavLink to="/ekibimiz" className={({ isActive }) => isActive ? "active" : ""}>Ekibimiz</NavLink></li>
-                <li><NavLink to="/paket-detay" className={({ isActive }) => isActive ? "active" : ""}>Koçluk Al!</NavLink></li>
-                <li><NavLink to="/blog" className={({ isActive }) => isActive ? "active" : ""}>Blog</NavLink></li>
+                <li className="dropdown-parent">
+                  <span className="dropdown-toggle">
+                    Hakkımızda <span className="dropdown-arrow">▼</span>
+                  </span>
+                  <ul className="dropdown-content">
+                    <li><NavLink to="/Hakkimizda">Hakkımızda</NavLink></li>
+                    <li><NavLink to="/ucretsiz-on-gorusme">İletişim</NavLink></li>
+                    <li><NavLink to="/sss">S.S.S</NavLink></li>
+                  </ul>
+                </li>
 
+                <li>
+                  <NavLink to="/ekibimiz" className={({ isActive }) => isActive ? "active" : ""}>
+                    Ekibimiz
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/paket-detay" className={({ isActive }) => isActive ? "active" : ""}>
+                    Koçluk Al!
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/blog" className={({ isActive }) => isActive ? "active" : ""}>
+                    Blog
+                  </NavLink>
+                </li>
               </ul>
             </div>
 
@@ -92,22 +105,20 @@ const Navbar = () => {
               <div className="login-button" ref={dropdownRef}>
                 {username ? (
                   <div className="user-menu">
-                    <span className="navbar-username" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                    <span className="navbar-username" onClick={() => setMenuOpen(false)}>
                       {username}
                     </span>
-                    {dropdownOpen && (
-                      <div className="dropdown-menu">
-                        <Link to="/account">Hesabım</Link>
-                        {userRole === "student" && <Link to="/student/dashboard">Öğrenci Paneli</Link>}
-                        {userRole === "coach" && <Link to="/coach/dashboard">Koç Paneli</Link>}
-                        {userRole === "admin" && <Link to="/admin">Admin Paneli</Link>}
-                        <Link to="/orders">Siparişlerim</Link>
-                        <button onClick={() => {
-                          localStorage.clear();
-                          navigate("/login");
-                        }}>Çıkış Yap</button>
-                      </div>
-                    )}
+                    <div className="dropdown-menu">
+                      <Link to="/account">Hesabım</Link>
+                      {userRole === "student" && <Link to="/student/dashboard">Öğrenci Paneli</Link>}
+                      {userRole === "coach" && <Link to="/coach/dashboard">Koç Paneli</Link>}
+                      {userRole === "admin" && <Link to="/admin">Admin Paneli</Link>}
+                      <Link to="/orders">Siparişlerim</Link>
+                      <button onClick={() => {
+                        localStorage.clear();
+                        navigate("/login");
+                      }}>Çıkış Yap</button>
+                    </div>
                   </div>
                 ) : (
                   <Link to="/login">GİRİŞ YAP</Link>
