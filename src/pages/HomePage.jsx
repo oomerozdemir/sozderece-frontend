@@ -9,7 +9,6 @@ const HeroSection = lazy(() => import("../components/HeroSection"));
 const PricingSection = lazy(() => import("../components/PricingSection"));
 const Navbar = lazy(() => import("../components/navbar"));
 const WhyChooseUs = lazy(() => import("../components/WhyChooseUs"));
-const FaqSection = lazy(() => import("../components/FaqSection"));
 const Footer = lazy(() => import("../components/Footer"));
 const TopBar = lazy(() => import("../components/TopBar"));
 const WhatsappButton = lazy(() => import("../components/WhatsappButton"));
@@ -71,7 +70,6 @@ export default function HomePage() {
         <HomeCoachSlider />
         <PricingSection />
         <WhyChooseUs />
-        <FaqSection />
 
         {/* === İLETİŞİM === */}
         <section className="contact-section">
