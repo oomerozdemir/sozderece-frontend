@@ -12,6 +12,7 @@ const Navbar = () => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const { cart } = useCart();
+const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -105,9 +106,12 @@ const Navbar = () => {
               <div className="login-button" ref={dropdownRef}>
                 {username ? (
                   <div className="user-menu">
-                    <span className="navbar-username" onClick={() => setMenuOpen(false)}>
-                      {username}
-                    </span>
+                  <span
+  className="navbar-username"
+  onClick={() => setDropdownOpen(!dropdownOpen)}
+>
+  {username}
+</span>
                     <div className="dropdown-menu">
                       <Link to="/account">Hesabım</Link>
                       {userRole === "student" && <Link to="/student/dashboard">Öğrenci Paneli</Link>}
