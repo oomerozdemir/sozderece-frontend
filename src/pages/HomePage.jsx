@@ -4,6 +4,7 @@ import "../cssFiles/index.css";
 import { Helmet } from "react-helmet";
 
 
+
 // Lazy-load bileşenler
 const HeroSection = lazy(() => import("../components/HeroSection"));
 const PricingSection = lazy(() => import("../components/PricingSection"));

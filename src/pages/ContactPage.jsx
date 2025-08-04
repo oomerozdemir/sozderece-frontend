@@ -35,6 +35,9 @@ const IletisimPage = () => {
     try {
       const response = await axios.post("/api/contact/trial", formData);
       if (response.data.success) {
+          if (window.fbq) {
+    window.fbq('track', 'Lead');
+  }
         setSuccessMsg("Form başarıyla gönderildi!");
         setFormData({
           name: "",

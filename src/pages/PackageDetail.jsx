@@ -56,6 +56,16 @@ const handleContinue = () => {
     description: selected.subtitle,
   };
 
+    // Meta Pixel: AddToCart olayı
+  if (window.fbq) {
+    window.fbq('track', 'AddToCart', {
+      content_ids: [selected.slug],
+      content_type: 'product',
+      value: parseInt(selected.price.replace(/[^\d]/g, '')),
+      currency: 'TRY',
+    });
+  }
+
   addToCart(item);
   navigate("/sepet"); 
 };
@@ -70,6 +80,17 @@ const handleContinue = () => {
     const found = packageList.find(pkg => pkg.slug === e.target.value);
     setSelected(found);
   };
+
+  useEffect(() => {
+  if (selected && window.fbq) {
+    window.fbq('track', 'ViewContent', {
+      content_ids: [selected.slug],
+      content_type: 'product',
+      value: parseInt(selected.price.replace(/[^\d]/g, '')),
+      currency: 'TRY',
+    });
+  }
+}, [selected]);
 
   const toggleAccordion = (index) => {
     setActiveIndex(index === activeIndex ? null : index);
