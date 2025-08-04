@@ -134,6 +134,23 @@ const handleSubmit = async (e) => {
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           required
         />
+
+        <div className="password-wrapper">
+  <input
+    type={showPassword ? "text" : "password"}
+    placeholder="Şifre"
+    value={form.password}
+    onChange={(e) => setForm({ ...form, password: e.target.value })}
+    required
+  />
+  <span
+    onClick={() => setPassword(!showPassword)}
+    className="eye-toggle"
+  >
+    {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
+  </span>
+</div>
+
 {!isLogin && (
   <div className="password-wrapper">
     <input
@@ -154,21 +171,6 @@ const handleSubmit = async (e) => {
   </div>
 )}
 
-<div className="password-wrapper">
-  <input
-    type={showPassword ? "text" : "password"}
-    placeholder="Şifre"
-    value={form.password}
-    onChange={(e) => setForm({ ...form, password: e.target.value })}
-    required
-  />
-  <span
-    onClick={() => setPassword(!showPassword)}
-    className="eye-toggle"
-  >
-    {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
-  </span>
-</div>
 
 
 
