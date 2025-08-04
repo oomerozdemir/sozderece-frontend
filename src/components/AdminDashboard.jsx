@@ -272,6 +272,23 @@ const handleBillingUpdate = async (orderId) => {
   }
 };
 
+const handleSendReminders = async () => {
+  const confirm = window.confirm("Süresi yaklaşan siparişler için e-posta hatırlatması gönderilsin mi?");
+  if (!confirm) return;
+
+  try {
+    const token = localStorage.getItem("token");
+    const res = await axios.post("/api/admin/orders/send-expiry-reminders", {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    alert(res.data.message || "Hatırlatma e-postaları gönderildi.");
+  } catch (err) {
+    console.error("Hatırlatma gönderilemedi:", err);
+    alert("E-posta gönderimi başarısız oldu.");
+  }
+};
+
+
 
   return (
     <div className="admin-dashboard">
@@ -471,6 +488,22 @@ const handleBillingUpdate = async (orderId) => {
       
       <section className="admin-section">
       <Link to="/admin/coupons">Kupon Oluştur</Link>
+</section>
+
+<section className="admin-section">
+  <h2>📦 Siparişler</h2>
+
+  <button onClick={handleSendReminders} style={{
+    backgroundColor: "#28a745",
+    color: "white",
+    padding: "10px 16px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    marginBottom: "1rem"
+  }}>
+    ✉️ Hatırlatma E-postası Gönder
+  </button>
 </section>
 
         <section className="admin-section">
