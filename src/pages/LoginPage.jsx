@@ -134,8 +134,8 @@ const handleSubmit = async (e) => {
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           required
         />
-
- <div className="password-wrapper">
+{!isLogin && (
+  <div className="password-wrapper">
     <input
       type={showPassword ? "text" : "password"}
       placeholder="Şifreyi Tekrar Girin"
@@ -152,6 +152,8 @@ const handleSubmit = async (e) => {
       {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
     </span>
   </div>
+)}
+
 
 
 
