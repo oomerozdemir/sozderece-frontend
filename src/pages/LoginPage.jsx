@@ -10,41 +10,57 @@ import "../cssFiles/login.css";
 import Navbar from "../components/navbar";
 
 const LoginPage = () => {
-  const [form, setForm] = useState({ name: "", email: "", password: "", phone: "", grade: "", track: "", });
+  const [form, setForm] = useState({ name: "", email: "", password: "",confirmPassword: "", phone: "", grade: "", track: "", });
 
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [showPassword, setPassword] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    try {
-      if (isLogin) {
-        // Giriş işlemi
-        const res = await axios.post(`/api/auth/login`, {
-          email: form.email,
-          password: form.password,
-        });
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
 
-        const token = res.data.token;
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-        const role = jwtDecode(token).role;
+  try {
+    if (isLogin) {
+      // Giriş işlemi
+      const res = await axios.post(`/api/auth/login`, {
+        email: form.email,
+        password: form.password,
+      });
 
-        if (role === "admin") navigate("/admin");
-        else if (role === "coach") navigate("/coach/dashboard");
-        else navigate("/student/dashboard");
-      } else {
-        // Kayıt işlemi
-        await axios.post(`/api/auth/register`, form);
-        setIsLogin(true);
+      const token = res.data.token;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      const role = jwtDecode(token).role;
+
+      if (role === "admin") navigate("/admin");
+      else if (role === "coach") navigate("/coach/dashboard");
+      else navigate("/student/dashboard");
+    } else {
+      // Şifre eşleşmiyorsa uyarı ver
+      if (form.password !== form.confirmPassword) {
+        setError("Şifreler uyuşmuyor.");
+        return;
       }
-    } catch (err) {
-      setError("İşlem başarısız! Bilgileri kontrol edin.");
+
+      // Kayıt işlemi
+      await axios.post(`/api/auth/register`, {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        phone: form.phone,
+        grade: form.grade,
+        track: form.track
+      });
+
+      setIsLogin(true);
     }
-  };
+  } catch (err) {
+    setError("İşlem başarısız! Bilgileri kontrol edin.");
+  }
+};
+
 
   return (
     <>
@@ -119,22 +135,23 @@ const LoginPage = () => {
           required
         />
 
-<div className="password-wrapper">
-  <input
-    type={showPassword ? "text" : "password"}
-    placeholder="Şifre"
-    value={form.password}
-    onChange={(e) => setForm({ ...form, password: e.target.value })}
-    required
-  />
-  <span
-    onClick={() => setPassword(!showPassword)}
-    className="eye-toggle"
-  >
-    {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
-  </span>
-</div>
-
+ <div className="password-wrapper">
+    <input
+      type={showPassword ? "text" : "password"}
+      placeholder="Şifreyi Tekrar Girin"
+      value={form.confirmPassword}
+      onChange={(e) =>
+        setForm({ ...form, confirmPassword: e.target.value })
+      }
+      required
+    />
+    <span
+      onClick={() => setPassword(!showPassword)}
+      className="eye-toggle"
+    >
+      {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
+    </span>
+  </div>
 
 
 
