@@ -37,6 +37,7 @@ const IadeVeCaymaPolitikasi = lazy(() => import("./pages/IadeVeCayma"));
 const GizlilikPolitikasiKvkk = lazy(() => import("./pages/GizlilikPolitikasi"));
 const BlogList = lazy(() => import("./pages/BlogList"));
 const BlogDetail = lazy(() => import("./pages/BlogDetail"));
+const NotFound = lazy(() => import("./pages/notFound.jsx"));
 
 
 
@@ -84,6 +85,9 @@ function App() {
             <Route path="/admin/refund-requests" element={<RoleRoute allowedRoles={["admin"]}><RefundRequests /></RoleRoute>} />
 
             <Route path="/unauthorized" element={<div>Erişim izniniz yok.</div>} />
+
+            <Route path="*" element={<NotFound />} />
+
           </Routes>
         </Suspense>
       </AnimatePresence>
@@ -98,7 +102,7 @@ export default App;
 /*
 
 
-og etiketlerinde image yolunu duzelt kontrol et calistigindan emin ol
+
 404 olan sayfayi duzenle tasarim olarak eglenceli bir hale getirebiliriz
 
 heroSectıon a ınteraktıf bır şeyler ekle reels vıdeosu nasıl ilerleriz gibi 
