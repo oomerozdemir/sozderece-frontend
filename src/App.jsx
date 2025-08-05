@@ -96,18 +96,15 @@ export default App;
 
 
 /*
-kayıt olurken parolayı tekrar gırmesı gereksın
+
+
+og etiketlerinde image yolunu duzelt kontrol et calistigindan emin ol
+404 olan sayfayi duzenle tasarim olarak eglenceli bir hale getirebiliriz
 
 heroSectıon a ınteraktıf bır şeyler ekle reels vıdeosu nasıl ilerleriz gibi 
 ekstra olarak resimlerle nasıl ilerlediğimizi anlatan bir bölüm sayfa yapabiliriz görsellerle.Görsel solda yazı sonra saga görsel sola yazı seklınde
 
-blog uretilecek
 
--ogrencının sıparıs bıtımıne yakın bıldırımlerı ekle
--otomatık odeme/abonelık sıstemını ekle
-
-sepete urun eklemek icin giris yapilmasina gerek olmazsa hangi kullanicinin sepete urun ekledigini nasil ogrenicez bunu arastir eger bir yolu varsa
-sepete urun eklemek icin giris yapilmasina gerek olmasin
 
 deneme analızı hesaplama net hesaplama gıbı seylerı ekle araç olarak
 

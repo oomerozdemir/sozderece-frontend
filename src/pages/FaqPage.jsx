@@ -93,7 +93,7 @@ export default function FaqSection() {
   />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://sozderecekocluk.com/sss" />
-  <meta property="og:image" content="https://sozderecekocluk.com/static/hero-logo.png" />
+  <meta property="og:image" content="https://sozderecekocluk.com/images/hero-logo.png" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://sozderecekocluk.com/sss" />
 
