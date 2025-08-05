@@ -136,17 +136,53 @@ const handleContinue = () => {
   return (
     
     <>
-  <Helmet>
+<Helmet>
   <title>{selected.name} | Sözderece Koçluk</title>
   <meta name="description" content={selected.subtitle} />
+  <meta
+    name="keywords"
+    content="yks koçluk, lgs koçluk, online koçluk paketi, öğrenci koçluğu fiyatları, veli bilgilendirmesi, net artıran koçluk, sözderece koçluk"
+  />
   <meta property="og:title" content={`${selected.name} | Sözderece Koçluk`} />
-  <meta property="og:description" content="Hemen koçluk paketi satın al! Bu sayfada YKS|LGS online koçluk paketlerimizi incele ve güvenle siparişini oluştur!" />
+  <meta
+    property="og:description"
+    content="Hemen koçluk paketi satın al! YKS ve LGS için online eğitim danışmanlığıyla hedeflerine ulaş. Güvenli ödeme ve memnuniyet garantisi."
+  />
   <meta property="og:type" content="product" />
   <meta property="og:url" content={`https://sozderecekocluk.com/paket/${selected.slug}`} />
-  <meta property="og:image" content="https://sozderecekocluk.com/static/hero-logo.png" />
+  <meta property="og:image" content="https://sozderecekocluk.com/images/hero-logo.png" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href={`https://sozderecekocluk.com/paket/${selected.slug}`} />
+
+  <script type="application/ld+json">
+{JSON.stringify({
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": selected.name,
+  "description": selected.subtitle,
+  "image": [
+    "https://sozderecekocluk.com/images/paketlerImage1.png",
+    "https://sozderecekocluk.com/images/paketlerImage2.png",
+    "https://sozderecekocluk.com/images/paketlerImage3.png"
+  ],
+  "brand": {
+    "@type": "Brand",
+    "name": "Sözderece Koçluk"
+  },
+  "sku": selected.slug,
+  "offers": {
+    "@type": "Offer",
+    "url": `https://sozderecekocluk.com/paket/${selected.slug}`,
+    "priceCurrency": "TRY",
+    "price": selected.price.replace(/[^\d]/g, ""),
+    "availability": "https://schema.org/InStock",
+    "itemCondition": "https://schema.org/NewCondition"
+  }
+})}
+</script>
+
 </Helmet>
+
 
 
       <Topbar />
@@ -155,7 +191,7 @@ const handleContinue = () => {
          <div className="package-image-placeholder">
          <div className="image-carousel">
             <button className="carousel-arrow left" onClick={handlePrev}>‹</button>
-            <img src={images[currentIndex]} alt={`Görsel ${currentIndex + 1}`} className="carousel-image" />
+            <img src={images[currentIndex]} alt={`Koçluk Paketi Görseli ${currentIndex + 1}`} className="carousel-image" />
             <button className="carousel-arrow right" onClick={handleNext}>›</button>
           </div> 
 

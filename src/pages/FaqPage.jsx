@@ -80,13 +80,17 @@ export default function FaqSection() {
   return (
     
     <>
-    <Helmet>
+<Helmet>
   <title>SSS | Sıkça Sorulan Sorular | Sözderece Koçluk</title>
   <meta
     name="description"
     content="Sözderece Koçluk sistemi, koç değişikliği, veli bilgilendirmesi, program özelleştirmesi ve daha fazlası hakkında sıkça sorulan soruları bu sayfada yanıtlıyoruz."
   />
-  <meta property="og:title" content="Sıkça Sorulan Sorular-SSS| Sözderece Koçluk" />
+  <meta
+    name="keywords"
+    content="öğrenci koçluğu nedir, veli bilgilendirmesi, online koçluk sistemi, koç değişikliği, sık sorulan sorular koçluk, sözderece, online eğitim koçluğu"
+  />
+  <meta property="og:title" content="Sıkça Sorulan Sorular - SSS | Sözderece Koçluk" />
   <meta
     property="og:description"
     content="Sözderece Koçluk hakkında en çok merak edilen soruları ve detaylı cevaplarını bu sayfada bulabilirsiniz. Öğrenci ve veli odaklı eğitim sistemi hakkında bilgi alın."
@@ -97,7 +101,6 @@ export default function FaqSection() {
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://sozderecekocluk.com/sss" />
 
-  {/* Structured FAQ schema (JSON-LD) */}
   <script type="application/ld+json">
     {JSON.stringify({
       "@context": "https://schema.org",

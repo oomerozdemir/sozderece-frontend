@@ -8,16 +8,20 @@ import { Helmet } from "react-helmet";
 export default function AboutPage() {
   return (
     <>
-    <Helmet>
+<Helmet>
   <title>Hakkımızda | Sözderece Koçluk</title>
   <meta
     name="description"
-    content="Sözderece Koçluk; yks öğrenci koçluğu, akademik rehberlik ve bireysel gelişim alanlarında uzmanlaşmış bir eğitim platformudur. Misyonumuzu, vizyonumuzu ve ekibimizi tanıyın."
+    content="Sözderece Koçluk; YKS ve LGS öğrencilerine yönelik birebir online eğitim koçluğu sunar. Misyonumuzu, vizyonumuzu ve ekibimizi bu sayfada keşfedin."
+  />
+  <meta
+    name="keywords"
+    content="sözderece koçluk, koçluk sistemi nedir, yks koçluğu, lgs koçluğu, online eğitim koçluğu, birebir koçluk"
   />
   <meta property="og:title" content="Hakkımızda | Sözderece Koçluk" />
   <meta
     property="og:description"
-    content="Sözderece Koçluk hakkında detaylı bilgiler bu sayfada. Misyonumuz, vizyonumuz, ekibimiz ve sık sorulan sorular için bu sayfayı ziyaret edebilirsin."
+    content="Sözderece Koçluk hakkında merak ettikleriniz: Misyon, vizyon, koçluk sistemi ve uzman ekibimiz hakkında detaylı bilgi alın."
   />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://sozderecekocluk.com/hakkimizda" />
@@ -25,6 +29,7 @@ export default function AboutPage() {
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://sozderecekocluk.com/hakkimizda" />
 </Helmet>
+
     <motion.div
       className="page"
       initial={{ opacity: 0, y: 50 }}

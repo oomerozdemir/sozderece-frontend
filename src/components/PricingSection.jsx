@@ -76,7 +76,7 @@ function PricingSection() {
       transition={{ duration: 0.8 }}
       viewport={{ once: true, amount: 0.3 }}
     >
-      <h2 className="pricing-section-title">Koçluk Paketimiz</h2>
+      <h2 className="pricing-section-title">Koçluk Paketimiz ile Hedefinize Ulaşın!</h2>
 
       <div className="pricing-card-horizontal no-image">
         <div className="grade-badge" title="5–7: Ara sınıf, 8–12 ve Mezun: Sınav grubu">

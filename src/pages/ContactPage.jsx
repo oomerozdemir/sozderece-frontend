@@ -58,16 +58,20 @@ const IletisimPage = () => {
 
   return (
     <>
-    <Helmet>
+<Helmet>
   <title>Ücretsiz Ön Görüşme | Sözderece Koçluk</title>
   <meta
     name="description"
-    content="Koçluk sistemimiz hakkında ücretsiz ön görüşme formunu doldurun, size özel eğitim planlamasına başlayalım. Öğrenci ve veli odaklı birebir destek."
+    content="Koçluk sistemimiz hakkında ücretsiz ön görüşme formunu doldurun. Öğrenci ve veliye özel eğitim planlaması ile sürece başlayın."
   />
-  <meta property="og:title" content="Ücretsiz Ön Görüşme İçin Hemen Formu Doldur! | Sözderece Koçluk" />
+  <meta
+    name="keywords"
+    content="ücretsiz ön görüşme, öğrenci koçluğu, veli danışmanlığı, koçluk sistemi nedir, eğitim koçluğu başvuru, sözderece ücretsiz görüşme, online koçluk"
+  />
+  <meta property="og:title" content="Ücretsiz Ön Görüşme | Sözderece Koçluk" />
   <meta
     property="og:description"
-    content="Hemen formu doldurun, uzman koçlarımız size özel planlamayla iletişime geçsin."
+    content="Hemen formu doldurun, uzman koçlarımız size özel birebir eğitim planlamasıyla dönüş yapsın!"
   />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://sozderecekocluk.com/ucretsiz-on-gorusme" />
@@ -75,6 +79,7 @@ const IletisimPage = () => {
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://sozderecekocluk.com/ucretsiz-on-gorusme" />
 </Helmet>
+
 
       <TopBar />
       <Navbar />

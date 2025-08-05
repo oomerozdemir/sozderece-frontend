@@ -102,9 +102,6 @@ export default App;
 /*
 
 
-
-404 olan sayfayi duzenle tasarim olarak eglenceli bir hale getirebiliriz
-
 heroSectıon a ınteraktıf bır şeyler ekle reels vıdeosu nasıl ilerleriz gibi 
 ekstra olarak resimlerle nasıl ilerlediğimizi anlatan bir bölüm sayfa yapabiliriz görsellerle.Görsel solda yazı sonra saga görsel sola yazı seklınde
 

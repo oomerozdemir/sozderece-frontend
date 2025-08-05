@@ -39,16 +39,20 @@ export default function HomePage() {
 
   return (
     <>
-    <Helmet>
+<Helmet>
   <title>Ana Sayfa | Sözderece Koçluk</title>
   <meta
     name="description"
     content="LGS ve YKS öğrencilerine özel birebir online koçluk sistemi. Disiplinli çalışma, motivasyon, program takibi ve veli bilgilendirmesi ile başarıya ulaşın."
   />
+  <meta
+    name="keywords"
+    content="yks koçluk, lgs koçluk, online yks koçu, deneme analizi, koçluk sistemi nedir, net artışı, sözderece koçluk, eğitim koçluğu"
+  />
   <meta property="og:title" content="Sözderece Koçluk | LGS & YKS Online Koçluk" />
   <meta
     property="og:description"
-    content="LGS ve YKS'ye hazırlanan öğrencilere online koçluk desteği.Hemen YKS-LGS koçluk sistemimizi inceleyi,formu doldurun ve hayalinizdeki üniversite için süreci başlatın!"
+    content="LGS ve YKS'ye hazırlanan öğrencilere birebir koçluk desteği. Hemen koçluk sistemimizi inceleyin ve sürecinizi başlatın!"
   />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://sozderecekocluk.com/" />
@@ -56,6 +60,7 @@ export default function HomePage() {
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://sozderecekocluk.com/" />
 </Helmet>
+
 
     <motion.div
       className="page"
