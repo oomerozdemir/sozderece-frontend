@@ -45,6 +45,8 @@ const Footer = () => {
             <ul>
               <li><a href="/paket-detay">YKS 2026</a></li>
               <li><a href="/paket-detay">LGS 2026</a></li>
+              <li><a href="/blog">Sözderece Blog</a></li>
+
             </ul>
           </div>
         </div>
