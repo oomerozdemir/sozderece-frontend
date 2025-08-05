@@ -16,7 +16,7 @@ const Footer = () => {
       <div className="footer-container">
         {/* Sol Logo ve Sosyal İkonlar */}
         <div className="footer-left">
-          <img src="../images/hero-logo.png" alt="Logo" className="footer-logo" />
+          <img src="../images/hero-logo.webp" alt="Logo" className="footer-logo" />
           <div className="social-icons">
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
               <FaInstagram />

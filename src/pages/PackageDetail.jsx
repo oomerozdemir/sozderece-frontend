@@ -116,9 +116,9 @@ const handleContinue = () => {
   ];
 
   const images = [
-    "/images/paketlerImage1.png",
-    "/images/paketlerImage2.png",
-    "/images/paketlerImage3.png"
+    "/images/paketlerImage1.webp",
+    "/images/paketlerImage2.webp",
+    "/images/paketlerImage3.webp"
   ];
 
   const handlePrev = () => {
@@ -150,7 +150,7 @@ const handleContinue = () => {
   />
   <meta property="og:type" content="product" />
   <meta property="og:url" content={`https://sozderecekocluk.com/paket/${selected.slug}`} />
-  <meta property="og:image" content="https://sozderecekocluk.com/images/hero-logo.png" />
+  <meta property="og:image" content="https://sozderecekocluk.com/images/hero-logo.webp" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href={`https://sozderecekocluk.com/paket/${selected.slug}`} />
 
@@ -248,20 +248,20 @@ const handleContinue = () => {
 
           <div className="payment-methods">
           <img
-            src="/images/kare-logo-mastercard.jpg"
+            src="/images/kare-logo-mastercard.webp"
             alt="Ödeme Yöntemleri"
             className="payment-logos"
           />
           <img
-            src="/images/kare-logo-visa.jpg"
+            src="/images/kare-logo-visa.webp"
             alt="Ödeme Yöntemleri"
             className="payment-logos"
           /><img
-            src="/images/kare-logo-troy.jpg"
+            src="/images/kare-logo-troy.webp"
             alt="Ödeme Yöntemleri"
             className="payment-logos"
           /><img
-            src="/images/kare-logo-paytr.jpg"
+            src="/images/kare-logo-paytr.webp"
             alt="Ödeme Yöntemleri"
             className="payment-logos"
           />

@@ -63,7 +63,7 @@ const [dropdownOpen, setDropdownOpen] = useState(false);
               <div className="navbar-logo">
                 <a href="/">
                   <img
-                    src="/images/hero-logo.png"
+                    src="/images/hero-logo.webp"
                     alt="Sözderece Koçluk"
                     className="navbar-logo-img"
                   />

@@ -7,7 +7,7 @@ export const blogPosts = [
     description: "Bu yazıda 2025 YKS için etkili çalışma yöntemlerini ele alıyoruz.",
     date: "2025-07-15",
     tags: ["YKS", "tercih dönemi"],
-    image: "/images/tercihDonemi.png",
+    image: "/images/tercihDonemi.webp",
    content: `
   <h2>YKS Tercih Döneminde Dikkat Edilmesi Gerekenler</h2>
   <p>Üniversiteye girişte <strong>sınav başarısı kadar tercih süreci de belirleyicidir</strong>. Başarılı bir sınav sonucunu hatalı tercihlerle gölgede bırakmak mümkündür. Bu nedenle tercih döneminde dikkatli ve bilinçli adımlar atmak gerekir.</p>
@@ -64,7 +64,7 @@ export const blogPosts = [
   description: "YKS'ye hazırlanırken başarıya götüren stratejiler ve Sözderece Koçluk önerileri.",
   date: "2025-08-01",
   tags: ["YKS", "hazırlık", "koçluk"],
-  image: "/images/yksStrateji.jpg",
+  image: "/images/yksStrateji.webp",
   content: `
     <h2>YKS Hazırlık Sürecinde Etkili Stratejiler</h2>
     <p>Üniversiteye girişin anahtarı olan <strong>Yükseköğretim Kurumları Sınavı (YKS)</strong>, her yıl milyonlarca öğrenciyi ilgilendiriyor. 

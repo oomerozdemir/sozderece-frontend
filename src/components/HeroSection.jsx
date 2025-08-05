@@ -15,7 +15,7 @@ const HeroSection = () => {
 >
   <div className="container">
     <img
-      src="../images/hero-logo.png"
+      src="../images/hero-logo.webp"
       alt="Sözderece Koçluk Logo"
       className="hero-logo"
     />

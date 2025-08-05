@@ -76,7 +76,7 @@ const CartPage = () => {
                     <li key={i} className="cart-item">
                       <div className="cart-item-details">
                         <div className="cart-item-image">
-                          <img src="/images/hero-logo.png" alt={item.name} />
+                          <img src="/images/hero-logo.webp" alt={item.name} />
                         </div>
                         <div className="cart-item-text">
                           <strong>{item.name}</strong>

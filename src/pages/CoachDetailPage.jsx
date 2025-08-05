@@ -36,7 +36,7 @@ const CoachDetailPage = () => {
   <meta property="og:title" content="Ekibimiz | Sözderece Koçluk" />
   <meta property="og:description" content="Sözderece Koçluk ekibinde yer alan alanında uzman koçlarımızı bu sayfadan inceleyin. Her biri öğrencilerin motivasyon ve başarısına odaklıdır." />
   <meta property="og:url" content="https://sozderecekocluk.com/koclar" />
-  <meta property="og:image" content="https://sozderecekocluk.com/hero-logo.png" />
+  <meta property="og:image" content="https://sozderecekocluk.com/hero-logo.webp" />
   <link rel="canonical" href="https://sozderecekocluk.com/koclar" />
 </Helmet>
 
