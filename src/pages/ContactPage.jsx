@@ -66,7 +66,7 @@ const IletisimPage = () => {
   />
   <meta
     name="keywords"
-    content="ücretsiz ön görüşme, öğrenci koçluğu, veli danışmanlığı, koçluk sistemi nedir, eğitim koçluğu başvuru, sözderece ücretsiz görüşme, online koçluk"
+    content="ücretsiz ön görüşme, öğrenci koçluğu, veli danışmanlığı,  eğitim koçluğu başvuru, sözderece ücretsiz görüşme"
   />
   <meta property="og:title" content="Ücretsiz Ön Görüşme | Sözderece Koçluk" />
   <meta
