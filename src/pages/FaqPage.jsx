@@ -128,6 +128,11 @@ export default function FaqSection() {
 >
   
       <h2 className="faq-title">Sıkça Sorulan Sorular</h2>
+      <p className="faq-intro-text">
+  <strong>Sözderece Koçluk</strong> hakkında merak ettiklerinizi bu <strong>sıkça sorulan sorular</strong> bölümünde derledik.
+  <strong> Öğrenci koçluğu nedir</strong>, <strong>koç değişikliği nasıl yapılır</strong> veya <strong>veli bilgilendirmesi nasıl gerçekleşir</strong> gibi sorularınızın cevabını burada bulabilirsiniz.
+  Tüm <strong>online eğitim koçluğu</strong> süreci hakkında detaylı bilgi almak için bizimle iletişime geçebilirsiniz.
+</p>
       <div className="faq-list">
         {faqs.map((item, index) => (
           <motion.div

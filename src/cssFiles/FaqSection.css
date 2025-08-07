@@ -98,6 +98,16 @@
   100% { transform: translateY(0); }
 }
 
+.faq-intro-text {
+  font-size: 1rem;
+  color: #4b5563; /* Tailwind "gray-600" uyumu */
+  max-width: 800px;
+  margin: 0 auto 2rem auto;
+  text-align: center;
+  line-height: 1.6;
+}
+
+
 @media (max-width: 768px) {
   .faq-coach {
     display: none;
