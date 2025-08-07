@@ -118,7 +118,7 @@ const IletisimPage = () => {
         
       </section>
       
-      <FaqSection />
+      
 
       <Footer />
     </>

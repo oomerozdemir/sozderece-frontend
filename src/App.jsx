@@ -100,7 +100,7 @@ export default App;
 
 
 /*
-
+clodinary den gelen kocluk resımlerını webp'ye donustur ve dosya boyutunu dusur.
 
 heroSectıon a ınteraktıf bır şeyler ekle reels vıdeosu nasıl ilerleriz gibi 
 ekstra olarak resimlerle nasıl ilerlediğimizi anlatan bir bölüm sayfa yapabiliriz görsellerle.Görsel solda yazı sonra saga görsel sola yazı seklınde

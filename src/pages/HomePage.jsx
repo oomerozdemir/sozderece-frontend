@@ -2,7 +2,7 @@ import React, { lazy } from "react";
 import { motion } from "framer-motion";
 import "../cssFiles/index.css";
 import { Helmet } from "react-helmet";
-
+import DiscountPopup from "../components/DiscountPopup";
 
 
 // Lazy-load bileşenler
@@ -71,6 +71,7 @@ export default function HomePage() {
     >
         <TopBar />
         <Navbar />
+        <DiscountPopup />
         <HeroSection />
 
         <HomeCoachSlider />
