@@ -44,7 +44,7 @@ const HomeCoachSlider = () => {
   return (
 
 <div className="home-coach-slider">
-    <h2 className="home-coach-title">Size Özel Ekibimizle Tanışın</h2>
+    <h2 className="home-coach-title">Sözderece Koçluk Ekibiyle Tanışın</h2>
       <Slider {...settings}>
         {coaches.map((coach) => (
           <div key={coach.id} className="coach-slide-card">
