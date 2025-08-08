@@ -50,19 +50,26 @@
   line-height: 1.4;
 }
 
-/* Mobil uyum */
+
 @media (max-width: 768px) {
   .coach-slide-card {
-    max-width: 80%; /* biraz daha dar */
-    padding: 0.8rem; /* daha kompakt */
+    max-width: 80%;
+    padding: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* hem resim hem metin ortalanır */
+    justify-content: center; /* dikeyde ortalama */
+    text-align: center; /* metin ortalanır */
+    background: none;
   }
 
   .coach-slide-card img {
-    width: 160px; /* genişlik sabit */
-    height: 160px; /* yükseklik sabit */
-    object-fit: cover; /* bozulma olmadan kırpma */
-    border-radius: 50%; /* yuvarlak yapar */
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 50%;
     margin-bottom: 0.8rem;
+    display: block;
   }
 
   .section-title {
