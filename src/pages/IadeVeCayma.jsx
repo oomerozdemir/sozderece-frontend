@@ -2,10 +2,14 @@ import "../cssFiles/mesafeliSozlesme.css";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";
+import { Helmet } from "react-helmet";
 
 const IadeVeCaymaPolitikasi = () => {
   return (
     <>
+     <Helmet>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
     <TopBar />
     <Navbar />
     <div className="sozlesme-container">

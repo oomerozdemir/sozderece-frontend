@@ -45,7 +45,7 @@ const benefitItems = [
   {
     title: "Deneme Analizi",
     icon: <FaChartLine />,
-    points: ["Net-zaman takibi", "Gelişim çizelgesi"],
+    points: ["Net-zaman takibi", "Gelişim çizelgesi", "Net Artışı"],
   },
   {
     title: "Soru & Kaynak Takibi",

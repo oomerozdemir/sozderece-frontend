@@ -2,11 +2,15 @@ import "../cssFiles/mesafeliSozlesme.css";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";
 import Navbar from "../components/navbar";
+import { Helmet } from "react-helmet";
 
 
 const MesafeliHizmetSozlesmesi = () => {
   return (
     <>
+      <Helmet>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
     <TopBar />
     <Navbar />
     <div className="sozlesme-container">

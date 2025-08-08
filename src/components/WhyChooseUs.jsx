@@ -11,7 +11,7 @@ const reasons  = [
   {
     icon: <FaHandsHelping />,
     title: "Koçluk değil, yol arkadaşlığı sunuyoruz.",
-    description: "Biz bir görev değil, bir güven bağı kuruyoruz. Öğrencinin duygusunu, inişini çıkışını anlıyor; yanında yürüyoruz.",
+    description: "Biz bir görev değil, güven bağı kuruyoruz. Öğrencinin duygusunu, inişini çıkışını anlıyor; yanında yürüyoruz.",
     
   },
   {

@@ -1,6 +1,10 @@
 # https://www.robotstxt.org/robotstxt.html
+
 User-agent: *
+Disallow: /gizlilik-politikasi
+Disallow: /iade-ve-cayma
+Disallow: /mesafeli-sozlesme
 Allow: /
 
-
 Sitemap: https://www.sozderecekocluk.com/sitemap.xml
+

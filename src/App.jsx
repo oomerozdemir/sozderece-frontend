@@ -100,7 +100,7 @@ export default App;
 
 
 /*
-
+mobilde koclarin resmi kucult
 
 
 deneme analızı hesaplama net hesaplama gıbı seylerı ekle araç olarak
