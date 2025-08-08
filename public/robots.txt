@@ -1,8 +1,8 @@
 # https://www.robotstxt.org/robotstxt.html
 
 User-agent: *
-Disallow: /gizlilik-politikasi
-Disallow: /iade-ve-cayma
+Disallow: /gizlilik-politikasi-kvkk
+Disallow: /iade-ve-cayma-politikasi
 Disallow: /mesafeli-hizmet-sozlesmesi
 Allow: /
 
