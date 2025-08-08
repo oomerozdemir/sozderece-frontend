@@ -141,7 +141,6 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   position: relative;
   cursor: pointer;
-  background: #ececec;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -275,6 +274,7 @@
   .swiper-button-prev,
   .swiper-button-next {
     display: none !important;
+
   }
   /* SWIPER DOT TASARIMI */
   .mobile-hero-slider .swiper-pagination {
@@ -299,40 +299,8 @@
     width: 16px;
     border-radius: 8px;
   }
+}
 
-  /* --- SWIPE İPUCU (ilk slaytta göster)--- */
-  .swipe-indicator {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #ff9203;
-    font-size: 1rem;
-    position: absolute;
-    bottom: -32px;
-    right: 0px;
-    z-index: 4;
-    background: rgba(255,255,255,0.92);
-    padding: 6px 16px 6px 10px;
-    border-radius: 24px 28px 28px 24px;
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    pointer-events: none;
-    user-select: none;
-    animation: swipe-right-indicator 2.2s infinite;
-  }
-}
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes swipe-right-indicator {
-  0%, 100% { opacity: 0.3; transform: translateX(0);}
-  20% { opacity: 1; transform: translateX(6px);}
-  45% { opacity: 1; transform: translateX(16px);}
-  75% { opacity: 1; transform: translateX(6px);}
-}
 
 .mobile-hero-slider {
   display: none;
@@ -367,5 +335,14 @@
   .swiper-button-next,
   .swiper-pagination {
     display: none !important;
+  }
+}
+
+@media (max-width: 468px) {
+  .hero-title {
+    font-size: 1.4rem;
+  }
+  .hero-subtext {
+    font-size: 0.8rem;
   }
 }

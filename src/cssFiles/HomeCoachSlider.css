@@ -53,11 +53,16 @@
 /* Mobil uyum */
 @media (max-width: 768px) {
   .coach-slide-card {
-    max-width: 90%;
+    max-width: 80%; /* biraz daha dar */
+    padding: 0.8rem; /* daha kompakt */
   }
 
   .coach-slide-card img {
-    height: 500px;
+    width: 160px; /* genişlik sabit */
+    height: 160px; /* yükseklik sabit */
+    object-fit: cover; /* bozulma olmadan kırpma */
+    border-radius: 50%; /* yuvarlak yapar */
+    margin-bottom: 0.8rem;
   }
 
   .section-title {

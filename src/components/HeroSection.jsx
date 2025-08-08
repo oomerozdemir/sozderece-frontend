@@ -141,13 +141,7 @@ export default function HeroSection() {
             <a href="/paketler" className="hero-btn primary">Hemen Başla</a>
             <a href="/ucretsiz-on-gorusme" className="hero-btn secondary">Ücretsiz Ön Görüşme</a>
           </div>
-          {/* SWIPE İPUCU */}
-          <div className="swipe-indicator">
-            <span>Sola Kaydır</span>
-            <svg width="18" height="18" viewBox="0 0 20 20">
-              <polyline points="6 4 14 10 6 16" fill="none" stroke="#ff9203" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
+       
         </div>
       </SwiperSlide>
       {/* 2. Slide: Video veya Instagram Link */}

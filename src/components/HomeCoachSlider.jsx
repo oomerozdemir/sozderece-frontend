@@ -26,7 +26,7 @@ const HomeCoachSlider = () => {
   slidesToShow: 3,
   slidesToScroll: 1,
   autoplay: true,          // Otomatik kaydırma aktif
-  autoplaySpeed: 2000,     // 4 saniyede bir kayar
+  autoplaySpeed: 4000,     // 4 saniyede bir kayar
   cssEase: "linear",       // Düzgün geçiş
   responsive: [
     {
