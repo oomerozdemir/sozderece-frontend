@@ -16,74 +16,8 @@ body {
 
 
 
-.hero-section {
-  background: linear-gradient(180deg, #b89f9f, #080894);
-  color: white;
-  padding: 40px 20px;
-  width: 100%;
-}
-
-.hero-logo {
-  width: 150px;
-  height: auto;
-  margin: 0 auto 30px;
-  display: block;
-}
 
 
-.hero-content {
-  text-align: center;
-  max-width: 700px;
-  margin: 0 auto;
-  padding-left: 20px;
-}
-
-
-.hero-content h2 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  color: orange;
-}
-
-.hero-content p {
-  font-size: 1.1rem;
-}
-
-.hero-button {
-  display: inline-block;
-  margin-top: 20px;
-  padding: 10px 35px;
-  background-color: rgb(219, 117, 0);
-  color: whitesmoke;
-  border-radius: 20px;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-}
-
-.hero-button:hover {
-  background-color: rgb(255, 140, 0);
-  transform: scale(1.05);
-  box-shadow: 0 0 10px orange;
-}
-
-.hero-button.outline {
-  background-color: transparent;
-  color: rgb(241, 241, 241);
-  border: 2px solid rgb(247, 247, 247);
-  margin-left: 15px;
-}
-
-.hero-button.outline:hover {
-  background-color: orange;
-  color: white;
-  box-shadow: 0 0 10px orange;
-}
-
-
-
-/* Top bar css */
 
 /* Top bar css */
 
@@ -222,34 +156,5 @@ body {
     grid-template-columns: 1fr;
   }
 
-
-  .hero-logo {
-  width: 120px;
-
-  }
-
-  .hero-content h2 {
-    font-size: 1.5rem;  /* daha küçük başlık */
-    line-height: 1.3;
-    word-break: break-word;
-  }
-
-   .hero-content p {
-    font-size: 1rem;  /* daha küçük başlık */
-    line-height: 1.3;
-    word-break: break-word;
-  }
-
-
- .hero-button {
-    display: block;
-    width: 100%;
-    text-align: center;
-    margin: 10px auto;
-    font-size: 1rem;
-  }
-  .hero-button.outline {
-    margin-left: 0px;
-  }
 }
 
