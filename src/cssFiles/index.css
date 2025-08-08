@@ -77,14 +77,14 @@ body {
 }
 
 .section-title {
-  font-size: 2.5rem;
+  font-size: 2rem;
   color: #1a1a1a;
   margin-bottom: 10px;
 }
 
 .section-description {
   color: #555;
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   margin-bottom: 40px;
 }
 
@@ -98,7 +98,7 @@ body {
 }
 
 .contact-info p {
-  font-size: 1.2rem;
+  font-size: 1rem;
   margin-bottom: 15px;
   color: #333;
 }
@@ -112,7 +112,7 @@ body {
   border-radius: 6px;
   text-decoration: none;
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1rem;
   transition: background-color 0.3s;
 }
 
@@ -126,7 +126,7 @@ body {
 .contact-form input,
 .contact-form textarea {
   padding: 14px;
-  font-size: 1.2rem;
+  font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
   resize: vertical;
@@ -134,7 +134,7 @@ body {
 
 .contact-form button {
   padding: 14px;
-  font-size: 1.2rem;
+  font-size: 1rem;
   background-color: #08035a;
 
   color: white;
@@ -149,12 +149,52 @@ body {
 
 
 
+/* ==== Mobil Uyum ==== */
 @media (max-width: 768px) {
- 
+  .contact-section {
+    padding: 40px 15px;
+  }
+
+  .section-title {
+    font-size: 1.6rem;
+    margin-bottom: 6px;
+  }
+
+  .section-description {
+    font-size: 1rem;
+    margin-bottom: 24px;
+    line-height: 1.4;
+  }
 
   .contact-grid {
     grid-template-columns: 1fr;
+    gap: 24px;
+    text-align: center;
   }
 
-}
+  .contact-info p {
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+  }
 
+  .whatsapp-button {
+    font-size: 1rem;
+    padding: 10px 16px;
+    margin-top: 14px;
+  }
+
+  .contact-form {
+    gap: 14px;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    font-size: 1rem;
+    padding: 10px;
+  }
+
+  .contact-form button {
+    font-size: 1rem;
+    padding: 10px;
+  }
+}
