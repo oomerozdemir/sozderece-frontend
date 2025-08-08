@@ -52,19 +52,14 @@
 
 
 @media (max-width: 768px) {
-  .home-coach-slider {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center; /* tüm kartları ortalar */
-    gap: 1.5rem; /* aralarındaki boşluk */
-  }
-
   .coach-slide-card {
-    width: 200px; /* sabit, her ekranda simetrik görünür */
+    max-width: 90%;
+    margin: 0 auto; /* ortalama */
     padding: 0.8rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* yatayda ortalar */
+    justify-content: flex-start; /* metin yukarıdan başlar */
     text-align: center;
     background: none;
     box-shadow: none;
@@ -75,16 +70,12 @@
     height: 160px;
     object-fit: cover;
     border-radius: 50%;
-    margin-bottom: 0.8rem;
+    margin: 0 auto 0.8rem auto; /* resim tam ortada */
     display: block;
   }
 }
 
 @media (max-width: 500px) {
-  .coach-slide-card {
-    width: 150px; /* daha küçük ekranlarda küçült */
-  }
-
   .coach-slide-card img {
     width: 120px;
     height: 120px;
