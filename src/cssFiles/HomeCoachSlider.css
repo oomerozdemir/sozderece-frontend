@@ -6,6 +6,14 @@
   margin: 0 auto;
 }
 
+
+.home-coach-title {
+    font-size: 2rem;
+    color: #0f172a;
+    margin-bottom: 3rem;
+    font-weight: 700;
+}
+
 .coachSlider-section-title {
   font-size: 1.8rem;
   font-weight: 600;
@@ -72,6 +80,9 @@
     border-radius: 50%;
     margin: 0 auto 0.8rem auto; /* resim tam ortada */
     display: block;
+  }
+  .home-coach-title {
+    font-size: 1.35rem;
   }
 }
 
