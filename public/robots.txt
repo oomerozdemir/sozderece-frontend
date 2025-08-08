@@ -3,7 +3,7 @@
 User-agent: *
 Disallow: /gizlilik-politikasi
 Disallow: /iade-ve-cayma
-Disallow: /mesafeli-sozlesme
+Disallow: /mesafeli-hizmet-sozlesmesi
 Allow: /
 
 Sitemap: https://www.sozderecekocluk.com/sitemap.xml
