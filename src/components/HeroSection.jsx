@@ -138,7 +138,7 @@ export default function HeroSection() {
             Net artışı için doğru yerdesiniz.
           </p>
           <div className="hero-buttons">
-            <a href="/paketler" className="hero-btn primary">Hemen Başla</a>
+            <a href="/paket-detay" className="hero-btn primary">Hemen Başla</a>
             <a href="/ucretsiz-on-gorusme" className="hero-btn secondary">Ücretsiz Ön Görüşme</a>
           </div>
        
