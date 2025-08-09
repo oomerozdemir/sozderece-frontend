@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import "../cssFiles/notFound.css";
 
 const NotFound = () => {
   return (
