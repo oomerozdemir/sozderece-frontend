@@ -101,7 +101,6 @@ export default App;
 
 /*
 
-
 deneme analızı hesaplama net hesaplama gıbı seylerı ekle araç olarak
 
 iade talebi gonderildiginde bana mail gelsin ayrica iade talebi yerinde 
