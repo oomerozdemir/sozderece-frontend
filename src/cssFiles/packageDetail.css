@@ -108,7 +108,6 @@
   width: 100%;
   padding: 12px;
   font-size: 1rem;
-  margin-bottom: 24px;
   border: 1px solid #170274;
   border-radius: 8px;
   background-color: #fefefe;
@@ -392,6 +391,13 @@
     box-shadow: 0 6px 18px rgba(0,0,0,0.06);
   }
 
+  .package-dropdown {
+      font-size: 0.70rem;
+  }
+  .dropdown-label {
+    font-size: 0.70rem;
+  }
+
   /* Masaüstündeki seçim alanını mobilde gizle */
   .package-detail-content .dropdown-label,
   .package-detail-content .package-dropdown {
@@ -415,6 +421,8 @@
   .package-detail-content {
     padding: 20px; /* kart içi biraz daralsın */
     border-radius: 14px;
+    margin-top: -39px;
+
   }
 
   /* Tipografi - mobil için küçültmeler */
