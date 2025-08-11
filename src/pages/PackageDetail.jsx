@@ -188,24 +188,25 @@ const handleContinue = () => {
       <Topbar />
       <Navbar />
       <div className="package-detail-layout">
-         <div className="package-image-placeholder">
-         <div className="image-carousel">
-            <button className="carousel-arrow left" onClick={handlePrev}>‹</button>
-            <img src={images[currentIndex]} alt={`Koçluk Paketi Görseli ${currentIndex + 1}`} className="carousel-image" />
-            <button className="carousel-arrow right" onClick={handleNext}>›</button>
-          </div> 
-
-          <div className="desktop-image-list">
-            {images.map((src, index) => (
-              <img
-                key={index}
-                src={src}
-                alt={`Görsel ${index + 1}`}
-                className="carousel-image"
-              />
-            ))}
-          </div>
-        </div>
+        {/* MOBİL: Üstte paket seçimi */}
+<div className="mobile-select">
+  <label htmlFor="package-dropdown-mobile" className="dropdown-label">
+    Hizmet Paketi
+  </label>
+  <select
+    id="package-dropdown-mobile"
+    value={selected?.slug}
+    onChange={handleDropdownChange}
+    className="package-dropdown"
+    aria-label="Hizmet Paketi Seçimi (Mobil)"
+  >
+    {packageList.map((pkg) => (
+      <option key={pkg.slug} value={pkg.slug}>
+        {pkg.name}
+      </option>
+    ))}
+  </select>
+</div>
 
         <div className="package-detail-content">
           <h1 className="package-title">{selected.name}</h1>
@@ -289,6 +290,25 @@ const handleContinue = () => {
             ))}
           </div>
         </div>
+         <div className="package-image-placeholder">
+         <div className="image-carousel">
+            <button className="carousel-arrow left" onClick={handlePrev}>‹</button>
+            <img src={images[currentIndex]} alt={`Koçluk Paketi Görseli ${currentIndex + 1}`} className="carousel-image" />
+            <button className="carousel-arrow right" onClick={handleNext}>›</button>
+          </div> 
+
+          <div className="desktop-image-list">
+            {images.map((src, index) => (
+              <img
+                key={index}
+                src={src}
+                alt={`Görsel ${index + 1}`}
+                className="carousel-image"
+              />
+            ))}
+          </div>
+        </div>
+
 
          <footer className="custom-footer">
           <div className="footer-icons">

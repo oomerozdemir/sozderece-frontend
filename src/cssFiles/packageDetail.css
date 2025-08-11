@@ -337,6 +337,8 @@
   50% { opacity: 0; }
 }
 
+/* Varsayılan: mobil seçim bloğu gizli, sadece mobilde açılıyor */
+.mobile-select { display: none; }
 
 
 /* Masaüstü için (min-width: 769px) resimler dikey sıralansın */
@@ -370,5 +372,72 @@
     display: none;
   }
 }
+
+/* ---- MOBİL İYİLEŞTİRMELER (≤768px) ---- */
+@media (max-width: 768px) {
+  .package-detail-layout {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;              /* daha sıkı boşluk */
+    padding: 20px 12px;     /* kenarlardan nefes */
+  }
+
+  /* Mobilde üstte görünecek seçim bloğu */
+  .mobile-select {
+    display: block;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  }
+
+  /* Masaüstündeki seçim alanını mobilde gizle */
+  .package-detail-content .dropdown-label,
+  .package-detail-content .package-dropdown {
+    display: none;
+  }
+
+  .package-image-placeholder {
+    width: 100%;
+  }
+
+  .image-carousel {
+    width: 100%;
+    margin: 0 auto 16px auto; /* mobilde alt boşluk biraz daha az */
+  }
+
+  .carousel-image {
+    max-height: 360px; /* 700px çok büyüktü; mobilde taşmayı önler */
+    object-fit: contain;
+  }
+
+  .package-detail-content {
+    padding: 20px; /* kart içi biraz daralsın */
+    border-radius: 14px;
+  }
+
+  /* Tipografi - mobil için küçültmeler */
+  .package-title { font-size: 1.4rem; }
+  .package-price { font-size: 1rem; }
+  .package-note { font-size: 0.85rem; }
+  .package-info { font-size: 0.95rem; }
+
+  .package-guarantees { gap: 12px; }
+  .guarantee-item { font-size: 0.9rem; padding: 10px; }
+
+  .choose-coach-button {
+    padding: 12px 16px;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  .payment-methods { margin-top: 12px; }
+  .payment-logos { max-width: 64px; }
+
+  .kontenjan-title { font-size: 0.85rem; }
+  .kontenjan-bilgi { font-size: 1rem; }
+}
+
 
 
