@@ -84,6 +84,7 @@
   .home-coach-title {
     font-size: 1.35rem;
   }
+  .home-coach-slider {margin: -40px auto;}
 }
 
 @media (max-width: 500px) {

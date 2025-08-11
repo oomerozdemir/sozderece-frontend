@@ -414,7 +414,7 @@
   }
 
   .carousel-image {
-    max-height: 360px; /* 700px çok büyüktü; mobilde taşmayı önler */
+    max-height: 276px; /* 700px çok büyüktü; mobilde taşmayı önler */
     object-fit: contain;
   }
 
@@ -445,6 +445,12 @@
 
   .kontenjan-title { font-size: 0.75rem; }
   .kontenjan-bilgi { font-size: 0.80rem; }
+
+  .accordion-title {font-size: 0.80;}
+  .accordion-content {font-size: 0.70;}
+
+  .footer-links {font-size: 0.70rem;}
+  .footer-copy {font-size: 0.75;}
 }
 
 
