@@ -300,24 +300,112 @@
 }
 
 
+/* ====== MOBİL TYPO & LAYOUT (≤768px) ====== */
 @media (max-width: 768px) {
- .founder-message.vertical{
-    flex-direction: column;
+  /* Genel konteyner ve boşluklar */
+  .containers { padding: 0 14px; }
+  .about-page { font-size: 100%; } /* baz korunsun */
+
+  /* HERO */
+  .about-hero { padding: 56px 16px; }
+  .about-hero h1 { font-size: 1rem; margin-bottom: 12px; }
+  .about-hero p { font-size: 0.8rem; line-height: 1.5; }
+
+  /* MISSION & VISION kartları */
+  .mission-vision-values {
+    gap: 16px;
+    padding: 40px 16px;
+  }
+  .info-card { padding: 18px; border-radius: 10px; }
+  .info-card h2 { font-size: 1rem; margin-bottom: 10px; }
+  .info-card p { font-size: 0.8rem; line-height: 1.5; }
+
+  /* Coaching section */
+  .coaching-system {
+    gap: 20px;
+    padding: 40px 16px;
+  }
+  .coaching-image { flex: 1 1 100%; }
+  .coaching-image img {
+    max-width: 300px;  /* mobilde daha küçük görsel */
+    width: 100%;
+    border-radius: 12px;
+  }
+  .coaching-text { flex: 1 1 100%; }
+  .coaching-text h2 { font-size: 1rem; margin-bottom: 12px; }
+  .coaching-text p { font-size: 0.8rem; line-height: 1.6; margin-bottom: 16px; }
+
+  .coaching-highlights { gap: 14px; }
+  .highlights { gap: 10px; }
+  .highlight-icon { font-size: 1.2rem; margin-top: 2px; }
+  .highlights p { font-size: 0.8rem; line-height: 1.45; }
+
+  /* Değerler (values) */
+  .value-cards { gap: 16px; padding: 32px 16px; }
+  .value-card { padding: 18px 14px; border-radius: 10px; }
+  .value-card h3 { font-size: 0.95rem; margin-bottom: 8px; }
+  .value-card p { font-size: 0.8rem; }
+  .value-card .icon { font-size: 1.4rem; margin-bottom: 10px; }
+
+  /* Kurucu (founder) bloğu */
+  .founder-message.vertical {
+    padding: 28px 18px;
+    max-width: 100%;
+    margin-top: 32px;
+    border-radius: 12px;
+  }
+  .founder-message.vertical img { max-width: 140px; margin-bottom: 12px; }
+  .founder-message.vertical blockquote {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .founder-message.vertical cite { font-size: 0.8rem; }
+
+  /* Ekibimiz */
+  .team-preview {
+    padding: 36px 16px;
+    margin-top: 36px;
+    border-radius: 12px;
+  }
+  .team-preview h2 { font-size: 1rem; margin-bottom: 10px; }
+  .team-preview p {
+    font-size: 0.8rem;
+    line-height: 1.55;
+    max-width: 100%;
+    margin: 0 auto 16px;
+  }
+  .team-link {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+
+  /* Join (CTA) */
+  .join-section { padding: 44px 16px; }
+  .join-content {
+    flex-direction: column !important; /* mevcut kodun 'row' yapmasını düzeltir */
+    gap: 12px;
+    align-items: center;
     text-align: center;
   }
-
-  .founder-message.vertical img {
-    margin-bottom: 16px;
+  .join-section h2 { font-size: 1rem; margin-bottom: 8px; }
+  .join-section p {
+    font-size: 0.8rem;
+    line-height: 1.55;
+    max-width: 100%;
+  }
+  .cta-button {
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    border-radius: 8px;
   }
 
- .join-content {
-    flex-direction: row;
-    justify-content: space-between;
-    text-align: left;
-  }
+  /* Grid’leri daha kompakt yap */
+  .mission-vision-values,
+  .value-cards { grid-template-columns: 1fr; }
 
-  .join-text {
-    max-width: 700px;
-  }
-
+  /* Küçük tipografiyi genel olarak uygula (güvenli azaltma) */
+  h1, h2, h3 { line-height: 1.2; }
+  p, li { font-size: 0.8rem; }
 }

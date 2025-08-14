@@ -200,17 +200,61 @@
 }
 
 
-/* RESPONSIVE */
+/* ====== MOBİL TYPO & LAYOUT (≤768px) ====== */
 @media (max-width: 768px) {
-  .blog-main {
-    flex-direction: column;
-  }
+  /* Genel alan */
+  .blog-page { padding: 14px; }
 
+  /* Başlık ve arama */
+  .blog-header { margin-bottom: 24px; }
+  .blog-header h1 { font-size: 1rem; }
   .search-input {
     width: 90%;
+    padding: 8px;
+    font-size: 0.85rem;
   }
 
-  .blog-detail-page {
-    padding: 20px;
+  /* Ana alan ve gridler */
+  .blog-main { flex-direction: column; gap: 20px; }
+  .blog-cards { grid-template-columns: 1fr; gap: 14px; }
+
+  /* Kartlar */
+  .blog-card { height: 220px; border-radius: 10px; }
+  .card-content { padding: 14px; }
+  .card-content h3 { font-size: 1rem; margin-bottom: 6px; }
+  .card-content p { font-size: 0.8rem; margin-bottom: 4px; }
+  .category, .date { font-size: 0.7rem; }
+
+  /* Sidebar */
+  .blog-sidebar { order: 2; }
+  .sidebar-post img {
+    width: 50px;
+    height: 50px;
   }
+  .sidebar-post p { font-size: 0.8rem; }
+  .sidebar-date { font-size: 0.7rem; }
+
+  /* Blog detay sayfası */
+  .blog-detail-page { padding: 16px; }
+  .blog-detail-header h1 { font-size: 1rem; margin-bottom: 6px; }
+  .blog-date { font-size: 0.75rem; margin-bottom: 12px; }
+  .blog-detail-content h2 {
+    font-size: 0.9rem;
+    margin: 20px 0 10px;
+  }
+  .blog-detail-content p {
+    font-size: 0.8rem;
+    line-height: 1.6;
+    margin: 12px 0;
+  }
+  .blog-detail-content li { font-size: 0.8rem; }
+
+  /* Load more */
+  .load-more-wrapper { margin: 20px 0; }
+  .load-more-button {
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+  .load-more-button .icon { font-size: 1rem; }
 }
