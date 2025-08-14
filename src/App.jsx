@@ -100,12 +100,23 @@ export default App;
 
 
 /*
+koç resımlerının boyutunu dusur
+
+googlesearch console da dızıne eklenen sayfaların hata raporlarını ıncele ve duzelt
+
+ekıbımız sayfası resımlerı duzelt mobıl responsıve olucak seklınde
+
 
 deneme analızı hesaplama net hesaplama gıbı seylerı ekle araç olarak
 
 iade talebi gonderildiginde bana mail gelsin ayrica iade talebi yerinde 
 siparisle ilgili fiyat bilgisi de olsun
 
+********KOÇ EKLEME PROBLEMI VAR*******
+İstanbul Medeniyet Üniversitesi
+
+Sayısal-9344.
+Mayaenayat1@gmail.com
 
 
 
