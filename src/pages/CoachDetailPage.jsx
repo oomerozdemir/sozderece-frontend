@@ -67,7 +67,6 @@ const CoachDetailPage = () => {
     <strong> Koçluk ekibimizi</strong> aşağıdan inceleyebilir ve size en uygun koçla birebir rehberlik sürecinizi başlatabilirsiniz.
   </p>
 
-  <p className="coach-detail-note">Ekibimizi aşağıda inceleyebilirsiniz.</p>
 
   <div className="coach-detail-list">
     {coaches.map((coach) => (
