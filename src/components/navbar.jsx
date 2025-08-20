@@ -115,7 +115,6 @@ const [dropdownOpen, setDropdownOpen] = useState(false);
             <div className="navbar-right-section">
               <Link to="/sepet" className="notif-cart-badge">
                 <FaShoppingCart size={22} color="#000" />
-                {cart.length > 0 && <span className="cart-badge">{cart.length}</span>}
               </Link>
 
               <div className="login-button" ref={dropdownRef}>
