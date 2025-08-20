@@ -261,7 +261,6 @@ const handlePasswordChange = async (e) => {
       <select
         value={form.grade}
         onChange={(e) => setForm({ ...form, grade: e.target.value })}
-        required
       >
         <option value="">Sınıf Seçin</option>
         <option value="5">5. Sınıf</option>
@@ -282,7 +281,6 @@ const handlePasswordChange = async (e) => {
         <select
           value={form.track}
           onChange={(e) => setForm({ ...form, track: e.target.value })}
-          required
         >
           <option value="">Alan Seçin</option>
           <option value="Sayısal">Sayısal</option>
@@ -323,40 +321,7 @@ const handlePasswordChange = async (e) => {
             </div>
           </div>
         )}
-        <section className="accountPage-info-card modern-form" style={{ marginTop: "40px" }}>
-  <h3>🔒 Şifre Değiştir</h3>
-  <form onSubmit={handlePasswordChange}>
-    <div className="accountPage-form-group">
-      <label>Mevcut Şifre</label>
-      <input
-        type="password"
-        value={passwords.current}
-        onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
-        required
-      />
-    </div>
-    <div className="accountPage-form-group">
-      <label>Yeni Şifre</label>
-      <input
-        type="password"
-        value={passwords.new1}
-        onChange={(e) => setPasswords({ ...passwords, new1: e.target.value })}
-        required
-      />
-    </div>
-    <div className="accountPage-form-group">
-      <label>Yeni Şifre (Tekrar)</label>
-      <input
-        type="password"
-        value={passwords.new2}
-        onChange={(e) => setPasswords({ ...passwords, new2: e.target.value })}
-        required
-      />
-    </div>
-    <button type="submit" className="accountPage-update-button">Şifreyi Güncelle</button>
-    {passwordMsg && <p className="success-message">{passwordMsg}</p>}
-  </form>
-</section>
+
 
       </main>
     </div>

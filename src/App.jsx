@@ -38,6 +38,7 @@ const GizlilikPolitikasiKvkk = lazy(() => import("./pages/GizlilikPolitikasi"));
 const BlogList = lazy(() => import("./pages/BlogList"));
 const BlogDetail = lazy(() => import("./pages/BlogDetail"));
 const NotFound = lazy(() => import("./pages/notFound.jsx"));
+const PreCartAuth = lazy(() => import("./pages/preAuth.jsx"));
 
 
 
@@ -57,6 +58,7 @@ function App() {
             <Route path="/iade-ve-cayma-politikasi" element={<IadeVeCaymaPolitikasi />} />
             <Route path="/gizlilik-politikasi-kvkk" element={<GizlilikPolitikasiKvkk />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/pre-auth" element={<PreCartAuth />}/>
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/sss" element={<FaqPage/>} />
@@ -99,25 +101,52 @@ export default App;
 
 
 
+
 /*
-koç resımlerının boyutunu dusur
+
+giris kayit yapma kisminda sifre kullanmiyoruz artik email ve otp ile giris olucak hep
+SIFRE KULLANILMICAK
+OTP ILE GIRIS YAPAN KULLANICIYI 1 AY HATIRLICAK SISTEM VE OTP EMAILI ISTEMICEK BIR SURE
+BUNLARI HALLET
+
+
+*****Gıriş yapma ve kayıt olmada onemli değişiklikler*****
+Paket-detay => Hemen Basla Butonu => e-posta girer kullanici ve otp kodu gider.
+=> kod dogruysa paket sepete eklenir ve kullanici ayni zamanda giris yapmis olur.
+=> sepet sayfasi acilir buradan devama basar => klasik payment sayfasina gider.
+
+Bu sistemin artilari/eksileri
++ kullanici kayit olurken daha az zaman harcar
++ kullanicidan e posta alindigi icin ardindan rahatsiz edilebilir tekrar odemeyi tamamlamasa bile
++ sepette urun kaldiysa mail veya sms gonderimi yapilabilir.
+- kullanicidan daha detayli bilgileri sonradan doldurmasi gerekir
+- ilk eksideki sorunu daha fazla calisma gerekse bile su sekilde cozebiliriz;
+fatura kisminda cogu bilgiyi aliriz ve onu user bilgisiyle baglariz bu sayede odeme tamamlandiginda cogu bilgi alinmis olur
+-sifreyi tekrar olusturmasi gerekir
+-eger sifre olusturmazsa her girisinde otp maili gider oyle girer
+-kullaniciya hesabim kisminda eyleme geciricek sayi ikonu cikar.O sekilde doldurmasi gereken alanlari gosterebiliriz
+Genel tani;
+Daha fazla zaman ve emek gerekicek bu sistem icin bazi seyler silinicek ve hatalar olucak.Ancak en sonunda
+daha gelismis,direkt olarak eyleme gecirebilecek ve pratik bir kullanicidan bilgi donusum alma yontemi olucak.
+Panel bilgileri su anda zaten gostermelik.Ilerde paneli gelistirdigimizde ayri bir webApp uzerinden yonlendirmeyle
+giris yaptirabiliriz.
+**********************************************************************************
+
+
+cerezlerin nasil calistigini ogren tamamiyle
+
 
 googlesearch console da dızıne eklenen sayfaların hata raporlarını ıncele ve duzelt
 
-ekıbımız sayfası resımlerı duzelt mobıl responsıve olucak seklınde
+
+
+*****Seviye tespit araci olusturabiliriz sitede*****
 
 
 deneme analızı hesaplama net hesaplama gıbı seylerı ekle araç olarak
 
 iade talebi gonderildiginde bana mail gelsin ayrica iade talebi yerinde 
 siparisle ilgili fiyat bilgisi de olsun
-
-********KOÇ EKLEME PROBLEMI VAR*******
-İstanbul Medeniyet Üniversitesi
-
-Sayısal-9344.
-Mayaenayat1@gmail.com
-
 
 
 İleride Eklenebilecek Özellikler
@@ -200,6 +229,41 @@ PDF kullanıcıya e-posta ile gönderilir
 
 
 
+*************************************************************************************
+Neden backend sepet?
+
+Ölçüm & atribüsyon
+
+Tüm funnel’ı sunucuda loglarsın: cart_created → item_added → checkout_started → payment_success/failed. Bu zincir tek bir cart_id üzerinden akar, raporlamak çok kolaylaşır.
+
+Cihazlar arası tutarlılık: Kullanıcı telefon → laptop geçtiğinde sepeti aynen görür (client-side localStorage’da bu mümkün değil).
+
+Abandonment (terk) takibi: “Sepete eklendi ama ödeme olmadı” vakalarını kesin ve kalıcı biçimde tespit edip e-posta/SMS otomasyonu tetikleyebilirsin (1 saat/24 saat sonra hatırlatma).
+
+A/B testleri & kampanya atribüsyonu: Sepete ekleme anında kampanya/utm bilgilerini cart’a yazar, hangi kaynağın satışa döndüğünü güvenle ölçersin.
+
+İş kuralları & esneklik
+
+Stok/limit/paket kuralları: “Bir kullanıcı aynı anda şu iki paketi alamaz”, “indirim kodu X sadece yeni kullanıcılara” gibi kuralları tek yerde uygularsın.
+
+Fiyat tutarlılığı: Fiyat, vergi, kur hesapları server’da standart olur; arayüzde farklı tarayıcılar sebebiyle hata/yanlış fiyat riski azalır.
+
+Promosyon/kupon: Kupon doğrulama, kampanya koşullarını merkezi yönetirsin.
+
+Güvenlik: Fiyat oynama, miktar manipülasyonu gibi client taraflı riskler azalır.
+
+Pazarlama & CRM
+
+Abandoned cart e-postası: E-posta zaten OTP ile elimizde. Sepette ürün kalan herkese otomatik akış kurmak çok basit hale gelir.
+
+Yaşam döngüsü tetikleri: “Sepette 48 saattir bekleyen paket”, “döndü ama satın almadı” vb. segmentleri cart durumundan üretirsin.
+
+Operasyonel
+
+Destek/geri dönüş analizi: Bir kullanıcının sepet geçmişine bakıp destek verirken ne olduğunu anlarsın.
+
+Raporlama: Günlük/haftalık sepet → ödeme dönüşüm oranları, ortalama sepet tutarı, en çok bırakılan ürün vb. raporlar tek sorguyla çıkar.
+*************************************************************************************
 
 
 *************************************************************************************

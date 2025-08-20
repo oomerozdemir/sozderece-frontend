@@ -1,222 +1,164 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { FaMedal, FaBullseye, FaComments, FaLock, FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
-import "../cssFiles/packageDetail.css"; 
+import "../cssFiles/packageDetail.css";
 import Navbar from "../components/navbar";
-import Topbar from "../components/TopBar";
-import useCart from "../hooks/useCart";
+import TopBar from "../components/TopBar";
 import { Helmet } from "react-helmet";
-
-const packageList = [
-  /*{
-    slug: "tek-ders-paketi",
-    name: "TEK DERS PAKETİ",
-    price: "700₺ / ders",
-    subtitle: "Sadece birebir özel derse odaklanan esnek paket."
-  },*/
-  {
-    slug: "lgs-2026-paketi",
-    name: "LGS 2026 PAKETİ",
-    price: "2500₺ / ay",
-    subtitle: "Disiplinli bir sınav süreci için ihtiyaç duyduğun temel destek burada!",
-    kontenjan: 89,
-  },
-  {
-    slug: "yks-2026-paketi",
-    name: "YKS 2026 PAKETİ",
-    price: "2500₺ / ay",
-    subtitle: "Disiplinli bir sınav süreci için ihtiyaç duyduğun temel destek burada!",
-    kontenjan: 87,
-  }
-];
+import { PACKAGES } from "../hooks/packages"; 
 
 const PackageDetail = () => {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState(null);
   const [activeIndex, setActiveIndex] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const isPaymentDisabled = false;
-  const { addToCart } = useCart();
 
-const handleContinue = () => {
-   if (isPaymentDisabled) {
-    alert("Sipariş vermek istiyorsanız lütfen WhatsApp üzerinden destek ekibimizle görüşün.Şu anda ödeme sistemiyle alakalı bir sorun üzerinde uğraşıyoruz.Bu sorun en kısa sürede çözülecektir.Anlayışınız için teşekkürler.");
-    return;
-  }
-  const userData = localStorage.getItem("user");
-  if (!userData) {
-    alert("Devam etmek için giriş yapmanız gereklidir.");
-    navigate("/login");
-    return;
-  }
+  // PACKAGES → liste ve varsayılan slug
+  const packageList = useMemo(() => Object.values(PACKAGES), []);
+  const defaultSlug = useMemo(() => Object.keys(PACKAGES)[0], []);
+  const [selectedSlug, setSelectedSlug] = useState(defaultSlug);
+  const selected = PACKAGES[selectedSlug];
 
-  const item = {
-    name: selected.name,
-    price: selected.price,
-    description: selected.subtitle,
+  const handleContinue = () => {
+    if (isPaymentDisabled) {
+      alert("Sipariş vermek istiyorsanız lütfen WhatsApp üzerinden destek ekibimizle görüşün. Şu anda ödeme sistemiyle ilgili bir sorun üzerinde çalışıyoruz.");
+      return;
+    }
+    navigate(`/pre-auth?slug=${encodeURIComponent(selected.slug)}`);
   };
 
-    // Meta Pixel: AddToCart olayı
-  if (window.fbq) {
-    window.fbq('track', 'AddToCart', {
-      content_ids: [selected.slug],
-      content_type: 'product',
-      value: parseInt(selected.price.replace(/[^\d]/g, '')),
-      currency: 'TRY',
-    });
-  }
-
-  addToCart(item);
-  navigate("/sepet"); 
-};
-
-
-
+  // ViewContent Pixel
   useEffect(() => {
-    setSelected(packageList[0]); 
-  }, []);
+    if (selected && window.fbq) {
+      window.fbq("track", "ViewContent", {
+        content_ids: [selected.slug],
+        content_type: "product",
+        value: selected.unitPrice / 100, // TL
+        currency: "TRY",
+      });
+    }
+  }, [selected]);
 
   const handleDropdownChange = (e) => {
-    const found = packageList.find(pkg => pkg.slug === e.target.value);
-    setSelected(found);
+    setSelectedSlug(e.target.value);
   };
-
-  useEffect(() => {
-  if (selected && window.fbq) {
-    window.fbq('track', 'ViewContent', {
-      content_ids: [selected.slug],
-      content_type: 'product',
-      value: parseInt(selected.price.replace(/[^\d]/g, '')),
-      currency: 'TRY',
-    });
-  }
-}, [selected]);
 
   const toggleAccordion = (index) => {
     setActiveIndex(index === activeIndex ? null : index);
   };
 
   const faqItems = [
-    {
-      title: "Sipariş Sonrası Süreç",
-      content: "Sipariş verdikten sonra 24 saat içinde koçunuz sizinle iletişime geçecektir."
-    },
-    {
-      title: "Whatsapp İletişiminde Farkımız",
-      content: "Koçlarımız 7/24 birebir takip sağlar."
-    },
-    {
-      title: "İptal ve İade Koşulları",
-      content: "Paket başladıktan sonraki ilk 5 gün içinde koşulsuz iade hakkınız vardır."
-    },
-    {
-      title: "Diğer Sorular",
-      content: "Tüm diğer sorularınız için iletisim@sozderecekocluk.com adresine ulaşabilir veya whatsapp üzerinden mesaj atabilirsiniz."
-    }
+    { title: "Sipariş Sonrası Süreç", content: "Sipariş verdikten sonra 24 saat içinde koçunuz sizinle iletişime geçecektir." },
+    { title: "Whatsapp İletişiminde Farkımız", content: "Koçlarımız 7/24 birebir takip sağlar." },
+    { title: "İptal ve İade Koşulları", content: "Paket başladıktan sonraki ilk 5 gün içinde koşulsuz iade hakkınız vardır." },
+    { title: "Diğer Sorular", content: "Tüm diğer sorularınız için iletisim@sozderecekocluk.com adresine ulaşabilir veya whatsapp üzerinden mesaj atabilirsiniz." },
   ];
 
   const images = [
     "/images/paketlerImage1.webp",
     "/images/paketlerImage2.webp",
-    "/images/paketlerImage3.webp"
+    "/images/paketlerImage3.webp",
   ];
 
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-  };
+  const handlePrev = () => setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  const handleNext = () => setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
 
   if (!selected) return <div className="package-not-found">Paket bulunamadı.</div>;
 
-  
+  const priceNumberTL = (selected.unitPrice / 100).toFixed(2);
 
   return (
-    
     <>
-<Helmet>
-  <title>{selected.name} | Sözderece Koçluk</title>
-  <meta name="description" content={selected.subtitle} />
-  <meta
-    name="keywords"
-    content="yks koçluk, lgs koçluk, online koçluk paketi, öğrenci koçluğu fiyatları, veli bilgilendirmesi, net artıran koçluk, sözderece koçluk"
-  />
-  <meta property="og:title" content={`${selected.name} | Sözderece Koçluk`} />
-  <meta
-    property="og:description"
-    content="Hemen koçluk paketi satın al! YKS ve LGS için online eğitim danışmanlığıyla hedeflerine ulaş. Güvenli ödeme ve memnuniyet garantisi."
-  />
-  <meta property="og:type" content="product" />
-  <meta property="og:url" content={`https://sozderecekocluk.com/paket/${selected.slug}`} />
-  <meta property="og:image" content="https://sozderecekocluk.com/images/hero-logo.webp" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href={`https://sozderecekocluk.com/paket/${selected.slug}`} />
+      <Helmet>
+        <title>{selected.title} | Sözderece Koçluk</title>
+        <meta name="description" content={selected.subtitle} />
+        <meta
+          name="keywords"
+          content="yks koçluk, lgs koçluk, online koçluk paketi, öğrenci koçluğu fiyatları, veli bilgilendirmesi, net artıran koçluk, sözderece koçluk"
+        />
+        <meta property="og:title" content={`${selected.title} | Sözderece Koçluk`} />
+        <meta
+          property="og:description"
+          content="Hemen koçluk paketi satın al! YKS ve LGS için online eğitim danışmanlığıyla hedeflerine ulaş. Güvenli ödeme ve memnuniyet garantisi."
+        />
+        <meta property="og:type" content="product" />
+        <meta property="og:url" content={`https://sozderecekocluk.com/paket/${selected.slug}`} />
+        <meta property="og:image" content="https://sozderecekocluk.com/images/paketlerImage1.webp" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href={`https://sozderecekocluk.com/paket/${selected.slug}`} />
 
-  <script type="application/ld+json">
-{JSON.stringify({
-  "@context": "https://schema.org/",
-  "@type": "Product",
-  "name": selected.name,
-  "description": selected.subtitle,
-  "image": [
-    "https://sozderecekocluk.com/images/paketlerImage1.png",
-    "https://sozderecekocluk.com/images/paketlerImage2.png",
-    "https://sozderecekocluk.com/images/paketlerImage3.png"
-  ],
-  "brand": {
-    "@type": "Brand",
-    "name": "Sözderece Koçluk"
-  },
-  "sku": selected.slug,
-  "offers": {
-    "@type": "Offer",
-    "url": `https://sozderecekocluk.com/paket/${selected.slug}`,
-    "priceCurrency": "TRY",
-    "price": selected.price.replace(/[^\d]/g, ""),
-    "availability": "https://schema.org/InStock",
-    "itemCondition": "https://schema.org/NewCondition"
-  }
-})}
-</script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            name: selected.title,
+            description: selected.subtitle,
+            image: [
+              "https://sozderecekocluk.com/images/paketlerImage1.webp",
+              "https://sozderecekocluk.com/images/paketlerImage2.webp",
+              "https://sozderecekocluk.com/images/paketlerImage3.webp",
+            ],
+            brand: { "@type": "Brand", name: "Sözderece Koçluk" },
+            sku: selected.slug,
+            offers: {
+              "@type": "Offer",
+              url: `https://sozderecekocluk.com/paket/${selected.slug}`,
+              priceCurrency: "TRY",
+              price: priceNumberTL, // numeric string
+              availability: "https://schema.org/InStock",
+              itemCondition: "https://schema.org/NewCondition",
+            },
+          })}
+        </script>
+      </Helmet>
 
-</Helmet>
-
-
-
-      <Topbar />
+      <TopBar />
       <Navbar />
+
       <div className="package-detail-layout">
         {/* MOBİL: Üstte paket seçimi */}
-<div className="mobile-select">
-  <label htmlFor="package-dropdown-mobile" className="dropdown-label">
-    Hizmet Paketi
-  </label>
-  <select
-    id="package-dropdown-mobile"
-    value={selected?.slug}
-    onChange={handleDropdownChange}
-    className="package-dropdown"
-    aria-label="Hizmet Paketi Seçimi (Mobil)"
-  >
-    {packageList.map((pkg) => (
-      <option key={pkg.slug} value={pkg.slug}>
-        {pkg.name}
-      </option>
-    ))}
-  </select>
-</div>
+        <div className="mobile-select">
+          <label htmlFor="package-dropdown-mobile" className="dropdown-label">
+            Hizmet Paketi
+          </label>
+          <select
+            id="package-dropdown-mobile"
+            value={selected.slug}
+            onChange={handleDropdownChange}
+            className="package-dropdown"
+            aria-label="Hizmet Paketi Seçimi (Mobil)"
+          >
+            {packageList.map((p) => (
+              <option key={p.slug} value={p.slug}>
+                {p.title}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <div className="package-detail-content">
-          <h1 className="package-title">{selected.name}</h1>
-          <p className="package-price">{selected.price}</p>
-          <p className="package-note">Tüm vergiler dahildir. <a href="/mesafeli-hizmet-sozlesmesi" className="underline">Mesafeli Hizmet Sözleşmesini İnceleyin.</a></p>
+          <h1 className="package-title">{selected.title}</h1>
+          <p className="package-price">{selected.priceText}</p>
+          <p className="package-note">
+            Tüm vergiler dahildir.{" "}
+            <a href="/mesafeli-hizmet-sozlesmesi" className="underline">
+              Mesafeli Hizmet Sözleşmesini İnceleyin.
+            </a>
+          </p>
 
-          <label htmlFor="package-dropdown" className="dropdown-label">Hizmet Paketi</label>
-          <select id="package-dropdown" value={selected.slug} onChange={handleDropdownChange} className="package-dropdown">
-            {packageList.map((pkg) => (
-              <option key={pkg.slug} value={pkg.slug}>{pkg.name}</option>
+          <label htmlFor="package-dropdown" className="dropdown-label">
+            Hizmet Paketi
+          </label>
+          <select
+            id="package-dropdown"
+            value={selected.slug}
+            onChange={handleDropdownChange}
+            className="package-dropdown"
+          >
+            {packageList.map((p) => (
+              <option key={p.slug} value={p.slug}>
+                {p.title}
+              </option>
             ))}
           </select>
 
@@ -224,16 +166,16 @@ const handleContinue = () => {
             <FaMedal style={{ marginRight: "8px", color: "#f4b400" }} />
             Size özel programlama ve sınırsız Whatsapp iletişimi. 12 aya kadar taksitle, güvenli ödeme imkanıyla.
           </p>
+
           {selected?.kontenjan !== undefined && (
-  <div className="kontenjan-bilgi-blok">
-    <p className="kontenjan-title">Kontenjan durumu</p>
-    <div className="kontenjan-bilgi">
-      <span className="yanip-sonen-simge"></span>
-      SON {selected.kontenjan} KİŞİ
-    </div>
-  </div>
-)}
-          
+            <div className="kontenjan-bilgi-blok">
+              <p className="kontenjan-title">Kontenjan durumu</p>
+              <div className="kontenjan-bilgi">
+                <span className="yanip-sonen-simge"></span>
+                SON {selected.kontenjan} KİŞİ
+              </div>
+            </div>
+          )}
 
           <div className="package-guarantees">
             <div className="guarantee-item">
@@ -248,31 +190,18 @@ const handleContinue = () => {
           </div>
 
           <div className="payment-methods">
-          <img
-            src="/images/kare-logo-mastercard.webp"
-            alt="Ödeme Yöntemleri"
-            className="payment-logos"
-          />
-          <img
-            src="/images/kare-logo-visa.webp"
-            alt="Ödeme Yöntemleri"
-            className="payment-logos"
-          /><img
-            src="/images/kare-logo-troy.webp"
-            alt="Ödeme Yöntemleri"
-            className="payment-logos"
-          /><img
-            src="/images/kare-logo-paytr.webp"
-            alt="Ödeme Yöntemleri"
-            className="payment-logos"
-          />
-        </div>
+            <img src="/images/kare-logo-mastercard.webp" alt="Ödeme Yöntemleri" className="payment-logos" />
+            <img src="/images/kare-logo-visa.webp" alt="Ödeme Yöntemleri" className="payment-logos" />
+            <img src="/images/kare-logo-troy.webp" alt="Ödeme Yöntemleri" className="payment-logos" />
+            <img src="/images/kare-logo-paytr.webp" alt="Ödeme Yöntemleri" className="payment-logos" />
+          </div>
 
-        <p style={{ fontSize: "0.9rem", color: "#64748b", marginTop: "8px" }}>
-        Tüm ödemeler 256-bit SSL sertifikası ile güvence altındadır.
-        </p>
+          <p style={{ fontSize: "0.9rem", color: "#64748b", marginTop: "8px" }}>
+            Tüm ödemeler 256-bit SSL sertifikası ile güvence altındadır.
+          </p>
+
           <button className="choose-coach-button" onClick={handleContinue}>
-           Hemen Süreci Başlat!
+            Hemen Süreci Başlat!
           </button>
 
           <div className="accordion-container">
@@ -282,35 +211,32 @@ const handleContinue = () => {
                   {item.title}
                   <span>{activeIndex === index ? "▲" : "▼"}</span>
                 </div>
-                {activeIndex === index && (
-                  <div className="accordion-content">{item.content}</div>
-                )}
+                {activeIndex === index && <div className="accordion-content">{item.content}</div>}
                 <hr />
               </div>
             ))}
           </div>
         </div>
-         <div className="package-image-placeholder">
-         <div className="image-carousel">
-            <button className="carousel-arrow left" onClick={handlePrev}>‹</button>
+
+        <div className="package-image-placeholder">
+          <div className="image-carousel">
+            <button className="carousel-arrow left" onClick={handlePrev}>
+              ‹
+            </button>
             <img src={images[currentIndex]} alt={`Koçluk Paketi Görseli ${currentIndex + 1}`} className="carousel-image" />
-            <button className="carousel-arrow right" onClick={handleNext}>›</button>
-          </div> 
+            <button className="carousel-arrow right" onClick={handleNext}>
+              ›
+            </button>
+          </div>
 
           <div className="desktop-image-list">
             {images.map((src, index) => (
-              <img
-                key={index}
-                src={src}
-                alt={`Görsel ${index + 1}`}
-                className="carousel-image"
-              />
+              <img key={index} src={src} alt={`Görsel ${index + 1}`} className="carousel-image" />
             ))}
           </div>
         </div>
 
-
-         <footer className="custom-footer">
+        <footer className="custom-footer">
           <div className="footer-icons">
             <FaInstagram />
             <FaTiktok />
@@ -325,7 +251,6 @@ const handleContinue = () => {
           </div>
           <div className="footer-copy">© 2025 SÖZDERECE KOÇLUK Her Hakkı Saklıdır</div>
         </footer>
-
       </div>
     </>
   );

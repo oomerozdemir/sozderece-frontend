@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import useCart from "../hooks/useCart";
 import "../cssFiles/cart.css";
 import { CgTrash } from "react-icons/cg";
@@ -6,107 +6,110 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
 
+
+
 const CartPage = () => {
-  const {
-    cart,
-    removeFromCart,
-    increaseQuantity,
-    decreaseQuantity,
-  } = useCart();
+  const { cart, loading, error, increaseQuantity } = useCart();
   const navigate = useNavigate();
   const [isAgreed, setIsAgreed] = useState(false);
 
-  const total = cart.reduce((sum, item) => {
-    const priceNumber = parseFloat(item.price.replace("₺", "").replace(/[^\d.]/g, ""));
-    return sum + priceNumber * (item.quantity || 1);
-  }, 0);
+  // Backend sepet yapısı: { items: [{ slug, title, unitPrice (int kuruş), quantity }]}
+  const items = useMemo(() => cart?.items ?? [], [cart]);
 
- const handleCheckout = () => {
-  if (!isAgreed) {
-    alert("Lütfen sözleşmeyi onaylayın.");
-    return;
-  }
+  const formatTL = (krs) => (krs / 100).toFixed(2);
 
-  if (cart.length === 0) {
-    alert("Lütfen önce bir paket seçin.");
-    return;
-  }
+  const total = useMemo(() => {
+    return items.reduce((sum, it) => sum + (it.unitPrice * (it.quantity || 1)), 0);
+  }, [items]);
 
-
-
-  navigate("/payment");
-};
+  const handleCheckout = () => {
+    if (!isAgreed) {
+      alert("Lütfen sözleşmeyi onaylayın.");
+      return;
+    }
+    if (items.length === 0) {
+      alert("Lütfen önce bir paket seçin.");
+      return;
+    }
+    // Ödeme sayfasında /api/order/prepare çağrısında useServerCart: true gönderiyoruz
+    navigate("/payment");
+  };
 
   const handleContinueShopping = () => {
     window.location.href = "/#paketler";
   };
 
-  const handleRemoveFromCart = (index) => {
-    removeFromCart(index);
-
+  // Şimdilik kaldır/azalt backend endpoint'leri yok; butonları pasif gösteriyoruz
+  const handleRemoveDisabled = () => {
+    alert("Sepetten kaldırma yakında aktif olacak.");
+  };
+  const handleDecreaseDisabled = () => {
+    alert("Adet azaltma yakında aktif olacak.");
   };
 
   return (
     <div>
       <TopBar />
       <Navbar />
+
       <div className="cart-page">
         <h2 className="cart-title">Sepet</h2>
 
-        {cart.length === 0  ? (
-  <div className="empty-message-container">
-    <p className="empty-message">Sepetiniz boş.</p>
-    <button
-      className="browse-packages-button"
-      onClick={() => navigate("/paket-detay")}
-    >
-      Paketlere Göz At
-    </button>
-  </div>
-) : (
+        {loading && <div className="empty-message">Sepet yükleniyor…</div>}
+        {error && !loading && <div className="empty-message">{error}</div>}
 
+        {!loading && !error && items.length === 0 ? (
+          <div className="empty-message-container">
+            <p className="empty-message">Sepetiniz boş.</p>
+            <button
+              className="browse-packages-button"
+              onClick={() => navigate("/paket-detay")}
+            >
+              Paketlere Göz At
+            </button>
+          </div>
+        ) : (!loading && !error) && (
           <>
-            {cart.length > 0 && (
-              <ul className="cart-list">
-                {cart.map((item, i) => {
-                  const unitPrice = parseFloat(item.price.replace("₺", "").replace(/[^\d.]/g, ""));
-                  const totalItemPrice = (unitPrice * item.quantity).toFixed(2);
-
-                  return (
-                    <li key={i} className="cart-item">
-                      <div className="cart-item-details">
-                        <div className="cart-item-image">
-                          <img src="/images/hero-logo.webp" alt={item.name} />
-                        </div>
-                        <div className="cart-item-text">
-                          <strong>{item.name}</strong>
-                          <p>{item.description}</p>
-                        </div>
+            <ul className="cart-list">
+              {items.map((item, i) => {
+                const unit = formatTL(item.unitPrice);
+                const totalItemPrice = formatTL(item.unitPrice * (item.quantity || 1));
+                return (
+                  <li key={`${item.slug}-${i}`} className="cart-item">
+                    <div className="cart-item-details">
+                      <div className="cart-item-image">
+                        <img src="/images/hero-logo.webp" alt={item.title} />
                       </div>
-
-                      <div className="cart-item-quantity">
-                        <button onClick={() => decreaseQuantity(i)}>-</button>
-                        <span>{item.quantity}</span>
-                        <button onClick={() => increaseQuantity(i)}>+</button>
+                      <div className="cart-item-text">
+                        <strong>{item.title}</strong>
+                        {/* İstersen buraya slug'a göre kısa açıklama ekleyebilirsin */}
                       </div>
+                    </div>
 
-                      <div className="cart-item-pricing">
-                        <div className="unit-price">₺{unitPrice.toFixed(2)} / adet</div>
-                        <div className="total-price"><strong>₺{totalItemPrice}</strong></div>
-                      </div>
+                    <div className="cart-item-quantity">
+                      <button onClick={handleDecreaseDisabled} disabled>-</button>
+                      <span>{item.quantity}</span>
+                      <button onClick={() => increaseQuantity(item.slug)}>+</button>
+                    </div>
 
-                      <button className="trashCan" onClick={() => handleRemoveFromCart(i)}><CgTrash size={22} /></button>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+                    <div className="cart-item-pricing">
+                      <div className="unit-price">₺{unit} / adet</div>
+                      <div className="total-price"><strong>₺{totalItemPrice}</strong></div>
+                    </div>
 
-            
+                    <button className="trashCan" onClick={handleRemoveDisabled} disabled>
+                      <CgTrash size={22} />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+
             <div className="cart-summary">
               <hr />
-              <p className="cart-total"><strong>Toplam:</strong> ₺{total.toFixed(2)}</p>
-              <p className="cart-note">Kargo ve indirim kuponları ödeme kısmında hesaplanır.</p>
+              <p className="cart-total"><strong>Toplam:</strong> ₺{formatTL(total)}</p>
+              <p className="cart-note">İndirim kuponları ödeme kısmında uygulanır.</p>
+
               <div className="cart-check">
                 <input
                   type="checkbox"
@@ -115,7 +118,8 @@ const CartPage = () => {
                   onChange={() => setIsAgreed(!isAgreed)}
                 />
                 <label htmlFor="agreement">
-                  Okudum ve onaylıyorum: <a href="/mesafeli-hizmet-sozlesmesi">Mesafeli Satış Sözleşmesi</a>
+                  Okudum ve onaylıyorum:{" "}
+                  <a href="/mesafeli-hizmet-sozlesmesi">Mesafeli Satış Sözleşmesi</a>
                 </label>
               </div>
 
@@ -123,7 +127,11 @@ const CartPage = () => {
                 ÖDEMEYE GEÇ!
               </button>
 
-              <p className="continue-link" onClick={handleContinueShopping} style={{ cursor: "pointer" }}>
+              <p
+                className="continue-link"
+                onClick={handleContinueShopping}
+                style={{ cursor: "pointer" }}
+              >
                 Alışverişe devam et.
               </p>
             </div>

@@ -1,209 +1,159 @@
-import { useState } from "react";
+// src/pages/LoginPage.jsx
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Helmet } from "react-helmet";
-
-import axios from "../utils/axios"
+import axios from "../utils/axios";
 import "../cssFiles/login.css";
 import Navbar from "../components/navbar";
 
 const LoginPage = () => {
-  const [form, setForm] = useState({ name: "", email: "", password: "",confirmPassword: "", phone: "", grade: "", track: "", });
-
-  const [isLogin, setIsLogin] = useState(true);
-  const [error, setError] = useState("");
   const navigate = useNavigate();
-  const [showPassword, setPassword] = useState(false);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
+  // OTP adımları: "email" -> "code" -> "done"
+  const [step, setStep] = useState("email");
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [resendIn, setResendIn] = useState(0);
+  const [error, setError] = useState("");
 
-  try {
-    if (isLogin) {
-      // Giriş işlemi
-      const res = await axios.post(`/api/auth/login`, {
-        email: form.email,
-        password: form.password,
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const t = setTimeout(() => setResendIn((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendIn]);
+
+  const sendCode = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      await axios.post("/api/auth/otp/send", { email: email.trim().toLowerCase() });
+      setStep("code");
+      setResendIn(60);
+    } catch (e) {
+      setError(e?.response?.data?.message || "Kod gönderilemedi.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verify = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await axios.post("/api/auth/otp/verify", {
+        email: email.trim().toLowerCase(),
+        code: code.trim(),
       });
 
       const token = res.data.token;
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      const role = jwtDecode(token).role;
+      const user = res.data.user;
 
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // role'e göre yönlendir (mevcut davranış korunur)
+      const role = (jwtDecode(token)?.role || user?.role || "student").toLowerCase();
       if (role === "admin") navigate("/admin");
       else if (role === "coach") navigate("/coach/dashboard");
       else navigate("/student/dashboard");
-    } else {
-      // Şifre eşleşmiyorsa uyarı ver
-      if (form.password !== form.confirmPassword) {
-        setError("Şifreler uyuşmuyor.");
-        return;
-      }
-
-      // Kayıt işlemi
-      await axios.post(`/api/auth/register`, {
-        name: form.name,
-        email: form.email,
-        password: form.password,
-        phone: form.phone,
-        grade: form.grade,
-        track: form.track
-      });
-
-      setIsLogin(true);
+    } catch (e) {
+      setError(e?.response?.data?.message || "Kod doğrulanamadı.");
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    setError("İşlem başarısız! Bilgileri kontrol edin.");
-  }
-};
-
+  };
 
   return (
     <>
-    <Helmet>
-  <title>Giriş Yap | Sözderece Koçluk</title>
-  <meta name="robots" content="noindex, nofollow" />
-</Helmet>
-    <Navbar />
-    <div className="login-container">
-      <form onSubmit={handleSubmit} className="login-form">
-        <h2>{isLogin ? "Giriş Yap" : "Kayıt Ol"}</h2>
+      <Helmet>
+        <title>Giriş Yap | Sözderece Koçluk</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
 
-        {error && <p className="error-message">{error}</p>}
+      <Navbar />
 
-        {!isLogin && (
-  <>
-    <input
-      type="text"
-      placeholder="Adınız ve Soyadınız"
-      value={form.name}
-      onChange={(e) => setForm({ ...form, name: e.target.value })}
-      required
-    />
+      <div className="login-container">
+        <form className="login-form" onSubmit={(e) => e.preventDefault()}>
+          <h2>E-posta ile Giriş</h2>
 
-    <input
-      type="tel"
-      placeholder="Telefon Numaranız"
-      value={form.phone}
-      onChange={(e) => setForm({ ...form, phone: e.target.value })}
-      required
-    />
+          {!!error && <p className="error-message">{error}</p>}
 
-    <select
-      value={form.grade}
-      onChange={(e) => setForm({ ...form, grade: e.target.value })}
-      required
-    >
-      <option value="">Sınıfınızı Seçin</option>
-      <option value="5">5. Sınıf</option>
-      <option value="6">6. Sınıf</option>
-      <option value="7">7. Sınıf</option>
-      <option value="8">8. Sınıf</option>
-      <option value="9">9. Sınıf</option>
-      <option value="10">10. Sınıf</option>
-      <option value="11">11. Sınıf</option>
-      <option value="12">12. Sınıf</option>
-      <option value="Mezun">Mezun</option>
-    </select>
+          {step === "email" && (
+            <>
+              <input
+                type="email"
+                placeholder="E-posta adresiniz"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={sendCode}
+                disabled={!email.includes("@") || loading || resendIn > 0}
+              >
+                {loading ? "Gönderiliyor..." : resendIn > 0 ? `Tekrar gönder (${resendIn})` : "Kod Gönder"}
+              </button>
+            </>
+          )}
 
-    {(form.grade === "9" || form.grade === "10" || form.grade === "11" || form.grade === "12" || form.grade === "Mezun") && (
-      <select
-        value={form.track}
-        onChange={(e) => setForm({ ...form, track: e.target.value })}
-        required
-      >
-        <option value="">Alanınızı Seçin</option>
-        <option value="Sayısal">Sayısal</option>
-        <option value="Eşit Ağırlık">Eşit Ağırlık</option>
-        <option value="Sözel">Sözel</option>
-      </select>
-    )}
-  </>
-)}
+          {step === "code" && (
+            <>
+              <input
+                type="text"
+                placeholder="E-postanıza gelen kod"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                maxLength={8}
+                required
+              />
+              <button
+                type="button"
+                onClick={verify}
+                disabled={code.trim().length < 4 || loading}
+              >
+                {loading ? "Doğrulanıyor..." : "Doğrula ve Giriş Yap"}
+              </button>
 
+              <button
+                type="button"
+                className="linklike"
+                onClick={sendCode}
+                disabled={loading || resendIn > 0}
+                style={{ marginTop: 8 }}
+              >
+                {resendIn > 0 ? `Kodu tekrar gönder (${resendIn})` : "Kodu tekrar gönder"}
+              </button>
+              <button
+                type="button"
+                className="linklike"
+                onClick={() => { setStep("email"); setCode(""); setError(""); }}
+                style={{ marginTop: 8 }}
+              >
+                E-postayı değiştir
+              </button>
+            </>
+          )}
+        </form>
+      </div>
 
-  
-        <input
-          type="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          required
-        />
-
-        <div className="password-wrapper">
-  <input
-    type={showPassword ? "text" : "password"}
-    placeholder="Şifre"
-    value={form.password}
-    onChange={(e) => setForm({ ...form, password: e.target.value })}
-    required
-  />
-  <span
-    onClick={() => setPassword(!showPassword)}
-    className="eye-toggle"
-  >
-    {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
-  </span>
-</div>
-
-{!isLogin && (
-  <div className="password-wrapper">
-    <input
-      type={showPassword ? "text" : "password"}
-      placeholder="Şifreyi Tekrar Girin"
-      value={form.confirmPassword}
-      onChange={(e) =>
-        setForm({ ...form, confirmPassword: e.target.value })
-      }
-      required
-    />
-    <span
-      onClick={() => setPassword(!showPassword)}
-      className="eye-toggle"
-    >
-      {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
-    </span>
-  </div>
-)}
-
-
-
-
-
-        <button type="submit">{isLogin ? "Giriş Yap" : "Kayıt Ol"}</button>
-
-  <div className="form-footer-links">
-  <span onClick={() => setIsLogin(!isLogin)}>
-    {isLogin ? "Hesabın yok mu? Kayıt Ol" : "Zaten hesabın var mı? Giriş Yap"}
-  </span>
-  {isLogin && (
-    <span onClick={() => navigate("/forgot-password")}>Şifreni mi unuttun?</span>
-  )}
-</div>
-
-      </form>
-      
-    </div>
-<footer className="custom-footer">
-              <div className="footer-icons">
-                <a href="https://www.instagram.com/sozderece/"><FaInstagram/></a>
-                <FaTiktok />
-                <FaYoutube />
-              </div>
-              <div className="footer-links">
-                <a href="/hakkimizda">Hakkımızda</a>
-                <a href="/mesafeli-hizmet-sozlesmesi">Mesafeli Hizmet Sözleşmesi</a>
-                <a href="/gizlilik-politikasi-kvkk">Gizlilik ve KVKK</a>
-                <a href="/iade-ve-cayma-politikasi">İade ve Cayma Politikası</a>
-              </div>
-              <div className="footer-copy">© 2025 Sözderece Koçluk Her Hakkı Saklıdır</div>
-            </footer>
-    
+      <footer className="custom-footer">
+        <div className="footer-icons">
+          <a href="https://www.instagram.com/sozderece/"><FaInstagram /></a>
+          <FaTiktok />
+          <FaYoutube />
+        </div>
+        <div className="footer-links">
+          <a href="/hakkimizda">Hakkımızda</a>
+          <a href="/mesafeli-hizmet-sozlesmesi">Mesafeli Hizmet Sözleşmesi</a>
+          <a href="/gizlilik-politikasi-kvkk">Gizlilik ve KVKK</a>
+          <a href="/iade-ve-cayma-politikasi">İade ve Cayma Politikası</a>
+        </div>
+        <div className="footer-copy">© 2025 Sözderece Koçluk Her Hakkı Saklıdır</div>
+      </footer>
     </>
   );
 };
