@@ -2,7 +2,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
-import { PACKAGES } from "../hooks/packages"; 
+import { PACKAGES } from "../hooks/packages.js"; // tek kaynak
+import "../cssFiles/preAuth.css";
 
 export default function PreCartAuth() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function PreCartAuth() {
       window.fbq("track", "AddToCart", {
         content_ids: [slug],
         content_type: "product",
-        value: pkg.unitPrice / 100, // TL
+        value: Number(pkg.unitPrice) / 100, // TL
         currency: "TRY",
       });
     } catch {}
@@ -44,13 +45,16 @@ export default function PreCartAuth() {
     if (token && userStr) {
       (async () => {
         try {
+          const userObj = JSON.parse(userStr || "{}");
           await axios.post(
             "/api/cart/items",
             {
               slug,
               title: pkg.title,
-              unitPrice: pkg.unitPrice, // kuruş (int)
+              name: pkg.title,                   // BE “name/title” farkını kapat
+              unitPrice: Number(pkg.unitPrice),  // kuruş (int)
               quantity: 1,
+              email: userObj?.email || undefined // BE isterse fallback
             },
             { headers: { Authorization: `Bearer ${token}` } }
           );
@@ -109,8 +113,10 @@ export default function PreCartAuth() {
           {
             slug,
             title: pkg.title,
-            unitPrice: pkg.unitPrice,
+            name: pkg.title,
+            unitPrice: Number(pkg.unitPrice),
             quantity: 1,
+            email: res.data?.user?.email || email.trim().toLowerCase(),
           },
           { headers: { Authorization: `Bearer ${res.data.token}` } }
         );
@@ -128,79 +134,100 @@ export default function PreCartAuth() {
 
   if (!pkg) {
     return (
-      <div className="max-w-md mx-auto p-6">
-        <h1 className="text-xl font-semibold mb-3">Paket bulunamadı</h1>
-        <button className="border rounded px-4 py-2" onClick={() => navigate("/#paketler")}>
-          Paketlere dön
-        </button>
+      <div className="preauth-container">
+        <form className="preauth-form" onSubmit={(e) => e.preventDefault()}>
+          <h1>Paket bulunamadı</h1>
+          <button
+            className="btn-primary"
+            type="button"
+            onClick={() => navigate("/#paketler")}
+          >
+            Paketlere dön
+          </button>
+        </form>
       </div>
     );
   }
 
   if (step === "checking" || step === "done") {
-    return <div className="max-w-md mx-auto p-6">Yönlendiriliyor…</div>;
+    return (
+      <div className="preauth-container">
+        <form className="preauth-form" onSubmit={(e) => e.preventDefault()}>
+          <h1>Yönlendiriliyor…</h1>
+        </form>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-md mx-auto p-6">
-      <h1 className="text-2xl font-semibold mb-2">Devam etmeden önce giriş yap</h1>
-      <p className="text-sm text-gray-600 mb-6">
-        {pkg.title} paketini sepete eklemek için e-posta ile tek kullanımlık kodla giriş yap.
-      </p>
+    <div className="preauth-container">
+      <form className="preauth-form" onSubmit={(e) => e.preventDefault()}>
+        <h1>Devam etmeden önce giriş yap</h1>
+        <p className="subtitle">
+          {pkg.title} paketini sepete eklemek için e-posta ile tek kullanımlık kodla giriş yap.
+        </p>
 
-      {step === "email" && (
-        <>
-          <label className="block text-sm mb-2">E-posta</label>
-          <input
-            type="email"
-            className="w-full border rounded px-3 py-2 mb-3"
-            placeholder="ornek@eposta.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <button
-            className="w-full bg-black text-white rounded py-2 disabled:opacity-50"
-            onClick={sendCode}
-            disabled={!email.includes("@") || resendIn > 0 || loading}
-          >
-            {loading ? "Gönderiliyor..." : "Kodu Gönder"}
-          </button>
-        </>
-      )}
+        {step === "email" && (
+          <>
+            <label>E-posta</label>
+            <input
+              type="email"
+              placeholder="ornek@eposta.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <button
+              className="btn-primary"
+              type="button"
+              onClick={sendCode}
+              disabled={!email.includes("@") || resendIn > 0 || loading}
+            >
+              {loading ? "Gönderiliyor..." : "Kodu Gönder"}
+            </button>
+          </>
+        )}
 
-      {step === "code" && (
-        <>
-          <label className="block text-sm mb-2">E-postana gelen kod</label>
-          <input
-            type="text"
-            className="w-full border rounded px-3 py-2 mb-3 tracking-widest text-center"
-            placeholder="• • • •"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            maxLength={8}
-          />
-          <button
-            className="w-full bg-black text-white rounded py-2 mb-3 disabled:opacity-50"
-            onClick={verify}
-            disabled={code.length < 4 || loading}
-          >
-            {loading ? "Doğrulanıyor..." : "Doğrula ve Sepete Ekle"}
-          </button>
+        {step === "code" && (
+          <>
+            <label>E-postana gelen kod</label>
+            <input
+              type="text"
+              placeholder="• • • •"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              maxLength={8}
+            />
+            <button
+              className="btn-primary"
+              type="button"
+              onClick={verify}
+              disabled={code.length < 4 || loading}
+            >
+              {loading ? "Doğrulanıyor..." : "Doğrula ve Sepete Ekle"}
+            </button>
 
-          <button
-            className="w-full border rounded py-2 disabled:opacity-50"
-            onClick={sendCode}
-            disabled={resendIn > 0 || loading}
-          >
-            {resendIn > 0 ? `Tekrar gönder (${resendIn})` : "Kodu tekrar gönder"}
-          </button>
-          <button className="block mx-auto mt-4 text-sm underline" onClick={() => setStep("email")}>
-            E-postayı değiştir
-          </button>
-        </>
-      )}
+            <button
+              className="btn-secondary"
+              type="button"
+              onClick={sendCode}
+              disabled={resendIn > 0 || loading}
+            >
+              {resendIn > 0 ? `Tekrar gönder (${resendIn})` : "Kodu tekrar gönder"}
+            </button>
 
-      {!!msg && <p className="mt-4 text-sm text-gray-700">{msg}</p>}
+            <button
+              className="btn-secondary"
+              type="button"
+              style={{ marginTop: 8 }}
+              onClick={() => setStep("email")}
+            >
+              E-postayı değiştir
+            </button>
+          </>
+        )}
+
+        {!!msg && <p className="message">{msg}</p>}
+      </form>
     </div>
   );
 }

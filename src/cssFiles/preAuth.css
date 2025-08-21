@@ -1,0 +1,170 @@
+/* PreCartAuth – klasik CSS */
+
+/* Sayfa yerleşimi */
+.preauth-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 60vh;
+  background-color: #fff;
+}
+
+.preauth-form {
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  padding: 24px;
+  margin: 32px 16px;
+  background: #ffffff;
+}
+
+.preauth-form h1 {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  color: #100383;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.preauth-form .subtitle {
+  font-size: 0.92rem;
+  color: #475569; /* slate-600 */
+  margin-bottom: 24px;
+}
+
+/* Form elemanları */
+.preauth-form label {
+  display: block;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.preauth-form input[type="email"],
+.preauth-form input[type="text"] {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #000;
+  padding: 12px 8px;
+  font-size: 1rem;
+  margin-bottom: 18px;
+  background-color: transparent;
+  color: #000;
+}
+
+.preauth-form input:focus {
+  outline: none;
+  border-bottom-color: #1f2937;
+}
+
+/* Butonlar */
+.preauth-form .btn-primary {
+  width: 100%;
+  padding: 14px;
+  background-color: #02095f;
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.preauth-form .btn-primary:hover {
+  background-color: #ec5802;
+}
+
+.preauth-form .btn-secondary {
+  width: 100%;
+  padding: 12px;
+  color: #111827;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.preauth-form .btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.preauth-form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Mesajlar */
+.preauth-form .message {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.preauth-form .error {
+  color: #b91c1c;
+}
+
+/* Footer (login.css ile tutarlılık) */
+.custom-footer {
+  margin-top: 60px;
+  padding: 40px 20px 20px;
+  border-top: 1px solid #ddd;
+  text-align: center;
+  background-color: #fafafa;
+}
+
+.footer-icons {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+}
+
+.footer-icons svg {
+  color: #010c69;
+  border: 1px solid #020074;
+  border-radius: 50%;
+  padding: 10px;
+  width: 44px;
+  height: 44px;
+  transition: all 0.3s ease;
+}
+
+.footer-icons svg:hover {
+  background-color: #e94b02;
+  border: 1px solid #e94b02;
+  color: #fff;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+}
+
+.footer-links a {
+  color: #222;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: #e5671e;
+}
+
+.footer-copy {
+  font-size: 0.85rem;
+  color: #666;
+}

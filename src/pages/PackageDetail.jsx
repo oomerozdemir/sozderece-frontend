@@ -7,6 +7,7 @@ import TopBar from "../components/TopBar";
 import { Helmet } from "react-helmet";
 import { PACKAGES } from "../hooks/packages"; 
 
+
 const PackageDetail = () => {
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(null);
