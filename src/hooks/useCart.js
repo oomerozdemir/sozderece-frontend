@@ -17,19 +17,26 @@ export default function useCart() {
       setLoading(true);
       setError(null);
       const res = await axios.get("/api/cart", { headers: authHeaders() });
-      setCart(res.data?.cart || { items: [] });
+      // Backend bazen direkt cart döner ( { items: [...] } )
+      // bazen { cart: {...} } olabilir; ikisini de karşılayalım
+      setCart(
+        res.data && res.data.items
+          ? res.data
+          : (res.data?.cart || { items: [] })
+      );
     } catch (e) {
       setError(e?.response?.data?.message || "Sepet getirilemedi");
+      setCart({ items: [] });
     } finally {
       setLoading(false);
     }
   }, []);
 
   const addToCart = useCallback(
-    async ({ slug, title, unitPrice, quantity = 1 }) => {
+    async ({ slug, title, unitPrice, quantity = 1, email, name }) => {
       await axios.post(
         "/api/cart/items",
-        { slug, title, unitPrice, quantity },
+        { slug, title, unitPrice, quantity, ...(email ? { email } : {}), ...(name ? { name } : {}) },
         { headers: authHeaders() }
       );
       await refresh();
@@ -37,8 +44,6 @@ export default function useCart() {
     [refresh]
   );
 
-  // Backend'de ayrı endpoint yazmadan artırma yapmanın pratik yolu:
-  // Aynı ürünü tekrar eklemek quantity'yi arttırır (controller zaten böyle yazıldı)
   const increaseQuantity = useCallback(
     async (slug) => {
       const item = cart?.items?.find((i) => i.slug === slug);
@@ -53,11 +58,6 @@ export default function useCart() {
     [cart, addToCart]
   );
 
-  // Not: decrease/remove/clear için henüz backend endpoint'leri yok.
-  // İstersen sonra:
-  //  - POST /api/cart/items/update { slug, quantity }
-  //  - DELETE /api/cart/items { slug }
-  // ekleriz ve burada metotları tamamlarız.
   const decreaseQuantity = async () => {
     console.warn("decreaseQuantity: backend endpoint eklenmeli");
   };
