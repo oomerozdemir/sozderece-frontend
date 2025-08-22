@@ -6,20 +6,53 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
 
-
-
 const CartPage = () => {
-  const { cart, loading, error, increaseQuantity } = useCart();
+  const {
+    cart,
+    loading,
+    error,
+    increaseQuantity,
+    decreaseQuantity,
+    removeFromCart,
+  } = useCart();
+
   const navigate = useNavigate();
   const [isAgreed, setIsAgreed] = useState(false);
 
-  // Backend sepet yapısı: { items: [{ slug, title, unitPrice (int kuruş), quantity }]}
-  const items = useMemo(() => cart?.items ?? [], [cart]);
+  // cart -> items dizisini güvenli şekilde çıkar (server veya UI modeli desteklenir)
+  const items = useMemo(() => {
+    if (!cart) return [];
+    if (Array.isArray(cart)) return cart;            // UI modeli
+    if (Array.isArray(cart.items)) return cart.items; // Server modeli
+    return [];
+  }, [cart]);
 
-  const formatTL = (krs) => (krs / 100).toFixed(2);
+  // Bir item'ın birim fiyatını (TL sayısal) döndür
+  const getUnitPriceTL = (it) => {
+    // Server modeli: unitPrice kuruş (int)
+    if (typeof it.unitPrice === "number") {
+      return it.unitPrice / 100;
+    }
+    // UI modeli: price "₺xx.yy" string
+    if (typeof it.price === "string") {
+      const n = parseFloat(it.price.replace("₺", "").replace(/[^\d.]/g, ""));
+      return isNaN(n) ? 0 : n;
+    }
+    return 0;
+  };
+
+  // Görünen ad (server: title, ui: name)
+  const getTitle = (it) => it.title || it.name || "Ürün";
+
+  // Slug (artan/azalan/sil için)
+  const getSlug = (it) => it.slug || it.id || getTitle(it);
 
   const total = useMemo(() => {
-    return items.reduce((sum, it) => sum + (it.unitPrice * (it.quantity || 1)), 0);
+    return items.reduce((sum, it) => {
+      const unit = getUnitPriceTL(it);
+      const qty = it.quantity || 1;
+      return sum + unit * qty;
+    }, 0);
   }, [items]);
 
   const handleCheckout = () => {
@@ -31,7 +64,6 @@ const CartPage = () => {
       alert("Lütfen önce bir paket seçin.");
       return;
     }
-    // Ödeme sayfasında /api/order/prepare çağrısında useServerCart: true gönderiyoruz
     navigate("/payment");
   };
 
@@ -39,12 +71,18 @@ const CartPage = () => {
     window.location.href = "/#paketler";
   };
 
-  // Şimdilik kaldır/azalt backend endpoint'leri yok; butonları pasif gösteriyoruz
-  const handleRemoveDisabled = () => {
-    alert("Sepetten kaldırma yakında aktif olacak.");
-  };
-  const handleDecreaseDisabled = () => {
+  // Hook fonksiyonları yoksa uyarı ver (eski hook sürümü ile de patlamasın)
+  const canDecrease = typeof decreaseQuantity === "function";
+  const canRemove = typeof removeFromCart === "function";
+
+  const onDecrease = (slug) => {
+    if (canDecrease) return decreaseQuantity(slug);
     alert("Adet azaltma yakında aktif olacak.");
+  };
+
+  const onRemove = (slug) => {
+    if (canRemove) return removeFromCart(slug);
+    alert("Sepetten kaldırma yakında aktif olacak.");
   };
 
   return (
@@ -68,36 +106,41 @@ const CartPage = () => {
               Paketlere Göz At
             </button>
           </div>
-        ) : (!loading && !error) && (
+        ) : !loading && !error ? (
           <>
             <ul className="cart-list">
               {items.map((item, i) => {
-                const unit = formatTL(item.unitPrice);
-                const totalItemPrice = formatTL(item.unitPrice * (item.quantity || 1));
+                const slug = getSlug(item);
+                const title = getTitle(item);
+                const unitTL = getUnitPriceTL(item);
+                const qty = item.quantity || 1;
+                const totalItemTL = (unitTL * qty).toFixed(2);
+
                 return (
-                  <li key={`${item.slug}-${i}`} className="cart-item">
+                  <li key={`${slug}-${i}`} className="cart-item">
                     <div className="cart-item-details">
                       <div className="cart-item-image">
-                        <img src="/images/hero-logo.webp" alt={item.title} />
+                        <img src="/images/hero-logo.webp" alt={title} />
                       </div>
                       <div className="cart-item-text">
-                        <strong>{item.title}</strong>
-                        {/* İstersen buraya slug'a göre kısa açıklama ekleyebilirsin */}
+                        <strong>{title}</strong>
                       </div>
                     </div>
 
                     <div className="cart-item-quantity">
-                      <button onClick={handleDecreaseDisabled} disabled>-</button>
-                      <span>{item.quantity}</span>
-                      <button onClick={() => increaseQuantity(item.slug)}>+</button>
+                      <button onClick={() => onDecrease(slug)}>-</button>
+                      <span>{qty}</span>
+                      <button onClick={() => increaseQuantity(slug)}>+</button>
                     </div>
 
                     <div className="cart-item-pricing">
-                      <div className="unit-price">₺{unit} / adet</div>
-                      <div className="total-price"><strong>₺{totalItemPrice}</strong></div>
+                      <div className="unit-price">₺{unitTL.toFixed(2)} / adet</div>
+                      <div className="total-price">
+                        <strong>₺{totalItemTL}</strong>
+                      </div>
                     </div>
 
-                    <button className="trashCan" onClick={handleRemoveDisabled} disabled>
+                    <button className="trashCan" onClick={() => onRemove(slug)}>
                       <CgTrash size={22} />
                     </button>
                   </li>
@@ -107,7 +150,9 @@ const CartPage = () => {
 
             <div className="cart-summary">
               <hr />
-              <p className="cart-total"><strong>Toplam:</strong> ₺{formatTL(total)}</p>
+              <p className="cart-total">
+                <strong>Toplam:</strong> ₺{total.toFixed(2)}
+              </p>
               <p className="cart-note">İndirim kuponları ödeme kısmında uygulanır.</p>
 
               <div className="cart-check">
@@ -136,7 +181,7 @@ const CartPage = () => {
               </p>
             </div>
           </>
-        )}
+        ) : null}
       </div>
     </div>
   );

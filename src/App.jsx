@@ -116,6 +116,8 @@ Beni hatirla butonuna tiklicak kullanici ve onu 1 ay hatirlicak 1 ay otp sormuca
 BUNLARI HALLET
 
 
+kullaniciya eksik bilgileri doldurmasi icin giris yaptiktan sonra yonlendirme yapariz.
+
 *****Gıriş yapma ve kayıt olmada onemli değişiklikler*****
 Paket-detay => Hemen Basla Butonu => e-posta girer kullanici ve otp kodu gider.
 => kod dogruysa paket sepete eklenir ve kullanici ayni zamanda giris yapmis olur.

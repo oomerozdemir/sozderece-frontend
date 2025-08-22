@@ -10,6 +10,8 @@ const user = JSON.parse(localStorage.getItem("user"));
 const PaymentPage = () => {
   const { cart } = useCart();
   const navigate = useNavigate();
+  const items = Array.isArray(cart) ? cart : []; // güvenlik
+
 
   const [formData, setFormData] = useState({
     email: user?.email || "",
@@ -28,12 +30,13 @@ const PaymentPage = () => {
   const [discountRate, setDiscountRate] = useState(0);
   const [couponMessage, setCouponMessage] = useState("");
   const [errors, setErrors] = useState({});
-  const total = useMemo(() => {
-    return cart.reduce((sum, item) => {
-      const price = parseFloat(item.price?.toString().replace("₺", "").replace(/[^\d.]/g, ""));
-      return sum + price * (item.quantity || 1);
-    }, 0);
-  }, [cart]);
+ // total:
+const total = useMemo(() => {
+  return items.reduce((sum, item) => {
+    const price = parseFloat(item.price?.toString().replace("₺", "").replace(/[^\d.]/g, "")) || 0;
+    return sum + price * (item.quantity || 1);
+  }, 0);
+}, [items]);
 
   const discountedTotal = useMemo(() => {
     return discountRate > 0 ? total * (1 - discountRate / 100) : total;
@@ -278,7 +281,7 @@ const PaymentPage = () => {
       <div className="payment-summary">
         <h4>Sepet Özeti</h4>
         <ul>
-          {cart.map((item, i) => (
+          {items.map((item, i) => (
             <li key={i} className="summary-item">
               <div>
                 <strong>{item.name}</strong>
