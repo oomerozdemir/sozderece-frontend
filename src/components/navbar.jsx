@@ -9,15 +9,15 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [username, setUsername] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [profileMissing, setProfileMissing] = useState(0); // 👈 eksik alan sayısı
+
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  const { cart } = useCart();
-const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
 
   useEffect(() => {
-    const handleUser = () => {
+    const syncUser = () => {
       const userData = localStorage.getItem("user");
       if (userData) {
         const parsed = JSON.parse(userData);
@@ -27,11 +27,20 @@ const [dropdownOpen, setDropdownOpen] = useState(false);
         setUsername(null);
         setUserRole(null);
       }
+      const missing = Number(localStorage.getItem("profileMissing") || 0);
+      setProfileMissing(missing);
     };
 
-    handleUser();
-    window.addEventListener("storage", handleUser);
-    return () => window.removeEventListener("storage", handleUser);
+    syncUser();
+    // farklı sekmeden güncellenirse:
+    window.addEventListener("storage", syncUser);
+    // aynı sekmede AccountPage'den dönünce güncellensin:
+    window.addEventListener("focus", syncUser);
+
+    return () => {
+      window.removeEventListener("storage", syncUser);
+      window.removeEventListener("focus", syncUser);
+    };
   }, []);
 
   // Kullanıcı menüsü dışına tıklanınca kapat
@@ -41,13 +50,9 @@ const [dropdownOpen, setDropdownOpen] = useState(false);
         setDropdownOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
 
   return (
     <>
@@ -78,7 +83,7 @@ const [dropdownOpen, setDropdownOpen] = useState(false);
 
               <ul className={`navbar-menu ${menuOpen ? "active" : ""}`}>
                 <li>
-                  <NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>
+                  <NavLink to="/" className={({ isActive }) => (isActive ? "active" : "")}>
                     Ana Sayfa
                   </NavLink>
                 </li>
@@ -95,17 +100,17 @@ const [dropdownOpen, setDropdownOpen] = useState(false);
                 </li>
 
                 <li>
-                  <NavLink to="/ekibimiz" className={({ isActive }) => isActive ? "active" : ""}>
+                  <NavLink to="/ekibimiz" className={({ isActive }) => (isActive ? "active" : "")}>
                     Ekibimiz
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/paket-detay" className={({ isActive }) => isActive ? "active" : ""}>
+                  <NavLink to="/paket-detay" className={({ isActive }) => (isActive ? "active" : "")}>
                     Koçluk Al!
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/blog" className={({ isActive }) => isActive ? "active" : ""}>
+                  <NavLink to="/blog" className={({ isActive }) => (isActive ? "active" : "")}>
                     Blog
                   </NavLink>
                 </li>
@@ -120,31 +125,33 @@ const [dropdownOpen, setDropdownOpen] = useState(false);
               <div className="login-button" ref={dropdownRef}>
                 {username ? (
                   <div className="user-menu">
-                  <span
-  className="navbar-username"
-  onClick={() => setDropdownOpen(!dropdownOpen)}
->
-  {username}
-  {profileMissing > 0 && (
-  <span className="profile-missing-badge">{profileMissing}</span>
-)}
-</span>
+                    <span
+                      className="navbar-username"
+                      onClick={() => setDropdownOpen(!dropdownOpen)}
+                    >
+                      {username}
+                      {profileMissing > 0 && (
+                        <span className="profile-missing-badge">{profileMissing}</span>
+                      )}
+                    </span>
 
-                {dropdownOpen && (
-  <div className="dropdown-menu">
-    <Link to="/account">Hesabım</Link>
-    {userRole === "student" && <Link to="/student/dashboard">Öğrenci Paneli</Link>}
-    {userRole === "coach" && <Link to="/coach/dashboard">Koç Paneli</Link>}
-    {userRole === "admin" && <Link to="/admin">Admin Paneli</Link>}
-    <Link to="/orders">Siparişlerim</Link>
-    <button onClick={() => {
-      localStorage.clear();
-      navigate("/login");
-    }}>
-      Çıkış Yap
-    </button>
-  </div>
-)}
+                    {dropdownOpen && (
+                      <div className="dropdown-menu">
+                        <Link to="/account">Hesabım</Link>
+                        {userRole === "student" && <Link to="/student/dashboard">Öğrenci Paneli</Link>}
+                        {userRole === "coach" && <Link to="/coach/dashboard">Koç Paneli</Link>}
+                        {userRole === "admin" && <Link to="/admin">Admin Paneli</Link>}
+                        <Link to="/orders">Siparişlerim</Link>
+                        <button
+                          onClick={() => {
+                            localStorage.clear();
+                            navigate("/login");
+                          }}
+                        >
+                          Çıkış Yap
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <Link to="/login">GİRİŞ YAP</Link>
