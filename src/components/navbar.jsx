@@ -3,56 +3,74 @@ import "../cssFiles/navbar.css";
 import { FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { NavLink, Link, useNavigate } from "react-router-dom";
-import useCart from "../hooks/useCart";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [username, setUsername] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [profileMissing, setProfileMissing] = useState(0); // 👈 eksik alan sayısı
+  const [profileMissing, setProfileMissing] = useState(0);
 
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
+  // email zorunlu değil; phone/grade/(gerekirse)track sayılır
+  const calcMissing = (u) => {
+    if (!u) return 0;
+    let m = 0;
+    if (!u.phone) m++;
+    if (!u.grade) m++;
+    if (["9", "10", "11", "12", "Mezun"].includes(u.grade) && !u.track) m++;
+    return m;
+  };
 
   useEffect(() => {
     const syncUser = () => {
-      const userData = localStorage.getItem("user");
-      if (userData) {
-        const parsed = JSON.parse(userData);
+      const userStr = localStorage.getItem("user");
+      let parsed = null;
+      if (userStr) {
+        try { parsed = JSON.parse(userStr); } catch (_) {}
+      }
+
+      if (parsed) {
         setUsername(parsed.name);
         setUserRole(parsed.role);
       } else {
         setUsername(null);
         setUserRole(null);
       }
-      const missing = Number(localStorage.getItem("profileMissing") || 0);
+
+      // 1) localStorage’den okumaya çalış
+      let missing = Number(localStorage.getItem("profileMissing"));
+      // 2) yoksa/NaN ise user’dan hesapla ve kaydet
+      if (!Number.isFinite(missing)) {
+        missing = calcMissing(parsed);
+        localStorage.setItem("profileMissing", String(missing));
+      }
       setProfileMissing(missing);
     };
 
     syncUser();
-    // farklı sekmeden güncellenirse:
     window.addEventListener("storage", syncUser);
-    // aynı sekmede AccountPage'den dönünce güncellensin:
     window.addEventListener("focus", syncUser);
-
     return () => {
       window.removeEventListener("storage", syncUser);
       window.removeEventListener("focus", syncUser);
     };
   }, []);
 
-  // Kullanıcı menüsü dışına tıklanınca kapat
+  // kullanıcı menüsü dışına tıklanınca kapat
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
 
   return (
     <>
@@ -135,23 +153,28 @@ const Navbar = () => {
                       )}
                     </span>
 
-                    {dropdownOpen && (
-                      <div className="dropdown-menu">
-                        <Link to="/account">Hesabım</Link>
-                        {userRole === "student" && <Link to="/student/dashboard">Öğrenci Paneli</Link>}
-                        {userRole === "coach" && <Link to="/coach/dashboard">Koç Paneli</Link>}
-                        {userRole === "admin" && <Link to="/admin">Admin Paneli</Link>}
-                        <Link to="/orders">Siparişlerim</Link>
-                        <button
-                          onClick={() => {
-                            localStorage.clear();
-                            navigate("/login");
-                          }}
-                        >
-                          Çıkış Yap
-                        </button>
-                      </div>
-                    )}
+                   {dropdownOpen && (
+  <div className="dropdown-menu">
+    <Link to="/account" className="dropdown-account-link">
+      Hesabım
+      {profileMissing > 0 && (
+        <span className="profile-missing-badge profile-missing-badge--inline">
+          {profileMissing}
+        </span>
+      )}
+    </Link>
+    {userRole === "student" && <Link to="/student/dashboard">Öğrenci Paneli</Link>}
+    {userRole === "coach" && <Link to="/coach/dashboard">Koç Paneli</Link>}
+    {userRole === "admin" && <Link to="/admin">Admin Paneli</Link>}
+    <Link to="/orders">Siparişlerim</Link>
+    <button onClick={() => {
+      localStorage.clear();
+      navigate("/login");
+    }}>
+      Çıkış Yap
+    </button>
+  </div>
+)}
                   </div>
                 ) : (
                   <Link to="/login">GİRİŞ YAP</Link>

@@ -105,7 +105,7 @@ const LoginPage = () => {
                 onClick={sendCode}
                 disabled={!email.includes("@") || loading || resendIn > 0}
               >
-                {loading ? "Gönderiliyor..." : resendIn > 0 ? `Tekrar gönder (${resendIn})` : "Kod Gönder"}
+                {loading ? "Gönderiliyor..." : resendIn > 0 ? `Tekrar gönder (${resendIn})` : "Giriş Yap"}
               </button>
             </>
           )}

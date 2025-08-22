@@ -103,7 +103,10 @@ export default App;
 
 
 /*
-******onemli DEGISIK********
+beni hatirlayin butonu calismiyor
+beni hatirla secenegini isaretlememe ragmen tekrar kod sordu
+
+******onemli DEGISIKLIK********
 1-Ders ve ardindan hoca sistemi eklenicek
 2-Yeni paketler eklenecek
 bu eklemelere gore nasil bir tasarim olusturulacak planlama gerekli ozellikle anasayfa da navbar ve hersection icin

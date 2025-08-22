@@ -241,6 +241,20 @@
   text-align: center;
 }
 
+/* Hesabım satırındaki rozet için daha sıkı hizalama */
+.profile-missing-badge--inline {
+  margin-left: 8px;
+  transform: translateY(-1px);
+  font-size: 0.7rem;   /* Menü içinde biraz daha küçük görünsün isterseniz */
+  min-width: 16px;
+  padding: 2px 5px;
+}
+
+/* (opsiyonel) Hesabım linkine ufak hizalama */
+.dropdown-account-link {
+  display: inline-flex;
+  align-items: center;
+}
 
 
 /* Responsive - 1300px altı */
