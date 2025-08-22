@@ -20,15 +20,9 @@ const AccountPage = () => {
   const [verificationCode, setVerificationCode] = useState("");
   const [codeSent, setCodeSent] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
-  const [passwords, setPasswords] = useState({
-    current: "",
-    new1: "",
-    new2: "",
-  });
-  const [passwordMsg, setPasswordMsg] = useState("");
   const [editingClass, setEditingClass] = useState(false);
 
-  // 👉 eksik alan sayısını hesaplayan fonksiyon (email hariç)
+  // eksik alan sayısını (email hariç) hesaplayan fonksiyon
   const calcMissing = (u) => {
     let missing = 0;
     if (!u.phone) missing++;
@@ -36,6 +30,18 @@ const AccountPage = () => {
     if (["9", "10", "11", "12", "Mezun"].includes(u.grade) && !u.track) missing++;
     return missing;
   };
+
+  // form bazlı (canlı) eksik alanlar
+  const missingPhone = !form.phone;
+  const missingGrade = !form.grade;
+  const missingTrack = ["9", "10", "11", "12", "Mezun"].includes(form.grade) && !form.track;
+  const liveMissingCount =
+    (missingPhone ? 1 : 0) + (missingGrade ? 1 : 0) + (missingTrack ? 1 : 0);
+
+  // Navbar’daki rozeti canlı güncelle (opsiyonel ama faydalı)
+  useEffect(() => {
+    localStorage.setItem("profileMissing", String(liveMissingCount));
+  }, [liveMissingCount]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -55,9 +61,9 @@ const AccountPage = () => {
         });
         setEmailVerified(userData.emailVerified || false);
 
-        // eksik alanları localStorage’a yaz
+        // sayfa açılışında eksik alanları hesapla
         const missing = calcMissing(userData);
-        localStorage.setItem("profileMissing", missing);
+        localStorage.setItem("profileMissing", String(missing));
       } catch (err) {
         setError("Kullanıcı bilgisi alınamadı.");
       }
@@ -92,7 +98,7 @@ const AccountPage = () => {
 
       // güncellemeden sonra eksik alanları tekrar hesapla
       const missing = calcMissing(res.data.user);
-      localStorage.setItem("profileMissing", missing);
+      localStorage.setItem("profileMissing", String(missing));
     } catch {
       setError("Güncelleme başarısız.");
     }
@@ -157,7 +163,7 @@ const AccountPage = () => {
 
       // doğrulama sonrası eksik alanları tekrar hesapla
       const missing = calcMissing(updatedUser);
-      localStorage.setItem("profileMissing", missing);
+      localStorage.setItem("profileMissing", String(missing));
 
       setShowVerifyBox(false);
       setVerifying("Doğrulama başarılı.");
@@ -194,6 +200,12 @@ const AccountPage = () => {
       </aside>
 
       <main className="accountPage-main">
+        {liveMissingCount > 0 && (
+          <div className="profile-completion-banner">
+            ⚠ Profilini tamamla — Eksik alan: {liveMissingCount}
+          </div>
+        )}
+
         <section className="accountPage-profile-card">
           <div>
             <h2>{user.name}</h2>
@@ -204,22 +216,36 @@ const AccountPage = () => {
           </div>
         </section>
 
-        {/* form */}
         <form onSubmit={handleUpdate} className="info-card modern-form">
           <h3>Kişisel Bilgiler</h3>
 
           <div className="accountPage-form-group">
-            <label>Adınız&Soyadiniz</label>
+            <label>
+              Adınız&Soyadiniz
+              {!form.name ? (
+                <span className="field-hint field-hint--missing">Önerilir</span>
+              ) : (
+                <span className="field-hint field-hint--ok">Tamam</span>
+              )}
+            </label>
             <input
               type="text"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               placeholder="Adınız"
+              className={!form.name ? "input-missing" : ""}
             />
           </div>
 
           <div className="accountPage-form-group">
-            <label>Email Adresi</label>
+            <label>
+              Email Adresi
+              {emailVerified ? (
+                <span className="field-hint field-hint--ok">Doğrulandı</span>
+              ) : (
+                <span className="field-hint field-hint--missing">Doğrula</span>
+              )}
+            </label>
             <div className="input-verify">
               <input
                 type="email"
@@ -235,12 +261,20 @@ const AccountPage = () => {
               </span>
             </div>
 
-            <label>Telefon Numarası</label>
+            <label>
+              Telefon Numarası
+              {missingPhone ? (
+                <span className="field-hint field-hint--missing">Eksik</span>
+              ) : (
+                <span className="field-hint field-hint--ok">Tamam</span>
+              )}
+            </label>
             <input
               type="tel"
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
               placeholder="Telefon"
+              className={missingPhone ? "input-missing" : ""}
             />
           </div>
 
@@ -266,12 +300,18 @@ const AccountPage = () => {
           ) : (
             <>
               <div className="accountPage-form-group">
-                <label>Sınıfınız</label>
+                <label>
+                  Sınıfınız
+                  {missingGrade ? (
+                    <span className="field-hint field-hint--missing">Eksik</span>
+                  ) : (
+                    <span className="field-hint field-hint--ok">Tamam</span>
+                  )}
+                </label>
                 <select
                   value={form.grade}
-                  onChange={(e) =>
-                    setForm({ ...form, grade: e.target.value })
-                  }
+                  onChange={(e) => setForm({ ...form, grade: e.target.value })}
+                  className={missingGrade ? "input-missing" : ""}
                 >
                   <option value="">Sınıf Seçin</option>
                   <option value="5">5. Sınıf</option>
@@ -288,12 +328,18 @@ const AccountPage = () => {
 
               {["9", "10", "11", "12", "Mezun"].includes(form.grade) && (
                 <div className="accountPage-form-group">
-                  <label>Alanınız</label>
+                  <label>
+                    Alanınız
+                    {missingTrack ? (
+                      <span className="field-hint field-hint--missing">Eksik</span>
+                    ) : (
+                      <span className="field-hint field-hint--ok">Tamam</span>
+                    )}
+                  </label>
                   <select
                     value={form.track}
-                    onChange={(e) =>
-                      setForm({ ...form, track: e.target.value })
-                    }
+                    onChange={(e) => setForm({ ...form, track: e.target.value })}
+                    className={missingTrack ? "input-missing" : ""}
                   >
                     <option value="">Alan Seçin</option>
                     <option value="Sayısal">Sayısal</option>
@@ -315,9 +361,7 @@ const AccountPage = () => {
         {showVerifyBox && (
           <div className="verify-popup">
             <div className="verify-card">
-              <h4>
-                {verifyTarget === "email" ? "E-posta" : "Telefon"} Doğrulama
-              </h4>
+              <h4>{verifyTarget === "email" ? "E-posta" : "Telefon"} Doğrulama</h4>
               {!codeSent ? (
                 <button onClick={sendCode}>📨 Kodu Gönder</button>
               ) : (
@@ -326,17 +370,12 @@ const AccountPage = () => {
                     type="text"
                     placeholder="Kod Giriniz"
                     value={verificationCode}
-                    onChange={(e) =>
-                      setVerificationCode(e.target.value)
-                    }
+                    onChange={(e) => setVerificationCode(e.target.value)}
                   />
                   <button onClick={submitCode}>✔ Doğrula</button>
                 </>
               )}
-              <button
-                onClick={() => setShowVerifyBox(false)}
-                style={{ marginTop: "10px" }}
-              >
+              <button onClick={() => setShowVerifyBox(false)} style={{ marginTop: "10px" }}>
                 Kapat
               </button>
             </div>

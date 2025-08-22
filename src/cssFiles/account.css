@@ -243,6 +243,48 @@
   border: 1px solid #e5e7eb;
 }
 
+/* Üstte tamamlanma bandı */
+.profile-completion-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff7ed;       /* turuncu açık */
+  border: 1px solid #fed7aa; /* turuncu sınır */
+  color: #9a3412;
+  padding: 10px 12px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+/* Etiket yanına küçük rozet */
+.field-hint {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  border-radius: 999px;
+  vertical-align: middle;
+  user-select: none;
+}
+.field-hint--missing {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #f87171;
+}
+.field-hint--ok {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+/* Alan boşsa input çerçevesini hafif vurgula */
+.input-missing {
+  border-color: #f87171 !important;
+  box-shadow: 0 0 0 3px rgba(248,113,113,.15);
+}
+
+
 
 /* Mobil uyumluluk */
 @media (max-width: 768px) {

@@ -226,6 +226,22 @@
   color: #0a0091;
 }
 
+ /* username yanındaki eksik alan sayacı */
+.profile-missing-badge {
+  display: inline-block;
+  min-width: 18px;
+  padding: 2px 6px;
+  margin-left: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #e11d48; /* kırmızı */
+  border-radius: 999px;       /* yuvarlak */
+  line-height: 1;
+  text-align: center;
+}
+
+
 /* Responsive - 1300px altı */
 @media (max-width: 1300px) {
   .navbar {
@@ -348,20 +364,6 @@
     animation: dropdownFadeDown 0.8s ease;
   }
 
- /* username yanındaki eksik alan sayacı */
-.profile-missing-badge {
-  display: inline-block;
-  min-width: 18px;
-  padding: 2px 6px;
-  margin-left: 6px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #fff;
-  background-color: #e11d48; /* kırmızı */
-  border-radius: 999px;       /* yuvarlak */
-  line-height: 1;
-  text-align: center;
-}
 
 
 
