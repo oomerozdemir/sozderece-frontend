@@ -104,12 +104,9 @@ export default App;
 
 /*
 ***deploy sonrasi farkedilen hatalar****
-1-sepete eklemeden once kodu girdiginde sepete ekleme islemi duzgun yapilmiyor ve kodu dogru girmeme ragmen ilerlemiyor
-2- giris yapili oldugum halde sepete urunu eklemiyor
-3-normal login ekranindan giris yaparken sorun yok ama yeni kayit olmus bir hesapta bazi sorunlar var.navbarda Hesabim dropdownu gozukmemesi gibi bunun sorunu db ye kayit olmuyor olabilir
-kullanicidan isim almadigimiz icin ona random isim tanimlayalim baslangicta kullanici1234 gibi
-ve evet su anda kayit olma islemi yapmadan giris yapmis gosteriyor yani hicbir kontrol yok ayrica db ye kayit da yok sanirim karisikliklar var normal login de
-
+1-sepete ekleniyor ama payment page e girerken hata var
+2-sepetten urun silinmiyor
+3-sepette urun arttiriliyor ama azalmiyor
 
 
 giris kayit yapma kisminda sifre kullanmiyoruz artik email ve otp ile giris olucak hep
