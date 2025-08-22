@@ -125,6 +125,9 @@ const [dropdownOpen, setDropdownOpen] = useState(false);
   onClick={() => setDropdownOpen(!dropdownOpen)}
 >
   {username}
+  {profileMissing > 0 && (
+  <span className="profile-missing-badge">{profileMissing}</span>
+)}
 </span>
 
                 {dropdownOpen && (

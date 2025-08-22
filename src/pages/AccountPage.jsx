@@ -5,7 +5,13 @@ import "../cssFiles/account.css";
 
 const AccountPage = () => {
   const [user, setUser] = useState(null);
-  const [form, setForm] = useState({ name: "", email: "", phone: "", grade: "", track: "", });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    grade: "",
+    track: "",
+  });
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [verifying, setVerifying] = useState("");
@@ -15,70 +21,82 @@ const AccountPage = () => {
   const [codeSent, setCodeSent] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
   const [passwords, setPasswords] = useState({
-  current: "",
-  new1: "",
-  new2: ""
+    current: "",
+    new1: "",
+    new2: "",
   });
-const [passwordMsg, setPasswordMsg] = useState("");
-const [editingClass, setEditingClass] = useState(false);
+  const [passwordMsg, setPasswordMsg] = useState("");
+  const [editingClass, setEditingClass] = useState(false);
 
-
-
-
-
-  useEffect(() => {
-  const fetchUser = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get("/api/auth/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const userData = res.data.user;
-      setUser(userData);
-      setForm({
-        name: userData.name,
-        email: userData.email,
-        phone: userData.phone || "",
-        grade: userData.grade || "",
-        track: userData.track || "", 
-      });
-      setEmailVerified(userData.emailVerified || false);
-    } catch (err) {
-      setError("Kullanıcı bilgisi alınamadı.");
-    }
+  // 👉 eksik alan sayısını hesaplayan fonksiyon (email hariç)
+  const calcMissing = (u) => {
+    let missing = 0;
+    if (!u.phone) missing++;
+    if (!u.grade) missing++;
+    if (["9", "10", "11", "12", "Mezun"].includes(u.grade) && !u.track) missing++;
+    return missing;
   };
 
-  fetchUser();
-}, []);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("/api/auth/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const userData = res.data.user;
+        setUser(userData);
+        setForm({
+          name: userData.name,
+          email: userData.email,
+          phone: userData.phone || "",
+          grade: userData.grade || "",
+          track: userData.track || "",
+        });
+        setEmailVerified(userData.emailVerified || false);
 
+        // eksik alanları localStorage’a yaz
+        const missing = calcMissing(userData);
+        localStorage.setItem("profileMissing", missing);
+      } catch (err) {
+        setError("Kullanıcı bilgisi alınamadı.");
+      }
+    };
 
-const handleUpdate = async (e) => {
-  e.preventDefault();
-  setError("");
-  setSuccess("");
+    fetchUser();
+  }, []);
 
-  try {
-    const token = localStorage.getItem("token");
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
 
-    
-    const cleanedForm = {
-      ...form,
-  track: ["9", "10", "11", "12", "Mezun"].includes(form.grade) ? form.track : null,
-};
+    try {
+      const token = localStorage.getItem("token");
 
-    const res = await axios.put("/api/auth/update-profile", cleanedForm, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+      const cleanedForm = {
+        ...form,
+        track: ["9", "10", "11", "12", "Mezun"].includes(form.grade)
+          ? form.track
+          : null,
+      };
 
-    setUser(res.data.user);
-    setSuccess("Bilgiler güncellendi.");
-    setEmailVerified(res.data.user.emailVerified || false);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-  } catch {
-    setError("Güncelleme başarısız.");
-  }
-};
+      const res = await axios.put("/api/auth/update-profile", cleanedForm, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
+      setUser(res.data.user);
+      setSuccess("Bilgiler güncellendi.");
+      setEmailVerified(res.data.user.emailVerified || false);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      // güncellemeden sonra eksik alanları tekrar hesapla
+      const missing = calcMissing(res.data.user);
+      localStorage.setItem("profileMissing", missing);
+    } catch {
+      setError("Güncelleme başarısız.");
+    }
+  };
 
   const handleVerify = (type) => {
     setVerifyTarget(type);
@@ -88,115 +106,95 @@ const handleUpdate = async (e) => {
     setVerifying("");
   };
 
-const sendCode = async () => {
+  const sendCode = async () => {
+    try {
+      const actualTarget =
+        verifyTarget === "email"
+          ? document.querySelector("input[type=email]").value
+          : form.phone;
 
-  try {
-    const actualTarget = verifyTarget === "email"
-      ? document.querySelector("input[type=email]").value
-      : form.phone;
-
-    await axios.post("/api/verification/send-code", {
-      type: verifyTarget,
-      target: actualTarget
-    });
-
-    setVerifying("Doğrulama kodu gönderildi.");
-    setCodeSent(true);
-  } catch {
-    setVerifying("Kod gönderilemedi.");
-  }
-};
-
-
-const submitCode = async () => {
-  try {
-    const actualTarget = verifyTarget === "email"
-      ? document.querySelector("input[type=email]").value
-      : form.phone;
-
-    const token = localStorage.getItem("token");
-    const res = await axios.post(
-      "/api/verification/verify-code",
-      {
+      await axios.post("/api/verification/send-code", {
         type: verifyTarget,
         target: actualTarget,
-        code: verificationCode.trim()
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
-    );
+      });
 
-    // kullanıcı bilgilerini güncelle
-    const meRes = await axios.get("/api/auth/me", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+      setVerifying("Doğrulama kodu gönderildi.");
+      setCodeSent(true);
+    } catch {
+      setVerifying("Kod gönderilemedi.");
+    }
+  };
 
-    const updatedUser = meRes.data.user;
-    setUser(updatedUser);
-    setEmailVerified(updatedUser.emailVerified || false);
-    localStorage.setItem("user", JSON.stringify(updatedUser));
+  const submitCode = async () => {
+    try {
+      const actualTarget =
+        verifyTarget === "email"
+          ? document.querySelector("input[type=email]").value
+          : form.phone;
 
-    setShowVerifyBox(false);
-    setVerifying("Doğrulama başarılı.");
-  } catch {
-    setVerifying("Kod doğrulanamadı.");
-  }
-};
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "/api/verification/verify-code",
+        {
+          type: verifyTarget,
+          target: actualTarget,
+          code: verificationCode.trim(),
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
+      // kullanıcı bilgilerini güncelle
+      const meRes = await axios.get("/api/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
+      const updatedUser = meRes.data.user;
+      setUser(updatedUser);
+      setEmailVerified(updatedUser.emailVerified || false);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
 
+      // doğrulama sonrası eksik alanları tekrar hesapla
+      const missing = calcMissing(updatedUser);
+      localStorage.setItem("profileMissing", missing);
+
+      setShowVerifyBox(false);
+      setVerifying("Doğrulama başarılı.");
+    } catch {
+      setVerifying("Kod doğrulanamadı.");
+    }
+  };
 
   if (!user && !error) return <p>Yükleniyor...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
-
-
-const handlePasswordChange = async (e) => {
-  e.preventDefault();
-  setPasswordMsg("");
-
-  if (passwords.new1 !== passwords.new2) {
-    setPasswordMsg("Yeni şifreler uyuşmuyor.");
-    return;
-  }
-
-  try {
-    const token = localStorage.getItem("token");
-    await axios.put(
-      "/api/auth/change-password",
-      {
-        currentPassword: passwords.current,
-        newPassword: passwords.new1
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    setPasswordMsg("Şifre başarıyla değiştirildi.");
-    setPasswords({ current: "", new1: "", new2: "" });
-  } catch (err) {
-    setPasswordMsg("Şifre değiştirilemedi. Mevcut şifre hatalı olabilir.");
-  }
-};
 
   return (
     <div className="accountPage-layout">
       <aside className="accountPage-sidebar">
         <ul className="accountPage-sidebar-menu">
-          <li><a href="/">🏠 Anasayfaya Dön</a></li>
+          <li>
+            <a href="/">🏠 Anasayfaya Dön</a>
+          </li>
           <li>👤 Hesap</li>
-          <li><a href="/orders">📦 Siparişlerim</a></li>
+          <li>
+            <a href="/orders">📦 Siparişlerim</a>
+          </li>
           <li style={{ color: "red", marginTop: "20px" }}>
-            <button onClick={() => {
-              localStorage.clear();
-              window.location.href = "/login";
-            }}>🚪 Çıkış Yap</button>
+            <button
+              onClick={() => {
+                localStorage.clear();
+                window.location.href = "/login";
+              }}
+            >
+              🚪 Çıkış Yap
+            </button>
           </li>
         </ul>
       </aside>
 
       <main className="accountPage-main">
         <section className="accountPage-profile-card">
-          
           <div>
             <h2>{user.name}</h2>
             <p>{user.email}</p>
@@ -206,6 +204,7 @@ const handlePasswordChange = async (e) => {
           </div>
         </section>
 
+        {/* form */}
         <form onSubmit={handleUpdate} className="info-card modern-form">
           <h3>Kişisel Bilgiler</h3>
 
@@ -234,68 +233,81 @@ const handlePasswordChange = async (e) => {
               >
                 {emailVerified ? "✔ Doğrulandı" : "✉ Doğrula"}
               </span>
-         
             </div>
-                 <label>Telefon Numarası</label>
-  <input
-    type="tel"
-    value={form.phone}
-    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-    placeholder="Telefon"
-  />
+
+            <label>Telefon Numarası</label>
+            <input
+              type="tel"
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              placeholder="Telefon"
+            />
           </div>
 
-         
+          {!editingClass && user.grade && user.track ? (
+            <div
+              style={{
+                marginBottom: "12px",
+                padding: "10px",
+                background: "#f8f8f8",
+                borderRadius: "8px",
+              }}
+            >
+              🎓 Sınıf: <strong>{user.grade}</strong> | Alan:{" "}
+              <strong>{user.track}</strong>
+              <button
+                type="button"
+                style={{ marginLeft: "10px" }}
+                onClick={() => setEditingClass(true)}
+              >
+                🖊 Değiştir
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="accountPage-form-group">
+                <label>Sınıfınız</label>
+                <select
+                  value={form.grade}
+                  onChange={(e) =>
+                    setForm({ ...form, grade: e.target.value })
+                  }
+                >
+                  <option value="">Sınıf Seçin</option>
+                  <option value="5">5. Sınıf</option>
+                  <option value="6">6. Sınıf</option>
+                  <option value="7">7. Sınıf</option>
+                  <option value="8">8. Sınıf</option>
+                  <option value="9">9. Sınıf</option>
+                  <option value="10">10. Sınıf</option>
+                  <option value="11">11. Sınıf</option>
+                  <option value="12">12. Sınıf</option>
+                  <option value="Mezun">Mezun</option>
+                </select>
+              </div>
 
-      {!editingClass && user.grade && user.track ? (
-  <div style={{ marginBottom: "12px", padding: "10px", background: "#f8f8f8", borderRadius: "8px" }}>
-    🎓 Sınıf: <strong>{user.grade}</strong> | Alan: <strong>{user.track}</strong>
-    <button type="button" style={{ marginLeft: "10px" }} onClick={() => setEditingClass(true)}>
-      🖊 Değiştir
-    </button>
-  </div>
-) : (
-  <>
-    <div className="accountPage-form-group">
-      <label>Sınıfınız</label>
-      <select
-        value={form.grade}
-        onChange={(e) => setForm({ ...form, grade: e.target.value })}
-      >
-        <option value="">Sınıf Seçin</option>
-        <option value="5">5. Sınıf</option>
-        <option value="6">6. Sınıf</option>
-        <option value="7">7. Sınıf</option>
-        <option value="8">8. Sınıf</option>
-        <option value="9">9. Sınıf</option>
-        <option value="10">10. Sınıf</option>
-        <option value="11">11. Sınıf</option>
-        <option value="12">12. Sınıf</option>
-        <option value="Mezun">Mezun</option>
-      </select>
-    </div>
+              {["9", "10", "11", "12", "Mezun"].includes(form.grade) && (
+                <div className="accountPage-form-group">
+                  <label>Alanınız</label>
+                  <select
+                    value={form.track}
+                    onChange={(e) =>
+                      setForm({ ...form, track: e.target.value })
+                    }
+                  >
+                    <option value="">Alan Seçin</option>
+                    <option value="Sayısal">Sayısal</option>
+                    <option value="Eşit Ağırlık">Eşit Ağırlık</option>
+                    <option value="Sözel">Sözel</option>
+                  </select>
+                </div>
+              )}
+            </>
+          )}
 
-    {["9", "10", "11", "12", "Mezun"].includes(form.grade) && (
-      <div className="accountPage-form-group">
-        <label>Alanınız</label>
-        <select
-          value={form.track}
-          onChange={(e) => setForm({ ...form, track: e.target.value })}
-        >
-          <option value="">Alan Seçin</option>
-          <option value="Sayısal">Sayısal</option>
-          <option value="Eşit Ağırlık">Eşit Ağırlık</option>
-          <option value="Sözel">Sözel</option>
-        </select>
-      </div>
-    )}
-  </>
-)}
-
-
-          
-
-          <button type="submit" className="update-button">Bilgileri Güncelle</button>
+          <button type="submit" className="update-button">
+            Bilgileri Güncelle
+          </button>
           {success && <p className="success-message">{success}</p>}
           {verifying && <p className="success-message">{verifying}</p>}
         </form>
@@ -303,7 +315,9 @@ const handlePasswordChange = async (e) => {
         {showVerifyBox && (
           <div className="verify-popup">
             <div className="verify-card">
-              <h4>{verifyTarget === "email" ? "E-posta" : "Telefon"} Doğrulama</h4>
+              <h4>
+                {verifyTarget === "email" ? "E-posta" : "Telefon"} Doğrulama
+              </h4>
               {!codeSent ? (
                 <button onClick={sendCode}>📨 Kodu Gönder</button>
               ) : (
@@ -312,17 +326,22 @@ const handlePasswordChange = async (e) => {
                     type="text"
                     placeholder="Kod Giriniz"
                     value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value)}
+                    onChange={(e) =>
+                      setVerificationCode(e.target.value)
+                    }
                   />
                   <button onClick={submitCode}>✔ Doğrula</button>
                 </>
               )}
-              <button onClick={() => setShowVerifyBox(false)} style={{ marginTop: "10px" }}>Kapat</button>
+              <button
+                onClick={() => setShowVerifyBox(false)}
+                style={{ marginTop: "10px" }}
+              >
+                Kapat
+              </button>
             </div>
           </div>
         )}
-
-
       </main>
     </div>
   );

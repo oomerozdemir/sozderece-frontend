@@ -103,37 +103,16 @@ export default App;
 
 
 /*
-
-giris kayit yapma kisminda sifre kullanmiyoruz artik email ve otp ile giris olucak hep
-SIFRE KULLANILMICAK
-OTP ILE GIRIS YAPAN KULLANICIYI 1 AY HATIRLICAK SISTEM VE OTP EMAILI ISTEMICEK BIR SURE
-Beni hatirla butonuna tiklicak kullanici ve onu 1 ay hatirlicak 1 ay otp sormucak
-BUNLARI HALLET
+******onemli DEGISIK********
+1-Ders ve ardindan hoca sistemi eklenicek
+2-Yeni paketler eklenecek
+bu eklemelere gore nasil bir tasarim olusturulacak planlama gerekli ozellikle anasayfa da navbar ve hersection icin
 
 
-kullaniciya eksik bilgileri doldurmasi icin giris yaptiktan sonra yonlendirme yapariz.
+accountpage css ayarlamasi
 
-*****Gıriş yapma ve kayıt olmada onemli değişiklikler*****
-Paket-detay => Hemen Basla Butonu => e-posta girer kullanici ve otp kodu gider.
-=> kod dogruysa paket sepete eklenir ve kullanici ayni zamanda giris yapmis olur.
-=> sepet sayfasi acilir buradan devama basar => klasik payment sayfasina gider.
-
-Bu sistemin artilari/eksileri
-+ kullanici kayit olurken daha az zaman harcar
-+ kullanicidan e posta alindigi icin ardindan rahatsiz edilebilir tekrar odemeyi tamamlamasa bile
-+ sepette urun kaldiysa mail veya sms gonderimi yapilabilir.
-- kullanicidan daha detayli bilgileri sonradan doldurmasi gerekir
-- ilk eksideki sorunu daha fazla calisma gerekse bile su sekilde cozebiliriz;
-fatura kisminda cogu bilgiyi aliriz ve onu user bilgisiyle baglariz bu sayede odeme tamamlandiginda cogu bilgi alinmis olur
--sifreyi tekrar olusturmasi gerekir
--eger sifre olusturmazsa her girisinde otp maili gider oyle girer
--kullaniciya hesabim kisminda eyleme geciricek sayi ikonu cikar.O sekilde doldurmasi gereken alanlari gosterebiliriz
-Genel tani;
-Daha fazla zaman ve emek gerekicek bu sistem icin bazi seyler silinicek ve hatalar olucak.Ancak en sonunda
-daha gelismis,direkt olarak eyleme gecirebilecek ve pratik bir kullanicidan bilgi donusum alma yontemi olucak.
-Panel bilgileri su anda zaten gostermelik.Ilerde paneli gelistirdigimizde ayri bir webApp uzerinden yonlendirmeyle
-giris yaptirabiliriz.
-**********************************************************************************
+tc yi billinginfodan kaldiralim
+billinginfodan aldigimiz bazi bilgiler isim soyisim gibi bunlar eger userda eksikse orayi da doldurabilsin.
 
 
 cerezlerin nasil calistigini ogren tamamiyle
