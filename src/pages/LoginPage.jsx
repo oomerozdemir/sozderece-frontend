@@ -18,6 +18,7 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [resendIn, setResendIn] = useState(0);
   const [error, setError] = useState("");
+  const [remember, setRemember] = useState(true);
 
   useEffect(() => {
     if (resendIn <= 0) return;
@@ -46,6 +47,7 @@ const LoginPage = () => {
       const res = await axios.post("/api/auth/otp/verify", {
         email: email.trim().toLowerCase(),
         code: code.trim(),
+        rememberMe: remember,
       });
 
       const token = res.data.token;
@@ -90,6 +92,14 @@ const LoginPage = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
+              <label className="remember-me">
+                <input 
+                  type="checkbox" 
+                  checked={remember}   
+                  onChange={(e) => setRemember(e.target.checked)}
+                />
+                Beni Hatırla
+              </label>
               <button
                 type="button"
                 onClick={sendCode}

@@ -16,6 +16,7 @@ export default function PreCartAuth() {
   const [step, setStep] = useState("checking"); // checking | email | code | done
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [remember, setRemember] = useState(true);
   const [resendIn, setResendIn] = useState(0);
 
   const pkg = slug ? PACKAGES[slug] : null; // { title, unitPrice, subtitle, ... }
@@ -100,6 +101,7 @@ export default function PreCartAuth() {
       const res = await axios.post("/api/auth/otp/verify", {
         email: email.trim().toLowerCase(),
         code: code.trim(),
+        rememberMe: remember,
       });
 
       // oturum aç
@@ -176,6 +178,14 @@ export default function PreCartAuth() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            <label className="remember-me">
+                <input 
+                  type="checkbox" 
+                  checked={remember}   
+                  onChange={(e) => setRemember(e.target.checked)}
+                />
+                Beni Hatırla
+              </label>
             <button
               className="btn-primary"
               type="button"

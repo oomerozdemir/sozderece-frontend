@@ -33,29 +33,33 @@
   color: #000;
 }
 
+.remember-me {
+  display: flex;           /* input + metni tek satıra al */
+  align-items: center;            /* dikey hizayı eşitle */
+  gap: 8px;
+  margin: 8px 0 16px;
+  font-size: 0.95rem;
+  color: #111827;
+  cursor: pointer;
+}
 
+.login-form .remember-me input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;                      /* alt boşluğu kaldır */
+  border: none;                   /* border-bottom vb. override */
+  padding: 0;
+  background: transparent;
+  vertical-align: middle;         /* metinle aynı tabana oturt */
+  accent-color: #02095f;          /* tarayıcı destekliyorsa tema rengi */
+}
 
 .login-form input:focus {
   outline: none;
   border-bottom-color: #1f2937;
 }
 
-.password-wrapper {
-  position: relative;
-  width: 100%;
-  margin-bottom: 24px;
-}
 
-.password-wrapper input {
-  width: 100%;
-  border: none;
-  border-bottom: 2px solid #000;
-  padding: 12px 8px;
-  padding-right: 40px; /* Göz için boşluk bırak */
-  font-size: 1rem;
-  background-color: transparent;
-  color: #000;
-}
 button:disabled {
   background-color: #ccc;
   cursor: not-allowed;

@@ -112,3 +112,23 @@
   color: #b91c1c;
 }
 
+.remember-me {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 16px;
+  font-size: 0.95rem;
+  color: #111827;
+  cursor: pointer;
+}
+
+.preauth-form .remember-me input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border: none;
+  padding: 0;
+  background: transparent;
+  vertical-align: middle;
+  accent-color: #02095f;
+}

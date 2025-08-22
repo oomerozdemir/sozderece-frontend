@@ -103,11 +103,6 @@ export default App;
 
 
 /*
-***deploy sonrasi farkedilen hatalar****
-1-sepete ekleniyor ama payment page e girerken hata var
-2-sepetten urun silinmiyor
-3-sepette urun arttiriliyor ama azalmiyor
-
 
 giris kayit yapma kisminda sifre kullanmiyoruz artik email ve otp ile giris olucak hep
 SIFRE KULLANILMICAK
