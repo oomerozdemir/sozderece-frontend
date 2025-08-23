@@ -106,6 +106,8 @@ export default App;
 beni hatirlayin butonu calismiyor
 beni hatirla secenegini isaretlememe ragmen tekrar kod sordu
 
+son degisiklerden dolayi admin tarafini da duzenle
+
 ******onemli DEGISIKLIK********
 1-Ders ve ardindan hoca sistemi eklenicek
 2-Yeni paketler eklenecek

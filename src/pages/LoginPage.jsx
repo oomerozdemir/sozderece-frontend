@@ -20,6 +20,25 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [remember, setRemember] = useState(true);
 
+  // ✅ Geçerli token varsa login sayfasını atla (beni hatırla için kritik)
+  useEffect(() => {
+    const t = localStorage.getItem("token");
+    if (!t) return;
+    try {
+      const payload = jwtDecode(t);
+      if (payload?.exp && payload.exp * 1000 > Date.now()) {
+        const role = String(payload.role || "").toLowerCase();
+        if (role === "admin") navigate("/admin", { replace: true });
+        else if (role === "coach") navigate("/coach/dashboard", { replace: true });
+        else navigate("/student/dashboard", { replace: true });
+      } else {
+        localStorage.removeItem("token");
+      }
+    } catch {
+      localStorage.removeItem("token");
+    }
+  }, [navigate]);
+
   useEffect(() => {
     if (resendIn <= 0) return;
     const t = setTimeout(() => setResendIn((s) => s - 1), 1000);
@@ -56,7 +75,7 @@ const LoginPage = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      // role'e göre yönlendir (mevcut davranış korunur)
+      // role'e göre yönlendir
       const role = (jwtDecode(token)?.role || user?.role || "student").toLowerCase();
       if (role === "admin") navigate("/admin");
       else if (role === "coach") navigate("/coach/dashboard");
@@ -93,9 +112,9 @@ const LoginPage = () => {
                 required
               />
               <label className="remember-me">
-                <input 
-                  type="checkbox" 
-                  checked={remember}   
+                <input
+                  type="checkbox"
+                  checked={remember}
                   onChange={(e) => setRemember(e.target.checked)}
                 />
                 Beni Hatırla
@@ -140,7 +159,11 @@ const LoginPage = () => {
               <button
                 type="button"
                 className="linklike"
-                onClick={() => { setStep("email"); setCode(""); setError(""); }}
+                onClick={() => {
+                  setStep("email");
+                  setCode("");
+                  setError("");
+                }}
                 style={{ marginTop: 8 }}
               >
                 E-postayı değiştir
