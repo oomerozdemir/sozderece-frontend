@@ -1,6 +1,7 @@
 // src/pages/PreCartAuth.jsx
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import axios from "../utils/axios";
 import { PACKAGES } from "../hooks/packages.js"; // tek kaynak
 import "../cssFiles/preAuth.css";
@@ -33,7 +34,7 @@ export default function PreCartAuth() {
     } catch {}
   };
 
-  // login'li ise: doğrudan server sepetine ekle ve /sepet'e git
+  // login'li ise: token geçerliyse doğrudan server sepetine ekle ve /sepet'e git
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userStr = localStorage.getItem("user");
@@ -44,29 +45,43 @@ export default function PreCartAuth() {
     }
 
     if (token && userStr) {
-      (async () => {
-        try {
-          const userObj = JSON.parse(userStr || "{}");
-          await axios.post(
-            "/api/cart/items",
-            {
-              slug,
-              title: pkg.title,
-              name: pkg.title,                   // BE “name/title” farkını kapat
-              unitPrice: Number(pkg.unitPrice),  // kuruş (int)
-              quantity: 1,
-              email: userObj?.email || undefined // BE isterse fallback
-            },
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          trackAddToCart();
-        } catch {
-          // hata olsa da sepet sayfasına ilerleyelim
-        } finally {
-          setStep("done");
-          navigate("/sepet", { replace: true });
-        }
-      })();
+      let valid = false;
+      try {
+        const payload = jwtDecode(token);
+        if (payload?.exp && payload.exp * 1000 > Date.now()) valid = true;
+      } catch {
+        valid = false;
+      }
+
+      if (valid) {
+        (async () => {
+          try {
+            const userObj = JSON.parse(userStr || "{}");
+            await axios.post(
+              "/api/cart/items",
+              {
+                slug,
+                title: pkg.title,
+                name: pkg.title,                   // BE “name/title” farkını kapat
+                unitPrice: Number(pkg.unitPrice),  // kuruş (int)
+                quantity: 1,
+                email: userObj?.email || undefined // BE isterse fallback
+              }
+              // Authorization header'ı axios interceptor otomatik ekliyor
+            );
+            trackAddToCart();
+          } catch {
+            // hata olsa da sepet sayfasına ilerleyelim
+          } finally {
+            setStep("done");
+            navigate("/sepet", { replace: true });
+          }
+        })();
+      } else {
+        // Süresi geçmiş/bozuk token → temizle ve OTP akışına dön
+        localStorage.removeItem("token");
+        setStep("email");
+      }
     } else {
       setStep("email");
     }
@@ -119,8 +134,8 @@ export default function PreCartAuth() {
             unitPrice: Number(pkg.unitPrice),
             quantity: 1,
             email: res.data?.user?.email || email.trim().toLowerCase(),
-          },
-          { headers: { Authorization: `Bearer ${res.data.token}` } }
+          }
+          // Authorization header'ı axios interceptor otomatik ekliyor
         );
         trackAddToCart();
       }
@@ -179,13 +194,13 @@ export default function PreCartAuth() {
               onChange={(e) => setEmail(e.target.value)}
             />
             <label className="remember-me">
-                <input 
-                  type="checkbox" 
-                  checked={remember}   
-                  onChange={(e) => setRemember(e.target.checked)}
-                />
-                Beni Hatırla
-              </label>
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+              />
+              Beni Hatırla
+            </label>
             <button
               className="btn-primary"
               type="button"
