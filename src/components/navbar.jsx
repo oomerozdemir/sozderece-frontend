@@ -3,6 +3,7 @@ import "../cssFiles/navbar.css";
 import { FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { NavLink, Link, useNavigate } from "react-router-dom";
+import axios from "../utils/axios";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -24,32 +25,32 @@ const Navbar = () => {
     return m;
   };
 
+  const syncUser = () => {
+    const userStr = localStorage.getItem("user");
+    let parsed = null;
+    if (userStr) {
+      try { parsed = JSON.parse(userStr); } catch (_) {}
+    }
+
+    if (parsed) {
+      setUsername(parsed.name);
+      setUserRole(parsed.role);
+    } else {
+      setUsername(null);
+      setUserRole(null);
+    }
+
+    // 1) localStorage’den okumaya çalış
+    let missing = Number(localStorage.getItem("profileMissing"));
+    // 2) yoksa/NaN ise user’dan hesapla ve kaydet
+    if (!Number.isFinite(missing)) {
+      missing = calcMissing(parsed);
+      localStorage.setItem("profileMissing", String(missing));
+    }
+    setProfileMissing(missing);
+  };
+
   useEffect(() => {
-    const syncUser = () => {
-      const userStr = localStorage.getItem("user");
-      let parsed = null;
-      if (userStr) {
-        try { parsed = JSON.parse(userStr); } catch (_) {}
-      }
-
-      if (parsed) {
-        setUsername(parsed.name);
-        setUserRole(parsed.role);
-      } else {
-        setUsername(null);
-        setUserRole(null);
-      }
-
-      // 1) localStorage’den okumaya çalış
-      let missing = Number(localStorage.getItem("profileMissing"));
-      // 2) yoksa/NaN ise user’dan hesapla ve kaydet
-      if (!Number.isFinite(missing)) {
-        missing = calcMissing(parsed);
-        localStorage.setItem("profileMissing", String(missing));
-      }
-      setProfileMissing(missing);
-    };
-
     syncUser();
     window.addEventListener("storage", syncUser);
     window.addEventListener("focus", syncUser);
@@ -71,6 +72,32 @@ const Navbar = () => {
   }, []);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  const handleLogout = async () => {
+    try {
+      // backend: remember cookie + DB revoke
+      await axios.post("/api/auth/logout", { forgetDevice: true });
+    } catch (_) {
+      // sessiz geç
+    } finally {
+      // bu cihazdaki oturum izlerini temizle
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("profileMissing");
+
+      // aynı sekmede ilk yüklemede sessiz girişi atla
+      sessionStorage.setItem("skipSilentLoginOnce", "1");
+
+      // UI state’i sıfırla
+      setDropdownOpen(false);
+      setUsername(null);
+      setUserRole(null);
+      setProfileMissing(0);
+
+      // login'e yönlendir
+      navigate("/login", { replace: true });
+    }
+  };
 
   return (
     <>
@@ -153,28 +180,25 @@ const Navbar = () => {
                       )}
                     </span>
 
-                   {dropdownOpen && (
-  <div className="dropdown-menu">
-    <Link to="/account" className="dropdown-account-link">
-      Hesabım
-      {profileMissing > 0 && (
-        <span className="profile-missing-badge profile-missing-badge--inline">
-          {profileMissing}
-        </span>
-      )}
-    </Link>
-    {userRole === "student" && <Link to="/student/dashboard">Öğrenci Paneli</Link>}
-    {userRole === "coach" && <Link to="/coach/dashboard">Koç Paneli</Link>}
-    {userRole === "admin" && <Link to="/admin">Admin Paneli</Link>}
-    <Link to="/orders">Siparişlerim</Link>
-    <button onClick={() => {
-      localStorage.clear();
-      navigate("/login");
-    }}>
-      Çıkış Yap
-    </button>
-  </div>
-)}
+                    {dropdownOpen && (
+                      <div className="dropdown-menu">
+                        <Link to="/account" className="dropdown-account-link">
+                          Hesabım
+                          {profileMissing > 0 && (
+                            <span className="profile-missing-badge profile-missing-badge--inline">
+                              {profileMissing}
+                            </span>
+                          )}
+                        </Link>
+                        {userRole === "student" && <Link to="/student/dashboard">Öğrenci Paneli</Link>}
+                        {userRole === "coach" && <Link to="/coach/dashboard">Koç Paneli</Link>}
+                        {userRole === "admin" && <Link to="/admin">Admin Paneli</Link>}
+                        <Link to="/orders">Siparişlerim</Link>
+                        <button onClick={handleLogout}>
+                          Çıkış Yap
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <Link to="/login">GİRİŞ YAP</Link>

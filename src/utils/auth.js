@@ -34,16 +34,23 @@ export function getRoleFromToken(token) {
   return (p?.role || "").toLowerCase();
 }
 
-export async function logout({ forgetDevice = false } = {}) {
+export async function logout({ forgetDevice = true, redirect = "/login" } = {}) {
   try {
-    // backend'de varsa opsiyonel:
+    // Backend: remember cookie + DB revoke (logout endpoint'in bunu yapması lazım)
     await axios.post("/api/auth/logout", { forgetDevice });
   } catch (_) {
     // sessiz geç
   } finally {
+    // Bu cihazdaki erişim bilgisini temizle
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    // Bu sekmede BİR KEZ sessiz girişi atla
+
+    // Aynı sekmede ilk yüklemede sessiz girişi ATLA
     sessionStorage.setItem("skipSilentLoginOnce", "1");
+
+    // İstersen yönlendir
+    if (redirect && typeof window !== "undefined") {
+      window.location.assign(redirect);
+    }
   }
 }
