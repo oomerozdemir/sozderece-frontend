@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "https://sozderece-backend.onrender.com", // sabit yaz
+  baseURL: "https://sozderece-backend.onrender.com", 
+  withCredentials: true,
 });
 
 instance.interceptors.request.use((config) => {

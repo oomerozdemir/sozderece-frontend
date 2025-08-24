@@ -20,17 +20,36 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [remember, setRemember] = useState(true);
 
-  // ✅ Geçerli token varsa login sayfasını atla
+  // 1) Açılışta: varsa geçerli token → role'e göre yönlendir
+  //    yoksa → sessiz giriş (remember cookie) dene; başarılıysa yönlendir
   useEffect(() => {
-    const t = localStorage.getItem("token");
-    if (!t || !isTokenValid(t)) {
+    (async () => {
+      const t = localStorage.getItem("token");
+      if (t && isTokenValid(t)) {
+        const role = getRoleFromToken(t);
+        if (role === "admin") navigate("/admin", { replace: true });
+        else if (role === "coach") navigate("/coach/dashboard", { replace: true });
+        else navigate("/student/dashboard", { replace: true });
+        return;
+      }
+
+      // token yok/expired → silent-login dene (remember cookie varsa BE yeni token verir)
+      try {
+        const res = await axios.get("/api/auth/auth/silent-login");
+        if (res?.data?.token) {
+          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("user", JSON.stringify(res.data.user));
+          const role = (res.data.user?.role || "student").toLowerCase();
+          if (role === "admin") navigate("/admin", { replace: true });
+          else if (role === "coach") navigate("/coach/dashboard", { replace: true });
+          else navigate("/student/dashboard", { replace: true });
+          return;
+        }
+      } catch {
+        // cookie yok/bozuk → normal OTP akışı
+      }
       setStep("email");
-      return;
-    }
-    const role = getRoleFromToken(t);
-    if (role === "admin") navigate("/admin", { replace: true });
-    else if (role === "coach") navigate("/coach/dashboard", { replace: true });
-    else navigate("/student/dashboard", { replace: true });
+    })();
   }, [navigate]);
 
   // resend sayacı
@@ -61,7 +80,7 @@ const LoginPage = () => {
       const res = await axios.post("/api/auth/otp/verify", {
         email: email.trim().toLowerCase(),
         code: code.trim(),
-        rememberMe: remember,
+        rememberMe: remember, // ✅ remember seçiliyse BE cookie yazacak
       });
 
       const token = res.data.token;
@@ -70,7 +89,6 @@ const LoginPage = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      // role'e göre yönlendir
       const role = getRoleFromToken(token) || (user?.role || "student").toLowerCase();
       if (role === "admin") navigate("/admin", { replace: true });
       else if (role === "coach") navigate("/coach/dashboard", { replace: true });

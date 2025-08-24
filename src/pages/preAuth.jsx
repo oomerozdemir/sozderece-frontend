@@ -1,11 +1,10 @@
+// src/pages/preAuth.jsx
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
-import { PACKAGES } from "../hooks/packages.js"; // tek kaynak
+import { PACKAGES } from "../hooks/packages.js";
 import "../cssFiles/preAuth.css";
 import { isTokenValid } from "../utils/auth";
-
-
 
 export default function PreCartAuth() {
   const navigate = useNavigate();
@@ -21,7 +20,7 @@ export default function PreCartAuth() {
   const [remember, setRemember] = useState(true);
   const [resendIn, setResendIn] = useState(0);
 
-  const pkg = slug ? PACKAGES[slug] : null; // { title, unitPrice, subtitle, ... }
+  const pkg = slug ? PACKAGES[slug] : null; // { title, unitPrice, ... }
 
   const trackAddToCart = () => {
     try {
@@ -29,56 +28,78 @@ export default function PreCartAuth() {
       window.fbq("track", "AddToCart", {
         content_ids: [slug],
         content_type: "product",
-        value: Number(pkg.unitPrice) / 100, // TL
+        value: Number(pkg.unitPrice) / 100,
         currency: "TRY",
       });
     } catch {}
   };
 
-  // login'li ise: token geçerliyse doğrudan server sepetine ekle ve /sepet'e git
+  // Tek bir yardımcı: server sepetine ekle ve /sepet'e git
+  const addToCartAndGo = async (tokenToUse, userEmail) => {
+    try {
+      await axios.post(
+        "/api/cart/items",
+        {
+          slug,
+          title: pkg.title,
+          name: pkg.title,
+          unitPrice: Number(pkg.unitPrice),
+          quantity: 1,
+          email: userEmail || undefined,
+        },
+        tokenToUse
+          ? { headers: { Authorization: `Bearer ${tokenToUse}` } }
+          : undefined
+      );
+      trackAddToCart();
+    } catch {
+      // hata olsa da akışı bozma
+    } finally {
+      setStep("done");
+      navigate("/sepet", { replace: true });
+    }
+  };
+
+  // Açılış akışı: 1) token geçerliyse → ekle & git
+  //               2) değilse → silent-login dene
+  //               3) cookie yoksa → OTP (email) adımı
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userStr = localStorage.getItem("user");
-
-    if (!pkg) {
-      setStep("email");
-      return;
-    }
-
-    if (token && userStr) {
-      const valid = isTokenValid(token);
-
-      if (valid) {
-        (async () => {
-          try {
-            const userObj = JSON.parse(userStr || "{}");
-            await axios.post(
-              "/api/cart/items",
-              {
-                slug,
-                title: pkg.title,
-                name: pkg.title,
-                unitPrice: Number(pkg.unitPrice),
-                quantity: 1,
-                email: userObj?.email || undefined
-              }
-              // Authorization header'ı axios interceptor otomatik ekliyor
-            );
-            trackAddToCart();
-          } catch {
-            // hata olsa da sepet sayfasına ilerleyelim
-          } finally {
-            setStep("done");
-            navigate("/sepet", { replace: true });
-          }
-        })();
-      } else {
-        localStorage.removeItem("token");
+    (async () => {
+      if (!pkg) {
         setStep("email");
+        return;
       }
-    } else {
+
+      const token = localStorage.getItem("token");
+      const userStr = localStorage.getItem("user");
+
+      if (token && userStr && isTokenValid(token)) {
+        const userObj = (() => {
+          try { return JSON.parse(userStr || "{}"); } catch { return {}; }
+        })();
+        await addToCartAndGo(token, userObj?.email);
+        return;
+      }
+
+      // token yok/expired → remember cookie ile sessiz giriş dene
+      try {
+        const res = await axios.get("/api/auth/auth/silent-login");
+        if (res?.data?.token && res?.data?.user) {
+          const newT = res.data.token;
+          const newU = res.data.user;
+          localStorage.setItem("token", newT);
+          localStorage.setItem("user", JSON.stringify(newU));
+          await addToCartAndGo(newT, newU?.email);
+          return;
+        }
+      } catch {
+        // cookie yok/bozuk → OTP adımına geç
+      }
+
+      localStorage.removeItem("token");
       setStep("email");
-    }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, pkg, navigate]);
 
   // resend sayaç
@@ -110,32 +131,17 @@ export default function PreCartAuth() {
       const res = await axios.post("/api/auth/otp/verify", {
         email: email.trim().toLowerCase(),
         code: code.trim(),
-        rememberMe: remember,
+        rememberMe: remember, // ✅ remember cookie'yi BE yazar
       });
 
-      // oturum aç
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      const token = res.data.token;
+      const user = res.data.user;
 
-      // server sepetine ekle
-      if (pkg) {
-        await axios.post(
-          "/api/cart/items",
-          {
-            slug,
-            title: pkg.title,
-            name: pkg.title,
-            unitPrice: Number(pkg.unitPrice),
-            quantity: 1,
-            email: res.data?.user?.email || email.trim().toLowerCase(),
-          }
-          // Authorization header'ı axios interceptor otomatik ekliyor
-        );
-        trackAddToCart();
-      }
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
-      setStep("done");
-      navigate("/sepet", { replace: true });
+      // server sepetine ekle ve git
+      await addToCartAndGo(token, user?.email || email.trim().toLowerCase());
     } catch (e) {
       setMsg(e?.response?.data?.message || "Kod doğrulanamadı.");
     } finally {
