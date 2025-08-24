@@ -30,7 +30,7 @@ export default function PrivateRoute({ children }) {
 
           // sessiz giriş dene (remember cookie varsa yeni token gelir)
           try {
-            const r = await axios.get("/api/auth/silent-login");
+            const r = await axios.get("/api/auth/silent-login?soft=1");
             if (r?.data?.token) {
               localStorage.setItem("token", r.data.token);
               if (r?.data?.user) {

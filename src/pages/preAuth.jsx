@@ -87,7 +87,7 @@ export default function PreCartAuth() {
         if (sessionStorage.getItem("skipSilentLoginOnce")) {
           sessionStorage.removeItem("skipSilentLoginOnce");
         } else {
-          const res = await axios.get("/api/auth/silent-login");
+          const res = await axios.get("/api/auth/silent-login?soft=1");
           if (res?.data?.token && res?.data?.user) {
             const newT = res.data.token;
             const newU = res.data.user;
