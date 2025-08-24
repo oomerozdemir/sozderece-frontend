@@ -1,10 +1,17 @@
-// src/pages/PreCartAuth.jsx
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import axios from "../utils/axios";
 import { PACKAGES } from "../hooks/packages.js"; // tek kaynak
 import "../cssFiles/preAuth.css";
+
+function decodeToken(t) {
+  try {
+    const base64 = t.split(".")[1];
+    return JSON.parse(atob(base64));
+  } catch {
+    return null;
+  }
+}
 
 export default function PreCartAuth() {
   const navigate = useNavigate();
@@ -13,6 +20,7 @@ export default function PreCartAuth() {
   const slug = qs.get("slug");
 
   const [email, setEmail] = useState("");
+  the
   const [code, setCode] = useState("");
   const [step, setStep] = useState("checking"); // checking | email | code | done
   const [msg, setMsg] = useState("");
@@ -45,13 +53,8 @@ export default function PreCartAuth() {
     }
 
     if (token && userStr) {
-      let valid = false;
-      try {
-        const payload = jwtDecode(token);
-        if (payload?.exp && payload.exp * 1000 > Date.now()) valid = true;
-      } catch {
-        valid = false;
-      }
+      const payload = decodeToken(token);
+      const valid = payload?.exp && payload.exp * 1000 > Date.now();
 
       if (valid) {
         (async () => {
@@ -62,10 +65,10 @@ export default function PreCartAuth() {
               {
                 slug,
                 title: pkg.title,
-                name: pkg.title,                   // BE “name/title” farkını kapat
-                unitPrice: Number(pkg.unitPrice),  // kuruş (int)
+                name: pkg.title,
+                unitPrice: Number(pkg.unitPrice),
                 quantity: 1,
-                email: userObj?.email || undefined // BE isterse fallback
+                email: userObj?.email || undefined
               }
               // Authorization header'ı axios interceptor otomatik ekliyor
             );
@@ -78,7 +81,6 @@ export default function PreCartAuth() {
           }
         })();
       } else {
-        // Süresi geçmiş/bozuk token → temizle ve OTP akışına dön
         localStorage.removeItem("token");
         setStep("email");
       }

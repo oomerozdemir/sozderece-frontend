@@ -1,12 +1,22 @@
 // src/pages/LoginPage.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+// import { jwtDecode } from "jwt-decode"; // ❌ Gerek yok
 import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
 import { Helmet } from "react-helmet";
 import axios from "../utils/axios";
 import "../cssFiles/login.css";
 import Navbar from "../components/navbar";
+
+// Basit ve güvenli JWT decode helper'ı (kütüphane yok)
+function decodeToken(t) {
+  try {
+    const base64 = t.split(".")[1];
+    return JSON.parse(atob(base64));
+  } catch {
+    return null;
+  }
+}
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -27,18 +37,13 @@ const LoginPage = () => {
       setStep("email");
       return;
     }
-    try {
-      const payload = jwtDecode(t);
-      if (payload?.exp && payload.exp * 1000 > Date.now()) {
-        const role = String(payload.role || "").toLowerCase();
-        if (role === "admin") navigate("/admin", { replace: true });
-        else if (role === "coach") navigate("/coach/dashboard", { replace: true });
-        else navigate("/student/dashboard", { replace: true });
-      } else {
-        localStorage.removeItem("token");
-        setStep("email");
-      }
-    } catch {
+    const payload = decodeToken(t);
+    if (payload?.exp && payload.exp * 1000 > Date.now()) {
+      const role = String(payload.role || "").toLowerCase();
+      if (role === "admin") navigate("/admin", { replace: true });
+      else if (role === "coach") navigate("/coach/dashboard", { replace: true });
+      else navigate("/student/dashboard", { replace: true });
+    } else {
       localStorage.removeItem("token");
       setStep("email");
     }
@@ -82,7 +87,8 @@ const LoginPage = () => {
       localStorage.setItem("user", JSON.stringify(user));
 
       // role'e göre yönlendir
-      const role = (jwtDecode(token)?.role || user?.role || "student").toLowerCase();
+      const payload = decodeToken(token);
+      const role = (payload?.role || user?.role || "student").toLowerCase();
       if (role === "admin") navigate("/admin", { replace: true });
       else if (role === "coach") navigate("/coach/dashboard", { replace: true });
       else navigate("/student/dashboard", { replace: true });
