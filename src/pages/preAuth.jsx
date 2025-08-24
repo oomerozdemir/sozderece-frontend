@@ -113,10 +113,15 @@ export default function PreCartAuth() {
     setLoading(true);
     setMsg("");
     try {
+      if (sessionStorage.getItem("skipSilentLoginOnce")) {
+   sessionStorage.removeItem("skipSilentLoginOnce");
+   // bu açılışta sessiz girişi es geç
+ } else {
       await axios.post("/api/auth/otp/send", { email: email.trim().toLowerCase() });
       setStep("code");
       setResendIn(60);
       setMsg("Doğrulama kodu e-posta adresine gönderildi.");
+ }
     } catch (e) {
       setMsg(e?.response?.data?.message || "Kod gönderilemedi.");
     } finally {

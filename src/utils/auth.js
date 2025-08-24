@@ -1,4 +1,6 @@
 // src/utils/auth.js
+import axios from "axios";
+
 function b64urlToB64(input) {
   // base64url -> base64 çevir
   let out = input.replace(/-/g, "+").replace(/_/g, "/");
@@ -30,4 +32,18 @@ export function isTokenValid(token) {
 export function getRoleFromToken(token) {
   const p = decodeToken(token);
   return (p?.role || "").toLowerCase();
+}
+
+export async function logout({ forgetDevice = false } = {}) {
+  try {
+    // backend'de varsa opsiyonel:
+    await axios.post("/api/auth/logout", { forgetDevice });
+  } catch (_) {
+    // sessiz geç
+  } finally {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    // Bu sekmede BİR KEZ sessiz girişi atla
+    sessionStorage.setItem("skipSilentLoginOnce", "1");
+  }
 }
