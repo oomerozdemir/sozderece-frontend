@@ -4,7 +4,6 @@ import axios from "../utils/axios";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";
 import Navbar from "../components/navbar";
-import FaqSection from "../components/FaqSection";
 import contactUsSvg from "../assets/undraw_contact-us_kcoa.svg";
 import { Helmet } from "react-helmet";
 

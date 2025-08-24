@@ -1,13 +1,27 @@
-// src/components/RoleRoute.jsx
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
+import { isTokenValid, getRoleFromToken } from "../utils/auth";
 
-const RoleRoute = ({ children, allowedRoles }) => {
-  const user = JSON.parse(localStorage.getItem("user"));
+export default function RoleRoute({ allowedRoles = [], children }) {
+  const location = useLocation();
+  const token = localStorage.getItem("token");
 
-  if (!user) return <Navigate to="/login" />;
-  if (!allowedRoles.includes(user.role)) return <Navigate to="/unauthorized" />;
+  // Geçersiz token -> login'e
+  if (!isTokenValid(token)) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // Token'dan rol; yoksa localStorage'daki user'dan dene
+  let role = (getRoleFromToken(token) || "").toLowerCase();
+  if (!role) {
+    try {
+      role = JSON.parse(localStorage.getItem("user"))?.role?.toLowerCase() || "";
+    } catch {}
+  }
+
+  const allow = allowedRoles.map((r) => r.toLowerCase()).includes(role);
+  if (!allow) {
+    return <Navigate to="/unauthorized" replace />;
+  }
 
   return children;
-};
-
-export default RoleRoute;
+}
