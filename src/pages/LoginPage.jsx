@@ -35,23 +35,26 @@ const LoginPage = () => {
 
       // token yok/expired → silent-login dene (remember cookie varsa BE yeni token verir)
       try {
+        // tek seferlik logout bayrağı: bu açılışta sessiz girişi atla
         if (sessionStorage.getItem("skipSilentLoginOnce")) {
-   sessionStorage.removeItem("skipSilentLoginOnce");
-   // bu açılışta sessiz girişi es geç
- } else {
-        const res = await axios.get("/api/auth/silent-login");
-        if (res?.data?.token) {
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("user", JSON.stringify(res.data.user));
-          const role = (res.data.user?.role || "student").toLowerCase();
-          if (role === "admin") navigate("/admin", { replace: true });
-          else if (role === "coach") navigate("/coach/dashboard", { replace: true });
-          else navigate("/student/dashboard", { replace: true });
-          return;
+          sessionStorage.removeItem("skipSilentLoginOnce");
+        } else {
+          const res = await axios.get("/api/auth/silent-login");
+          if (res?.data?.token) {
+            localStorage.setItem("token", res.data.token);
+            localStorage.setItem("user", JSON.stringify(res.data.user));
+            const role = (res.data.user?.role || "student").toLowerCase();
+            if (role === "admin") navigate("/admin", { replace: true });
+            else if (role === "coach") navigate("/coach/dashboard", { replace: true });
+            else navigate("/student/dashboard", { replace: true });
+            return;
+          }
         }
+      } catch (err) {
+        // 401 normal: cookie yok/okunmadı → login ekranında kal
+        if (import.meta?.env?.MODE === "development") {
+          console.debug("[silent-login skipped]", err?.response?.status);
         }
-      } catch {
-        // cookie yok/bozuk → normal OTP akışı
       }
       setStep("email");
     })();

@@ -61,7 +61,7 @@ export default function PreCartAuth() {
   };
 
   // Açılış akışı: 1) token geçerliyse → ekle & git
-  //               2) değilse → silent-login dene
+  //               2) değilse → silent-login dene (skipOnce'a saygı)
   //               3) cookie yoksa → OTP (email) adımı
   useEffect(() => {
     (async () => {
@@ -83,14 +83,19 @@ export default function PreCartAuth() {
 
       // token yok/expired → remember cookie ile sessiz giriş dene
       try {
-        const res = await axios.get("/api/auth/silent-login");
-        if (res?.data?.token && res?.data?.user) {
-          const newT = res.data.token;
-          const newU = res.data.user;
-          localStorage.setItem("token", newT);
-          localStorage.setItem("user", JSON.stringify(newU));
-          await addToCartAndGo(newT, newU?.email);
-          return;
+        // tek seferlik logout bayrağı: bu açılışta sessiz girişi atla
+        if (sessionStorage.getItem("skipSilentLoginOnce")) {
+          sessionStorage.removeItem("skipSilentLoginOnce");
+        } else {
+          const res = await axios.get("/api/auth/silent-login");
+          if (res?.data?.token && res?.data?.user) {
+            const newT = res.data.token;
+            const newU = res.data.user;
+            localStorage.setItem("token", newT);
+            localStorage.setItem("user", JSON.stringify(newU));
+            await addToCartAndGo(newT, newU?.email);
+            return;
+          }
         }
       } catch {
         // cookie yok/bozuk → OTP adımına geç
@@ -113,15 +118,10 @@ export default function PreCartAuth() {
     setLoading(true);
     setMsg("");
     try {
-      if (sessionStorage.getItem("skipSilentLoginOnce")) {
-   sessionStorage.removeItem("skipSilentLoginOnce");
-   // bu açılışta sessiz girişi es geç
- } else {
       await axios.post("/api/auth/otp/send", { email: email.trim().toLowerCase() });
       setStep("code");
       setResendIn(60);
       setMsg("Doğrulama kodu e-posta adresine gönderildi.");
- }
     } catch (e) {
       setMsg(e?.response?.data?.message || "Kod gönderilemedi.");
     } finally {

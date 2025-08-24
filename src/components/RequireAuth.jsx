@@ -16,8 +16,16 @@ export default function RequireAuth({ children }) {
       try {
         const t = localStorage.getItem("token");
 
-        // 1) Token geçersizse: sessiz giriş dene (remember cookie varsa yeni token döner)
+        // 1) Token geçersizse: önce tek seferlik skip bayrağına bak, sonra sessiz giriş dene
         if (!isTokenValid(t)) {
+          if (sessionStorage.getItem("skipSilentLoginOnce")) {
+            sessionStorage.removeItem("skipSilentLoginOnce");
+            if (alive) {
+              setOk(false);
+              setReady(true);
+            }
+            return;
+          }
           try {
             const r = await axios.get("/api/auth/silent-login");
             if (r?.data?.token) {
@@ -49,7 +57,7 @@ export default function RequireAuth({ children }) {
           }
           if (!alive) return;
           setOk(true);
-        } catch (err) {
+        } catch {
           // /me 401 dönerse token bozulmuş olabilir → sessiz giriş fallback
           try {
             const r = await axios.get("/api/auth/silent-login");

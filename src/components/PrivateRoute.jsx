@@ -16,8 +16,19 @@ export default function PrivateRoute({ children }) {
       try {
         const token = localStorage.getItem("token");
 
-        // Token geçersiz → sessiz giriş dene
+        // Token geçersiz → önce tek seferlik skip bayrağına bak
         if (!isTokenValid(token)) {
+          // logout sonrası aynı sekmede sessiz girişi atla
+          if (sessionStorage.getItem("skipSilentLoginOnce")) {
+            sessionStorage.removeItem("skipSilentLoginOnce");
+            if (alive) {
+              setOk(false);
+              setReady(true);
+            }
+            return;
+          }
+
+          // sessiz giriş dene (remember cookie varsa yeni token gelir)
           try {
             const r = await axios.get("/api/auth/silent-login");
             if (r?.data?.token) {
@@ -55,7 +66,7 @@ export default function PrivateRoute({ children }) {
     };
   }, [location.pathname]);
 
-  if (!ready) return null; // küçük skeleton/loader koyabilirsin
+  if (!ready) return null; // istersen skeleton koy
 
   if (!ok) {
     return <Navigate to="/login" state={{ from: location }} replace />;
