@@ -3,15 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import { PACKAGES } from "../hooks/packages.js"; // tek kaynak
 import "../cssFiles/preAuth.css";
+import { isTokenValid } from "../utils/auth";
 
-function decodeToken(t) {
-  try {
-    const base64 = t.split(".")[1];
-    return JSON.parse(atob(base64));
-  } catch {
-    return null;
-  }
-}
+
 
 export default function PreCartAuth() {
   const navigate = useNavigate();
@@ -52,8 +46,7 @@ export default function PreCartAuth() {
     }
 
     if (token && userStr) {
-      const payload = decodeToken(token);
-      const valid = payload?.exp && payload.exp * 1000 > Date.now();
+      const valid = isTokenValid(token);
 
       if (valid) {
         (async () => {
