@@ -35,7 +35,7 @@ const LoginPage = () => {
 
       // token yok/expired → silent-login dene (remember cookie varsa BE yeni token verir)
       try {
-        const res = await axios.get("/api/auth/auth/silent-login");
+        const res = await axios.get("/api/auth/silent-login");
         if (res?.data?.token) {
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("user", JSON.stringify(res.data.user));

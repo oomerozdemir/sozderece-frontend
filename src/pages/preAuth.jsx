@@ -83,7 +83,7 @@ export default function PreCartAuth() {
 
       // token yok/expired → remember cookie ile sessiz giriş dene
       try {
-        const res = await axios.get("/api/auth/auth/silent-login");
+        const res = await axios.get("/api/auth/silent-login");
         if (res?.data?.token && res?.data?.user) {
           const newT = res.data.token;
           const newU = res.data.user;
