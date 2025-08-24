@@ -20,7 +20,6 @@ export default function PreCartAuth() {
   const slug = qs.get("slug");
 
   const [email, setEmail] = useState("");
-  the
   const [code, setCode] = useState("");
   const [step, setStep] = useState("checking"); // checking | email | code | done
   const [msg, setMsg] = useState("");
