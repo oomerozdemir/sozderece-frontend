@@ -1,325 +1,247 @@
+/* ====== AccountPage – Modern & Responsive ====== */
+
+:root {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --primary: #3b82f6;
+  --primary-600: #2563eb;
+  --ring: rgba(59, 130, 246, 0.25);
+  --success-bg: #dcfce7;
+  --success: #166534;
+  --danger-bg: #fee2e2;
+  --danger: #991b1b;
+  --amber-bg: #fff7ed;
+  --amber: #9a3412;
+  --border: #e5e7eb;
+  --radius: 14px;
+  --shadow: 0 6px 24px rgba(2, 6, 23, 0.06);
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); }
+
+/* Shell + Mobile header */
+.accountPage-shell { padding-inline: 20px; }
+
+.accountPage-mobileHeader {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 16px 0 8px;
+}
+.accountPage-mobileHeader h1 { font-size: 1.25rem; margin: 0; }
+.accountPage-iconBtn {
+  display: grid; place-items: center;
+  width: 40px; height: 40px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Layout */
 .accountPage-layout {
-  display: flex;
-  gap: 40px;
-  padding: 40px 20px;
-  background-color: #f9fafb;
-  justify-content: flex-start;
-  align-items: flex-start;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 28px;
+  padding: 24px 0 40px;
+  align-items: start;
 }
 
 /* Sidebar */
 .accountPage-sidebar {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  min-width: 220px;
-  max-height: fit-content;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  flex-shrink: 0;
+  position: sticky;
+  top: 84px;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  height: fit-content;
 }
-
 .accountPage-sidebar-menu {
   list-style: none;
-  padding: 0;
-  margin: 0;
+  padding: 0; margin: 0;
+  display: grid; gap: 10px;
 }
-
-.accountPage-sidebar-menu li {
-  margin-bottom: 60px;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.accountPage-sidebar-menu li:hover {
-  color: #3b82f6;
-}
-
-.accountPage-sidebar-menu button {
-  background: none;
-  border: none;
-  color: red;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 1.1rem;
-}
-.accountPage-main {
-  flex: 1;
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-.accountPage-profile-card {
-  background: #fff;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  margin-bottom: 24px;
-}
-
-.accountPage-profile-card p {
-  margin: 2px 0;
-  font-size: 0.95rem;
-}
-
-
-
-.accountPage-info-card {
-  background: white;
-  padding: 24px;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  margin-bottom: 20px;
-}
-
-
-
-/* Genel form stili */
-.accountPage-info-card.modern-form {
-  background-color: #fff;
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  max-width: 900px;
-  margin-top: 30px;
-  
-}
-
-/* Her alan grubu */
-.accountPage-form-group {
-  margin-bottom: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Etiketler */
-.accountPage-form-group label {
-  margin-bottom: 6px;
-  font-weight: 600;
-  color: #444;
-}
-
-.accountPage-form-group input {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  outline: none;
-  transition: border 0.3s;
-}
-
-.accountPage-form-group input:focus {
-  border-color: #3b82f6;
-}
-
-/* Input + doğrulama alanları */
-.input-verify {
-  display: flex;
+.accountPage-sidebar-menu li a,
+.accountPage-sidebar-menu li button {
+  display: grid;
+  grid-template-columns: 22px 1fr;
   align-items: center;
   gap: 10px;
-}
-
-/* Input'lar */
-.input-verify input {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  outline: none;
-  transition: border 0.3s;
-  
-}
-
-.input-verify input:focus {
-  border-color: #3b82f6;
-}
-
-/* Doğrulama rozeti */
-.verified, .not-verified {
-  font-size: 0.85rem;
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  user-select: none;
-  transition: background 0.3s;
-}
-
-.verified {
-  background-color: #d1fae5;
-  color: #065f46;
-  border: 1px solid #10b981;
-}
-
-.not-verified {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #f87171;
-}
-
-.not-verified:hover {
-  background-color: #fca5a5;
-  color: white;
-}
-
-/* Güncelle butonu */
-.accountPage-update-button {
-  margin-top: 20px;
-  padding: 10px 16px;
-  background-color: #3b82f6;
-  border: none;
-  border-radius: 10px;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.accountPage-update-button:hover {
-  background-color: #2563eb;
-}
-
-/* Doğrulama popup */
-.verify-popup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.verify-card {
-  background: white;
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 12px;
-  width: 300px;
-}
-
-.verify-card input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.verify-card button {
-  background-color: #10b981;
-  color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.verify-card button:hover {
-  background-color: #059669;
-}
-
-.order-list {
-  list-style: none;
-  padding-left: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.order-list li {
-  background: #f3f4f6;
-  padding: 12px 16px;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-}
-
-/* Üstte tamamlanma bandı */
-.profile-completion-banner {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #fff7ed;       /* turuncu açık */
-  border: 1px solid #fed7aa; /* turuncu sınır */
-  color: #9a3412;
   padding: 10px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text);
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  font: 600 0.95rem/1.1 Poppins, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+.accountPage-sidebar-menu li a:hover,
+.accountPage-sidebar-menu li button:hover {
+  background: #f1f5f9;
+  border-color: var(--border);
+}
+.accountPage-sidebar-menu li.active a {
+  background: #eef2ff;
+  border-color: #e0e7ff;
+}
+.logout-li .accountPage-logoutBtn { color: var(--danger); }
+
+/* Main */
+.accountPage-main { max-width: 860px; width: 100%; margin: 0 auto; }
+
+/* Profile card */
+.accountPage-profile-card {
+  background: var(--card);
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 16px;
+  align-items: center;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  padding: 18px;
+  margin-bottom: 18px;
+}
+.accountPage-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: #e2e8f0;
+  color: #0f172a; font-weight: 700; font-size: 1.25rem;
+}
+.accountPage-profile-info h2 { margin: 0 0 4px; font-size: 1.1rem; }
+.accountPage-profile-info .muted { color: var(--muted); margin: 2px 0 0; }
+
+/* Section header */
+.accountPage-sectionHeader {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 12px;
+}
+.accountPage-linkBtn {
+  background: transparent; border: none; color: var(--primary);
+  font-weight: 600; cursor: pointer; display: inline-flex; gap: 6px; align-items: center;
+}
+
+/* Info card / form */
+.accountPage-info-card {
+  background: var(--card);
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  margin-bottom: 18px;
+}
+.accountPage-info-card.modern-form {
+  padding: 22px;
+}
+
+.accountPage-form-group { margin-bottom: 16px; display: flex; flex-direction: column; }
+.accountPage-form-group label {
+  margin-bottom: 6px; font-weight: 600; color: #1f2937;
+}
+.accountPage-form-group input,
+.accountPage-form-group select {
+  padding: 12px 12px;
+  border: 1px solid var(--border);
   border-radius: 12px;
-  margin-bottom: 16px;
-  font-weight: 600;
+  outline: none;
+  transition: border .2s, box-shadow .2s, background .2s;
+  background: #fff;
+}
+.accountPage-form-group input:focus,
+.accountPage-form-group select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--ring);
 }
 
-/* Etiket yanına küçük rozet */
-.field-hint {
-  display: inline-block;
-  margin-left: 8px;
-  padding: 2px 8px;
-  font-size: 0.75rem;
-  border-radius: 999px;
-  vertical-align: middle;
-  user-select: none;
+/* Input + verify */
+.input-verify { display: flex; align-items: center; gap: 10px; }
+.verified, .not-verified {
+  font-size: 0.9rem; padding: 8px 12px; border-radius: 10px; cursor: pointer;
+  user-select: none; transition: background .2s, color .2s, border .2s;
 }
-.field-hint--missing {
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #f87171;
-}
-.field-hint--ok {
-  background: #dcfce7;
-  color: #166534;
-  border: 1px solid #86efac;
+.verified { background: var(--success-bg); color: var(--success); border: 1px solid #86efac; }
+.not-verified { background: var(--danger-bg); color: var(--danger); border: 1px solid #f87171; }
+.not-verified:hover { background: #fca5a5; color: #fff; }
+.input-missing { border-color: #f87171 !important; box-shadow: 0 0 0 3px rgba(248,113,113,.15); }
+
+/* Preview block */
+.accountPage-previewBlock {
+  display: flex; align-items: center; gap: 10px;
+  background: #f8fafc; border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px; margin-bottom: 12px;
 }
 
-/* Alan boşsa input çerçevesini hafif vurgula */
-.input-missing {
-  border-color: #f87171 !important;
-  box-shadow: 0 0 0 3px rgba(248,113,113,.15);
+/* Update button */
+.accountPage-update-button {
+  margin-top: 8px;
+  padding: 12px 16px;
+  background: var(--primary);
+  border: none; border-radius: 12px;
+  color: #fff; font-weight: 700; cursor: pointer;
+  transition: background .2s, transform .05s ease;
+}
+.accountPage-update-button:hover { background: var(--primary-600); }
+.accountPage-update-button:active { transform: translateY(1px); }
+
+/* Messages */
+.accountPage-success { margin-top: 10px; color: var(--success); font-weight: 600; }
+.accountPage-error { margin-top: 10px; color: var(--danger); font-weight: 600; }
+.accountPage-loading { padding: 24px; }
+
+/* Verify popup */
+.verify-popup {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, .45);
+  display: grid; place-items: center;
+  z-index: 50;
+}
+.verify-card {
+  background: var(--card);
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 16px 60px rgba(2,6,23,.25);
+  display: grid; gap: 12px; width: min(420px, 90vw);
+  border: 1px solid var(--border);
+}
+.verify-card input {
+  padding: 12px; border: 1px solid var(--border); border-radius: 10px;
+}
+.verify-card button {
+  background: #10b981; color: #fff; padding: 10px 12px;
+  border: none; border-radius: 10px; font-weight: 700; cursor: pointer;
+}
+.verify-card button:hover { background: #059669; }
+
+/* Completion banner */
+.profile-completion-banner {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--amber-bg); border: 1px solid #fed7aa; color: var(--amber);
+  padding: 10px 12px; border-radius: 12px; margin-bottom: 16px; font-weight: 700;
 }
 
-
-
-/* Mobil uyumluluk */
-@media (max-width: 768px) {
+/* Mobile */
+@media (max-width: 1024px) {
   .accountPage-layout {
-    flex-direction: column;
-    align-items: stretch;
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
-
+  .accountPage-mobileHeader { display: flex; }
   .accountPage-sidebar {
-    width: 100%;
-    margin-bottom: 20px;
+    display: none;
   }
-
-  .accountPage-main {
-    width: 100%;
-    margin: 0;
+  .accountPage-sidebar.open {
+    display: block;
+    position: sticky;
+    top: 64px;
   }
-
-  .accountPage-profile-card {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .input-verify {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .input-verify input,
-  .verified,
-  .not-verified {
-    width: 100%;
-  }
-
-  .verify-card {
-    width: 90%;
-  }
+  .input-verify { flex-direction: column; align-items: stretch; }
+  .input-verify .verified,
+  .input-verify .not-verified { width: 100%; text-align: center; }
 }

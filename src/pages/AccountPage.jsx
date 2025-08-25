@@ -1,5 +1,6 @@
 // 📁 src/pages/AccountPage.jsx
 import { useEffect, useState } from "react";
+import { FiHome, FiUser, FiPackage, FiLogOut, FiEdit2, FiMenu } from "react-icons/fi";
 import axios from "../utils/axios";
 import "../cssFiles/account.css";
 
@@ -21,24 +22,24 @@ const AccountPage = () => {
   const [codeSent, setCodeSent] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
   const [editingClass, setEditingClass] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // eksik alan sayısını (email hariç) hesaplayan fonksiyon
+  // eksik alan sayısı (email hariç)
   const calcMissing = (u) => {
-    let missing = 0;
-    if (!u.phone) missing++;
-    if (!u.grade) missing++;
-    if (["9", "10", "11", "12", "Mezun"].includes(u.grade) && !u.track) missing++;
-    return missing;
+    let m = 0;
+    if (!u?.phone) m++;
+    if (!u?.grade) m++;
+    if (["9", "10", "11", "12", "Mezun"].includes(u?.grade) && !u?.track) m++;
+    return m;
   };
 
-  // form bazlı (canlı) eksik alanlar
+  // form bazlı canlı eksikler
   const missingPhone = !form.phone;
   const missingGrade = !form.grade;
   const missingTrack = ["9", "10", "11", "12", "Mezun"].includes(form.grade) && !form.track;
   const liveMissingCount =
     (missingPhone ? 1 : 0) + (missingGrade ? 1 : 0) + (missingTrack ? 1 : 0);
 
-  // Navbar’daki rozeti canlı güncelle (opsiyonel ama faydalı)
   useEffect(() => {
     localStorage.setItem("profileMissing", String(liveMissingCount));
   }, [liveMissingCount]);
@@ -53,22 +54,20 @@ const AccountPage = () => {
         const userData = res.data.user;
         setUser(userData);
         setForm({
-          name: userData.name,
-          email: userData.email,
+          name: userData.name || "",
+          email: userData.email || "",
           phone: userData.phone || "",
           grade: userData.grade || "",
           track: userData.track || "",
         });
-        setEmailVerified(userData.emailVerified || false);
+        setEmailVerified(Boolean(userData.emailVerified));
 
-        // sayfa açılışında eksik alanları hesapla
         const missing = calcMissing(userData);
         localStorage.setItem("profileMissing", String(missing));
-      } catch (err) {
+      } catch {
         setError("Kullanıcı bilgisi alınamadı.");
       }
     };
-
     fetchUser();
   }, []);
 
@@ -79,24 +78,19 @@ const AccountPage = () => {
 
     try {
       const token = localStorage.getItem("token");
-
       const cleanedForm = {
         ...form,
-        track: ["9", "10", "11", "12", "Mezun"].includes(form.grade)
-          ? form.track
-          : null,
+        track: ["9", "10", "11", "12", "Mezun"].includes(form.grade) ? form.track : null,
       };
-
       const res = await axios.put("/api/auth/update-profile", cleanedForm, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       setUser(res.data.user);
       setSuccess("Bilgiler güncellendi.");
-      setEmailVerified(res.data.user.emailVerified || false);
+      setEmailVerified(Boolean(res.data.user.emailVerified));
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      // güncellemeden sonra eksik alanları tekrar hesapla
       const missing = calcMissing(res.data.user);
       localStorage.setItem("profileMissing", String(missing));
     } catch {
@@ -116,7 +110,7 @@ const AccountPage = () => {
     try {
       const actualTarget =
         verifyTarget === "email"
-          ? document.querySelector("input[type=email]").value
+          ? form.email
           : form.phone;
 
       await axios.post("/api/verification/send-code", {
@@ -133,35 +127,24 @@ const AccountPage = () => {
 
   const submitCode = async () => {
     try {
-      const actualTarget =
-        verifyTarget === "email"
-          ? document.querySelector("input[type=email]").value
-          : form.phone;
-
+      const actualTarget = verifyTarget === "email" ? form.email : form.phone;
       const token = localStorage.getItem("token");
+
       await axios.post(
         "/api/verification/verify-code",
-        {
-          type: verifyTarget,
-          target: actualTarget,
-          code: verificationCode.trim(),
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { type: verifyTarget, target: actualTarget, code: verificationCode.trim() },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // kullanıcı bilgilerini güncelle
       const meRes = await axios.get("/api/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       const updatedUser = meRes.data.user;
       setUser(updatedUser);
-      setEmailVerified(updatedUser.emailVerified || false);
+      setEmailVerified(Boolean(updatedUser.emailVerified));
       localStorage.setItem("user", JSON.stringify(updatedUser));
 
-      // doğrulama sonrası eksik alanları tekrar hesapla
       const missing = calcMissing(updatedUser);
       localStorage.setItem("profileMissing", String(missing));
 
@@ -172,216 +155,234 @@ const AccountPage = () => {
     }
   };
 
-  if (!user && !error) return <p>Yükleniyor...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (!user && !error) return <p className="accountPage-loading">Yükleniyor...</p>;
+  if (error) return <p className="accountPage-error">{error}</p>;
 
   return (
-    <div className="accountPage-layout">
-      <aside className="accountPage-sidebar">
-        <ul className="accountPage-sidebar-menu">
-          <li>
-            <a href="/">🏠 Anasayfaya Dön</a>
-          </li>
-          <li>👤 Hesap</li>
-          <li>
-            <a href="/orders">📦 Siparişlerim</a>
-          </li>
-          <li style={{ color: "red", marginTop: "20px" }}>
-            <button
-              onClick={() => {
-                localStorage.clear();
-                window.location.href = "/login";
-              }}
-            >
-              🚪 Çıkış Yap
-            </button>
-          </li>
-        </ul>
-      </aside>
+    <div className="accountPage-shell">
+      {/* Mobil başlık + menü */}
+      <div className="accountPage-mobileHeader">
+        <button className="accountPage-iconBtn" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Menü">
+          <FiMenu />
+        </button>
+        <h1>Hesabım</h1>
+        <div />
+      </div>
 
-      <main className="accountPage-main">
-        {liveMissingCount > 0 && (
-          <div className="profile-completion-banner">
-            ⚠ Profilini tamamla — Eksik alan: {liveMissingCount}
-          </div>
-        )}
-
-        <section className="accountPage-profile-card">
-          <div>
-            <h2>{user.name}</h2>
-            <p>{user.email}</p>
-            <p style={{ fontSize: "0.9rem", color: "#888" }}>
-              Son giriş: 3 dakika önce
-            </p>
-          </div>
-        </section>
-
-        <form onSubmit={handleUpdate} className="info-card modern-form">
-          <h3>Kişisel Bilgiler</h3>
-
-          <div className="accountPage-form-group">
-            <label>
-              Adınız&Soyadiniz
-              {!form.name ? (
-                <span className="field-hint field-hint--missing">Önerilir</span>
-              ) : (
-                <span className="field-hint field-hint--ok">Tamam</span>
-              )}
-            </label>
-            <input
-              type="text"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="Adınız"
-              className={!form.name ? "input-missing" : ""}
-            />
-          </div>
-
-          <div className="accountPage-form-group">
-            <label>
-              Email Adresi
-              {emailVerified ? (
-                <span className="field-hint field-hint--ok">Doğrulandı</span>
-              ) : (
-                <span className="field-hint field-hint--missing">Doğrula</span>
-              )}
-            </label>
-            <div className="input-verify">
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="E-posta"
-              />
-              <span
-                className={emailVerified ? "verified" : "not-verified"}
-                onClick={() => !emailVerified && handleVerify("email")}
-              >
-                {emailVerified ? "✔ Doğrulandı" : "✉ Doğrula"}
-              </span>
-            </div>
-
-            <label>
-              Telefon Numarası
-              {missingPhone ? (
-                <span className="field-hint field-hint--missing">Eksik</span>
-              ) : (
-                <span className="field-hint field-hint--ok">Tamam</span>
-              )}
-            </label>
-            <input
-              type="tel"
-              value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              placeholder="Telefon"
-              className={missingPhone ? "input-missing" : ""}
-            />
-          </div>
-
-          {!editingClass && user.grade && user.track ? (
-            <div
-              style={{
-                marginBottom: "12px",
-                padding: "10px",
-                background: "#f8f8f8",
-                borderRadius: "8px",
-              }}
-            >
-              🎓 Sınıf: <strong>{user.grade}</strong> | Alan:{" "}
-              <strong>{user.track}</strong>
+      <div className="accountPage-layout">
+        {/* Sidebar */}
+        <aside className={`accountPage-sidebar ${sidebarOpen ? "open" : ""}`}>
+          <ul className="accountPage-sidebar-menu">
+            <li>
+              <a href="/"><FiHome /> <span>Ana sayfa</span></a>
+            </li>
+            <li className="active">
+              <a href="/account"><FiUser /> <span>Hesap</span></a>
+            </li>
+            <li>
+              <a href="/orders"><FiPackage /> <span>Siparişlerim</span></a>
+            </li>
+            <li className="logout-li">
               <button
-                type="button"
-                style={{ marginLeft: "10px" }}
-                onClick={() => setEditingClass(true)}
+                onClick={() => {
+                  // davranışı bozmadan bıraktım; istersen Navbar’daki handleLogout’u da çağırabilirsin
+                  localStorage.clear();
+                  window.location.href = "/login";
+                }}
+                className="accountPage-logoutBtn"
               >
-                🖊 Değiştir
+                <FiLogOut /> Çıkış Yap
               </button>
-            </div>
-          ) : (
-            <>
-              <div className="accountPage-form-group">
-                <label>
-                  Sınıfınız
-                  {missingGrade ? (
-                    <span className="field-hint field-hint--missing">Eksik</span>
-                  ) : (
-                    <span className="field-hint field-hint--ok">Tamam</span>
-                  )}
-                </label>
-                <select
-                  value={form.grade}
-                  onChange={(e) => setForm({ ...form, grade: e.target.value })}
-                  className={missingGrade ? "input-missing" : ""}
-                >
-                  <option value="">Sınıf Seçin</option>
-                  <option value="5">5. Sınıf</option>
-                  <option value="6">6. Sınıf</option>
-                  <option value="7">7. Sınıf</option>
-                  <option value="8">8. Sınıf</option>
-                  <option value="9">9. Sınıf</option>
-                  <option value="10">10. Sınıf</option>
-                  <option value="11">11. Sınıf</option>
-                  <option value="12">12. Sınıf</option>
-                  <option value="Mezun">Mezun</option>
-                </select>
-              </div>
+            </li>
+          </ul>
+        </aside>
 
-              {["9", "10", "11", "12", "Mezun"].includes(form.grade) && (
+        {/* Ana içerik */}
+        <main className="accountPage-main">
+          {liveMissingCount > 0 && (
+            <div className="profile-completion-banner">
+              ⚠ Profilini tamamla — Eksik alan: {liveMissingCount}
+            </div>
+          )}
+
+          {/* Profil kartı */}
+          <section className="accountPage-profile-card">
+            <div className="accountPage-avatar">{(user.name || "K")[0]}</div>
+            <div className="accountPage-profile-info">
+              <h2>{user.name || "Kullanıcı"}</h2>
+              <p>{user.email}</p>
+              <p className="muted">Son giriş: az önce</p>
+            </div>
+          </section>
+
+          {/* Form kartı */}
+          <form onSubmit={handleUpdate} className="accountPage-info-card modern-form">
+            <div className="accountPage-sectionHeader">
+              <h3>Kişisel Bilgiler</h3>
+              {user.grade && user.track ? (
+                <button type="button" className="accountPage-linkBtn" onClick={() => setEditingClass(true)}>
+                  <FiEdit2 /> Sınıf / Alanı Değiştir
+                </button>
+              ) : null}
+            </div>
+
+            <div className="accountPage-form-group">
+              <label>
+                Adınız &amp; Soyadınız{" "}
+                {!form.name ? (
+                  <span className="field-hint field-hint--missing">Önerilir</span>
+                ) : (
+                  <span className="field-hint field-hint--ok">Tamam</span>
+                )}
+              </label>
+              <input
+                type="text"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="Adınız"
+                className={!form.name ? "input-missing" : ""}
+              />
+            </div>
+
+            <div className="accountPage-form-group">
+              <label>
+                E-posta Adresi{" "}
+                {emailVerified ? (
+                  <span className="field-hint field-hint--ok">Doğrulandı</span>
+                ) : (
+                  <span className="field-hint field-hint--missing">Doğrula</span>
+                )}
+              </label>
+              <div className="input-verify">
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  placeholder="E-posta"
+                />
+                <span
+                  className={emailVerified ? "verified" : "not-verified"}
+                  onClick={() => !emailVerified && handleVerify("email")}
+                >
+                  {emailVerified ? "✔ Doğrulandı" : "✉ Doğrula"}
+                </span>
+              </div>
+            </div>
+
+            <div className="accountPage-form-group">
+              <label>
+                Telefon Numarası{" "}
+                {missingPhone ? (
+                  <span className="field-hint field-hint--missing">Eksik</span>
+                ) : (
+                  <span className="field-hint field-hint--ok">Tamam</span>
+                )}
+              </label>
+              <input
+                type="tel"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                placeholder="Telefon"
+                className={missingPhone ? "input-missing" : ""}
+              />
+            </div>
+
+            {!editingClass && user.grade && user.track ? (
+              <div className="accountPage-previewBlock">
+                🎓 Sınıf: <strong>{user.grade}</strong> | Alan: <strong>{user.track}</strong>
+                <button type="button" className="accountPage-linkBtn" onClick={() => setEditingClass(true)}>
+                  <FiEdit2 /> Değiştir
+                </button>
+              </div>
+            ) : (
+              <>
                 <div className="accountPage-form-group">
                   <label>
-                    Alanınız
-                    {missingTrack ? (
+                    Sınıfınız{" "}
+                    {missingGrade ? (
                       <span className="field-hint field-hint--missing">Eksik</span>
                     ) : (
                       <span className="field-hint field-hint--ok">Tamam</span>
                     )}
                   </label>
                   <select
-                    value={form.track}
-                    onChange={(e) => setForm({ ...form, track: e.target.value })}
-                    className={missingTrack ? "input-missing" : ""}
+                    value={form.grade}
+                    onChange={(e) => setForm({ ...form, grade: e.target.value })}
+                    className={missingGrade ? "input-missing" : ""}
                   >
-                    <option value="">Alan Seçin</option>
-                    <option value="Sayısal">Sayısal</option>
-                    <option value="Eşit Ağırlık">Eşit Ağırlık</option>
-                    <option value="Sözel">Sözel</option>
+                    <option value="">Sınıf Seçin</option>
+                    <option value="5">5. Sınıf</option>
+                    <option value="6">6. Sınıf</option>
+                    <option value="7">7. Sınıf</option>
+                    <option value="8">8. Sınıf</option>
+                    <option value="9">9. Sınıf</option>
+                    <option value="10">10. Sınıf</option>
+                    <option value="11">11. Sınıf</option>
+                    <option value="12">12. Sınıf</option>
+                    <option value="Mezun">Mezun</option>
                   </select>
                 </div>
-              )}
-            </>
-          )}
 
-          <button type="submit" className="update-button">
-            Bilgileri Güncelle
-          </button>
-          {success && <p className="success-message">{success}</p>}
-          {verifying && <p className="success-message">{verifying}</p>}
-        </form>
+                {["9", "10", "11", "12", "Mezun"].includes(form.grade) && (
+                  <div className="accountPage-form-group">
+                    <label>
+                      Alanınız{" "}
+                      {missingTrack ? (
+                        <span className="field-hint field-hint--missing">Eksik</span>
+                      ) : (
+                        <span className="field-hint field-hint--ok">Tamam</span>
+                      )}
+                    </label>
+                    <select
+                      value={form.track}
+                      onChange={(e) => setForm({ ...form, track: e.target.value })}
+                      className={missingTrack ? "input-missing" : ""}
+                    >
+                      <option value="">Alan Seçin</option>
+                      <option value="Sayısal">Sayısal</option>
+                      <option value="Eşit Ağırlık">Eşit Ağırlık</option>
+                      <option value="Sözel">Sözel</option>
+                    </select>
+                  </div>
+                )}
+              </>
+            )}
 
-        {showVerifyBox && (
-          <div className="verify-popup">
-            <div className="verify-card">
-              <h4>{verifyTarget === "email" ? "E-posta" : "Telefon"} Doğrulama</h4>
-              {!codeSent ? (
-                <button onClick={sendCode}>📨 Kodu Gönder</button>
-              ) : (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Kod Giriniz"
-                    value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value)}
-                  />
-                  <button onClick={submitCode}>✔ Doğrula</button>
-                </>
-              )}
-              <button onClick={() => setShowVerifyBox(false)} style={{ marginTop: "10px" }}>
-                Kapat
-              </button>
+            <button type="submit" className="accountPage-update-button">
+              Bilgileri Güncelle
+            </button>
+
+            {success && <p className="accountPage-success">{success}</p>}
+            {verifying && <p className="accountPage-success">{verifying}</p>}
+            {error && <p className="accountPage-error">{error}</p>}
+          </form>
+
+          {/* Doğrulama popup */}
+          {showVerifyBox && (
+            <div className="verify-popup" onClick={() => setShowVerifyBox(false)}>
+              <div className="verify-card" onClick={(e) => e.stopPropagation()}>
+                <h4>{verifyTarget === "email" ? "E-posta" : "Telefon"} Doğrulama</h4>
+                {!codeSent ? (
+                  <button onClick={sendCode}>📨 Kodu Gönder</button>
+                ) : (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="Kod Giriniz"
+                      value={verificationCode}
+                      onChange={(e) => setVerificationCode(e.target.value)}
+                    />
+                    <button onClick={submitCode}>✔ Doğrula</button>
+                  </>
+                )}
+                <button onClick={() => setShowVerifyBox(false)} className="accountPage-linkBtn" style={{ marginTop: 10 }}>
+                  Kapat
+                </button>
+              </div>
             </div>
-          </div>
-        )}
-      </main>
+          )}
+        </main>
+      </div>
     </div>
   );
 };

@@ -41,7 +41,7 @@
 .navbar-menu {
   display: flex;
   list-style: none;
-  gap: 40px;
+  gap: 20px;
   justify-content: center;
   align-items: center;
 }
@@ -54,18 +54,18 @@
 
 .navbar-menu a {
   text-decoration: none;
-  color: black;
+  color: rgb(255, 255, 255);
   font-weight: bold;
   transition: color 0.3s;
 }
 
 .navbar-menu li:hover a {
-  color: black;
+  color: rgb(247, 78, 0);
 }
 
 .navbar-menu a.active {
-  color: black;
-  border-bottom: 1px solid black;
+  color: rgb(255, 255, 255);
+  border-bottom: 1px solid rgb(238, 95, 0);
 }
 
 .hamburger {
@@ -181,7 +181,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  color: black;
+  color: rgb(255, 255, 255);
   font-weight: bold;
 }
 
@@ -196,7 +196,7 @@
   position: absolute;
   top: 100%;
   left: 0;
-  background: white;
+  background: rgb(255, 255, 255);
   padding: 10px 0;
   border-radius: 35px;
   min-width: 160px;
@@ -221,10 +221,7 @@
   border-radius: 6px;
 }
 
-.dropdown-content li a:hover {
-  background-color: #f0f0f0;
-  color: #0a0091;
-}
+
 
 /* username yanındaki eksik alan sayacı */
 .profile-missing-badge {
@@ -312,7 +309,7 @@
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
-    background: rgba(255, 255, 255, 0.30);
+    background: rgba(24, 23, 23, 0.3);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     overflow-y: auto;
   }
@@ -352,7 +349,7 @@
   }
 
   .dropdown-content li a:hover {
-    color: #0a0091;
+    color: #ffffff;
   }
 
   .dropdown-arrow {
