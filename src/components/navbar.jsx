@@ -76,7 +76,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       // backend: remember cookie + DB revoke
-      await axios.post("/api/auth/logout", { forgetDevice: false });
+      await axios.post("/api/auth/logout", { forgetDevice: true });
     } catch (_) {
       // sessiz geç
     } finally {
@@ -86,7 +86,7 @@ const Navbar = () => {
       localStorage.removeItem("profileMissing");
 
       // aynı sekmede ilk yüklemede sessiz girişi atla
-     // sessionStorage.setItem("skipSilentLoginOnce", "1");
+      sessionStorage.setItem("skipSilentLoginOnce", "1");
 
       // UI state’i sıfırla
       setDropdownOpen(false);
