@@ -1,6 +1,6 @@
 // 📁 src/pages/AccountPage.jsx
 import { useEffect, useState } from "react";
-import { FiHome, FiUser, FiPackage, FiLogOut, FiEdit2, FiMenu } from "react-icons/fi";
+import { FiHome, FiUser, FiPackage, FiLogOut, FiEdit2, FiMenu, FiCheckCircle, FiXCircle } from "react-icons/fi";
 import axios from "../utils/axios";
 import "../cssFiles/account.css";
 
@@ -227,14 +227,18 @@ const AccountPage = () => {
             </div>
 
             <div className="accountPage-form-group">
-              <label>
-                Adınız &amp; Soyadınız{" "}
-                {!form.name ? (
-                  <span className="field-hint field-hint--missing">Önerilir</span>
-                ) : (
-                  <span className="field-hint field-hint--ok">Tamam</span>
-                )}
-              </label>
+               <label>
+              Adınız &amp; Soyadınız{" "}
+              {!form.name ? (
+                <span className="field-hint field-hint--missing">
+                  <FiXCircle aria-label="Eksik" />
+                </span>
+              ) : (
+                <span className="field-hint field-hint--ok">
+                  <FiCheckCircle aria-label="Tamam" />
+                </span>
+              )}
+            </label>
               <input
                 type="text"
                 value={form.name}
@@ -270,14 +274,18 @@ const AccountPage = () => {
             </div>
 
             <div className="accountPage-form-group">
-              <label>
-                Telefon Numarası{" "}
-                {missingPhone ? (
-                  <span className="field-hint field-hint--missing">Eksik</span>
-                ) : (
-                  <span className="field-hint field-hint--ok">Tamam</span>
-                )}
-              </label>
+                        <label>
+            Telefon Numarası{" "}
+            {missingPhone ? (
+              <span className="field-hint field-hint--missing">
+                <FiXCircle aria-label="Eksik" />
+              </span>
+            ) : (
+              <span className="field-hint field-hint--ok">
+                <FiCheckCircle aria-label="Tamam" />
+              </span>
+            )}
+            </label>
               <input
                 type="tel"
                 value={form.phone}
@@ -298,13 +306,17 @@ const AccountPage = () => {
               <>
                 <div className="accountPage-form-group">
                   <label>
-                    Sınıfınız{" "}
-                    {missingGrade ? (
-                      <span className="field-hint field-hint--missing">Eksik</span>
-                    ) : (
-                      <span className="field-hint field-hint--ok">Tamam</span>
-                    )}
-                  </label>
+              Sınıfınız{" "}
+              {missingGrade ? (
+                <span className="field-hint field-hint--missing">
+                  <FiXCircle aria-label="Eksik" />
+                </span>
+              ) : ( 
+                  <span className="field-hint field-hint--ok">
+                  <FiCheckCircle aria-label="Tamam" />
+                </span>
+            )}
+            </label>
                   <select
                     value={form.grade}
                     onChange={(e) => setForm({ ...form, grade: e.target.value })}
@@ -325,14 +337,18 @@ const AccountPage = () => {
 
                 {["9", "10", "11", "12", "Mezun"].includes(form.grade) && (
                   <div className="accountPage-form-group">
-                    <label>
-                      Alanınız{" "}
-                      {missingTrack ? (
-                        <span className="field-hint field-hint--missing">Eksik</span>
-                      ) : (
-                        <span className="field-hint field-hint--ok">Tamam</span>
-                      )}
-                    </label>
+                   <label>
+                    Alanınız{" "}
+                    {missingTrack ? (
+                      <span className="field-hint field-hint--missing">
+                        <FiXCircle aria-label="Eksik" />
+                      </span>
+                    ) : (
+                      <span className="field-hint field-hint--ok">
+                        <FiCheckCircle aria-label="Tamam" />
+                      </span>
+                    )}
+                  </label>
                     <select
                       value={form.track}
                       onChange={(e) => setForm({ ...form, track: e.target.value })}

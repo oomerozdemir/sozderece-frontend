@@ -226,6 +226,20 @@ body { background: var(--bg); }
   padding: 10px 12px; border-radius: 12px; margin-bottom: 16px; font-weight: 700;
 }
 
+/* --- Field hint icon badges --- */
+.field-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  margin-left: 8px;
+}
+.field-hint svg { width: 18px; height: 18px; }
+
+.field-hint--ok { color: var(--success); }        /* yeşil */
+.field-hint--missing { color: var(--danger); }    /* kırmızı */
+
+
 /* Mobile */
 @media (max-width: 1024px) {
   .accountPage-layout {
