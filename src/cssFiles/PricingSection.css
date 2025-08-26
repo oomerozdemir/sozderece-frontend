@@ -316,7 +316,7 @@
 /* Daha küçük cihazlar için ekstra sıkılaştırma */
 @media (max-width: 560px) {
   .pricing-section {
-    padding: 1.8rem 0.75rem;
+    padding: 5.8rem 4.75rem;
   }
 
   .pricing-card-horizontal.no-image {
