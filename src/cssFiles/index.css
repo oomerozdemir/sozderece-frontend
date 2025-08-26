@@ -15,17 +15,13 @@ body {
 
 
 
-
-
-
-
 /* Top bar css */
-
 .top-bar {
-  background: linear-gradient(180deg,  #da6b21, #b89f9f);
-  color: rgb(255, 255, 255);
-  font-size: 1rem;
-  padding: 8px 0;
+  background: linear-gradient(180deg, #da6b21, #b89f9f);
+  color: #fff;
+  font-size: 0.95rem;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(0,0,0,.06); /* hero'dan ayrım */
 }
 
 .top-bar .container {
@@ -35,37 +31,58 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  min-height: 40px;
+  gap: 12px;
 }
 
-.top-bar-left span {
-  margin-right: 20px;
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  line-height: 1.2;
+}
+.tb-item {
   display: inline-flex;
   align-items: center;
-  gap: 8px; /* ikon ile yazı arası boşluk */
+  gap: 8px;
 }
-
-.top-bar-left span a {
-  color: white;
+.top-bar a {
+  color: #fff;
   text-decoration: none;
 }
+.top-bar a:hover {
+  text-decoration: underline;
+}
 
+/* icons */
+.icon { font-size: 1rem; opacity: .95; }
+
+/* right socials */
 .top-bar-right {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 14px;
 }
-
 .top-bar-right a {
-  color: rgb(255, 255, 255);
-  font-size: 1.3rem;
-  transition: color 0.3s ease;
+  font-size: 1.2rem;
+  display: inline-flex;
+  transition: transform .15s ease, opacity .15s ease;
 }
-
 .top-bar-right a:hover {
-  color: #0509d4; /* ikon hover efekti */
+  transform: translateY(-1px);
+  opacity: .9;
 }
 
+/* Mobile tweaks */
+@media (max-width: 768px) {
+  .top-bar { font-size: 0.9rem; padding: 5px 0; }
+  .top-bar .container { padding: 0 14px; gap: 10px; }
+  .top-bar-left { gap: 12px; }
+  .tb-email { display: none; }          /* e-postayı gizle */
+  .icon { font-size: .95rem; }
+  .top-bar-right a { font-size: 1.15rem; }
+}
 
 
 
