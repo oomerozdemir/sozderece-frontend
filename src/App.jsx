@@ -103,8 +103,10 @@ export default App;
 
 
 /*
-
-
+özel ders oğretmenı ve öğrenci koçu özel giriş ve kayıt yeri açıcaz
+öğrencilerin giriş yaptıgı yerden farklı olucak bu
+öğrenci koçu girişini şu anki sistemle aynı tutabiliriz çok fazla koç girişi olmayacaktır bizim kontrolumuzde kalsın o
+özel ders öğretmeni girişi ve kayıt yeri farklı olucak sadece orda da sistemi özeldersalanından kopyalayabiliriz.
 ******onemli DEGISIKLIK********
 1-Ders ve ardindan hoca sistemi eklenicek
 2-Yeni paketler eklenecek
@@ -149,11 +151,6 @@ Backend kısmında
 10-randevu takvımını öğretmen kendisi düzenleyebilecek burada boş zamanlarını dolu zamanlarını silip düzenleyebilecek.
 ayrıca yeni öğrenci eklemesi de yapabilecek öğrenci silme işlemi olmucak ama.Atanan bir randevuyu geri almayı sadece admin panelinden yapılabilir olucak.
 sımdılık bu kadar daha da eklenicek şey olucaktır
-
-
-navbar renk ayarları
-
-accountpage css ayarlamasi
 
 paketler sayfasını yenıleyecegız
 artık 4 ayrı paket oldugu ıcın 

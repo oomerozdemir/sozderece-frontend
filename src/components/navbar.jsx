@@ -2,11 +2,12 @@ import { useEffect, useState, useRef } from "react";
 import "../cssFiles/navbar.css";
 import { FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import { NavLink, Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "../utils/axios";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [username, setUsername] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -14,8 +15,8 @@ const Navbar = () => {
 
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // email zorunlu değil; phone/grade/(gerekirse)track sayılır
   const calcMissing = (u) => {
     if (!u) return 0;
     let m = 0;
@@ -28,21 +29,11 @@ const Navbar = () => {
   const syncUser = () => {
     const userStr = localStorage.getItem("user");
     let parsed = null;
-    if (userStr) {
-      try { parsed = JSON.parse(userStr); } catch (_) {}
-    }
+    if (userStr) { try { parsed = JSON.parse(userStr); } catch (_) {} }
+    setUsername(parsed ? parsed.name : null);
+    setUserRole(parsed ? parsed.role : null);
 
-    if (parsed) {
-      setUsername(parsed.name);
-      setUserRole(parsed.role);
-    } else {
-      setUsername(null);
-      setUserRole(null);
-    }
-
-    // 1) localStorage’den okumaya çalış
     let missing = Number(localStorage.getItem("profileMissing"));
-    // 2) yoksa/NaN ise user’dan hesapla ve kaydet
     if (!Number.isFinite(missing)) {
       missing = calcMissing(parsed);
       localStorage.setItem("profileMissing", String(missing));
@@ -60,78 +51,81 @@ const Navbar = () => {
     };
   }, []);
 
-  // kullanıcı menüsü dışına tıklanınca kapat
+  // dışa tıklama → kullanıcı menüsünü kapa
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false);
-      }
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setDropdownOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  // route değişince mobil menüyü kapa
+  useEffect(() => { setMenuOpen(false); setDropdownOpen(false); }, [location.pathname]);
+
+  // body scroll lock + ESC kapama
+  useEffect(() => {
+    document.body.classList.toggle("menu-open", menuOpen);
+    const onEsc = (e) => { if (e.key === "Escape") setMenuOpen(false); };
+    window.addEventListener("keydown", onEsc);
+    return () => {
+      document.body.classList.remove("menu-open");
+      window.removeEventListener("keydown", onEsc);
+    };
+  }, [menuOpen]);
+
+  // scroll gölgesi
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 4);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const handleLogout = async () => {
-    try {
-      // backend: remember cookie + DB revoke
-      await axios.post("/api/auth/logout", { forgetDevice: true });
-    } catch (_) {
-      // sessiz geç
-    } finally {
-      // bu cihazdaki oturum izlerini temizle
+    try { await axios.post("/api/auth/logout", { forgetDevice: false }); } catch {}
+    finally {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       localStorage.removeItem("profileMissing");
-
-      // aynı sekmede ilk yüklemede sessiz girişi atla
-      sessionStorage.setItem("skipSilentLoginOnce", "1");
-
-      // UI state’i sıfırla
       setDropdownOpen(false);
       setUsername(null);
       setUserRole(null);
       setProfileMissing(0);
-
-      // login'e yönlendir
       navigate("/login", { replace: true });
     }
   };
 
   return (
     <>
-      <motion.div className="navbar-wrapper">
+      <motion.div className={`navbar-wrapper ${scrolled ? "scrolled" : ""}`}>
         <motion.nav
           className="navbar"
-          initial={{ opacity: 0, y: -50 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.4 }}
         >
           <div className="navbar-inner">
             <div className="navbar-left-group">
               <div className="navbar-logo">
                 <a href="/">
-                  <img
-                    src="/images/hero-logo.webp"
-                    alt="Sözderece Koçluk"
-                    className="navbar-logo-img"
-                  />
+                  <img src="/images/hero-logo.webp" alt="Sözderece Koçluk" className="navbar-logo-img" />
                 </a>
               </div>
 
-              {menuOpen ? (
-                <FaTimes onClick={() => setMenuOpen(false)} className="hamburger" />
-              ) : (
-                <FaBars onClick={() => setMenuOpen(true)} className="hamburger" />
-              )}
+              <button
+                className="hamburger"
+                type="button"
+                aria-label={menuOpen ? "Menüyü kapat" : "Menüyü aç"}
+                aria-expanded={menuOpen}
+                aria-controls="site-menu"
+                onClick={() => setMenuOpen((s) => !s)}
+              >
+                {menuOpen ? <FaTimes /> : <FaBars />}
+              </button>
 
-              <ul className={`navbar-menu ${menuOpen ? "active" : ""}`}>
-                <li>
-                  <NavLink to="/" className={({ isActive }) => (isActive ? "active" : "")}>
-                    Ana Sayfa
-                  </NavLink>
-                </li>
+              <ul id="site-menu" className={`navbar-menu ${menuOpen ? "active" : ""}`}>
+                <li><NavLink to="/" end>Ana Sayfa</NavLink></li>
 
                 <li className="dropdown-parent">
                   <span className="dropdown-toggle">
@@ -144,59 +138,43 @@ const Navbar = () => {
                   </ul>
                 </li>
 
-                <li>
-                  <NavLink to="/ekibimiz" className={({ isActive }) => (isActive ? "active" : "")}>
-                    Ekibimiz
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/paket-detay" className={({ isActive }) => (isActive ? "active" : "")}>
-                    Koçluk Al!
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/blog" className={({ isActive }) => (isActive ? "active" : "")}>
-                    Blog
-                  </NavLink>
-                </li>
+                <li><NavLink to="/ekibimiz">Ekibimiz</NavLink></li>
+                <li><NavLink to="/paket-detay">Koçluk Al!</NavLink></li>
+                <li><NavLink to="/blog">Blog</NavLink></li>
               </ul>
             </div>
 
             <div className="navbar-right-section">
-              <Link to="/sepet" className="notif-cart-badge">
+              <Link to="/sepet" className="notif-cart-badge" aria-label="Sepet">
                 <FaShoppingCart size={22} color="#000" />
               </Link>
 
               <div className="login-button" ref={dropdownRef}>
                 {username ? (
                   <div className="user-menu">
-                    <span
+                    <button
+                      type="button"
                       className="navbar-username"
-                      onClick={() => setDropdownOpen(!dropdownOpen)}
+                      onClick={() => setDropdownOpen((s) => !s)}
+                      aria-expanded={dropdownOpen}
                     >
                       {username}
-                      {profileMissing > 0 && (
-                        <span className="profile-missing-badge">{profileMissing}</span>
-                      )}
-                    </span>
+                      {profileMissing > 0 && <span className="profile-missing-badge">{profileMissing}</span>}
+                    </button>
 
                     {dropdownOpen && (
                       <div className="dropdown-menu">
                         <Link to="/account" className="dropdown-account-link">
                           Hesabım
                           {profileMissing > 0 && (
-                            <span className="profile-missing-badge profile-missing-badge--inline">
-                              {profileMissing}
-                            </span>
+                            <span className="profile-missing-badge profile-missing-badge--inline">{profileMissing}</span>
                           )}
                         </Link>
                         {userRole === "student" && <Link to="/student/dashboard">Öğrenci Paneli</Link>}
                         {userRole === "coach" && <Link to="/coach/dashboard">Koç Paneli</Link>}
                         {userRole === "admin" && <Link to="/admin">Admin Paneli</Link>}
                         <Link to="/orders">Siparişlerim</Link>
-                        <button onClick={handleLogout}>
-                          Çıkış Yap
-                        </button>
+                        <button onClick={handleLogout}>Çıkış Yap</button>
                       </div>
                     )}
                   </div>
@@ -209,7 +187,7 @@ const Navbar = () => {
         </motion.nav>
       </motion.div>
 
-      {menuOpen && <div className="menu-backdrop" onClick={() => setMenuOpen(false)}></div>}
+      {menuOpen && <div className="menu-backdrop" onClick={() => setMenuOpen(false)} />}
     </>
   );
 };
