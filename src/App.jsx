@@ -7,7 +7,7 @@ import RoleRoute from "./components/RoleRoutes.jsx";
 
 import "./cssFiles/App.css";
 import "./cssFiles/index.css";
-import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 // Lazy yüklenen sayfalar
@@ -39,10 +39,15 @@ const BlogList = lazy(() => import("./pages/BlogList"));
 const BlogDetail = lazy(() => import("./pages/BlogDetail"));
 const NotFound = lazy(() => import("./pages/notFound.jsx"));
 const PreCartAuth = lazy(() => import("./pages/preAuth.jsx"));
-
-
-
 const FaqPage = lazy(() => import("./pages/FaqPage.jsx"));
+
+// ÖĞRETMEN: yeni sayfalar/guard
+const RequireTeacher = lazy(() => import("./components/RequireTeacher.jsx"));
+const TeacherPanel = lazy(() => import("./pages/TeacherPanel.jsx"));
+const TeacherLogin = lazy(() => import("./pages/TeacherLogin.jsx"));
+const TeacherRegister = lazy(() => import("./pages/TeacherRegister.jsx"));
+const TeachersList = lazy(() => import("./pages/TeacherList.jsx"));
+const TeacherDetail = lazy(() => import("./pages/TeacherDetail.jsx"));
 
 function App() {
   const location = useLocation();
@@ -52,19 +57,28 @@ function App() {
       <AnimatePresence mode="wait">
         <Suspense fallback={<div className="loading-spinner"><span></span>Yükleniyor...</div>}>
           <Routes location={location} key={location.pathname}>
+            {/* Public */}
             <Route path="/" element={<HomePage />} />
             <Route path="/hakkimizda" element={<AboutPage />} />
             <Route path="/mesafeli-hizmet-sozlesmesi" element={<MesafeliSozlesme />} />
             <Route path="/iade-ve-cayma-politikasi" element={<IadeVeCaymaPolitikasi />} />
             <Route path="/gizlilik-politikasi-kvkk" element={<GizlilikPolitikasiKvkk />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/pre-auth" element={<PreCartAuth />}/>
+            <Route path="/pre-auth" element={<PreCartAuth />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/sss" element={<FaqPage/>} />
-            <Route path="/blog" element={<BlogList/>} />
-            <Route path="/blog/:slug" element={<BlogDetail/>} />
+            <Route path="/sss" element={<FaqPage />} />
+            <Route path="/blog" element={<BlogList />} />
+            <Route path="/blog/:slug" element={<BlogDetail />} />
+            <Route path="/sepet" element={<CartPage />} />
+            <Route path="/paket-detay" element={<PackageDetail />} />
+            <Route path="/ekibimiz" element={<CoachDetail />} />
+            <Route path="/ucretsiz-on-gorusme" element={<ContactPage />} />
+            <Route path="/payment-fail" element={<PaymentFailPage />} />
 
+            {/* ÖĞRETMEN: public auth sayfaları */}
+            <Route path="/ogretmen/giris" element={<TeacherLogin />} />
+            <Route path="/ogretmen/kayit" element={<TeacherRegister />} />
 
             {/* Korunan sayfalar */}
             <Route path="/coach/dashboard" element={<RoleRoute allowedRoles={["coach"]}><CoachDashboard /></RoleRoute>} />
@@ -75,21 +89,27 @@ function App() {
             <Route path="/order-success" element={<PrivateRoute><OrderSuccessPage /></PrivateRoute>} />
             <Route path="/payment/iframe/:token" element={<PrivateRoute><PaymentIframePage /></PrivateRoute>} />
 
-            <Route path="/sepet" element={<CartPage />} />
-            <Route path="/paket-detay" element={<PackageDetail />} />
-            <Route path="/ekibimiz" element={<CoachDetail />} />
-            <Route path="/ucretsiz-on-gorusme" element={<ContactPage />} />
-            <Route path="/payment-fail" element={<PaymentFailPage />} />
+            {/* ÖĞRETMEN: panel (yalnızca teacher rolü) */}
+            <Route
+              path="/ogretmen/panel/profil"
+              element={
+                <RequireTeacher>
+                  <TeacherPanel />
+                </RequireTeacher>
+              }
+            />
+            <Route path="/ogretmenler" element={<TeachersList />} />
+            <Route path="/ogretmenler/:slug" element={<TeacherDetail />} />
 
+            {/* Admin */}
             <Route path="/admin/*" element={<RoleRoute allowedRoles={["admin"]}><AdminApp /></RoleRoute>} />
             <Route path="/admin/coaches" element={<RoleRoute allowedRoles={["admin"]}><AdminCoachPage /></RoleRoute>} />
             <Route path="/admin/coupons" element={<RoleRoute allowedRoles={["admin"]}><AdminCouponPage /></RoleRoute>} />
             <Route path="/admin/refund-requests" element={<RoleRoute allowedRoles={["admin"]}><RefundRequests /></RoleRoute>} />
 
+            {/* Common */}
             <Route path="/unauthorized" element={<div>Erişim izniniz yok.</div>} />
-
             <Route path="*" element={<NotFound />} />
-
           </Routes>
         </Suspense>
       </AnimatePresence>
@@ -191,13 +211,6 @@ E-posta Hatırlatmaları	Bitmesine 3 gün kala kullanıcıya e-posta ile bilgile
 👁 Kullanıcı Kartında Sipariş Geçmişi Sekmesi:
 
 Her kullanıcıya tıkladığında, geçmiş siparişleri listelenir
-
-
-ekstra eklenicek ozellikler
-ayni email ile farkli hesap olusturamama
-
-tum sayfalarin mobilde nasil gorundugunu kontrol et
-
 
 
 
