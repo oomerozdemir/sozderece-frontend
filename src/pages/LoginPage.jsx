@@ -1,6 +1,6 @@
 // src/pages/LoginPage.jsx
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom"; // ⬅️ Link eklendi
+import { useNavigate, Link } from "react-router-dom";
 import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
 import { Helmet } from "react-helmet";
 import axios from "../utils/axios";
@@ -18,9 +18,10 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [resendIn, setResendIn] = useState(0);
   const [error, setError] = useState("");
-  const [remember, setRemember] = useState(true);
+  const [remember, setRemember] = useState(false); // default false
+  const [hasRemember, setHasRemember] = useState(false); // bu cihazda kayıtlı oturum var mı?
 
-  // 1) Açılışta token/remember kontrolü (AYNEN KORUNDU)
+  // 1) Açılışta token/remember kontrolü
   useEffect(() => {
     (async () => {
       const t = localStorage.getItem("token");
@@ -37,22 +38,41 @@ const LoginPage = () => {
           sessionStorage.removeItem("skipSilentLoginOnce");
         } else {
           const res = await axios.get("/api/auth/silent-login?soft=1");
-          if (res?.data?.token) {
-            localStorage.setItem("token", res.data.token);
-            localStorage.setItem("user", JSON.stringify(res.data.user));
-            const role = (res.data.user?.role || "student").toLowerCase();
-            if (role === "admin") navigate("/admin", { replace: true });
-            else if (role === "coach") navigate("/coach/dashboard", { replace: true });
-            else navigate("/student/dashboard", { replace: true });
-            return;
+          // soft modda token dönebilir ama BİZ KULLANMIYORUZ → sadece var/yok sinyali
+          if (res?.data?.authenticated === true) {
+            setHasRemember(true); // "Tek tıkla giriş" butonunu göster
           }
         }
       } catch {
-        // sessiz giriş başarısızsa login ekranında kal
+        // sessiz giriş yoksa normal akışa devam
       }
+
       setStep("email");
     })();
   }, [navigate]);
+
+  // "Tek tıkla giriş": kullanıcı isterse normal silent-login (soft=0)
+  const oneTapLogin = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await axios.get("/api/auth/silent-login");
+      if (res?.data?.token && res?.data?.user) {
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        const role = (res.data.user?.role || "student").toLowerCase();
+        if (role === "admin") navigate("/admin", { replace: true });
+        else if (role === "coach") navigate("/coach/dashboard", { replace: true });
+        else navigate("/student/dashboard", { replace: true });
+      } else {
+        setError("Tek tıkla giriş başarısız.");
+      }
+    } catch (e) {
+      setError(e?.response?.data?.message || "Tek tıkla giriş başarısız.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // resend sayacı
   useEffect(() => {
@@ -82,7 +102,7 @@ const LoginPage = () => {
       const res = await axios.post("/api/auth/otp/verify", {
         email: email.trim().toLowerCase(),
         code: code.trim(),
-        rememberMe: remember,
+        rememberMe: remember, // kullanıcı işaretlerse BE remember cookie yazacak
       });
       const token = res.data.token;
       const user = res.data.user;
@@ -109,11 +129,11 @@ const LoginPage = () => {
 
       <Navbar />
 
-      {/* === YENİ: iki sütunlu layout (sol: öğretmen CTA, sağ: mevcut OTP formu) === */}
+      {/* İki sütun: sol öğretmen CTA, sağ öğrenci OTP girişi */}
       <div className="login-container">
         <div className="login-wrapper">
           <div className="login-split">
-            {/* SOL KART — Öğretmen CTA (sadece yönlendirme) */}
+            {/* SOL — Öğretmen CTA */}
             <aside className="teacher-card">
               <h3>Özel ders vermek ister misin?</h3>
               <p className="teacher-sub">
@@ -137,7 +157,7 @@ const LoginPage = () => {
               </div>
             </aside>
 
-            {/* SAĞ KART — ÖĞRENCİ OTP GİRİŞİ (MEVCUT FORM) */}
+            {/* SAĞ — Öğrenci OTP Girişi */}
             <section className="login-form-card">
               <form className="login-form" onSubmit={(e) => e.preventDefault()}>
                 {step === "checking" && <h2>Yönlendiriliyor…</h2>}
@@ -147,6 +167,24 @@ const LoginPage = () => {
 
                 {step === "email" && (
                   <>
+                    {/* Bu cihazda remember varsa Tek Tıkla Giriş */}
+                    {hasRemember && (
+                      <div className="remember-cta" style={{ marginBottom: 10, textAlign: "center" }}>
+                        <button
+                          type="button"
+                          onClick={oneTapLogin}
+                          disabled={loading}
+                          className="teacher-primary-btn"
+                          style={{ width: "100%" }}
+                        >
+                          Tek tıkla giriş yap
+                        </button>
+                        <div style={{ fontSize: ".9rem", color: "#6b7280", marginTop: 6 }}>
+                          Bu cihazda kayıtlı oturum bulundu.
+                        </div>
+                      </div>
+                    )}
+
                     <input
                       type="email"
                       placeholder="E-posta adresiniz"
@@ -225,7 +263,7 @@ const LoginPage = () => {
         </div>
       </div>
 
-      {/* FOOTER (AYNEN KORUNDU) */}
+      {/* FOOTER */}
       <footer className="custom-footer">
         <div className="footer-icons">
           <a href="https://www.instagram.com/sozderece/"><FaInstagram /></a>
