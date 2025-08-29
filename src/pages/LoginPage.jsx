@@ -1,30 +1,100 @@
 // src/pages/LoginPage.jsx
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom"; // ⬅️ Link eklendi
+import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
+import { Helmet } from "react-helmet";
 import axios from "../utils/axios";
+import "../cssFiles/login.css";
 import Navbar from "../components/navbar";
-import "../cssFiles/login.css"; // kart stil eklerini buraya koyacağız
+import { isTokenValid, getRoleFromToken } from "../utils/auth";
 
-export default function LoginPage() {
+const LoginPage = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [err, setErr] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    setErr("");
+  // adımlar: checking | email | code
+  const [step, setStep] = useState("checking");
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [resendIn, setResendIn] = useState(0);
+  const [error, setError] = useState("");
+  const [remember, setRemember] = useState(true);
+
+  // 1) Açılışta token/remember kontrolü (AYNEN KORUNDU)
+  useEffect(() => {
+    (async () => {
+      const t = localStorage.getItem("token");
+      if (t && isTokenValid(t)) {
+        const role = getRoleFromToken(t);
+        if (role === "admin") navigate("/admin", { replace: true });
+        else if (role === "coach") navigate("/coach/dashboard", { replace: true });
+        else navigate("/student/dashboard", { replace: true });
+        return;
+      }
+
+      try {
+        if (sessionStorage.getItem("skipSilentLoginOnce")) {
+          sessionStorage.removeItem("skipSilentLoginOnce");
+        } else {
+          const res = await axios.get("/api/auth/silent-login?soft=1");
+          if (res?.data?.token) {
+            localStorage.setItem("token", res.data.token);
+            localStorage.setItem("user", JSON.stringify(res.data.user));
+            const role = (res.data.user?.role || "student").toLowerCase();
+            if (role === "admin") navigate("/admin", { replace: true });
+            else if (role === "coach") navigate("/coach/dashboard", { replace: true });
+            else navigate("/student/dashboard", { replace: true });
+            return;
+          }
+        }
+      } catch {
+        // sessiz giriş başarısızsa login ekranında kal
+      }
+      setStep("email");
+    })();
+  }, [navigate]);
+
+  // resend sayacı
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const t = setTimeout(() => setResendIn((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendIn]);
+
+  const sendCode = async () => {
     setLoading(true);
+    setError("");
     try {
-      const { data } = await axios.post("/api/auth/login", { email, password });
-      const token = data?.token;
-      const user = data?.user;
+      await axios.post("/api/auth/otp/send", { email: email.trim().toLowerCase() });
+      setStep("code");
+      setResendIn(60);
+    } catch (e) {
+      setError(e?.response?.data?.message || "Kod gönderilemedi.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verify = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await axios.post("/api/auth/otp/verify", {
+        email: email.trim().toLowerCase(),
+        code: code.trim(),
+        rememberMe: remember,
+      });
+      const token = res.data.token;
+      const user = res.data.user;
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
-      navigate("/account", { replace: true });
+
+      const role = getRoleFromToken(token) || (user?.role || "student").toLowerCase();
+      if (role === "admin") navigate("/admin", { replace: true });
+      else if (role === "coach") navigate("/coach/dashboard", { replace: true });
+      else navigate("/student/dashboard", { replace: true });
     } catch (e) {
-      setErr(e?.response?.data?.message || "Giriş başarısız.");
+      setError(e?.response?.data?.message || "Kod doğrulanamadı.");
     } finally {
       setLoading(false);
     }
@@ -32,11 +102,18 @@ export default function LoginPage() {
 
   return (
     <>
+      <Helmet>
+        <title>Giriş Yap | Sözderece Koçluk</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+
       <Navbar />
+
+      {/* === YENİ: iki sütunlu layout (sol: öğretmen CTA, sağ: mevcut OTP formu) === */}
       <div className="login-container">
         <div className="login-wrapper">
           <div className="login-split">
-            {/* SOL KART — Özel Ders Öğretmeni CTA */}
+            {/* SOL KART — Öğretmen CTA (sadece yönlendirme) */}
             <aside className="teacher-card">
               <h3>Özel ders vermek ister misin?</h3>
               <p className="teacher-sub">
@@ -60,45 +137,111 @@ export default function LoginPage() {
               </div>
             </aside>
 
-            {/* SAĞ — Mevcut Login Formu */}
+            {/* SAĞ KART — ÖĞRENCİ OTP GİRİŞİ (MEVCUT FORM) */}
             <section className="login-form-card">
-              <form className="login-form" onSubmit={onSubmit}>
-                <h2>Giriş Yap</h2>
-                {!!err && <p className="error-message">{err}</p>}
-                <input
-                  type="email"
-                  placeholder="E-posta"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-                <div style={{ position: "relative" }}>
-                  <input
-                    type="password"
-                    placeholder="Şifre"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
+              <form className="login-form" onSubmit={(e) => e.preventDefault()}>
+                {step === "checking" && <h2>Yönlendiriliyor…</h2>}
+                {step !== "checking" && <h2>E-posta ile Giriş</h2>}
 
-                <button type="submit" disabled={loading}>
-                  {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
-                </button>
+                {!!error && <p className="error-message">{error}</p>}
 
-                <div className="form-footer-links">
-                  <span onClick={() => navigate("/forgot-password")}>
-                    Şifremi Unuttum
-                  </span>
-                  <span onClick={() => navigate("/reset-password")}>
-                    Şifre Sıfırla
-                  </span>
-                </div>
+                {step === "email" && (
+                  <>
+                    <input
+                      type="email"
+                      placeholder="E-posta adresiniz"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                    <label className="remember-me">
+                      <input
+                        type="checkbox"
+                        checked={remember}
+                        onChange={(e) => setRemember(e.target.checked)}
+                      />
+                      Beni Hatırla
+                    </label>
+                    <button
+                      type="button"
+                      onClick={sendCode}
+                      disabled={!email.includes("@") || loading || resendIn > 0}
+                    >
+                      {loading
+                        ? "Gönderiliyor..."
+                        : resendIn > 0
+                        ? `Tekrar gönder (${resendIn})`
+                        : "Giriş Yap"}
+                    </button>
+                  </>
+                )}
+
+                {step === "code" && (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="E-postanıza gelen kod"
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                      maxLength={8}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={verify}
+                      disabled={code.trim().length < 4 || loading}
+                    >
+                      {loading ? "Doğrulanıyor..." : "Doğrula ve Giriş Yap"}
+                    </button>
+
+                    <button
+                      type="button"
+                      className="linklike"
+                      onClick={sendCode}
+                      disabled={loading || resendIn > 0}
+                      style={{ marginTop: 8 }}
+                    >
+                      {resendIn > 0
+                        ? `Kodu tekrar gönder (${resendIn})`
+                        : "Kodu tekrar gönder"}
+                    </button>
+                    <button
+                      type="button"
+                      className="linklike"
+                      onClick={() => {
+                        setStep("email");
+                        setCode("");
+                        setError("");
+                      }}
+                      style={{ marginTop: 8 }}
+                    >
+                      E-postayı değiştir
+                    </button>
+                  </>
+                )}
               </form>
             </section>
           </div>
         </div>
       </div>
+
+      {/* FOOTER (AYNEN KORUNDU) */}
+      <footer className="custom-footer">
+        <div className="footer-icons">
+          <a href="https://www.instagram.com/sozderece/"><FaInstagram /></a>
+          <FaTiktok />
+          <FaYoutube />
+        </div>
+        <div className="footer-links">
+          <a href="/hakkimizda">Hakkımızda</a>
+          <a href="/mesafeli-hizmet-sozlesmesi">Mesafeli Hizmet Sözleşmesi</a>
+          <a href="/gizlilik-politikasi-kvkk">Gizlilik ve KVKK</a>
+          <a href="/iade-ve-cayma-politikasi">İade ve Cayma Politikası</a>
+        </div>
+        <div className="footer-copy">© 2025 Sözderece Koçluk Her Hakkı Saklıdır</div>
+      </footer>
     </>
   );
-}
+};
+
+export default LoginPage;
