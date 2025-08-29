@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
 import { isTokenValid, getRoleFromToken } from "../utils/auth";
+import "../cssFiles/teacher.css"; // ⬅️ YENİ: sayfaya özel css
 
 export default function TeacherLogin() {
   const navigate = useNavigate();
@@ -37,17 +38,46 @@ export default function TeacherLogin() {
   return (
     <>
       <Navbar />
-      <div className="login-container">
-        <form className="login-form" onSubmit={onSubmit}>
-          <h2>Öğretmen Girişi</h2>
-          {!!err && <p className="error-message">{err}</p>}
-          <input type="email" placeholder="E-posta" value={email} onChange={(e)=>setEmail(e.target.value)} required />
-          <input type="password" placeholder="Şifre" value={password} onChange={(e)=>setPassword(e.target.value)} required />
-          <button type="submit" disabled={loading}>{loading ? "Giriş yapılıyor..." : "Giriş Yap"}</button>
-          <div style={{marginTop:8}}>
-            <a href="/ogretmen/kayit">Hesabın yok mu? Kayıt ol</a>
-          </div>
-        </form>
+      <div className="tlogin">
+        <div className="login-container tlogin-container">
+          <form className="login-form tlogin-card" onSubmit={onSubmit}>
+            <h2 className="tlogin-title">Öğretmen Girişi</h2>
+            <p className="tlogin-sub">Özel ders profilini yönetmek için giriş yap.</p>
+
+            {!!err && <p className="error-message">{err}</p>}
+
+            <input
+              className="tlogin-input"
+              type="email"
+              placeholder="E-posta"
+              value={email}
+              onChange={(e)=>setEmail(e.target.value)}
+              required
+            />
+            <input
+              className="tlogin-input"
+              type="password"
+              placeholder="Şifre"
+              value={password}
+              onChange={(e)=>setPassword(e.target.value)}
+              required
+            />
+
+            <button className="tlogin-btn" type="submit" disabled={loading}>
+              {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
+            </button>
+
+            <div className="tlogin-footer">
+              <Link to="/ogretmen/kayit" className="tlogin-link">
+                Özel ders vermek için <strong>kayıt ol</strong>
+              </Link>
+              <span className="tlogin-sep">•</span>
+              <Link to="/forgot-password" className="tlogin-link-secondary">
+                Şifremi unuttum
+              </Link>
+            </div>
+          </form>
+        </div>
       </div>
     </>
   );

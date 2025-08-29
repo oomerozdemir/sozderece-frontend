@@ -123,6 +123,11 @@ export default App;
 
 
 /*
+login kısmında hatalar var
+koçluk satın alırken artık otomatık giriş yapıyo burda hata var
+
+
+
 özel ders oğretmenı ve öğrenci koçu özel giriş ve kayıt yeri açıcaz
 öğrencilerin giriş yaptıgı yerden farklı olucak bu
 öğrenci koçu girişini şu anki sistemle aynı tutabiliriz çok fazla koç girişi olmayacaktır bizim kontrolumuzde kalsın o
