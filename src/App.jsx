@@ -124,7 +124,6 @@ export default App;
 
 /*
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
-  1-navbarda ogretmen panelı yonlendırmesı
   2-ogretmen olarak gırıs yaparken de maıle kod gonderelım kayıt oncesı sadece
   3-ogretmen panelı duzenlemesı
   ogretmen panelı duzenlemesı ıcınde sunlar olacak
@@ -138,6 +137,7 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   5-ogretmen panelı hesabım kısmında sınıf sectırıyor buna gerek yok
   6-sıparıslerım yonlendırmesı var bunu sadece ogrencıyse gosterelım
   7-yıne hesabım sayfasında user rolune gore panel yonlendırmesı yapalım
+  8-aynı sekılde navbarda da sıparıslerım gozukmesın ogrencı degılse
 
 
 
