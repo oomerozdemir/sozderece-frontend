@@ -142,7 +142,7 @@ const LoginPage = () => {
               <ul className="teacher-benefits">
                 <li>🔹 Şehir / ilçe & sınıf filtreleri</li>
                 <li>🔹 Online / yüz yüze seçenekleri</li>
-                <li>🔹 Kişisel profil sayfası (slug)</li>
+                <li>🔹 Kişisel profil sayfası</li>
               </ul>
 
               <Link to="/ogretmen/kayit" className="teacher-primary-btn">

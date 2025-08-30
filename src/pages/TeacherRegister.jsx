@@ -5,16 +5,7 @@ import Navbar from "../components/navbar";
 import { isValidName, isValidEmail, isValidPhone } from "../utils/validation";
 import { getRoleFromToken, isTokenValid } from "../utils/auth";
 import "../cssFiles/teacher-register.css";
-
-// Basit örnek veri kümeleri (istersen 81 il / tüm ilçelerle genişletebiliriz)
-const TR_CITIES = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya"];
-const TR_DISTRICTS = {
-  İstanbul: ["Kadıköy", "Üsküdar", "Beşiktaş", "Bakırköy", "Ataşehir", "Kartal", "Şişli"],
-  Ankara: ["Çankaya", "Keçiören", "Yenimahalle", "Mamak", "Etimesgut"],
-  İzmir: ["Konak", "Karşıyaka", "Bornova", "Buca"],
-  Bursa: ["Osmangazi", "Yıldırım", "Nilüfer"],
-  Antalya: ["Muratpaşa", "Kepez", "Konyaaltı"],
-};
+import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
 
 const SUBJECTS = [
   "Matematik",
@@ -64,7 +55,7 @@ export default function TeacherRegister() {
 
   const districts = useMemo(() => TR_DISTRICTS[form.city] || [], [form.city]);
 
-  // --- MODE yardımcıları (HER ZAMAN component içinde olmalı) ---
+  // --- MODE yardımcıları ---
   const modeKey = String(form.mode || "").toUpperCase();
   const isOnlineOnly = modeKey === "ONLINE";
   const isFaceOnly = modeKey === "FACE_TO_FACE";
@@ -209,10 +200,14 @@ export default function TeacherRegister() {
                   value={form.district}
                   onChange={(e) => onChange("district", e.target.value)}
                   required
-                  disabled={!form.city}
+                  disabled={!form.city || districts.length === 0}
                 >
                   <option value="">
-                    {form.city ? "İlçe seçin" : "Önce il seçin"}
+                    {!form.city
+                      ? "Önce il seçin"
+                      : districts.length
+                      ? "İlçe seçin"
+                      : "Bu il için ilçe listesi yakında"}
                   </option>
                   {districts.map((d) => (
                     <option key={d} value={d}>
@@ -245,7 +240,7 @@ export default function TeacherRegister() {
 
             {/* Sınıf Seviyeleri */}
             <div className="tr-card">
-              <div className="section-title">Ders Verilen Sınıflar</div>
+              <div className="section-title">Ders Verilen Seviyeler</div>
               <div className="chips">
                 {GRADES.map((g) => (
                   <label
