@@ -18,7 +18,6 @@ const PaymentIframePage = () => {
 
   useEffect(() => {
     const handleMessage = (event) => {
-      // Güvenlik: Sadece PayTR'den gelen mesajı işleyelim
       if (event.origin !== "https://www.paytr.com") return;
 
       if (event.data === "PAYMENT_SUCCESS") {

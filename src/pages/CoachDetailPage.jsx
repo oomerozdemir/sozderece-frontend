@@ -58,7 +58,6 @@ const CoachDetailPage = () => {
 <div className="coach-detail-page">
   <h2 className="coach-detail-title">Ekibimiz</h2>
 
-  {/* SEO uyumlu açıklama bloğu */}
   <p className="coach-detail-description">
     Sözderece Koçluk ekibi, <strong>YKS koçları</strong> ve <strong>LGS koçları</strong> olarak sınav sürecinde öğrencilerin her adımında yanında olmaktadır.
     <strong> Eğitim koçu</strong> desteği sayesinde öğrencilerimiz motivasyonlarını yüksek tutarken, sınav stratejilerini koçlarıyla birlikte geliştirir.

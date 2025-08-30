@@ -1,4 +1,3 @@
-// src/pages/LoginPage.jsx
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
@@ -11,7 +10,6 @@ import { isTokenValid, getRoleFromToken } from "../utils/auth";
 const LoginPage = () => {
   const navigate = useNavigate();
 
-  // adımlar: checking | email | code
   const [step, setStep] = useState("checking");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -38,20 +36,17 @@ const LoginPage = () => {
           sessionStorage.removeItem("skipSilentLoginOnce");
         } else {
           const res = await axios.get("/api/auth/silent-login?soft=1");
-          // soft modda token dönebilir ama BİZ KULLANMIYORUZ → sadece var/yok sinyali
           if (res?.data?.authenticated === true) {
-            setHasRemember(true); // "Tek tıkla giriş" butonunu göster
+            setHasRemember(true); 
           }
         }
       } catch {
-        // sessiz giriş yoksa normal akışa devam
       }
 
       setStep("email");
     })();
   }, [navigate]);
 
-  // "Tek tıkla giriş": kullanıcı isterse normal silent-login (soft=0)
   const oneTapLogin = async () => {
     setLoading(true);
     setError("");

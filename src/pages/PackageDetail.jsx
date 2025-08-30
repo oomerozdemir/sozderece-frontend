@@ -14,7 +14,6 @@ const PackageDetail = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const isPaymentDisabled = false;
 
-  // PACKAGES → liste ve varsayılan slug
   const packageList = useMemo(() => Object.values(PACKAGES), []);
   const defaultSlug = useMemo(() => Object.keys(PACKAGES)[0], []);
   const [selectedSlug, setSelectedSlug] = useState(defaultSlug);
@@ -28,7 +27,6 @@ const PackageDetail = () => {
     navigate(`/pre-auth?slug=${encodeURIComponent(selected.slug)}`);
   };
 
-  // ViewContent Pixel
   useEffect(() => {
     if (selected && window.fbq) {
       window.fbq("track", "ViewContent", {
@@ -105,7 +103,7 @@ const PackageDetail = () => {
               "@type": "Offer",
               url: `https://sozderecekocluk.com/paket/${selected.slug}`,
               priceCurrency: "TRY",
-              price: priceNumberTL, // numeric string
+              price: priceNumberTL,
               availability: "https://schema.org/InStock",
               itemCondition: "https://schema.org/NewCondition",
             },
@@ -117,7 +115,6 @@ const PackageDetail = () => {
       <Navbar />
 
       <div className="package-detail-layout">
-        {/* MOBİL: Üstte paket seçimi */}
         <div className="mobile-select">
           <label htmlFor="package-dropdown-mobile" className="dropdown-label">
             Hizmet Paketi

@@ -12,7 +12,7 @@ const OrderSuccessPage = () => {
 
 useEffect(() => {
   try {
-    clearCart(); // güvenli çalışıyor mu test et
+    clearCart(); 
     console.log("🧹 Sepet temizlendi.");
   } catch (err) {
     console.error("❌ clearCart hatası:");

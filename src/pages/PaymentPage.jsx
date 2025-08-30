@@ -10,7 +10,7 @@ const user = JSON.parse(localStorage.getItem("user"));
 const PaymentPage = () => {
   const { cart } = useCart();
   const navigate = useNavigate();
-  const items = Array.isArray(cart) ? cart : []; // güvenlik
+  const items = Array.isArray(cart) ? cart : []; 
 
 
   const [formData, setFormData] = useState({

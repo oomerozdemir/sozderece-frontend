@@ -12,7 +12,7 @@ const [isLoading, setIsLoading] = useState(false);
   e.preventDefault();
   setMessage("");
   setError("");
-  setIsLoading(true); // Başlarken yükleniyor
+  setIsLoading(true); 
 
   try {
     const res = await axios.post("/api/auth/forgot-password", { input });
@@ -20,7 +20,7 @@ const [isLoading, setIsLoading] = useState(false);
   } catch (err) {
     setError("Gönderim başarısız. Lütfen e-posta adresinizi kontrol edin.");
   } finally {
-    setIsLoading(false); // Her durumda durdur
+    setIsLoading(false); 
   }
 };
 

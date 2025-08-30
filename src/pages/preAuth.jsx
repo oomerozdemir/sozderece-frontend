@@ -13,14 +13,14 @@ export default function PreCartAuth() {
 
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
-  const [step, setStep] = useState("checking"); // checking | email | code | done
+  const [step, setStep] = useState("checking"); 
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
   const [resendIn, setResendIn] = useState(0);
-  const [hasRemember, setHasRemember] = useState(false); // ⬅️ YENİ
+  const [hasRemember, setHasRemember] = useState(false); 
 
-  const pkg = slug ? PACKAGES[slug] : null; // { title, unitPrice, ... }
+  const pkg = slug ? PACKAGES[slug] : null; 
 
   const trackAddToCart = () => {
     try {
@@ -81,7 +81,7 @@ export default function PreCartAuth() {
           sessionStorage.removeItem("skipSilentLoginOnce");
         } else {
           const res = await axios.get("/api/auth/silent-login?soft=1");
-          // ❗ ÖNEMLİ: soft=1'de token dönse bile KULLANMIYORUZ
+          //ÖNEMLİ: soft=1'de token dönse bile KULLANMIYORUZ
           if (res?.data?.authenticated === true) {
             setHasRemember(true); // Tek tıkla giriş butonunu göstereceğiz
           }
@@ -94,7 +94,6 @@ export default function PreCartAuth() {
       localStorage.removeItem("token");
       setStep("email");
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, pkg, navigate]);
 
   // "Tek tıkla giriş ve sepete ekle"
@@ -148,7 +147,7 @@ export default function PreCartAuth() {
       const res = await axios.post("/api/auth/otp/verify", {
         email: email.trim().toLowerCase(),
         code: code.trim(),
-        rememberMe: remember, // kullanıcı isterse remember cookie yazılsın
+        rememberMe: remember, 
       });
 
       const token = res.data.token;

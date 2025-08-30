@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
+import "../cssFiles/teacher-panel.css";
+import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
 
 export default function TeacherPanel() {
   const [profile, setProfile] = useState(null);
@@ -8,15 +10,28 @@ export default function TeacherPanel() {
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
-    axios.get("/api/v1/ogretmen/me/profil").then(({data}) => setProfile(data.profile)).catch(()=>{});
+    axios
+      .get("/api/v1/ogretmen/me/profil")
+      .then(({ data }) => setProfile(data.profile))
+      .catch(() => {});
   }, []);
 
-  if (!profile) return (<><Navbar /><div className="login-container"><h2>Yükleniyor…</h2></div></>);
+  const onChange = (k, v) => setProfile((p) => ({ ...p, [k]: v }));
 
-  const onChange = (k, v) => setProfile(p => ({ ...p, [k]: v }));
+  const districts = useMemo(() => {
+    if (!profile?.city) return [];
+    return TR_DISTRICTS[profile.city] || [];
+  }, [profile?.city]);
+
+  useEffect(() => {
+    if (!profile?.city) return;
+    const list = TR_DISTRICTS[profile.city] || [];
+    setProfile((p) => ({ ...p, district: list[0] || "" }));
+  }, [profile?.city]);
 
   const save = async (e) => {
     e.preventDefault();
+    if (!profile) return;
     setSaving(true);
     setMsg("");
     try {
@@ -27,7 +42,7 @@ export default function TeacherPanel() {
         priceOnline: profile.priceOnline ?? null,
         priceF2F: profile.priceF2F ?? null,
         bio: profile.bio ?? "",
-        isPublic: !!profile.isPublic
+        isPublic: !!profile.isPublic,
       };
       await axios.put("/api/v1/ogretmen/me/profil", payload);
       setMsg("Kaydedildi.");
@@ -38,43 +53,185 @@ export default function TeacherPanel() {
     }
   };
 
+  if (!profile) {
+    return (
+      <>
+        <Navbar />
+        <div className="tpanel">
+          <div className="tp-wrap">
+            <div className="tp-loading">Yükleniyor…</div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  const modeKey = String(profile.mode || "").toUpperCase();
+  const isOnlineOnly = modeKey === "ONLINE";
+  const isFaceOnly = modeKey === "FACE_TO_FACE";
+  const both = modeKey === "BOTH";
+
   return (
     <>
       <Navbar />
-      <div className="login-container">
-        <form className="login-form" onSubmit={save}>
-          <h2>Öğretmen Paneli</h2>
-          {!!msg && <p>{msg}</p>}
+      <div className="tpanel">
+        <div className="tp-wrap">
+          <header className="tp-header">
+            <h1>Öğretmen Paneli</h1>
+            <p>Profil bilgilerini düzenle ve yayın durumunu yönet.</p>
+          </header>
 
-          <p><strong>{profile.firstName} {profile.lastName}</strong> — <small>slug: {profile.slug}</small></p>
+          {!!msg && <div className="tp-message">{msg}</div>}
 
-          <div className="grid-two">
-            <input placeholder="İl" value={profile.city||""} onChange={(e)=>onChange("city", e.target.value)} />
-            <input placeholder="İlçe" value={profile.district||""} onChange={(e)=>onChange("district", e.target.value)} />
+          <div className="tp-layout">
+            {/* Sol özet kartı */}
+            <aside className="tp-card tp-side">
+              <div className="tp-avatar">
+                <div className="tp-avatar-circle">
+                  {(profile.firstName?.[0] || "").toUpperCase()}
+                </div>
+              </div>
+              <div className="tp-name">
+                {profile.firstName} {profile.lastName}
+              </div>
+              <div className="tp-slug">
+                slug: <code>{profile.slug}</code>
+              </div>
+
+              <label className="tp-switch">
+                <input
+                  type="checkbox"
+                  checked={!!profile.isPublic}
+                  onChange={(e) => onChange("isPublic", e.target.checked)}
+                />
+                <span>Profili yayında göster</span>
+              </label>
+
+              <div className="tp-hint">
+                Öğrenciler sadece <b>yayında</b> olan profilleri görebilir.
+              </div>
+            </aside>
+
+            {/* Sağ ana form */}
+            <section className="tp-card">
+              <form className="tp-form" onSubmit={save}>
+                {/* Lokasyon */}
+                <div className="tp-section">
+                  <div className="tp-section-title">Lokasyon</div>
+                  <div className="tp-grid-2">
+                    <div>
+                      <label className="tp-label">İl</label>
+                      <select
+                        value={profile.city || ""}
+                        onChange={(e) => onChange("city", e.target.value)}
+                      >
+                        <option value="">İl seçin</option>
+                        {TR_CITIES.map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="tp-label">İlçe</label>
+                      <select
+                        value={profile.district || ""}
+                        onChange={(e) => onChange("district", e.target.value)}
+                        disabled={!profile.city || districts.length === 0}
+                      >
+                        <option value="">
+                          {!profile.city
+                            ? "Önce il seçin"
+                            : districts.length
+                            ? "İlçe seçin"
+                            : "Bu il için ilçe listesi yakında"}
+                        </option>
+                        {districts.map((d) => (
+                          <option key={d} value={d}>
+                            {d}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ders Modu & Fiyat */}
+                <div className="tp-section">
+                  <div className="tp-section-title">Ders Modu & Fiyat</div>
+                  <label className="tp-label">Ders Modu</label>
+                  <select
+                    value={profile.mode}
+                    onChange={(e) => onChange("mode", e.target.value)}
+                  >
+                    <option value="ONLINE">Online</option>
+                    <option value="FACE_TO_FACE">Yüz yüze</option>
+                    <option value="BOTH">Her ikisi</option>
+                  </select>
+
+                  <div className="tp-grid-2 tp-mt8">
+                    {(isOnlineOnly || both) && (
+                      <div>
+                        <label className="tp-sublabel">Online Fiyat (₺)</label>
+                        <input
+                          type="number"
+                          placeholder="Online ders ücreti"
+                          value={profile.priceOnline ?? ""}
+                          onChange={(e) =>
+                            onChange(
+                              "priceOnline",
+                              e.target.value ? Number(e.target.value) : null
+                            )
+                          }
+                          min={0}
+                          required={isOnlineOnly}
+                        />
+                      </div>
+                    )}
+
+                    {(isFaceOnly || both) && (
+                      <div>
+                        <label className="tp-sublabel">Yüz Yüze Fiyat (₺)</label>
+                        <input
+                          type="number"
+                          placeholder="Yüz yüze ders ücreti"
+                          value={profile.priceF2F ?? ""}
+                          onChange={(e) =>
+                            onChange(
+                              "priceF2F",
+                              e.target.value ? Number(e.target.value) : null
+                            )
+                          }
+                          min={0}
+                          required={isFaceOnly}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Bio */}
+                <div className="tp-section">
+                  <div className="tp-section-title">Kısa Tanıtım</div>
+                  <textarea
+                    placeholder="Kendinden ve tecrübenden kısaca bahset..."
+                    value={profile.bio ?? ""}
+                    onChange={(e) => onChange("bio", e.target.value)}
+                    rows={5}
+                  />
+                </div>
+
+                <div className="tp-actions">
+                  <button type="submit" disabled={saving}>
+                    {saving ? "Kaydediliyor..." : "Kaydet"}
+                  </button>
+                </div>
+              </form>
+            </section>
           </div>
-
-          <label>Mod</label>
-          <select value={profile.mode} onChange={(e)=>onChange("mode", e.target.value)}>
-            <option value="ONLINE">ONLINE</option>
-            <option value="FACE_TO_FACE">FACE_TO_FACE</option>
-            <option value="BOTH">BOTH</option>
-          </select>
-
-          <div className="grid-two">
-            <input type="number" placeholder="Online Fiyat" value={profile.priceOnline ?? ""} onChange={(e)=>onChange("priceOnline", e.target.value ? Number(e.target.value) : null)} />
-            <input type="number" placeholder="Yüzyüze Fiyat" value={profile.priceF2F ?? ""} onChange={(e)=>onChange("priceF2F", e.target.value ? Number(e.target.value) : null)} />
-          </div>
-
-          <label>Bio</label>
-          <textarea value={profile.bio ?? ""} onChange={(e)=>onChange("bio", e.target.value)} />
-
-          <label className="remember-me">
-            <input type="checkbox" checked={!!profile.isPublic} onChange={(e)=>onChange("isPublic", e.target.checked)} />
-            Profili yayında göster
-          </label>
-
-          <button type="submit" disabled={saving}>{saving ? "Kaydediliyor..." : "Kaydet"}</button>
-        </form>
+        </div>
       </div>
     </>
   );

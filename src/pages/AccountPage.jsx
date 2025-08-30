@@ -1,4 +1,3 @@
-// 📁 src/pages/AccountPage.jsx
 import { useEffect, useState } from "react";
 import { FiHome, FiUser, FiPackage, FiLogOut, FiEdit2, FiMenu, FiCheckCircle, FiXCircle } from "react-icons/fi";
 import axios from "../utils/axios";
@@ -185,7 +184,6 @@ const AccountPage = () => {
             <li className="logout-li">
               <button
                 onClick={() => {
-                  // davranışı bozmadan bıraktım; istersen Navbar’daki handleLogout’u da çağırabilirsin
                   localStorage.clear();
                   window.location.href = "/login";
                 }}

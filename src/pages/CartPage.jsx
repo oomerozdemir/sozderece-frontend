@@ -19,7 +19,6 @@ const CartPage = () => {
   const navigate = useNavigate();
   const [isAgreed, setIsAgreed] = useState(false);
 
-  // cart -> items dizisini güvenli şekilde çıkar (server veya UI modeli desteklenir)
   const items = useMemo(() => {
     if (!cart) return [];
     if (Array.isArray(cart)) return cart;            // UI modeli
@@ -27,13 +26,10 @@ const CartPage = () => {
     return [];
   }, [cart]);
 
-  // Bir item'ın birim fiyatını (TL sayısal) döndür
   const getUnitPriceTL = (it) => {
-    // Server modeli: unitPrice kuruş (int)
     if (typeof it.unitPrice === "number") {
       return it.unitPrice / 100;
     }
-    // UI modeli: price "₺xx.yy" string
     if (typeof it.price === "string") {
       const n = parseFloat(it.price.replace("₺", "").replace(/[^\d.]/g, ""));
       return isNaN(n) ? 0 : n;
@@ -41,10 +37,8 @@ const CartPage = () => {
     return 0;
   };
 
-  // Görünen ad (server: title, ui: name)
   const getTitle = (it) => it.title || it.name || "Ürün";
 
-  // Slug (artan/azalan/sil için)
   const getSlug = (it) => it.slug || it.id || getTitle(it);
 
   const total = useMemo(() => {
@@ -71,7 +65,6 @@ const CartPage = () => {
     window.location.href = "/#paketler";
   };
 
-  // Hook fonksiyonları yoksa uyarı ver (eski hook sürümü ile de patlamasın)
   const canDecrease = typeof decreaseQuantity === "function";
   const canRemove = typeof removeFromCart === "function";
 

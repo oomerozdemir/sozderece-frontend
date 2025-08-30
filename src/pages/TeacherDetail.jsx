@@ -10,7 +10,6 @@ export default function TeacherDetail() {
     (async () => {
       const { data } = await axios.get(`/api/v1/ogretmenler/${slug}`);
       setT(data.teacher);
-      // view sayacı (fire-and-forget)
       axios.post(`/api/v1/ogretmenler/${slug}/view`).catch(()=>{});
     })();
   }, [slug]);

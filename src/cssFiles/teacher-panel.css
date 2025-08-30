@@ -1,0 +1,101 @@
+.tpanel {
+  background:
+    radial-gradient(900px 400px at -10% -10%, #eef2ff 0%, transparent 60%),
+    radial-gradient(1000px 500px at 110% 0%, #fff7ed 0%, transparent 60%),
+    #ffffff;
+  min-height: calc(100vh - 70px);
+}
+
+.tp-wrap { max-width: 1100px; margin: 0 auto; padding: 20px 16px 40px; }
+
+.tp-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #0f172a;
+  font-weight: 800;
+}
+.tp-header p {
+  margin: 4px 0 14px;
+  color: #475569;
+  font-size: .95rem;
+}
+
+/* Layout */
+.tp-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 16px;
+}
+@media (max-width: 900px) {
+  .tp-layout { grid-template-columns: 1fr; }
+}
+
+/* Kart */
+.tp-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 8px 18px rgba(0,0,0,.04);
+}
+
+/* Sol özet */
+.tp-side { position: sticky; top: 16px; height: fit-content; }
+.tp-avatar { display: flex; justify-content: center; margin-bottom: 10px; }
+.tp-avatar-circle {
+  width: 72px; height: 72px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 1.6rem; font-weight: 800;
+  color: #fff; background: #02095f;
+}
+.tp-name { text-align: center; font-weight: 800; color: #111827; }
+.tp-slug { text-align: center; color: #64748b; margin-top: 4px; }
+.tp-switch { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.tp-hint { margin-top: 6px; font-size: .9rem; color: #6b7280; }
+
+/* Form alanı */
+.tp-form input,
+.tp-form select,
+.tp-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  outline: none;
+}
+.tp-form textarea { resize: vertical; }
+.tp-label { display: block; font-weight: 600; margin: 8px 0 6px; color: #111827; }
+.tp-sublabel { display: block; font-size: .85rem; color: #374151; margin-bottom: 6px; }
+
+.tp-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tp-mt8 { margin-top: 8px; }
+
+.tp-section + .tp-section { margin-top: 14px; }
+.tp-section-title {
+  font-weight: 700; color: #111827; margin-bottom: 8px;
+}
+
+.tp-actions {
+  display: flex; justify-content: flex-end; margin-top: 12px; gap: 10px;
+}
+.tp-actions button {
+  padding: 10px 14px; border-radius: 10px; border: 1px solid #e5e7eb;
+  background: #02095f; color: #fff; font-weight: 800;
+}
+.tp-actions button:hover { background: #ec5802; }
+
+/* Mesaj barı */
+.tp-message {
+  background: #ecfeff;
+  border: 1px solid #a5f3fc;
+  color: #0e7490;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin: 8px 0 12px;
+}
+
+/* Loading */
+.tp-loading {
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 14px;
+  padding: 18px; text-align: center; color: #334155;
+  box-shadow: 0 8px 18px rgba(0,0,0,.04);
+}

@@ -123,9 +123,20 @@ export default App;
 
 
 /*
-login kısmında hatalar var
-koçluk satın alırken artık otomatık giriş yapıyo burda hata var
-kocluk satin alimi sonrasi da tek tikla giris yapalim bulduysa eger cunku kullanici giris yapmamis olsa bile direkt giris yaptiriyor.
+Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
+  1-navbarda ogretmen panelı yonlendırmesı
+  2-ogretmen olarak gırıs yaparken de maıle kod gonderelım kayıt oncesı sadece
+  3-ogretmen panelı duzenlemesı
+  ogretmen panelı duzenlemesı ıcınde sunlar olacak
+    -profıl fotografı ekleyebılme
+    -randevularını duzenleyebılme ve goruntuleyebılme
+    -gelen özel ders taleplerini görüntüleme
+    -taleplerı onaylama
+    
+  gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
+  4-gırıs yaparken vesaıre sıfre sıfırlama sıfremı unuttum gıbı klasık şeylerı ekleyelım
+
+
 
 
 
