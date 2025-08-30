@@ -24,9 +24,11 @@ export default function TeacherPanel() {
   }, [profile?.city]);
 
   useEffect(() => {
-    if (!profile?.city) return;
-    const list = TR_DISTRICTS[profile.city] || [];
-    setProfile((p) => ({ ...p, district: list[0] || "" }));
+      setProfile((p) => {
+  const current = p?.district || "";
+    if (current && list.includes(current)) return p;
+    return { ...p, district: list[0] || "" };
+  });
   }, [profile?.city]);
 
   const save = async (e) => {
@@ -95,7 +97,7 @@ export default function TeacherPanel() {
                 {profile.firstName} {profile.lastName}
               </div>
               <div className="tp-slug">
-                slug: <code>{profile.slug}</code>
+                kullanıcı id: <code>{profile.slug}</code>
               </div>
 
               <label className="tp-switch">
@@ -137,7 +139,7 @@ export default function TeacherPanel() {
                     <div>
                       <label className="tp-label">İlçe</label>
                       <select
-                        value={profile.district || ""}
+                        value={(districts.includes(profile.district) ? profile.district : "")}
                         onChange={(e) => onChange("district", e.target.value)}
                         disabled={!profile.city || districts.length === 0}
                       >
