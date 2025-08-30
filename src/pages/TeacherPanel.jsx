@@ -18,18 +18,22 @@ export default function TeacherPanel() {
 
   const onChange = (k, v) => setProfile((p) => ({ ...p, [k]: v }));
 
+  // Şehre göre ilçeler
   const districts = useMemo(() => {
     if (!profile?.city) return [];
     return TR_DISTRICTS[profile.city] || [];
   }, [profile?.city]);
 
+  // Şehir değişince, mevcut district geçerliyse dokunma; boş/uyuşmuyorsa ilk ilçeyi ata
   useEffect(() => {
-      setProfile((p) => {
-  const current = p?.district || "";
-    if (current && list.includes(current)) return p;
-    return { ...p, district: list[0] || "" };
-  });
-  }, [profile?.city]);
+    if (!profile?.city) return;
+    setProfile((p) => {
+      const current = p?.district || "";
+      if (current && districts.includes(current)) return p;
+      return { ...p, district: districts[0] || "" };
+    });
+    // districts'i dependency'ye ekleyerek ESLint uyarısını da önlüyoruz
+  }, [profile?.city, districts]);
 
   const save = async (e) => {
     e.preventDefault();
@@ -139,7 +143,7 @@ export default function TeacherPanel() {
                     <div>
                       <label className="tp-label">İlçe</label>
                       <select
-                        value={(districts.includes(profile.district) ? profile.district : "")}
+                        value={districts.includes(profile.district) ? profile.district : ""}
                         onChange={(e) => onChange("district", e.target.value)}
                         disabled={!profile.city || districts.length === 0}
                       >
