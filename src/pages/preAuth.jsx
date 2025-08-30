@@ -1,4 +1,3 @@
-// src/pages/preAuth.jsx
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
@@ -19,6 +18,7 @@ export default function PreCartAuth() {
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
   const [resendIn, setResendIn] = useState(0);
+  const [hasRemember, setHasRemember] = useState(false); // ⬅️ YENİ
 
   const pkg = slug ? PACKAGES[slug] : null; // { title, unitPrice, ... }
 
@@ -34,7 +34,7 @@ export default function PreCartAuth() {
     } catch {}
   };
 
-  // Tek bir yardımcı: server sepetine ekle ve /sepet'e git
+  // Server sepetine ekle ve /sepet'e git
   const addToCartAndGo = async (tokenToUse, userEmail) => {
     try {
       await axios.post(
@@ -47,9 +47,7 @@ export default function PreCartAuth() {
           quantity: 1,
           email: userEmail || undefined,
         },
-        tokenToUse
-          ? { headers: { Authorization: `Bearer ${tokenToUse}` } }
-          : undefined
+        tokenToUse ? { headers: { Authorization: `Bearer ${tokenToUse}` } } : undefined
       );
       trackAddToCart();
     } catch {
@@ -60,9 +58,7 @@ export default function PreCartAuth() {
     }
   };
 
-  // Açılış akışı: 1) token geçerliyse → ekle & git
-  //               2) değilse → silent-login dene (skipOnce'a saygı)
-  //               3) cookie yoksa → OTP (email) adımı
+  // AÇILIŞ AKIŞI
   useEffect(() => {
     (async () => {
       if (!pkg) {
@@ -70,42 +66,58 @@ export default function PreCartAuth() {
         return;
       }
 
+      // 1) Geçerli token varsa direkt ekle & git
       const token = localStorage.getItem("token");
       const userStr = localStorage.getItem("user");
-
       if (token && userStr && isTokenValid(token)) {
-        const userObj = (() => {
-          try { return JSON.parse(userStr || "{}"); } catch { return {}; }
-        })();
+        const userObj = (() => { try { return JSON.parse(userStr || "{}"); } catch { return {}; } })();
         await addToCartAndGo(token, userObj?.email);
         return;
       }
 
-      // token yok/expired → remember cookie ile sessiz giriş dene
+      // 2) token yok/expired → remember cookie'yi SADECE PROBE et (soft=1)
       try {
-        // tek seferlik logout bayrağı: bu açılışta sessiz girişi atla
         if (sessionStorage.getItem("skipSilentLoginOnce")) {
           sessionStorage.removeItem("skipSilentLoginOnce");
         } else {
           const res = await axios.get("/api/auth/silent-login?soft=1");
-          if (res?.data?.token && res?.data?.user) {
-            const newT = res.data.token;
-            const newU = res.data.user;
-            localStorage.setItem("token", newT);
-            localStorage.setItem("user", JSON.stringify(newU));
-            await addToCartAndGo(newT, newU?.email);
-            return;
+          // ❗ ÖNEMLİ: soft=1'de token dönse bile KULLANMIYORUZ
+          if (res?.data?.authenticated === true) {
+            setHasRemember(true); // Tek tıkla giriş butonunu göstereceğiz
           }
         }
       } catch {
         // cookie yok/bozuk → OTP adımına geç
       }
 
+      // 3) OTP email adımına geç
       localStorage.removeItem("token");
       setStep("email");
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, pkg, navigate]);
+
+  // "Tek tıkla giriş ve sepete ekle"
+  const oneTapLoginAndAdd = async () => {
+    setLoading(true);
+    setMsg("");
+    try {
+      const res = await axios.get("/api/auth/silent-login"); // soft=0
+      if (res?.data?.token && res?.data?.user) {
+        const t = res.data.token;
+        const u = res.data.user;
+        localStorage.setItem("token", t);
+        localStorage.setItem("user", JSON.stringify(u));
+        await addToCartAndGo(t, u?.email);
+        return;
+      }
+      setMsg("Tek tıkla giriş başarısız. Lütfen e-posta ile devam edin.");
+    } catch (e) {
+      setMsg(e?.response?.data?.message || "Tek tıkla giriş başarısız.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // resend sayaç
   useEffect(() => {
@@ -136,7 +148,7 @@ export default function PreCartAuth() {
       const res = await axios.post("/api/auth/otp/verify", {
         email: email.trim().toLowerCase(),
         code: code.trim(),
-        rememberMe: remember, // ✅ remember cookie'yi BE yazar
+        rememberMe: remember, // kullanıcı isterse remember cookie yazılsın
       });
 
       const token = res.data.token;
@@ -145,7 +157,6 @@ export default function PreCartAuth() {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      // server sepetine ekle ve git
       await addToCartAndGo(token, user?.email || email.trim().toLowerCase());
     } catch (e) {
       setMsg(e?.response?.data?.message || "Kod doğrulanamadı.");
@@ -159,11 +170,7 @@ export default function PreCartAuth() {
       <div className="preauth-container">
         <form className="preauth-form" onSubmit={(e) => e.preventDefault()}>
           <h1>Paket bulunamadı</h1>
-          <button
-            className="btn-primary"
-            type="button"
-            onClick={() => navigate("/#paketler")}
-          >
+          <button className="btn-primary" type="button" onClick={() => navigate("/#paketler")}>
             Paketlere dön
           </button>
         </form>
@@ -191,6 +198,24 @@ export default function PreCartAuth() {
 
         {step === "email" && (
           <>
+            {/* Bu cihazda remember varsa → Tek tıkla butonu */}
+            {hasRemember && (
+              <div style={{ marginBottom: 10, textAlign: "center" }}>
+                <button
+                  className="btn-primary"
+                  type="button"
+                  onClick={oneTapLoginAndAdd}
+                  disabled={loading}
+                  style={{ width: "100%" }}
+                >
+                  Tek tıkla giriş ve sepete ekle
+                </button>
+                <div style={{ fontSize: ".9rem", color: "#6b7280", marginTop: 6 }}>
+                  Bu cihazda kayıtlı oturum bulundu.
+                </div>
+              </div>
+            )}
+
             <label>E-posta</label>
             <input
               type="email"
@@ -236,21 +261,11 @@ export default function PreCartAuth() {
               {loading ? "Doğrulanıyor..." : "Doğrula ve Sepete Ekle"}
             </button>
 
-            <button
-              className="btn-secondary"
-              type="button"
-              onClick={sendCode}
-              disabled={resendIn > 0 || loading}
-            >
+            <button className="btn-secondary" type="button" onClick={sendCode} disabled={resendIn > 0 || loading}>
               {resendIn > 0 ? `Tekrar gönder (${resendIn})` : "Kodu tekrar gönder"}
             </button>
 
-            <button
-              className="btn-secondary"
-              type="button"
-              style={{ marginTop: 8 }}
-              onClick={() => setStep("email")}
-            >
+            <button className="btn-secondary" type="button" style={{ marginTop: 8 }} onClick={() => setStep("email")}>
               E-postayı değiştir
             </button>
           </>

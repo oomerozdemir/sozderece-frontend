@@ -125,6 +125,7 @@ export default App;
 /*
 login kısmında hatalar var
 koçluk satın alırken artık otomatık giriş yapıyo burda hata var
+kocluk satin alimi sonrasi da tek tikla giris yapalim bulduysa eger cunku kullanici giris yapmamis olsa bile direkt giris yaptiriyor.
 
 
 
