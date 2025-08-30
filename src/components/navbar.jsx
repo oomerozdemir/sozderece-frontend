@@ -31,7 +31,7 @@ const Navbar = () => {
     let parsed = null;
     if (userStr) { try { parsed = JSON.parse(userStr); } catch (_) {} }
     setUsername(parsed ? parsed.name : null);
-    setUserRole(parsed ? parsed.role : null);
+    setUserRole(parsed ? String(parsed.role || "").toLowerCase() : null);
 
     let missing = Number(localStorage.getItem("profileMissing"));
     if (!Number.isFinite(missing)) {
@@ -173,6 +173,7 @@ const Navbar = () => {
                         {userRole === "student" && <Link to="/student/dashboard">Öğrenci Paneli</Link>}
                         {userRole === "coach" && <Link to="/coach/dashboard">Koç Paneli</Link>}
                         {userRole === "admin" && <Link to="/admin">Admin Paneli</Link>}
+                        {userRole === "teacher" && <Link to="/ogretmen/panel/profil">Öğretmen Paneli</Link>}
                         <Link to="/orders">Siparişlerim</Link>
                         <button onClick={handleLogout}>Çıkış Yap</button>
                       </div>

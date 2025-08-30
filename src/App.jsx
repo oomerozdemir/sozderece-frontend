@@ -135,7 +135,9 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
     
   gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
   4-gırıs yaparken vesaıre sıfre sıfırlama sıfremı unuttum gıbı klasık şeylerı ekleyelım
-
+  5-ogretmen panelı hesabım kısmında sınıf sectırıyor buna gerek yok
+  6-sıparıslerım yonlendırmesı var bunu sadece ogrencıyse gosterelım
+  7-yıne hesabım sayfasında user rolune gore panel yonlendırmesı yapalım
 
 
 
