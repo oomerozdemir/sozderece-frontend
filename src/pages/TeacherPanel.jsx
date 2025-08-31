@@ -15,14 +15,17 @@ export default function TeacherPanel() {
   const fileRef = useRef(null);
 
   const {
-  avail, setAvail,
-  slots, setSlots,
-  range, setRange,
-  timeOffs, setTimeOffs,
-  creatingOff, setCreatingOff,
-  minToStr, strToMin, onAvailChange,
-  saveAvailability, fetchSlots, addTimeOff, delTimeOff,
-} = useTeacherScheduling(setMsg);
+    avail, setAvail,
+    slots,
+    range, setRange,
+    timeOffs,
+    creatingOff, setCreatingOff,
+    minToStr, strToMin, onAvailChange,
+    saveAvailability, fetchSlots, addTimeOff, delTimeOff,
+  } = useTeacherScheduling(setMsg);
+
+  // Sekme durumu
+  const [tab, setTab] = useState("availability"); // availability | slots | timeoff
 
   useEffect(() => {
     axios
@@ -158,7 +161,6 @@ export default function TeacherPanel() {
                     title="Profil fotoğrafını değiştir"
                     aria-label="Profil fotoğrafını değiştir"
                   >
-                    {/* küçük kalem ikonu (SVG) */}
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                       <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" stroke="currentColor" strokeWidth="1.5" fill="currentColor"/>
                       <path d="M20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z" fill="currentColor"/>
@@ -313,31 +315,62 @@ export default function TeacherPanel() {
               </form>
             </section>
 
+            {/* Scheduling: Sekmeli görünüm */}
             <section className="tp-card" style={{ marginTop: 16 }}>
-  <AvailabilityEditor
-    avail={avail}
-    setAvail={setAvail}
-    onAvailChange={onAvailChange}
-    minToStr={minToStr}
-    strToMin={strToMin}
-    onSave={saveAvailability}
-  />
+              <div className="tp-tabs">
+                <button
+                  type="button"
+                  className={`tp-tab ${tab === "availability" ? "active" : ""}`}
+                  onClick={() => setTab("availability")}
+                >
+                  Uygunluk
+                </button>
+                <button
+                  type="button"
+                  className={`tp-tab ${tab === "slots" ? "active" : ""}`}
+                  onClick={() => setTab("slots")}
+                >
+                  Takvim Önizleme
+                </button>
+                <button
+                  type="button"
+                  className={`tp-tab ${tab === "timeoff" ? "active" : ""}`}
+                  onClick={() => setTab("timeoff")}
+                >
+                  Tatil / Blokaj
+                </button>
+              </div>
 
-  <SlotsPreview
-    range={range}
-    setRange={setRange}
-    slots={slots}
-    fetchSlots={fetchSlots}
-  />
+              {tab === "availability" && (
+                <AvailabilityEditor
+                  avail={avail}
+                  setAvail={setAvail}
+                  onAvailChange={onAvailChange}
+                  minToStr={minToStr}
+                  strToMin={strToMin}
+                  onSave={saveAvailability}
+                />
+              )}
 
-  <TimeOffManager
-    creatingOff={creatingOff}
-    setCreatingOff={setCreatingOff}
-    timeOffs={timeOffs}
-    addTimeOff={addTimeOff}
-    delTimeOff={delTimeOff}
-  />
-</section>
+              {tab === "slots" && (
+                <SlotsPreview
+                  range={range}
+                  setRange={setRange}
+                  slots={slots}
+                  fetchSlots={fetchSlots}
+                />
+              )}
+
+              {tab === "timeoff" && (
+                <TimeOffManager
+                  creatingOff={creatingOff}
+                  setCreatingOff={setCreatingOff}
+                  timeOffs={timeOffs}
+                  addTimeOff={addTimeOff}
+                  delTimeOff={delTimeOff}
+                />
+              )}
+            </section>
           </div>
         </div>
       </div>

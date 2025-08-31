@@ -6,13 +6,15 @@ export default function AvailabilityEditor({
   strToMin,
   onSave,
 }) {
-  const days = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
-
+  const days = ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
   const getItem = (i) => avail.items.find((x) => x.weekday === i) || {};
 
   return (
     <div className="tp-section">
-      <div className="tp-section-title">Haftalık Uygunluk</div>
+      <div className="tp-section-head">
+        <div className="tp-section-title">Haftalık Uygunluk</div>
+        <div className="tp-section-sub">Günleri aç/kapat; saat aralıklarını ve ders modunu ayarla.</div>
+      </div>
 
       <div className="tp-grid-2" style={{ gridTemplateColumns: "1fr" }}>
         <label className="tp-label">Zaman Dilimi</label>
@@ -28,8 +30,9 @@ export default function AvailabilityEditor({
           const item = getItem(i);
           const active = !!item.isActive;
           return (
-            <div key={i} className="tp-availability-row">
-              <div className="day">{d}</div>
+            <div key={i} className={`tp-availability-row ${active ? "" : "is-disabled"}`}>
+              <span className="day-badge">{d}</span>
+
               <label className="tp-switch">
                 <input
                   type="checkbox"
@@ -38,20 +41,25 @@ export default function AvailabilityEditor({
                 />
                 <span>Açık</span>
               </label>
-              <input
-                type="time"
-                value={minToStr(item.startMin ?? 9 * 60)}
-                onChange={(e) => onAvailChange(i, "startMin", strToMin(e.target.value))}
-                disabled={!active}
-              />
-              <span>–</span>
-              <input
-                type="time"
-                value={minToStr(item.endMin ?? 17 * 60)}
-                onChange={(e) => onAvailChange(i, "endMin", strToMin(e.target.value))}
-                disabled={!active}
-              />
+
+              <div className="tp-timebox">
+                <input
+                  type="time"
+                  value={minToStr(item.startMin ?? 9 * 60)}
+                  onChange={(e) => onAvailChange(i, "startMin", strToMin(e.target.value))}
+                  disabled={!active}
+                />
+                <span>–</span>
+                <input
+                  type="time"
+                  value={minToStr(item.endMin ?? 17 * 60)}
+                  onChange={(e) => onAvailChange(i, "endMin", strToMin(e.target.value))}
+                  disabled={!active}
+                />
+              </div>
+
               <select
+                className="tp-mode"
                 value={item.mode || "BOTH"}
                 onChange={(e) => onAvailChange(i, "mode", e.target.value)}
                 disabled={!active}

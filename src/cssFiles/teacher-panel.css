@@ -152,7 +152,89 @@
   height: 0;
 }
 
+/* Sekmeler */
+.tp-tabs {
+  display: flex; gap: 8px; margin-bottom: 10px; border-bottom: 1px solid #e5e7eb;
+}
+.tp-tab {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 10px 12px;
+  font-weight: 700;
+  color: #475569;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+.tp-tab.active {
+  color: #02095f;
+  border-color: #02095f;
+}
 
+/* Bölüm başlığı ve açıklama */
+.tp-section-head { margin-bottom: 8px; }
+.tp-section-sub { color: #64748b; font-size: .9rem; }
+
+/* Uygunluk satırları */
+.tp-availability-table { display: grid; gap: 8px; }
+.tp-availability-row {
+  display: grid;
+  grid-template-columns: 140px 110px 1fr 180px;
+  align-items: center;
+  gap: 10px;
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px;
+}
+.tp-availability-row.is-disabled { opacity: .6; }
+.day-badge {
+  display: inline-block;
+  background: #02095f; color: #fff; font-weight: 800;
+  padding: 6px 10px; border-radius: 999px; text-align: center;
+}
+.tp-timebox { display: flex; align-items: center; gap: 8px; }
+.tp-mode { width: 100%; }
+
+/* Slot grupları */
+.tp-slot-group { margin-top: 12px; }
+.tp-slot-group-head { margin-bottom: 8px; }
+.tp-badge {
+  display: inline-block; background: #eef2ff; color: #1e293b;
+  padding: 6px 10px; border-radius: 10px; font-weight: 700;
+}
+.tp-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+.tp-slot-card {
+  border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px;
+  background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.04);
+}
+.tp-slot-time { font-weight: 800; color: #111827; }
+.tp-slot-mode { color: #475569; font-size: .9rem; margin-top: 2px; }
+
+/* Tatil/Blokaj listesi */
+.tp-timeoffs { display: grid; gap: 8px; margin-top: 8px; }
+.tp-timeoff {
+  display: grid; gap: 6px;
+  border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; background: #fff;
+}
+.tp-timeoff-dates { font-weight: 700; color: #0f172a; }
+.tp-timeoff-note { color: #475569; }
+.tp-btn-outline {
+  align-self: start;
+  padding: 8px 12px; border-radius: 10px; background: #fff;
+  border: 1px solid #e5e7eb; color: #0f172a; font-weight: 700; cursor: pointer;
+}
+.tp-btn-outline:hover { background: #f8fafc; }
+
+/* Boş durum */
+.tp-empty {
+  margin-top: 8px; color: #64748b; background: #f8fafc;
+  border: 1px solid #e5e7eb; padding: 10px; border-radius: 10px;
+}
 
 
 @media (max-width: 900px) {

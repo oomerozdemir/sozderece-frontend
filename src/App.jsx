@@ -129,8 +129,9 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   3-ogretmen panelı duzenlemesı
     ogretmen panelı duzenlemesı ıcınde sunlar olacak;
       -profıl fotografı ekleyebılme ✅
-      -randevu yapısını ekleme
-      -randevularını duzenleyebılme ve goruntuleyebılme
+      -randevu yapısını ekleme ✅
+      -randevularını duzenleyebılme ve goruntuleyebılme ✅
+      -randevu kismini tasarim olarak guzellestir kolaylastir.
       -degerlendirmelerin ve yorumlarin gozukecegi yeri yap(ogrenci kısmı halledilirken eşzamanlı)
       -gelen özel ders taleplerini görüntüleme(ogrenci kısmı halledilirken eşzamanlı)
       -taleplerı onaylama(ogrenci kısmı halledilirken eşzamanlı)
