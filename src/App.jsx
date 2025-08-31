@@ -128,11 +128,13 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   2-ogretmen olarak gırıs yaparken de maıle kod gonderelım kayıt oncesı sadece ✅
   3-ogretmen panelı duzenlemesı
     ogretmen panelı duzenlemesı ıcınde sunlar olacak;
-      -profıl fotografı ekleyebılme
+      -profıl fotografı ekleyebılme ✅
       -randevu yapısını ekleme
       -randevularını duzenleyebılme ve goruntuleyebılme
+      -degerlendirmelerin ve yorumlarin gozukecegi yeri yap(ogrenci kısmı halledilirken eşzamanlı)
       -gelen özel ders taleplerini görüntüleme(ogrenci kısmı halledilirken eşzamanlı)
       -taleplerı onaylama(ogrenci kısmı halledilirken eşzamanlı)
+      -ogretmenler frontend de gozuktugunde resim yukleme sinirlamalarini gerekliyse yapalim.
       gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
   
   4-gırıs yaparken vesaıre sıfre sıfırlama sıfremı unuttum gıbı klasık şeylerı ekleyelım
@@ -141,6 +143,7 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   7-yıne hesabım sayfasında user rolune gore panel yonlendırmesı yapalım
   8-aynı sekılde navbarda da sıparıslerım gozukmesın ogrencı degılse
   9-ogretmen kayıt olurken fıyat belırlerken ona onerı yapalım size benzer öğretmenler şu aralıkta(min-max) fiyat belirledi diye
+  10-Ogrenci tarafida yapilirken randevu kismini iki tarafli onaylamalari vesaire kontrol et ve yap
 
 
 

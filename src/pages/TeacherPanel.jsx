@@ -3,12 +3,26 @@ import axios from "../utils/axios";
 import Navbar from "../components/navbar";
 import "../cssFiles/teacher-panel.css";
 import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
+import useTeacherScheduling from "../hooks/useTeacherScheduling";
+import AvailabilityEditor from "../components/teacherComps/AvailabilityEditor";
+import SlotsPreview from "../components/teacherComps/SlotsPreview";
+import TimeOffManager from "../components/teacherComps/TimeOffManager";
 
 export default function TeacherPanel() {
   const [profile, setProfile] = useState(null);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const fileRef = useRef(null);
+
+  const {
+  avail, setAvail,
+  slots, setSlots,
+  range, setRange,
+  timeOffs, setTimeOffs,
+  creatingOff, setCreatingOff,
+  minToStr, strToMin, onAvailChange,
+  saveAvailability, fetchSlots, addTimeOff, delTimeOff,
+} = useTeacherScheduling(setMsg);
 
   useEffect(() => {
     axios
@@ -298,6 +312,32 @@ export default function TeacherPanel() {
                 </div>
               </form>
             </section>
+
+            <section className="tp-card" style={{ marginTop: 16 }}>
+  <AvailabilityEditor
+    avail={avail}
+    setAvail={setAvail}
+    onAvailChange={onAvailChange}
+    minToStr={minToStr}
+    strToMin={strToMin}
+    onSave={saveAvailability}
+  />
+
+  <SlotsPreview
+    range={range}
+    setRange={setRange}
+    slots={slots}
+    fetchSlots={fetchSlots}
+  />
+
+  <TimeOffManager
+    creatingOff={creatingOff}
+    setCreatingOff={setCreatingOff}
+    timeOffs={timeOffs}
+    addTimeOff={addTimeOff}
+    delTimeOff={delTimeOff}
+  />
+</section>
           </div>
         </div>
       </div>
