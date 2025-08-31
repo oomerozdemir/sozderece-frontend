@@ -26,9 +26,6 @@
   grid-template-columns: 300px 1fr;
   gap: 16px;
 }
-@media (max-width: 900px) {
-  .tp-layout { grid-template-columns: 1fr; }
-}
 
 /* Kart */
 .tp-card {
@@ -41,12 +38,7 @@
 
 /* Sol özet */
 .tp-side { position: sticky; top: 16px; height: fit-content; }
-.tp-avatar { display: flex; justify-content: center; margin-bottom: 10px; }
-.tp-avatar-circle {
-  width: 72px; height: 72px; border-radius: 50%;
-  display: grid; place-items: center; font-size: 1.6rem; font-weight: 800;
-  color: #fff; background: #02095f;
-}
+
 .tp-name { text-align: center; font-weight: 800; color: #111827; }
 .tp-slug { text-align: center; color: #64748b; margin-top: 4px; }
 .tp-switch { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
@@ -98,4 +90,71 @@
   background: #fff; border: 1px solid #e5e7eb; border-radius: 14px;
   padding: 18px; text-align: center; color: #334155;
   box-shadow: 0 8px 18px rgba(0,0,0,.04);
+}
+
+/* Avatar alanı ve edit butonu */
+.tp-avatar { display: flex; justify-content: center; margin-bottom: 10px; }
+
+.tp-avatar-wrapper {
+  position: relative;
+  width: 96px;
+  height: 96px;
+}
+
+.tp-avatar-img {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.tp-avatar-circle {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fff;
+  background: #02095f;
+}
+
+/* Edit (kalem) butonu */
+.tp-avatar-edit {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #111827;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,.15);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.tp-avatar-edit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0,0,0,.18);
+}
+
+.tp-hidden-file {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+
+
+
+@media (max-width: 900px) {
+  .tp-layout { grid-template-columns: 1fr; }
 }

@@ -124,20 +124,23 @@ export default App;
 
 /*
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
-  2-ogretmen olarak gırıs yaparken de maıle kod gonderelım kayıt oncesı sadece
+  1-navbarda ogretmen panelı yonlendırmesı  ✅
+  2-ogretmen olarak gırıs yaparken de maıle kod gonderelım kayıt oncesı sadece ✅
   3-ogretmen panelı duzenlemesı
-  ogretmen panelı duzenlemesı ıcınde sunlar olacak
-    -profıl fotografı ekleyebılme
-    -randevularını duzenleyebılme ve goruntuleyebılme
-    -gelen özel ders taleplerini görüntüleme
-    -taleplerı onaylama
-    
-  gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
+    ogretmen panelı duzenlemesı ıcınde sunlar olacak;
+      -profıl fotografı ekleyebılme
+      -randevu yapısını ekleme
+      -randevularını duzenleyebılme ve goruntuleyebılme
+      -gelen özel ders taleplerini görüntüleme(ogrenci kısmı halledilirken eşzamanlı)
+      -taleplerı onaylama(ogrenci kısmı halledilirken eşzamanlı)
+      gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
+  
   4-gırıs yaparken vesaıre sıfre sıfırlama sıfremı unuttum gıbı klasık şeylerı ekleyelım
   5-ogretmen panelı hesabım kısmında sınıf sectırıyor buna gerek yok
   6-sıparıslerım yonlendırmesı var bunu sadece ogrencıyse gosterelım
   7-yıne hesabım sayfasında user rolune gore panel yonlendırmesı yapalım
   8-aynı sekılde navbarda da sıparıslerım gozukmesın ogrencı degılse
+  9-ogretmen kayıt olurken fıyat belırlerken ona onerı yapalım size benzer öğretmenler şu aralıkta(min-max) fiyat belirledi diye
 
 
 
@@ -149,6 +152,7 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
 ******onemli DEGISIKLIK********
 1-Ders ve ardindan hoca sistemi eklenicek
 2-Yeni paketler eklenecek
+3-özel ders öğretmenleri için de bir sözleşme hazırlamak gerekli
 
 Özel ders sistemi ile eklenicek yenilikler
 Frontend görünen yüzde

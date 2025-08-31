@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
 import "../cssFiles/teacher-panel.css";
@@ -8,6 +8,7 @@ export default function TeacherPanel() {
   const [profile, setProfile] = useState(null);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
+  const fileRef = useRef(null);
 
   useEffect(() => {
     axios
@@ -32,7 +33,6 @@ export default function TeacherPanel() {
       if (current && districts.includes(current)) return p;
       return { ...p, district: districts[0] || "" };
     });
-    // districts'i dependency'ye ekleyerek ESLint uyarısını da önlüyoruz
   }, [profile?.city, districts]);
 
   const save = async (e) => {
@@ -59,6 +59,35 @@ export default function TeacherPanel() {
     }
   };
 
+  // --- FOTOĞRAF YÜKLEME ---
+  const onPickPhoto = () => fileRef.current?.click();
+  const onPhotoChange = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setMsg("Dosya boyutu en fazla 5MB olmalı.");
+      return;
+    }
+
+    const fd = new FormData();
+    fd.append("photo", file);
+
+    try {
+      setMsg("Fotoğraf yükleniyor…");
+      const { data } = await axios.post("/api/v1/ogretmen/me/photo", fd);
+      if (data?.profile?.photoUrl) {
+        setProfile((p) => ({ ...p, photoUrl: data.profile.photoUrl }));
+        setMsg("Fotoğraf güncellendi.");
+      } else {
+        setMsg("Yükleme tamamlandı, ancak URL alınamadı.");
+      }
+    } catch (err) {
+      setMsg(err?.response?.data?.message || "Fotoğraf yüklenemedi.");
+    }
+  };
+
   if (!profile) {
     return (
       <>
@@ -77,6 +106,10 @@ export default function TeacherPanel() {
   const isFaceOnly = modeKey === "FACE_TO_FACE";
   const both = modeKey === "BOTH";
 
+  // Ad & baş harf
+  const fullName = `${profile.firstName || ""} ${profile.lastName || ""}`.trim();
+  const initial = (profile.firstName?.[0] || "").toUpperCase();
+
   return (
     <>
       <Navbar />
@@ -93,13 +126,42 @@ export default function TeacherPanel() {
             {/* Sol özet kartı */}
             <aside className="tp-card tp-side">
               <div className="tp-avatar">
-                <div className="tp-avatar-circle">
-                  {(profile.firstName?.[0] || "").toUpperCase()}
+                <div className="tp-avatar-wrapper">
+                  {profile.photoUrl ? (
+                    <img
+                      src={profile.photoUrl}
+                      alt={fullName || "Profil"}
+                      className="tp-avatar-img"
+                    />
+                  ) : (
+                    <div className="tp-avatar-circle">{initial}</div>
+                  )}
+
+                  <button
+                    type="button"
+                    className="tp-avatar-edit"
+                    onClick={onPickPhoto}
+                    title="Profil fotoğrafını değiştir"
+                    aria-label="Profil fotoğrafını değiştir"
+                  >
+                    {/* küçük kalem ikonu (SVG) */}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" stroke="currentColor" strokeWidth="1.5" fill="currentColor"/>
+                      <path d="M20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z" fill="currentColor"/>
+                    </svg>
+                  </button>
+
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept="image/*"
+                    className="tp-hidden-file"
+                    onChange={onPhotoChange}
+                  />
                 </div>
               </div>
-              <div className="tp-name">
-                {profile.firstName} {profile.lastName}
-              </div>
+
+              <div className="tp-name">{fullName || "İsimsiz"}</div>
               <div className="tp-slug">
                 kullanıcı id: <code>{profile.slug}</code>
               </div>
