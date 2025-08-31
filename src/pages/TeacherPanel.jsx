@@ -13,6 +13,8 @@ export default function TeacherPanel() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const fileRef = useRef(null);
+  const [pwd, setPwd] = useState({ current: "", next: "", next2: "" });
+  const [pwdLoading, setPwdLoading] = useState(false);
 
   const {
     avail, setAvail,
@@ -126,6 +128,41 @@ export default function TeacherPanel() {
   // Ad & baş harf
   const fullName = `${profile.firstName || ""} ${profile.lastName || ""}`.trim();
   const initial = (profile.firstName?.[0] || "").toUpperCase();
+
+
+  // Sifre Degis
+
+  const changePassword = async (e) => {
+  e?.preventDefault?.();
+  setMsg("");
+  if (!pwd.next || !pwd.next2) {
+    setMsg("Yeni şifre ve doğrulama zorunludur.");
+    return;
+  }
+  if (pwd.next !== pwd.next2) {
+    setMsg("Şifreler uyuşmuyor.");
+    return;
+  }
+  if (pwd.next.length < 8) {
+    setMsg("Yeni şifre en az 8 karakter olmalı.");
+    return;
+  }
+  setPwdLoading(true);
+  try {
+    const body = {
+      currentPassword: pwd.current || undefined, // mevcut yoksa undefined gönder
+      newPassword: pwd.next,
+      confirmPassword: pwd.next2,
+    };
+    const { data } = await axios.put("/api/v1/ogretmen/me/password", body);
+    setMsg(data?.message || "Şifre güncellendi.");
+    setPwd({ current: "", next: "", next2: "" });
+  } catch (err) {
+    setMsg(err?.response?.data?.message || "Şifre güncellenemedi.");
+  } finally {
+    setPwdLoading(false);
+  }
+};
 
   return (
     <>
@@ -314,6 +351,55 @@ export default function TeacherPanel() {
                 </div>
               </form>
             </section>
+
+            <section className="tp-card" style={{ marginTop: 16 }}>
+  <form className="tp-form" onSubmit={changePassword}>
+    <div className="tp-section">
+      <div className="tp-section-title">Şifre Değiştir</div>
+      <div className="tp-grid-2">
+        <div>
+          <label className="tp-label">Mevcut Şifre</label>
+          <input
+            type="password"
+            placeholder="Mevcut şifreniz"
+            value={pwd.current}
+            onChange={(e) => setPwd((s) => ({ ...s, current: e.target.value }))}
+          />
+        </div>
+        <div>
+          <label className="tp-label">Yeni Şifre</label>
+          <input
+            type="password"
+            placeholder="En az 8 karakter"
+            value={pwd.next}
+            onChange={(e) => setPwd((s) => ({ ...s, next: e.target.value }))}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="tp-grid-2 tp-mt8" style={{ gridTemplateColumns: "1fr" }}>
+        <div>
+          <label className="tp-label">Yeni Şifre (Tekrar)</label>
+          <input
+            type="password"
+            placeholder="Yeni şifrenizi tekrar yazın"
+            value={pwd.next2}
+            onChange={(e) => setPwd((s) => ({ ...s, next2: e.target.value }))}
+            required
+          />
+        </div>
+      </div>
+    </div>
+
+    <div className="tp-actions">
+      <button type="submit" disabled={pwdLoading}>
+        {pwdLoading ? "Güncelleniyor..." : "Şifreyi Güncelle"}
+      </button>
+    </div>
+  </form>
+</section>
+
 
             {/* Scheduling: Sekmeli görünüm */}
             <section className="tp-card" style={{ marginTop: 16 }}>

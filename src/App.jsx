@@ -131,15 +131,15 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
       -profıl fotografı ekleyebılme ✅
       -randevu yapısını ekleme ✅
       -randevularını duzenleyebılme ve goruntuleyebılme ✅
-      -randevu kismini tasarim olarak guzellestir kolaylastir.
+      -randevu kismini tasarim olarak guzellestir kolaylastir ✅
       -degerlendirmelerin ve yorumlarin gozukecegi yeri yap(ogrenci kısmı halledilirken eşzamanlı)
       -gelen özel ders taleplerini görüntüleme(ogrenci kısmı halledilirken eşzamanlı)
       -taleplerı onaylama(ogrenci kısmı halledilirken eşzamanlı)
-      -ogretmenler frontend de gozuktugunde resim yukleme sinirlamalarini gerekliyse yapalim.
+      -ogretmenler frontend de gozuktugunde resim yukleme sinirlamalarini gerekliyse yapalim. ✅
       gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
   
   4-gırıs yaparken vesaıre sıfre sıfırlama sıfremı unuttum gıbı klasık şeylerı ekleyelım
-  5-ogretmen panelı hesabım kısmında sınıf sectırıyor buna gerek yok
+  5-ogretmen olarak gırıs yaptıgında hesabım kısmında sınıf sectırıyor buna gerek yok
   6-sıparıslerım yonlendırmesı var bunu sadece ogrencıyse gosterelım
   7-yıne hesabım sayfasında user rolune gore panel yonlendırmesı yapalım
   8-aynı sekılde navbarda da sıparıslerım gozukmesın ogrencı degılse
