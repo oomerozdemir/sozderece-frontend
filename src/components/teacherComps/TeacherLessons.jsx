@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "../../utils/axios";
 import { FiEdit2, FiTrash2, FiPlus, FiSearch } from "react-icons/fi";
+import "../../cssFiles/teacher-panel.css";
 
 const SUBJECTS = [
   "Matematik","Fen Bilimleri","Türkçe","Tarih","Coğrafya",
