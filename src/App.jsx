@@ -150,6 +150,16 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   10-Ogrenci tarafida yapilirken randevu kismini iki tarafli onaylamalari vesaire kontrol et ve yap
 
 
+******** ozel ders icin ogrenci tarafi ********
+1-ozel ders secerken satin alimi paketler halinde vericez tekli 5li 15li 30u cinsinden
+  -paketi hesabina tanimlayacagiz ogrencinin ve bu paketlerin her birinde sectigi pakete gore 5li ise 5 tane ders talebi gonderme hakki olucak ogrencinin
+  -bu gonderdigi talepleri ogretmen onaylayacak randevu secimini ogrenci bu talebi gonderirken yapicak.Ogretmen bunlara gorerek ogrenciyi onaylayacak
+  -ogretmene mail gondeririz talep geldikce
+  -talep onaylandiginda ayni sekilde talep onaylandi diye ogrenciye de mail gider
+  -ders bittiginde ogretmen ders tamamlandi diye isaretler.
+  -ogrenci de ayni sekilde dersi tamamlandi diye isaretler ve yorum degerlendirme yonlendirmesi yapilir ogrenciye.
+  -bir chatbot yeri yapabiliriz ogretmen talebi onayladiginda konusabilecekleri ve iletisim saglayacaklari kolay bir yer olur.
+  
 
 
 özel ders oğretmenı ve öğrenci koçu özel giriş ve kayıt yeri açıcaz

@@ -1,3 +1,4 @@
+// src/pages/TeacherPanel.jsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
@@ -7,6 +8,7 @@ import useTeacherScheduling from "../hooks/useTeacherScheduling";
 import AvailabilityEditor from "../components/teacherComps/AvailabilityEditor";
 import SlotsPreview from "../components/teacherComps/SlotsPreview";
 import TimeOffManager from "../components/teacherComps/TimeOffManager";
+import TeacherLessons from "../components/teacherComps/TeacherLessons";
 
 export default function TeacherPanel() {
   const [profile, setProfile] = useState(null);
@@ -14,7 +16,7 @@ export default function TeacherPanel() {
   const [msg, setMsg] = useState("");
   const fileRef = useRef(null);
 
-  // Şifre değiştir alanı
+  // Şifre değiştir
   const [pwd, setPwd] = useState({ current: "", next: "", next2: "" });
   const [pwdLoading, setPwdLoading] = useState(false);
 
@@ -29,27 +31,26 @@ export default function TeacherPanel() {
     saveAvailability, fetchSlots, addTimeOff, delTimeOff,
   } = useTeacherScheduling(setMsg);
 
-  // Sekme durumu
-  const [tab, setTab] = useState("availability"); // availability | slots | timeoff
+  // Sekmeler: availability | slots | timeoff | lessons
+  const [tab, setTab] = useState("availability");
 
   // Profil çek
   useEffect(() => {
-    axios
-      .get("/api/v1/ogretmen/me/profil")
+    axios.get("/api/v1/ogretmen/me/profil")
       .then(({ data }) => setProfile(data.profile))
       .catch(() => {});
   }, []);
 
-  // Genel değişim handler
+  // Genel değişim
   const onChange = (k, v) => setProfile((p) => ({ ...p, [k]: v }));
 
-  // Şehre göre ilçeler (HOOK — early return'dan ÖNCE!)
+  // İlçeler (hook — early return'dan önce)
   const districts = useMemo(() => {
     if (!profile?.city) return [];
     return TR_DISTRICTS[profile.city] || [];
   }, [profile?.city]);
 
-  // Şehir değişince district doğrula
+  // Şehir değişince geçerli district’i koru, değilse ilkini ata
   useEffect(() => {
     if (!profile?.city) return;
     setProfile((p) => {
@@ -59,7 +60,7 @@ export default function TeacherPanel() {
     });
   }, [profile?.city, districts]);
 
-  // ===== Ders Alanları & Seviye yönetimi (HOOKS yukarıda!) =====
+  // Ders alanları & seviyeler
   const SUBJECTS = [
     "Matematik","Fen Bilimleri","Türkçe","Tarih","Coğrafya",
     "Fizik","Kimya","Biyoloji","İngilizce","Almanca","Geometri","Edebiyat","Bilgisayar"
@@ -94,7 +95,6 @@ export default function TeacherPanel() {
   const selectedSubjects = safeArr(profile?.subjects);
   const selectedGrades   = safeArr(profile?.grades);
 
-  //HOOKS burada — early return'dan ÖNCE!
   const availableSubjects = useMemo(
     () => SUBJECTS.filter((s) => !selectedSubjects.includes(s)),
     [selectedSubjects]
@@ -104,7 +104,7 @@ export default function TeacherPanel() {
     [selectedGrades]
   );
 
-  // Kaydet
+  // Profil kaydet
   const save = async (e) => {
     e.preventDefault();
     if (!profile) return;
@@ -131,21 +131,18 @@ export default function TeacherPanel() {
     }
   };
 
-  // Fotoğraf yükleme
+  // Profil foto
   const onPickPhoto = () => fileRef.current?.click();
   const onPhotoChange = async (e) => {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
-
     if (file.size > 5 * 1024 * 1024) {
       setMsg("Dosya boyutu en fazla 5MB olmalı.");
       return;
     }
-
     const fd = new FormData();
     fd.append("photo", file);
-
     try {
       setMsg("Fotoğraf yükleniyor…");
       const { data } = await axios.post("/api/v1/ogretmen/me/photo", fd);
@@ -167,7 +164,6 @@ export default function TeacherPanel() {
     if (!pwd.next || !pwd.next2) return setMsg("Yeni şifre ve doğrulama zorunludur.");
     if (pwd.next !== pwd.next2) return setMsg("Şifreler uyuşmuyor.");
     if (pwd.next.length < 8) return setMsg("Yeni şifre en az 8 karakter olmalı.");
-
     setPwdLoading(true);
     try {
       const body = {
@@ -185,7 +181,7 @@ export default function TeacherPanel() {
     }
   };
 
-  // ---- Early return----
+  // ---- Early return (hook yok aşağıda)
   if (!profile) {
     return (
       <>
@@ -207,6 +203,17 @@ export default function TeacherPanel() {
   const fullName = `${profile.firstName || ""} ${profile.lastName || ""}`.trim();
   const initial = (profile.firstName?.[0] || "").toUpperCase();
 
+  // Derslerim sekmesinde profil.mode'u güncellemek için handler
+  const updateMode = async (nextMode) => {
+    try {
+      await axios.put("/api/v1/ogretmen/me/profil", { mode: nextMode });
+      setProfile((p) => ({ ...p, mode: nextMode }));
+      setMsg("Ders modu güncellendi.");
+    } catch (e) {
+      setMsg(e?.response?.data?.message || "Ders modu güncellenemedi.");
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -220,7 +227,7 @@ export default function TeacherPanel() {
           {!!msg && <div className="tp-message">{msg}</div>}
 
           <div className="tp-layout">
-            {/* Sol özet kartı */}
+            {/* Sol özet */}
             <aside className="tp-card tp-side">
               <div className="tp-avatar">
                 <div className="tp-avatar-wrapper">
@@ -329,7 +336,7 @@ export default function TeacherPanel() {
                   </div>
                 </div>
 
-                {/* Hızlı seçim */}
+                {/* Hızlı seçimler */}
                 <div className="tp-mt8">
                   <label className="tp-label small">Hızlı Seçim</label>
                   <div className="tp-chips">
@@ -515,7 +522,7 @@ export default function TeacherPanel() {
               </form>
             </section>
 
-            {/* Scheduling sekmeleri */}
+            {/* Scheduling & Derslerim sekmeleri */}
             <section className="tp-card" style={{ marginTop: 16 }}>
               <div className="tp-tabs">
                 <button
@@ -538,6 +545,13 @@ export default function TeacherPanel() {
                   onClick={() => setTab("timeoff")}
                 >
                   Tatil / Blokaj
+                </button>
+                <button
+                  type="button"
+                  className={`tp-tab ${tab === "lessons" ? "active" : ""}`}
+                  onClick={() => setTab("lessons")}
+                >
+                  Derslerim
                 </button>
               </div>
 
@@ -568,6 +582,13 @@ export default function TeacherPanel() {
                   timeOffs={timeOffs}
                   addTimeOff={addTimeOff}
                   delTimeOff={delTimeOff}
+                />
+              )}
+
+              {tab === "lessons" && (
+                <TeacherLessons
+                  profile={profile}
+                  onModeChange={updateMode}
                 />
               )}
             </section>

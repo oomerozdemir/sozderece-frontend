@@ -237,6 +237,52 @@
 }
 
 
+
+/* Teacher Lessons.jsx */
+.tl-card{margin-top:16px}
+.tl-toggles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.tl-toggle{padding:14px;border-radius:12px;background:#f6f7fb;display:flex;align-items:center;justify-content:space-between}
+.tl-toggle.on{background:#e9f8ef} .tl-toggle.off{background:#fdecee}
+.tl-toggle-head{font-weight:600}
+
+.switch{position:relative;width:52px;height:28px;display:inline-block}
+.switch input{display:none}
+.switch span{position:absolute;cursor:pointer;background:#ccc;border-radius:28px;inset:0;transition:.2s}
+.switch span:before{content:"";position:absolute;height:22px;width:22px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s}
+.switch input:checked + span{background:#2e7d32}
+.switch input:checked + span:before{transform:translateX(24px)}
+
+.tl-toolbar{display:flex;align-items:center;justify-content:space-between;margin:10px 0}
+.tl-left{display:flex;align-items:center;gap:8px}
+.tl-right{display:flex;align-items:center;gap:10px}
+.tl-search{display:flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid #e5e7eb;border-radius:10px;background:#fff}
+.tl-search input{border:none;outline:none}
+
+.tl-btn-primary{background:#243c8f;color:#fff;border:none;padding:8px 12px;border-radius:10px;display:inline-flex;align-items:center;gap:8px}
+.tl-btn-light{background:#f2f3f7;border:none;padding:8px 12px;border-radius:10px}
+
+.tl-table{border:1px solid #eef0f4;border-radius:12px;overflow:hidden;background:#fff}
+.tl-tr{display:grid;grid-template-columns:2fr 120px 160px 150px;align-items:center}
+.tl-th,.tl-td{padding:12px 14px;border-bottom:1px solid #f1f3f6}
+.tl-th{font-weight:700;color:#4a5568;background:#fbfcfe}
+.tl-actions{display:flex;gap:8px}
+.tl-icon{border:none;border-radius:8px;padding:6px;display:inline-flex;align-items:center;justify-content:center;background:#eef2ff}
+.tl-icon.yellow{background:#fff7e6}
+.tl-icon.red{background:#ffe7e7}
+.tl-empty{padding:14px;text-align:center;color:#8792a2}
+
+.tl-pager{display:flex;align-items:center;gap:8px;justify-content:flex-end;margin-top:10px}
+.tl-pager button{padding:6px 10px;border:1px solid #e5e7eb;border-radius:8px;background:#fff}
+
+.tl-modal{position:fixed;inset:0;background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;z-index:60}
+.tl-modal-card{background:#fff;padding:16px;border-radius:14px;min-width:360px;max-width:520px;width:92%}
+.tl-form{display:grid;gap:10px;margin-top:10px}
+.tl-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+
+
+
+
 @media (max-width: 900px) {
   .tp-layout { grid-template-columns: 1fr; }
 }
