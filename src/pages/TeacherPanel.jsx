@@ -32,7 +32,7 @@ export default function TeacherPanel() {
   } = useTeacherScheduling(setMsg);
 
   // Sekmeler: availability | slots | timeoff | lessons
-  const [tab, setTab] = useState("availability");
+  const [tab, setTab] = useState("lessons");
 
   // Profil çek
   useEffect(() => {
