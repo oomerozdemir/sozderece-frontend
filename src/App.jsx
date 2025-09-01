@@ -138,8 +138,8 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
       -ogretmenler frontend de gozuktugunde resim yukleme sinirlamalarini gerekliyse yapalim. ✅
       gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
   
-  4-gırıs yaparken vesaıre sıfre sıfırlama sıfremı unuttum gıbı klasık şeylerı ekleyelım
-  5-ogretmen olarak gırıs yaptıgında hesabım kısmında sınıf sectırıyor buna gerek yok
+  4-gırıs yaparken vesaıre sıfre sıfırlama sıfremı unuttum gıbı klasık şeylerı ekleyelım ✅
+  5-ogretmen olarak gırıs yaptıgında hesabım kısmında sınıf sectırıyor buna gerek yok ✅
   6-sıparıslerım yonlendırmesı var bunu sadece ogrencıyse gosterelım
   7-yıne hesabım sayfasında user rolune gore panel yonlendırmesı yapalım
   8-aynı sekılde navbarda da sıparıslerım gozukmesın ogrencı degılse

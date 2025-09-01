@@ -181,30 +181,29 @@ const AccountPage = () => {
 
       <div className="accountPage-layout">
         {/* Sidebar */}
-        <aside className={`accountPage-sidebar ${sidebarOpen ? "open" : ""}`}>
-          <ul className="accountPage-sidebar-menu">
-            <li>
-              <a href="/"><FiHome /> <span>Ana sayfa</span></a>
-            </li>
-            <li className="active">
-              <a href="/account"><FiUser /> <span>Hesap</span></a>
-            </li>
-            <li>
-              <a href="/orders"><FiPackage /> <span>Siparişlerim</span></a>
-            </li>
-            <li className="logout-li">
-              <button
-                onClick={() => {
-                  localStorage.clear();
-                  window.location.href = "/login";
-                }}
-                className="accountPage-logoutBtn"
-              >
-                <FiLogOut /> Çıkış Yap
-              </button>
-            </li>
-          </ul>
-        </aside>
+<aside className={`accountPage-sidebar ${sidebarOpen ? "open" : ""}`}>
+  <ul className="accountPage-sidebar-menu">
+    <li>
+      <a href="/"><FiHome /> <span>Ana sayfa</span></a>
+    </li>
+    <li className="active">
+      <a href="/account"><FiUser /> <span>Hesap</span></a>
+    </li>
+
+    {roleIsStudent && (
+      <li>
+        <a href="/orders"><FiPackage /> <span>Siparişlerim</span></a>
+      </li>
+    )}
+
+    <li className="logout-li">
+      <button onClick={() => { localStorage.clear(); window.location.href = "/login"; }} className="accountPage-logoutBtn">
+        <FiLogOut /> Çıkış Yap
+      </button>
+    </li>
+  </ul>
+</aside>
+
 
         {/* Ana içerik */}
         <main className="accountPage-main">
