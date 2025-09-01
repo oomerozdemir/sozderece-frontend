@@ -16,11 +16,14 @@ export default function TeacherPanel() {
   const [msg, setMsg] = useState("");
   const fileRef = useRef(null);
 
-  // Şifre değiştir alanı (duruyor)
+  // Şifre değiştir
   const [pwd, setPwd] = useState({ current: "", next: "", next2: "" });
   const [pwdLoading, setPwdLoading] = useState(false);
 
-  // Scheduling hook
+  // Biyografi
+  const [bioSaving, setBioSaving] = useState(false);
+
+  // Scheduling
   const {
     avail, setAvail,
     slots,
@@ -31,27 +34,24 @@ export default function TeacherPanel() {
     saveAvailability, fetchSlots, addTimeOff, delTimeOff,
   } = useTeacherScheduling(setMsg);
 
-  // Sekmeler: availability | slots | timeoff | lessons
+  // Sekmeler: availability | slots | timeoff | lessons | location
   const [tab, setTab] = useState("lessons");
 
-  // Profil çek
+  // Profil
   useEffect(() => {
-    axios
-      .get("/api/v1/ogretmen/me/profil")
+    axios.get("/api/v1/ogretmen/me/profil")
       .then(({ data }) => setProfile(data.profile))
       .catch(() => {});
   }, []);
 
-  // Genel değişim handler
   const onChange = (k, v) => setProfile((p) => ({ ...p, [k]: v }));
 
-  // Şehre göre ilçeler (HOOK — early return'dan ÖNCE)
+  // İl -> İlçe listesi
   const districts = useMemo(() => {
     if (!profile?.city) return [];
     return TR_DISTRICTS[profile.city] || [];
   }, [profile?.city]);
 
-  // Şehir değişince district doğrula
   useEffect(() => {
     if (!profile?.city) return;
     setProfile((p) => {
@@ -61,7 +61,7 @@ export default function TeacherPanel() {
     });
   }, [profile?.city, districts]);
 
-  // Sadece lokasyon kaydı
+  // Lokasyon kaydet
   const saveLocation = async () => {
     if (!profile) return;
     setSaving(true);
@@ -79,21 +79,18 @@ export default function TeacherPanel() {
     }
   };
 
-  // Fotoğraf yükleme
+  // Fotoğraf
   const onPickPhoto = () => fileRef.current?.click();
   const onPhotoChange = async (e) => {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
-
     if (file.size > 5 * 1024 * 1024) {
       setMsg("Dosya boyutu en fazla 5MB olmalı.");
       return;
     }
-
     const fd = new FormData();
     fd.append("photo", file);
-
     try {
       setMsg("Fotoğraf yükleniyor…");
       const { data } = await axios.post("/api/v1/ogretmen/me/photo", fd);
@@ -133,15 +130,28 @@ export default function TeacherPanel() {
     }
   };
 
-  // ---- Early return (hook yok aşağıda)
+  // Biyografi
+  const saveBio = async (e) => {
+    e?.preventDefault?.();
+    if (!profile) return;
+    setBioSaving(true);
+    setMsg("");
+    try {
+      await axios.put("/api/v1/ogretmen/me/profil", { bio: (profile.bio || "").trim() });
+      setMsg("Biyografi güncellendi.");
+    } catch (e) {
+      setMsg(e?.response?.data?.message || "Biyografi kaydedilemedi.");
+    } finally {
+      setBioSaving(false);
+    }
+  };
+
   if (!profile) {
     return (
       <>
         <Navbar />
         <div className="tpanel">
-          <div className="tp-wrap">
-            <div className="tp-loading">Yükleniyor…</div>
-          </div>
+          <div className="tp-wrap"><div className="tp-loading">Yükleniyor…</div></div>
         </div>
       </>
     );
@@ -150,7 +160,6 @@ export default function TeacherPanel() {
   const fullName = `${profile.firstName || ""} ${profile.lastName || ""}`.trim();
   const initial = (profile.firstName?.[0] || "").toUpperCase();
 
-  // Derslerim sekmesinde profil.mode'u güncelleyen handler (TeacherLessons kullanıyor)
   const updateMode = async (nextMode) => {
     try {
       await axios.put("/api/v1/ogretmen/me/profil", { mode: nextMode });
@@ -160,6 +169,9 @@ export default function TeacherPanel() {
       setMsg(e?.response?.data?.message || "Ders modu güncellenemedi.");
     }
   };
+
+  const bioLen = (profile.bio || "").length;
+  const BIO_MAX = 1200;
 
   return (
     <>
@@ -174,20 +186,15 @@ export default function TeacherPanel() {
           {!!msg && <div className="tp-message">{msg}</div>}
 
           <div className="tp-layout">
-            {/* Sol özet kartı */}
+            {/* Sol özet */}
             <aside className="tp-card tp-side">
               <div className="tp-avatar">
                 <div className="tp-avatar-wrapper">
                   {profile.photoUrl ? (
-                    <img
-                      src={profile.photoUrl}
-                      alt={fullName || "Profil"}
-                      className="tp-avatar-img"
-                    />
+                    <img src={profile.photoUrl} alt={fullName || "Profil"} className="tp-avatar-img" />
                   ) : (
                     <div className="tp-avatar-circle">{initial}</div>
                   )}
-
                   <button
                     type="button"
                     className="tp-avatar-edit"
@@ -200,21 +207,12 @@ export default function TeacherPanel() {
                       <path d="M20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z" fill="currentColor"/>
                     </svg>
                   </button>
-
-                  <input
-                    ref={fileRef}
-                    type="file"
-                    accept="image/*"
-                    className="tp-hidden-file"
-                    onChange={onPhotoChange}
-                  />
+                  <input ref={fileRef} type="file" accept="image/*" className="tp-hidden-file" onChange={onPhotoChange}/>
                 </div>
               </div>
 
               <div className="tp-name">{fullName || "İsimsiz"}</div>
-              <div className="tp-slug">
-                kullanıcı id: <code>{profile.slug}</code>
-              </div>
+              <div className="tp-slug">kullanıcı id: <code>{profile.slug}</code></div>
 
               <label className="tp-switch">
                 <input
@@ -225,95 +223,20 @@ export default function TeacherPanel() {
                 <span>Profili yayında göster</span>
               </label>
 
-              <div className="tp-hint">
-                Öğrenciler sadece <b>yayında</b> olan profilleri görebilir.
-              </div>
+              <div className="tp-hint">Öğrenciler sadece <b>yayında</b> olan profilleri görebilir.</div>
             </aside>
 
-            {/* Sağ: ÜSTTE sekmeler + LOKASYON satırı + içerik */}
+            {/* Sağ kart: sekmeler + içerikler */}
             <section className="tp-card">
               <div className="tp-tabs">
-                <button
-                  type="button"
-                  className={`tp-tab ${tab === "availability" ? "active" : ""}`}
-                  onClick={() => setTab("availability")}
-                >
-                  Uygunluk
-                </button>
-                <button
-                  type="button"
-                  className={`tp-tab ${tab === "slots" ? "active" : ""}`}
-                  onClick={() => setTab("slots")}
-                >
-                  Takvim Önizleme
-                </button>
-                <button
-                  type="button"
-                  className={`tp-tab ${tab === "timeoff" ? "active" : ""}`}
-                  onClick={() => setTab("timeoff")}
-                >
-                  Tatil / Blokaj
-                </button>
-                <button
-                  type="button"
-                  className={`tp-tab ${tab === "lessons" ? "active" : ""}`}
-                  onClick={() => setTab("lessons")}
-                >
-                  Derslerim
-                </button>
+                <button type="button" className={`tp-tab ${tab === "availability" ? "active" : ""}`} onClick={() => setTab("availability")}>Uygunluk</button>
+                <button type="button" className={`tp-tab ${tab === "slots" ? "active" : ""}`} onClick={() => setTab("slots")}>Takvim Önizleme</button>
+                <button type="button" className={`tp-tab ${tab === "timeoff" ? "active" : ""}`} onClick={() => setTab("timeoff")}>Tatil / Blokaj</button>
+                <button type="button" className={`tp-tab ${tab === "lessons" ? "active" : ""}`} onClick={() => setTab("lessons")}>Derslerim</button>
+                <button type="button" className={`tp-tab ${tab === "location" ? "active" : ""}`} onClick={() => setTab("location")}>Lokasyon</button>
               </div>
 
-              {/* LOKASYON — sekmelerin hemen altında, satır içi */}
-              <div
-                className="tp-grid-2"
-                style={{
-                  gap: 12,
-                  alignItems: "end",
-                  margin: "12px 0 16px 0"
-                }}
-              >
-                <div>
-                  <label className="tp-label">İl</label>
-                  <select
-                    value={profile.city || ""}
-                    onChange={(e) => onChange("city", e.target.value)}
-                  >
-                    <option value="">İl seçin</option>
-                    {TR_CITIES.map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="tp-label">İlçe</label>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <select
-                      value={districts.includes(profile.district) ? profile.district : ""}
-                      onChange={(e) => onChange("district", e.target.value)}
-                      disabled={!profile.city || districts.length === 0}
-                      style={{ flex: 1 }}
-                    >
-                      <option value="">
-                        {!profile.city
-                          ? "Önce il seçin"
-                          : districts.length
-                          ? "İlçe seçin"
-                          : "Bu il için ilçe listesi yakında"}
-                      </option>
-                      {districts.map((d) => (
-                        <option key={d} value={d}>{d}</option>
-                      ))}
-                    </select>
-
-                    <button type="button" onClick={saveLocation} disabled={saving}>
-                      {saving ? "Kaydediliyor…" : "Konumu Kaydet"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* SEKME İÇERİKLERİ */}
+              {/* Sekme içerikleri */}
               {tab === "availability" && (
                 <AvailabilityEditor
                   avail={avail}
@@ -345,14 +268,57 @@ export default function TeacherPanel() {
               )}
 
               {tab === "lessons" && (
-                <TeacherLessons
-                  profile={profile}
-                  onModeChange={updateMode}
-                />
+                <TeacherLessons profile={profile} onModeChange={updateMode} />
+              )}
+
+              {tab === "location" && (
+                <form className="tp-form" onSubmit={(e)=>{e.preventDefault(); saveLocation();}}>
+                  <div className="tp-section">
+                    <div className="tp-section-title">Lokasyon</div>
+                    <div className="tp-grid-2">
+                      <div>
+                        <label className="tp-label">İl</label>
+                        <select
+                          value={profile.city || ""}
+                          onChange={(e) => onChange("city", e.target.value)}
+                        >
+                          <option value="">İl seçin</option>
+                          {TR_CITIES.map((c) => (
+                            <option key={c} value={c}>{c}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="tp-label">İlçe</label>
+                        <select
+                          value={districts.includes(profile.district) ? profile.district : ""}
+                          onChange={(e) => onChange("district", e.target.value)}
+                          disabled={!profile.city || districts.length === 0}
+                        >
+                          <option value="">
+                            {!profile.city
+                              ? "Önce il seçin"
+                              : districts.length
+                              ? "İlçe seçin"
+                              : "Bu il için ilçe listesi yakında"}
+                          </option>
+                          {districts.map((d) => (
+                            <option key={d} value={d}>{d}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="tp-actions">
+                    <button type="submit" disabled={saving}>
+                      {saving ? "Kaydediliyor…" : "Kaydet"}
+                    </button>
+                  </div>
+                </form>
               )}
             </section>
 
-            {/* ŞİFRE DEĞİŞTİR — duruyor */}
+            {/* Şifre Değiştir */}
             <section className="tp-card" style={{ marginTop: 16 }}>
               <form className="tp-form" onSubmit={changePassword}>
                 <div className="tp-section">
@@ -396,6 +362,30 @@ export default function TeacherPanel() {
                 <div className="tp-actions">
                   <button type="submit" disabled={pwdLoading}>
                     {pwdLoading ? "Güncelleniyor..." : "Şifreyi Güncelle"}
+                  </button>
+                </div>
+              </form>
+            </section>
+
+            {/* Biyografi */}
+            <section className="tp-card" style={{ marginTop: 16 }}>
+              <form className="tp-form" onSubmit={saveBio}>
+                <div className="tp-section">
+                  <div className="tp-section-title">Biyografi / Tanıtım</div>
+                  <textarea
+                    placeholder="Kendinden ve tecrübenden kısaca bahset. (örn. 8 yıllık matematik öğretmeniyim, LGS-TYT-AYT hazırlık...)"
+                    rows={8}
+                    maxLength={BIO_MAX}
+                    value={profile.bio ?? ""}
+                    onChange={(e) => onChange("bio", e.target.value)}
+                  />
+                  <div className="tp-hint" style={{ textAlign: "right" }}>
+                    {bioLen}/{BIO_MAX}
+                  </div>
+                </div>
+                <div className="tp-actions">
+                  <button type="submit" disabled={bioSaving}>
+                    {bioSaving ? "Kaydediliyor…" : "Biyografiyi Kaydet"}
                   </button>
                 </div>
               </form>
