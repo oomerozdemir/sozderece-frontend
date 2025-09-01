@@ -1,3 +1,4 @@
+// src/pages/AccountPage.jsx
 import { useEffect, useState } from "react";
 import { FiHome, FiUser, FiPackage, FiLogOut, FiEdit2, FiMenu, FiCheckCircle, FiXCircle } from "react-icons/fi";
 import axios from "../utils/axios";
@@ -23,19 +24,25 @@ const AccountPage = () => {
   const [editingClass, setEditingClass] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // eksik alan sayısı (email hariç)
+  // ---- Yardımcılar
+  const isStudentRole = (u) => ((u?.role || "").toLowerCase() === "student");
+
+  // eksik alan sayısı (rol bazlı)
   const calcMissing = (u) => {
     let m = 0;
     if (!u?.phone) m++;
-    if (!u?.grade) m++;
-    if (["9", "10", "11", "12", "Mezun"].includes(u?.grade) && !u?.track) m++;
+    if (isStudentRole(u)) {
+      if (!u?.grade) m++;
+      if (["9", "10", "11", "12", "Mezun"].includes(u?.grade) && !u?.track) m++;
+    }
     return m;
   };
 
-  // form bazlı canlı eksikler
+  // form bazlı canlı eksikler (rol bazlı)
+  const roleIsStudent = isStudentRole(user);
   const missingPhone = !form.phone;
-  const missingGrade = !form.grade;
-  const missingTrack = ["9", "10", "11", "12", "Mezun"].includes(form.grade) && !form.track;
+  const missingGrade = roleIsStudent ? !form.grade : false;
+  const missingTrack = roleIsStudent && ["9", "10", "11", "12", "Mezun"].includes(form.grade) && !form.track;
   const liveMissingCount =
     (missingPhone ? 1 : 0) + (missingGrade ? 1 : 0) + (missingTrack ? 1 : 0);
 
@@ -78,8 +85,12 @@ const AccountPage = () => {
     try {
       const token = localStorage.getItem("token");
       const cleanedForm = {
-        ...form,
-        track: ["9", "10", "11", "12", "Mezun"].includes(form.grade) ? form.track : null,
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        // Sadece öğrenci ise sınıf/alan gönder
+        grade: roleIsStudent ? form.grade : null,
+        track: roleIsStudent && ["9", "10", "11", "12", "Mezun"].includes(form.grade) ? form.track : null,
       };
       const res = await axios.put("/api/auth/update-profile", cleanedForm, {
         headers: { Authorization: `Bearer ${token}` },
@@ -217,7 +228,7 @@ const AccountPage = () => {
           <form onSubmit={handleUpdate} className="accountPage-info-card modern-form">
             <div className="accountPage-sectionHeader">
               <h3>Kişisel Bilgiler</h3>
-              {user.grade && user.track ? (
+              {roleIsStudent && user.grade && user.track ? (
                 <button type="button" className="accountPage-linkBtn" onClick={() => setEditingClass(true)}>
                   <FiEdit2 /> Sınıf / Alanı Değiştir
                 </button>
@@ -225,18 +236,18 @@ const AccountPage = () => {
             </div>
 
             <div className="accountPage-form-group">
-               <label>
-              Adınız &amp; Soyadınız{" "}
-              {!form.name ? (
-                <span className="field-hint field-hint--missing">
-                  <FiXCircle aria-label="Eksik" />
-                </span>
-              ) : (
-                <span className="field-hint field-hint--ok">
-                  <FiCheckCircle aria-label="Tamam" />
-                </span>
-              )}
-            </label>
+              <label>
+                Adınız &amp; Soyadınız{" "}
+                {!form.name ? (
+                  <span className="field-hint field-hint--missing">
+                    <FiXCircle aria-label="Eksik" />
+                  </span>
+                ) : (
+                  <span className="field-hint field-hint--ok">
+                    <FiCheckCircle aria-label="Tamam" />
+                  </span>
+                )}
+              </label>
               <input
                 type="text"
                 value={form.name}
@@ -272,18 +283,18 @@ const AccountPage = () => {
             </div>
 
             <div className="accountPage-form-group">
-                        <label>
-            Telefon Numarası{" "}
-            {missingPhone ? (
-              <span className="field-hint field-hint--missing">
-                <FiXCircle aria-label="Eksik" />
-              </span>
-            ) : (
-              <span className="field-hint field-hint--ok">
-                <FiCheckCircle aria-label="Tamam" />
-              </span>
-            )}
-            </label>
+              <label>
+                Telefon Numarası{" "}
+                {missingPhone ? (
+                  <span className="field-hint field-hint--missing">
+                    <FiXCircle aria-label="Eksik" />
+                  </span>
+                ) : (
+                  <span className="field-hint field-hint--ok">
+                    <FiCheckCircle aria-label="Tamam" />
+                  </span>
+                )}
+              </label>
               <input
                 type="tel"
                 value={form.phone}
@@ -293,74 +304,78 @@ const AccountPage = () => {
               />
             </div>
 
-            {!editingClass && user.grade && user.track ? (
-              <div className="accountPage-previewBlock">
-                🎓 Sınıf: <strong>{user.grade}</strong> | Alan: <strong>{user.track}</strong>
-                <button type="button" className="accountPage-linkBtn" onClick={() => setEditingClass(true)}>
-                  <FiEdit2 /> Değiştir
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="accountPage-form-group">
-                  <label>
-              Sınıfınız{" "}
-              {missingGrade ? (
-                <span className="field-hint field-hint--missing">
-                  <FiXCircle aria-label="Eksik" />
-                </span>
-              ) : ( 
-                  <span className="field-hint field-hint--ok">
-                  <FiCheckCircle aria-label="Tamam" />
-                </span>
-            )}
-            </label>
-                  <select
-                    value={form.grade}
-                    onChange={(e) => setForm({ ...form, grade: e.target.value })}
-                    className={missingGrade ? "input-missing" : ""}
-                  >
-                    <option value="">Sınıf Seçin</option>
-                    <option value="5">5. Sınıf</option>
-                    <option value="6">6. Sınıf</option>
-                    <option value="7">7. Sınıf</option>
-                    <option value="8">8. Sınıf</option>
-                    <option value="9">9. Sınıf</option>
-                    <option value="10">10. Sınıf</option>
-                    <option value="11">11. Sınıf</option>
-                    <option value="12">12. Sınıf</option>
-                    <option value="Mezun">Mezun</option>
-                  </select>
+            {/* ---- Sınıf / Alan sadece öğrenci rolünde görünür ---- */}
+            {roleIsStudent && (
+              !editingClass && user.grade && user.track ? (
+                <div className="accountPage-previewBlock">
+                  🎓 Sınıf: <strong>{user.grade}</strong> | Alan: <strong>{user.track}</strong>
+                  <button type="button" className="accountPage-linkBtn" onClick={() => setEditingClass(true)}>
+                    <FiEdit2 /> Değiştir
+                  </button>
                 </div>
-
-                {["9", "10", "11", "12", "Mezun"].includes(form.grade) && (
+              ) : (
+                <>
                   <div className="accountPage-form-group">
-                   <label>
-                    Alanınız{" "}
-                    {missingTrack ? (
-                      <span className="field-hint field-hint--missing">
-                        <FiXCircle aria-label="Eksik" />
-                      </span>
-                    ) : (
-                      <span className="field-hint field-hint--ok">
-                        <FiCheckCircle aria-label="Tamam" />
-                      </span>
-                    )}
-                  </label>
+                    <label>
+                      Sınıfınız{" "}
+                      {missingGrade ? (
+                        <span className="field-hint field-hint--missing">
+                          <FiXCircle aria-label="Eksik" />
+                        </span>
+                      ) : (
+                        <span className="field-hint field-hint--ok">
+                          <FiCheckCircle aria-label="Tamam" />
+                        </span>
+                      )}
+                    </label>
                     <select
-                      value={form.track}
-                      onChange={(e) => setForm({ ...form, track: e.target.value })}
-                      className={missingTrack ? "input-missing" : ""}
+                      value={form.grade}
+                      onChange={(e) => setForm({ ...form, grade: e.target.value })}
+                      className={missingGrade ? "input-missing" : ""}
                     >
-                      <option value="">Alan Seçin</option>
-                      <option value="Sayısal">Sayısal</option>
-                      <option value="Eşit Ağırlık">Eşit Ağırlık</option>
-                      <option value="Sözel">Sözel</option>
+                      <option value="">Sınıf Seçin</option>
+                      <option value="5">5. Sınıf</option>
+                      <option value="6">6. Sınıf</option>
+                      <option value="7">7. Sınıf</option>
+                      <option value="8">8. Sınıf</option>
+                      <option value="9">9. Sınıf</option>
+                      <option value="10">10. Sınıf</option>
+                      <option value="11">11. Sınıf</option>
+                      <option value="12">12. Sınıf</option>
+                      <option value="Mezun">Mezun</option>
                     </select>
                   </div>
-                )}
-              </>
+
+                  {["9", "10", "11", "12", "Mezun"].includes(form.grade) && (
+                    <div className="accountPage-form-group">
+                      <label>
+                        Alanınız{" "}
+                        {missingTrack ? (
+                          <span className="field-hint field-hint--missing">
+                            <FiXCircle aria-label="Eksik" />
+                          </span>
+                        ) : (
+                          <span className="field-hint field-hint--ok">
+                            <FiCheckCircle aria-label="Tamam" />
+                          </span>
+                        )}
+                      </label>
+                      <select
+                        value={form.track}
+                        onChange={(e) => setForm({ ...form, track: e.target.value })}
+                        className={missingTrack ? "input-missing" : ""}
+                      >
+                        <option value="">Alan Seçin</option>
+                        <option value="Sayısal">Sayısal</option>
+                        <option value="Eşit Ağırlık">Eşit Ağırlık</option>
+                        <option value="Sözel">Sözel</option>
+                      </select>
+                    </div>
+                  )}
+                </>
+              )
             )}
+            {/* ---- /Sadece öğrenci ---- */}
 
             <button type="submit" className="accountPage-update-button">
               Bilgileri Güncelle
