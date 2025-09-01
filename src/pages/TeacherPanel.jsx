@@ -68,6 +68,8 @@ export default function TeacherPanel() {
         priceF2F: profile.priceF2F ?? null,
         bio: profile.bio ?? "",
         isPublic: !!profile.isPublic,
+        subjects: selectedSubjects,
+        grades: selectedGrades,
       };
       await axios.put("/api/v1/ogretmen/me/profil", payload);
       setMsg("Kaydedildi.");
@@ -164,6 +166,55 @@ export default function TeacherPanel() {
   }
 };
 
+
+// Panelde seçim için sabit listeler 
+const SUBJECTS = [
+  "Matematik","Fen Bilimleri","Türkçe","Tarih","Coğrafya",
+  "Fizik","Kimya","Biyoloji","İngilizce","Almanca","Geometri","Edebiyat","Bilgisayar"
+];
+const GRADES = ["İlkokul","Ortaokul","Lise","Üniversite","Mezun"];
+
+// güvenli başlangıç
+const safeArr = (v) => Array.isArray(v) ? v : [];
+
+// chips için toggle/add/remove yardımcıları
+const toggleInArray = (key, value) => {
+  setProfile((p) => {
+    const arr = new Set(safeArr(p?.[key]));
+    arr.has(value) ? arr.delete(value) : arr.add(value);
+    return { ...p, [key]: Array.from(arr) };
+  });
+};
+const addOne = (key, value) => {
+  if (!value) return;
+  setProfile((p) => {
+    const arr = new Set(safeArr(p?.[key]));
+    arr.add(value);
+    return { ...p, [key]: Array.from(arr) };
+  });
+};
+const removeOne = (key, value) => {
+  setProfile((p) => {
+    const arr = new Set(safeArr(p?.[key]));
+    arr.delete(value);
+    return { ...p, [key]: Array.from(arr) };
+  });
+};
+
+
+const selectedSubjects = safeArr(profile?.subjects);
+const selectedGrades   = safeArr(profile?.grades);
+
+const availableSubjects = useMemo(
+  () => SUBJECTS.filter(s => !selectedSubjects.includes(s)),
+  [selectedSubjects]
+);
+const availableGrades = useMemo(
+  () => GRADES.filter(g => !selectedGrades.includes(g)),
+  [selectedGrades]
+);
+
+
   return (
     <>
       <Navbar />
@@ -235,6 +286,101 @@ export default function TeacherPanel() {
 
             {/* Sağ ana form */}
             <section className="tp-card">
+                {/* Ders Alanları & Seviyeler */}
+<div className="tp-section">
+  <div className="tp-section-title">Ders Alanları & Seviyeler</div>
+
+  {/* Ders Alanları */}
+  <label className="tp-label">Ders Alanların</label>
+  <div className="tp-chips">
+    {selectedSubjects.length === 0 && <span className="tp-chip ghost">Henüz eklenmedi</span>}
+    {selectedSubjects.map((s) => (
+      <span key={s} className="tp-chip">
+        {s}
+        <button type="button" className="tp-chip-x" onClick={() => removeOne("subjects", s)} aria-label={`${s} sil`}>×</button>
+      </span>
+    ))}
+  </div>
+
+  <div className="tp-grid-2 tp-mt8">
+    <div>
+      <label className="tp-sublabel">Ders Alanı Ekle</label>
+      <div className="tp-inline">
+        <select id="add-subject-select" defaultValue="">
+          <option value="">Seçiniz</option>
+          {availableSubjects.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={() => {
+            const sel = document.getElementById("add-subject-select")?.value;
+            addOne("subjects", sel);
+          }}
+        >
+          Ekle
+        </button>
+      </div>
+    </div>
+
+    {/* Seviyeler */}
+    <div>
+      <label className="tp-sublabel">Seviye (Sınıf) Ekle</label>
+      <div className="tp-inline">
+        <select id="add-grade-select" defaultValue="">
+          <option value="">Seçiniz</option>
+          {availableGrades.map((g) => (
+            <option key={g} value={g}>{g}</option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={() => {
+            const sel = document.getElementById("add-grade-select")?.value;
+            addOne("grades", sel);
+          }}
+        >
+          Ekle
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {/*  hızlı seçim alanı */}
+  <div className="tp-mt8">
+    <label className="tp-label small">Hızlı Seçim</label>
+    <div className="tp-chips">
+      {SUBJECTS.map((s) => (
+        <button
+          type="button"
+          key={s}
+          className={`tp-chip ${selectedSubjects.includes(s) ? "active" : ""}`}
+          onClick={() => toggleInArray("subjects", s)}
+        >
+          {s}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div className="tp-mt8">
+    <label className="tp-label small">Seviye Hızlı Seçim</label>
+    <div className="tp-chips">
+      {GRADES.map((g) => (
+        <button
+          type="button"
+          key={g}
+          className={`tp-chip ${selectedGrades.includes(g) ? "active" : ""}`}
+          onClick={() => toggleInArray("grades", g)}
+        >
+          {g}
+        </button>
+      ))}
+    </div>
+  </div>
+</div>
+
               <form className="tp-form" onSubmit={save}>
                 {/* Lokasyon */}
                 <div className="tp-section">

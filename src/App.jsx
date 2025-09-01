@@ -136,13 +136,16 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
       -gelen özel ders taleplerini görüntüleme(ogrenci kısmı halledilirken eşzamanlı)
       -taleplerı onaylama(ogrenci kısmı halledilirken eşzamanlı)
       -ogretmenler frontend de gozuktugunde resim yukleme sinirlamalarini gerekliyse yapalim. ✅
+      -ogretmen panelınde ogretmenın verebıldıgı ders alanını gorme ve duzenleyıp sılme ıslemlerını ekleyelım.
+      -yuzyuze ders veryor ıse ogretmen ders verıcegı alanları duzenleyecegı bır yer ekleyelım.
+      -
       gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
   
   4-gırıs yaparken vesaıre sıfre sıfırlama sıfremı unuttum gıbı klasık şeylerı ekleyelım ✅
   5-ogretmen olarak gırıs yaptıgında hesabım kısmında sınıf sectırıyor buna gerek yok ✅
   6-sıparıslerım yonlendırmesı var bunu sadece ogrencıyse gosterelım ✅
-  7-yıne hesabım sayfasında user rolune gore panel yonlendırmesı yapalım
-  8-aynı sekılde navbarda da sıparıslerım gozukmesın ogrencı degılse
+  7-yıne hesabım sayfasında user rolune gore panel yonlendırmesı yapalım ✅
+  8-aynı sekılde navbarda da sıparıslerım gozukmesın ogrencı degılse ✅
   9-ogretmen kayıt olurken fıyat belırlerken ona onerı yapalım size benzer öğretmenler şu aralıkta(min-max) fiyat belirledi diye
   10-Ogrenci tarafida yapilirken randevu kismini iki tarafli onaylamalari vesaire kontrol et ve yap
 
