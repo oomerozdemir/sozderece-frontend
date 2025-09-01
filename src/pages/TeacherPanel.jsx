@@ -16,7 +16,7 @@ export default function TeacherPanel() {
   const [msg, setMsg] = useState("");
   const fileRef = useRef(null);
 
-  // Şifre değiştir alanı
+  // Şifre değiştir alanı (duruyor)
   const [pwd, setPwd] = useState({ current: "", next: "", next2: "" });
   const [pwdLoading, setPwdLoading] = useState(false);
 
@@ -61,26 +61,19 @@ export default function TeacherPanel() {
     });
   }, [profile?.city, districts]);
 
-  // Profil kaydet
-  const save = async (e) => {
-    e.preventDefault();
+  // Sadece lokasyon kaydı
+  const saveLocation = async () => {
     if (!profile) return;
     setSaving(true);
     setMsg("");
     try {
-      const payload = {
+      await axios.put("/api/v1/ogretmen/me/profil", {
         city: profile.city,
         district: profile.district,
-        mode: profile.mode,
-        priceOnline: profile.priceOnline ?? null,
-        priceF2F: profile.priceF2F ?? null,
-        bio: profile.bio ?? "",
-        isPublic: !!profile.isPublic,
-      };
-      await axios.put("/api/v1/ogretmen/me/profil", payload);
-      setMsg("Kaydedildi.");
+      });
+      setMsg("Lokasyon güncellendi.");
     } catch (e) {
-      setMsg(e?.response?.data?.message || "Kaydedilemedi.");
+      setMsg(e?.response?.data?.message || "Lokasyon kaydedilemedi.");
     } finally {
       setSaving(false);
     }
@@ -154,15 +147,10 @@ export default function TeacherPanel() {
     );
   }
 
-  const modeKey = String(profile.mode || "").toUpperCase();
-  const isOnlineOnly = modeKey === "ONLINE";
-  const isFaceOnly = modeKey === "FACE_TO_FACE";
-  const both = modeKey === "BOTH";
-
   const fullName = `${profile.firstName || ""} ${profile.lastName || ""}`.trim();
   const initial = (profile.firstName?.[0] || "").toUpperCase();
 
-  // Derslerim sekmesinde profil.mode'u güncelleyen handler
+  // Derslerim sekmesinde profil.mode'u güncelleyen handler (TeacherLessons kullanıyor)
   const updateMode = async (nextMode) => {
     try {
       await axios.put("/api/v1/ogretmen/me/profil", { mode: nextMode });
@@ -242,7 +230,7 @@ export default function TeacherPanel() {
               </div>
             </aside>
 
-            {/* Sağ taraf — 1) ÜSTTE sekmeli alan (Derslerim dahil) */}
+            {/* Sağ: ÜSTTE sekmeler + LOKASYON satırı + içerik */}
             <section className="tp-card">
               <div className="tp-tabs">
                 <button
@@ -275,6 +263,57 @@ export default function TeacherPanel() {
                 </button>
               </div>
 
+              {/* LOKASYON — sekmelerin hemen altında, satır içi */}
+              <div
+                className="tp-grid-2"
+                style={{
+                  gap: 12,
+                  alignItems: "end",
+                  margin: "12px 0 16px 0"
+                }}
+              >
+                <div>
+                  <label className="tp-label">İl</label>
+                  <select
+                    value={profile.city || ""}
+                    onChange={(e) => onChange("city", e.target.value)}
+                  >
+                    <option value="">İl seçin</option>
+                    {TR_CITIES.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="tp-label">İlçe</label>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <select
+                      value={districts.includes(profile.district) ? profile.district : ""}
+                      onChange={(e) => onChange("district", e.target.value)}
+                      disabled={!profile.city || districts.length === 0}
+                      style={{ flex: 1 }}
+                    >
+                      <option value="">
+                        {!profile.city
+                          ? "Önce il seçin"
+                          : districts.length
+                          ? "İlçe seçin"
+                          : "Bu il için ilçe listesi yakında"}
+                      </option>
+                      {districts.map((d) => (
+                        <option key={d} value={d}>{d}</option>
+                      ))}
+                    </select>
+
+                    <button type="button" onClick={saveLocation} disabled={saving}>
+                      {saving ? "Kaydediliyor…" : "Konumu Kaydet"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* SEKME İÇERİKLERİ */}
               {tab === "availability" && (
                 <AvailabilityEditor
                   avail={avail}
@@ -313,116 +352,7 @@ export default function TeacherPanel() {
               )}
             </section>
 
-            {/* Sağ taraf — 2) PROFİL FORMU (Lokasyon, Mod/Fiyat, Bio) */}
-            <section className="tp-card" style={{ marginTop: 16 }}>
-              <form className="tp-form" onSubmit={save}>
-                {/* Lokasyon */}
-                <div className="tp-section">
-                  <div className="tp-section-title">Lokasyon</div>
-                  <div className="tp-grid-2">
-                    <div>
-                      <label className="tp-label">İl</label>
-                      <select
-                        value={profile.city || ""}
-                        onChange={(e) => onChange("city", e.target.value)}
-                      >
-                        <option value="">İl seçin</option>
-                        {TR_CITIES.map((c) => (
-                          <option key={c} value={c}>{c}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="tp-label">İlçe</label>
-                      <select
-                        value={districts.includes(profile.district) ? profile.district : ""}
-                        onChange={(e) => onChange("district", e.target.value)}
-                        disabled={!profile.city || districts.length === 0}
-                      >
-                        <option value="">
-                          {!profile.city
-                            ? "Önce il seçin"
-                            : districts.length
-                            ? "İlçe seçin"
-                            : "Bu il için ilçe listesi yakında"}
-                        </option>
-                        {districts.map((d) => (
-                          <option key={d} value={d}>{d}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Ders Modu & Fiyat */}
-                <div className="tp-section">
-                  <div className="tp-section-title">Ders Modu & Fiyat</div>
-                  <label className="tp-label">Ders Modu</label>
-                  <select
-                    value={profile.mode}
-                    onChange={(e) => onChange("mode", e.target.value)}
-                  >
-                    <option value="ONLINE">Online</option>
-                    <option value="FACE_TO_FACE">Yüz yüze</option>
-                    <option value="BOTH">Her ikisi</option>
-                  </select>
-
-                  <div className="tp-grid-2 tp-mt8">
-                    {(isOnlineOnly || both) && (
-                      <div>
-                        <label className="tp-sublabel">Online Fiyat (₺)</label>
-                        <input
-                          type="number"
-                          placeholder="Online ders ücreti"
-                          value={profile.priceOnline ?? ""}
-                          onChange={(e) =>
-                            onChange("priceOnline", e.target.value ? Number(e.target.value) : null)
-                          }
-                          min={0}
-                          required={isOnlineOnly}
-                        />
-                      </div>
-                    )}
-
-                    {(isFaceOnly || both) && (
-                      <div>
-                        <label className="tp-sublabel">Yüz Yüze Fiyat (₺)</label>
-                        <input
-                          type="number"
-                          placeholder="Yüz yüze ders ücreti"
-                          value={profile.priceF2F ?? ""}
-                          onChange={(e) =>
-                            onChange("priceF2F", e.target.value ? Number(e.target.value) : null)
-                          }
-                          min={0}
-                          required={isFaceOnly}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Bio */}
-                <div className="tp-section">
-                  <div className="tp-section-title">Kısa Tanıtım</div>
-                  <textarea
-                    placeholder="Kendinden ve tecrübenden kısaca bahset..."
-                    value={profile.bio ?? ""}
-                    onChange={(e) => onChange("bio", e.target.value)}
-                    rows={5}
-                  />
-                </div>
-
-                <div className="tp-actions">
-                  <button type="submit" disabled={saving}>
-                    {saving ? "Kaydediliyor..." : "Kaydet"}
-                  </button>
-                </div>
-              </form>
-            </section>
-
-            {/* Sağ taraf — 3) ŞİFRE DEĞİŞTİR */}
+            {/* ŞİFRE DEĞİŞTİR — duruyor */}
             <section className="tp-card" style={{ marginTop: 16 }}>
               <form className="tp-form" onSubmit={changePassword}>
                 <div className="tp-section">
