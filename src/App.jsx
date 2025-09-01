@@ -140,7 +140,7 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   
   4-gırıs yaparken vesaıre sıfre sıfırlama sıfremı unuttum gıbı klasık şeylerı ekleyelım ✅
   5-ogretmen olarak gırıs yaptıgında hesabım kısmında sınıf sectırıyor buna gerek yok ✅
-  6-sıparıslerım yonlendırmesı var bunu sadece ogrencıyse gosterelım
+  6-sıparıslerım yonlendırmesı var bunu sadece ogrencıyse gosterelım ✅
   7-yıne hesabım sayfasında user rolune gore panel yonlendırmesı yapalım
   8-aynı sekılde navbarda da sıparıslerım gozukmesın ogrencı degılse
   9-ogretmen kayıt olurken fıyat belırlerken ona onerı yapalım size benzer öğretmenler şu aralıkta(min-max) fiyat belirledi diye

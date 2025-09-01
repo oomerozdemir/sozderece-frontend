@@ -1,6 +1,5 @@
-// src/pages/AccountPage.jsx
 import { useEffect, useState } from "react";
-import { FiHome, FiUser, FiPackage, FiLogOut, FiEdit2, FiMenu, FiCheckCircle, FiXCircle } from "react-icons/fi";
+import { FiHome, FiUser, FiPackage, FiLogOut, FiEdit2, FiMenu, FiCheckCircle, FiXCircle, FiGrid } from "react-icons/fi";
 import axios from "../utils/axios";
 import "../cssFiles/account.css";
 
@@ -168,6 +167,24 @@ const AccountPage = () => {
   if (!user && !error) return <p className="accountPage-loading">Yükleniyor...</p>;
   if (error) return <p className="accountPage-error">{error}</p>;
 
+
+  const roleLower = (user?.role || "").toLowerCase();
+const panelItem = (() => {
+  switch (roleLower) {
+    case "student":
+      return { href: "/student/dashboard", label: "Öğrenci Paneli" };
+    case "coach":
+      return { href: "/coach/dashboard", label: "Koç Paneli" };
+    case "teacher":
+      return { href: "/ogretmen/panel/profil", label: "Öğretmen Paneli" };
+    case "admin":
+      return { href: "/admin", label: "Admin Paneli" };
+    default:
+      return null;
+  }
+})();
+
+
   return (
     <div className="accountPage-shell">
       {/* Mobil başlık + menü */}
@@ -195,6 +212,14 @@ const AccountPage = () => {
         <a href="/orders"><FiPackage /> <span>Siparişlerim</span></a>
       </li>
     )}
+
+    {panelItem && (
+  <li>
+    <a href={panelItem.href}>
+      <FiGrid /> <span>{panelItem.label}</span>
+    </a>
+  </li>
+)}
 
     <li className="logout-li">
       <button onClick={() => { localStorage.clear(); window.location.href = "/login"; }} className="accountPage-logoutBtn">
