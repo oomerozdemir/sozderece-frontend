@@ -49,6 +49,9 @@ const TeacherRegister = lazy(() => import("./pages/TeacherRegister.jsx"));
 const TeachersList = lazy(() => import("./pages/TeacherList.jsx"));
 const TeacherDetail = lazy(() => import("./pages/TeacherDetail.jsx"));
 
+const LessonRequest = lazy(() => import("./pages/LessonRequest.jsx"));
+const PackageSelect = lazy(() => import("./pages/TutorPackageSelect.jsx"));
+
 function App() {
   const location = useLocation();
 
@@ -101,6 +104,13 @@ function App() {
             <Route path="/ogretmenler" element={<TeachersList />} />
             <Route path="/ogretmenler/:slug" element={<TeacherDetail />} />
 
+
+            {/* Öğrenci → Öğretmenden ders talebi formu */}
+            <Route path="/ogretmenler/:slug/talep" element={<LessonRequest />} />
+
+            {/* Paket seçim sayfası (talep sonrası) */}
+            <Route path="/ozel-ders-paketler" element={<PackageSelect />} />
+
             {/* Admin */}
             <Route path="/admin/*" element={<RoleRoute allowedRoles={["admin"]}><AdminApp /></RoleRoute>} />
             <Route path="/admin/coaches" element={<RoleRoute allowedRoles={["admin"]}><AdminCoachPage /></RoleRoute>} />
@@ -136,8 +146,8 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
       -gelen özel ders taleplerini görüntüleme(ogrenci kısmı halledilirken eşzamanlı)
       -taleplerı onaylama(ogrenci kısmı halledilirken eşzamanlı)
       -ogretmenler frontend de gozuktugunde resim yukleme sinirlamalarini gerekliyse yapalim. ✅
-      -ogretmen panelınde ogretmenın verebıldıgı ders alanını gorme ve duzenleyıp sılme ıslemlerını ekleyelım.
-      -yuzyuze ders veryor ıse ogretmen ders verıcegı alanları duzenleyecegı bır yer ekleyelım.
+      -ogretmen panelınde ogretmenın verebıldıgı ders alanını gorme ve duzenleyıp sılme ıslemlerını ekleyelım. ✅
+      -yuzyuze ders veryor ıse ogretmen ders verıcegı alanları duzenleyecegı bır yer ekleyelım. ✅
       -
       gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
   
