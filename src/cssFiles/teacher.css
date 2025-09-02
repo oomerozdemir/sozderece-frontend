@@ -1,40 +1,222 @@
-.teachers-page { max-width: 1080px; margin: 24px auto; padding: 0 16px; }
-.filters { display: grid; grid-template-columns: repeat(8,1fr); gap: 10px; margin-bottom: 14px; }
-.filters input, .filters select { padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 10px; }
+/* ================================
+   TEACHER LIST (tl-*)
+   ================================ */
 
-.grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
-.teacher-card { display: block; border: 1px solid #e5e7eb; border-radius: 14px; overflow: hidden; text-decoration: none; color: inherit; background: #fff; }
-.teacher-card img { width: 100%; height: 180px; object-fit: cover; }
-.teacher-card .meta { padding: 12px; }
-.teacher-card .name { font-weight: 700; margin-bottom: 4px; }
-.teacher-card .subj { color: #4b5563; font-size: .9rem; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.teacher-card .row { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
-.teacher-card .row.small { font-size: .9rem; color: #374151; }
-.badge { background:#eef2ff; color:#1f2937; padding: 4px 8px; border-radius: 999px; font-size: .8rem; }
-.price { font-weight: 700; }
+.tl-page {
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 0 16px;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: #222;
+}
 
-.pager { display: flex; gap: 10px; align-items: center; justify-content: center; padding: 16px 0; }
-.pager button { padding: 8px 12px; border-radius: 10px; border: 1px solid #e5e7eb; background: #fff; }
-.loading { padding: 24px; text-align: center; }
+/* Filter bar */
+.tl-filters {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+  position: sticky;
+  top: 8px;
+  z-index: 1;
+}
+.tl-filters input,
+.tl-filters select {
+  width: 100%;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  outline: none;
+}
+.tl-filters input:focus,
+.tl-filters select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
 
-/* Teacher Login Css */
+/* Grid */
+.tl-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* Card */
+.tl-card {
+  display: grid;
+  grid-template-rows: 160px 1fr;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  background: #fff;
+  overflow: hidden;
+  transition: box-shadow .2s ease, transform .08s ease;
+}
+.tl-card:hover {
+  box-shadow: 0 8px 28px rgba(16,24,40,0.08);
+  transform: translateY(-2px);
+}
+.tl-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  background: #f5f5f5;
+}
+.tl-card .tl-meta {
+  padding: 12px;
+  display: grid;
+  gap: 6px;
+}
+.tl-card .tl-name {
+  font-weight: 700;
+  font-size: 16px;
+}
+.tl-card .tl-subj {
+  font-size: 13px;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tl-card .tl-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+.tl-card .tl-row.small {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Badge/price */
+.tl-badge {
+  font-size: 12px;
+  background: #eef2ff;
+  color: #3730a3;
+  border: 1px solid #e0e7ff;
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+.tl-price {
+  font-weight: 600;
+}
+
+/* CTA */
+.tl-card .tl-cta {
+  margin-top: 8px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #111827;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s ease, transform .05s ease;
+}
+.tl-card .tl-cta:hover { background: #0b1220; }
+.tl-card .tl-cta:active { transform: translateY(1px); }
+
+/* Pager */
+.tl-pager {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+}
+.tl-pager button {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+}
+.tl-pager button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* Loading */
+.tl-loading {
+  padding: 24px;
+  text-align: center;
+}
+
+/* Responsive (list) */
+@media (max-width: 960px) {
+  .tl-filters { grid-template-columns: repeat(2, 1fr); }
+  .tl-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .tl-grid { grid-template-columns: 1fr; }
+}
+
+/* ================================
+   TEACHER DETAIL (td-*)
+   ================================ */
+
+.td-page {
+  max-width: 960px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+.td-header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.td-photo {
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #f3f4f6;
+  border: 1px solid #eee;
+}
+.td-meta {
+  display: grid;
+  gap: 4px;
+}
+.td-cta {
+  margin-top: 16px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #111827;
+  color: #fff;
+  font-weight: 600;
+  padding: 0 16px;
+  cursor: pointer;
+}
+.td-cta:hover { background: #0b1220; }
+
+/* ================================
+   TEACHER LOGIN (tlogin-*)
+   ================================ */
+
 .tlogin {
-  min-height: calc(100vh - 70px); /* navbar yüksekliğine göre ayarla */
+  min-height: calc(100vh - 70px);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(1200px 500px at 10% -10%, #eef2ff 0%, transparent 60%),
-              radial-gradient(1000px 400px at 110% 10%, #fff7ed 0%, transparent 60%),
-              #ffffff;
+  background:
+    radial-gradient(1200px 500px at 10% -10%, #eef2ff 0%, transparent 60%),
+    radial-gradient(1000px 400px at 110% 10%, #fff7ed 0%, transparent 60%),
+    #ffffff;
 }
-
 .tlogin-container {
   width: 100%;
   max-width: 520px;
   padding: 24px 16px;
 }
-
-/* Kart */
 .tlogin-card {
   background: #ffffff;
   border: 1px solid #e5e7eb;
@@ -42,8 +224,6 @@
   padding: 22px 18px;
   box-shadow: 0 12px 24px rgba(2, 9, 95, 0.08);
 }
-
-/* Başlık & alt başlık */
 .tlogin-title {
   margin: 0 0 6px;
   font-size: 1.6rem;
@@ -55,8 +235,6 @@
   color: #475569;
   font-size: 0.95rem;
 }
-
-/* Input & hata */
 .tlogin-input {
   width: 100%;
   margin: 8px 0;
@@ -70,7 +248,6 @@
   border-color: #02095f;
   box-shadow: 0 0 0 4px rgba(2, 9, 95, 0.08);
 }
-
 .error-message {
   background: #fee2e2;
   border: 1px solid #fecaca;
@@ -79,8 +256,6 @@
   border-radius: 10px;
   margin: 8px 0 6px;
 }
-
-/* Buton */
 .tlogin-btn {
   width: 100%;
   margin-top: 6px;
@@ -94,8 +269,6 @@
 }
 .tlogin-btn:hover { background: #ec5802; transform: translateY(-1px); }
 .tlogin-btn:disabled { opacity: .65; cursor: not-allowed; }
-
-/* Alt linkler */
 .tlogin-footer {
   margin-top: 12px;
   display: flex;
@@ -122,15 +295,111 @@
 
 
 
-
-
-@media (max-width: 900px){
-  .filters { grid-template-columns: repeat(2,1fr); }
-  .grid { grid-template-columns: repeat(1,1fr); }
- 
+/* ================================
+   TutorPackageSelect 
+   ================================ */
+.pkc-container {
+  max-width: 960px;
+  margin: 24px auto;
+  padding: 0 16px;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
+.pkc-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
 
+.pkc-empty {
+  border: 1px dashed #d1d5db;
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 12px;
+  color: #6b7280;
+}
+
+.pkc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+@media (max-width: 720px){
+  .pkc-grid { grid-template-columns: 1fr; }
+}
+
+.pkc-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  cursor: pointer;
+  transition: box-shadow .15s ease, transform .05s ease;
+}
+.pkc-card:hover {
+  box-shadow: 0 8px 28px rgba(16,24,40,.08);
+  transform: translateY(-1px);
+}
+.pkc-card input[type="radio"] {
+  margin-top: 4px;
+}
+.pkc-card.is-selected {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+
+.pkc-card-title {
+  font-weight: 700;
+}
+.pkc-subtitle {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 2px;
+}
+.pkc-price {
+  margin-top: 8px;
+  font-weight: 800;
+  font-size: 18px;
+}
+.pkc-price-text {
+  font-weight: 500;
+  font-size: 12px;
+  color: #6b7280;
+  margin-left: 6px;
+}
+
+.pkc-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+.pkc-btn {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #111827;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+.pkc-btn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+.pkc-btn:hover { background: #0b1220; }
+
+
+
+
+
+
+/* Responsive (login tweaks) */
 @media (max-width: 640px) {
   .tlogin-card { padding: 18px 14px; }
   .tlogin-title { font-size: 1.4rem; }

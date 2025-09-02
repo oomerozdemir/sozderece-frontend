@@ -140,9 +140,12 @@ function TeacherCard({ t }) {
           <span>👁 {t.viewCount || 0}</span>
           <span>⭐ {t.ratingAverage?.toFixed?.(1) || "0.0"} ({t.ratingCount || 0})</span>
         </div>
-         <button onClick={() => navigate(`/ogretmenler/${t.slug}/talep`)}>
-              Ders talebi oluştur
-            </button>
+        <button className="cta-btn" onClick={(e) => {
+  e.preventDefault(); 
+  navigate(`/ogretmenler/${t.slug}/talep`);
+}}>
+  Ders talebi oluştur
+</button>
       </div>
     </Link>
   );

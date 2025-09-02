@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import { isTokenValid } from "../utils/auth";
+import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
 
 export default function LessonRequest() {
   const { slug } = useParams();
