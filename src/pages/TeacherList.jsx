@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
 import "../cssFiles/teacher.css";
@@ -17,6 +17,7 @@ const SORTS    = [
 ];
 
 export default function TeachersList() {
+  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
@@ -139,6 +140,9 @@ function TeacherCard({ t }) {
           <span>👁 {t.viewCount || 0}</span>
           <span>⭐ {t.ratingAverage?.toFixed?.(1) || "0.0"} ({t.ratingCount || 0})</span>
         </div>
+         <button onClick={() => navigate(`/ogretmenler/${t.slug}/talep`)}>
+              Ders talebi oluştur
+            </button>
       </div>
     </Link>
   );
