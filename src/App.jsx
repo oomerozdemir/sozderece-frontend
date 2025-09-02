@@ -49,6 +49,7 @@ const TeacherRegister = lazy(() => import("./pages/TeacherRegister.jsx"));
 const TeachersList = lazy(() => import("./pages/TeacherList.jsx"));
 const TeacherDetail = lazy(() => import("./pages/TeacherDetail.jsx"));
 
+// Öğrenci akışı
 const LessonRequest = lazy(() => import("./pages/LessonRequest.jsx"));
 const PackageSelect = lazy(() => import("./pages/TutorPackageSelect.jsx"));
 
@@ -104,12 +105,11 @@ function App() {
             <Route path="/ogretmenler" element={<TeachersList />} />
             <Route path="/ogretmenler/:slug" element={<TeacherDetail />} />
 
-
             {/* Öğrenci → Öğretmenden ders talebi formu */}
             <Route path="/ogretmenler/:slug/talep" element={<LessonRequest />} />
 
             {/* Paket seçim sayfası (talep sonrası) */}
-            <Route path="/ozel-ders-paketler" element={<PackageSelect />} />
+            <Route path="/paket-sec" element={<PackageSelect />} />
 
             {/* Admin */}
             <Route path="/admin/*" element={<RoleRoute allowedRoles={["admin"]}><AdminApp /></RoleRoute>} />
@@ -128,6 +128,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
