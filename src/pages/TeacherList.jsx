@@ -125,6 +125,8 @@ export default function TeachersList() {
         </>
       )}
     </div>
+    <Footer />
+
     </>
   );
 }
@@ -134,7 +136,6 @@ function TeacherCard({ t }) {
   const cover = t.photoUrl || "https://placehold.co/400x240?text=Teacher";
 
   return (
-    <>
     <Link to={`/ogretmenler/${t.slug}`} className="tl-card">
       <img src={cover} alt={`${t.firstName} ${t.lastName}`} />
       <div className="tl-meta">
@@ -168,7 +169,5 @@ function TeacherCard({ t }) {
         </button>
       </div>
     </Link>
-    <Footer />
-    </>
   );
 }
