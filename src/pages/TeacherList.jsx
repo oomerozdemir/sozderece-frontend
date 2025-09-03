@@ -17,7 +17,6 @@ const SORTS    = [
 ];
 
 export default function TeachersList() {
-  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
@@ -123,6 +122,8 @@ export default function TeachersList() {
 }
 
 function TeacherCard({ t }) {
+  const navigate = useNavigate();
+
   const cover = t.photoUrl || "https://placehold.co/400x240?text=Teacher";
   return (
     <Link to={`/ogretmenler/${t.slug}`} className="teacher-card">
@@ -140,12 +141,12 @@ function TeacherCard({ t }) {
           <span>👁 {t.viewCount || 0}</span>
           <span>⭐ {t.ratingAverage?.toFixed?.(1) || "0.0"} ({t.ratingCount || 0})</span>
         </div>
-        <button className="cta-btn" onClick={(e) => {
-  e.preventDefault(); 
-  navigate(`/ogretmenler/${t.slug}/talep`);
-}}>
-  Ders talebi oluştur
-</button>
+         <button
+                className="tl-cta"
+                onClick={() => navigate(`/ogretmenler/${t.slug}/talep`)}
+              >
+                Ders talebi oluştur
+              </button>
       </div>
     </Link>
   );

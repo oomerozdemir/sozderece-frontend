@@ -171,7 +171,10 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   -ogrenci de ayni sekilde dersi tamamlandi diye isaretler ve yorum degerlendirme yonlendirmesi yapilir ogrenciye.
   -bir chatbot yeri yapabiliriz ogretmen talebi onayladiginda konusabilecekleri ve iletisim saglayacaklari kolay bir yer olur.
   
-
+*******************************ogrenci tarafi hoca secerken ki sorunlar ==>***********************
+  1-ogretmene ozel sayfada css duzenlemesi ayni sekilde ogretmenler sayfasinda da
+  2-ogretmen profil sayfasinda fiyat bilgisi ogretmenin resmi ve hakkinda kisminin daha uzun olmasi
+  
 
 özel ders oğretmenı ve öğrenci koçu özel giriş ve kayıt yeri açıcaz
 öğrencilerin giriş yaptıgı yerden farklı olucak bu

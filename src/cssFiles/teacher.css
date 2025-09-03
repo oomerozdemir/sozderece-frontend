@@ -293,10 +293,8 @@
   text-decoration: underline;
 }
 
-
-
 /* ================================
-   TutorPackageSelect 
+   TUTOR PACKAGE SELECT (pkc-*)
    ================================ */
 .pkc-container {
   max-width: 960px;
@@ -304,13 +302,11 @@
   padding: 0 16px;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
-
 .pkc-title {
   font-size: 24px;
   font-weight: 800;
   margin-bottom: 12px;
 }
-
 .pkc-empty {
   border: 1px dashed #d1d5db;
   background: #f9fafb;
@@ -318,7 +314,6 @@
   border-radius: 12px;
   color: #6b7280;
 }
-
 .pkc-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0,1fr));
@@ -328,7 +323,6 @@
 @media (max-width: 720px){
   .pkc-grid { grid-template-columns: 1fr; }
 }
-
 .pkc-card {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
@@ -345,39 +339,16 @@
   box-shadow: 0 8px 28px rgba(16,24,40,.08);
   transform: translateY(-1px);
 }
-.pkc-card input[type="radio"] {
-  margin-top: 4px;
-}
+.pkc-card input[type="radio"] { margin-top: 4px; }
 .pkc-card.is-selected {
   border-color: #6366f1;
   box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
 }
-
-.pkc-card-title {
-  font-weight: 700;
-}
-.pkc-subtitle {
-  color: #6b7280;
-  font-size: 13px;
-  margin-top: 2px;
-}
-.pkc-price {
-  margin-top: 8px;
-  font-weight: 800;
-  font-size: 18px;
-}
-.pkc-price-text {
-  font-weight: 500;
-  font-size: 12px;
-  color: #6b7280;
-  margin-left: 6px;
-}
-
-.pkc-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 14px;
-}
+.pkc-card-title { font-weight: 700; }
+.pkc-subtitle { color: #6b7280; font-size: 13px; margin-top: 2px; }
+.pkc-price { margin-top: 8px; font-weight: 800; font-size: 18px; }
+.pkc-price-text { font-weight: 500; font-size: 12px; color: #6b7280; margin-left: 6px; }
+.pkc-actions { display: flex; justify-content: flex-end; margin-top: 14px; }
 .pkc-btn {
   height: 40px;
   padding: 0 16px;
@@ -388,19 +359,112 @@
   font-weight: 700;
   cursor: pointer;
 }
-.pkc-btn:disabled {
-  opacity: .6;
-  cursor: not-allowed;
-}
+.pkc-btn:disabled { opacity: .6; cursor: not-allowed; }
 .pkc-btn:hover { background: #0b1220; }
 
-
-
-
-
-
-/* Responsive (login tweaks) */
+/* Responsive tweaks */
 @media (max-width: 640px) {
   .tlogin-card { padding: 18px 14px; }
   .tlogin-title { font-size: 1.4rem; }
+}
+
+
+/* lesson-request*/
+
+.lr-page {
+  max-width: 720px;
+  margin: 32px auto;
+  padding: 0 16px;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: #111827;
+}
+
+.lr-page h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  color: #0f172a;
+}
+
+.lr-loading {
+  padding: 24px;
+  text-align: center;
+  color: #475569;
+}
+
+/* Form */
+.lr-form {
+  display: grid;
+  gap: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+.lr-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.lr-form select,
+.lr-form input[type="text"],
+.lr-form textarea {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.lr-form select:focus,
+.lr-form input[type="text"]:focus,
+.lr-form textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.lr-form textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+/* Submit button */
+.lr-btn {
+  margin-top: 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #02095f;
+  background: #02095f;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform .06s ease, background-color .2s ease;
+}
+
+.lr-btn:hover {
+  background: #ec5802;
+  transform: translateY(-1px);
+}
+
+.lr-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .lr-form {
+    padding: 16px;
+  }
+
+  .lr-page h1 {
+    font-size: 1.5rem;
+  }
 }

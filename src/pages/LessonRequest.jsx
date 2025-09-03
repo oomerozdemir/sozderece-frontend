@@ -1,134 +1,162 @@
-import { useEffect, useState, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "../utils/axios";
 import { isTokenValid } from "../utils/auth";
-import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
+import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo"; // ✅ artık kullanılıyor
+import "../cssFiles/teacher.css";
 
 export default function LessonRequest() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
-  const [t, setT] = useState(null);     // teacher
+  const [teacher, setTeacher] = useState(null);
   const [form, setForm] = useState({
     subject: "",
     grade: "",
-    mode: "ONLINE", // ONLINE | FACE_TO_FACE
+    mode: "ONLINE",
     city: "",
     district: "",
     locationNote: "",
     note: "",
   });
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
 
-  // 1) Öğretmeni yükle
-  useEffect(()=> {
-    (async ()=>{
+  useEffect(() => {
+    (async () => {
       try {
         const { data } = await axios.get(`/api/v1/ogretmenler/${slug}`);
-        setT(data.teacher);
-        // default'ları öğretmenin verdiği sınırlar içinde ayarla
-        const allowedModes = data.teacher.mode === "BOTH" ? ["ONLINE","FACE_TO_FACE"] : [data.teacher.mode];
-        setForm(s=>({ ...s, mode: allowedModes[0] || "ONLINE" }));
+        setTeacher(data.teacher);
       } catch (e) {
-        setError("Öğretmen bulunamadı.");
-      } finally {
-        setLoading(false);
+        console.error(e);
       }
     })();
   }, [slug]);
 
-  const subjects = useMemo(()=> t?.subjects || [], [t]);
-  const grades   = useMemo(()=> t?.grades || [], [t]);
-  const allowedModes = useMemo(()=> t ? (t.mode === "BOTH" ? ["ONLINE","FACE_TO_FACE"] : [t.mode]) : [], [t]);
+  const onChange = (k, v) => setForm((s) => ({ ...s, [k]: v }));
 
-  const onChange = (k,v)=> setForm(s=>({ ...s, [k]: v }));
-
-  const submit = async () => {
-    setError("");
-
-    // Giriş kontrolü – yoksa PreCartAuth benzeri OTP akışına yönlendirelim
-    const token = localStorage.getItem("token");
+  const handleSubmit = async () => {
     if (!token || !isTokenValid(token)) {
-      // login sonrası bu sayfaya geri dönmek için işaret bırak
       sessionStorage.setItem("skipSilentLoginOnce", "1");
-      navigate(`/login?next=/ogretmen/${slug}/talep`, { replace: true });
-      return;
-    }
-
-    // yüz yüze ise şehir/ilçe zorunlu
-    if (form.mode === "FACE_TO_FACE" && (!form.city || !form.district)) {
-      setError("Yüz yüze için şehir ve ilçe seçmelisin.");
+      navigate(`/login?next=/ogretmenler/${slug}/talep`, { replace: true });
       return;
     }
 
     try {
       setSaving(true);
-      const { data } = await axios.post("/api/student-requests", {
-        teacherSlug: slug,
-        ...form,
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const { data } = await axios.post(
+        "/api/v1/student-requests",
+        { ...form, teacherSlug: slug },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-      // Talep oluşturuldu; paket seçimine git
-      navigate(`/paket-sec?requestId=${data.request.id}&slug=${slug}`, { replace: true });
+      navigate(`/paket-sec?requestId=${data.id}&slug=${slug}`, { replace: true });
     } catch (e) {
-      setError(e?.response?.data?.message || "Talep kaydedilemedi.");
+      alert(e?.response?.data?.message || "Talep kaydedilemedi.");
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <div style={{padding:24}}>Yükleniyor…</div>;
-  if (error)   return <div style={{padding:24, color:"crimson"}}>{error}</div>;
-  if (!t)      return null;
+  const availableDistricts = TR_DISTRICTS[form.city] || [];
 
   return (
-    <div style={{maxWidth: 960, margin:"24px auto", padding:"0 16px"}}>
-      <h1>{t.firstName} {t.lastName} için ders talebi</h1>
+    <div className="lr-page">
+      <h1>Ders Talebi Oluştur</h1>
+      {!teacher ? (
+        <div className="lr-loading">Yükleniyor…</div>
+      ) : (
+        <div className="lr-form">
+          <label>
+            Ders
+            <select value={form.subject} onChange={(e) => onChange("subject", e.target.value)}>
+              <option value="">Seçiniz</option>
+              {(teacher.subjects || []).map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </label>
 
-      <div className="form">
-        <label>Ders</label>
-        <select value={form.subject} onChange={e=>onChange("subject", e.target.value)}>
-          <option value="">Seç</option>
-          {subjects.map(s=> <option key={s} value={s}>{s}</option>)}
-        </select>
+          <label>
+            Seviye
+            <select value={form.grade} onChange={(e) => onChange("grade", e.target.value)}>
+              <option value="">Seçiniz</option>
+              {(teacher.grades || []).map((g) => (
+                <option key={g} value={g}>
+                  {g}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        <label>Seviye</label>
-        <select value={form.grade} onChange={e=>onChange("grade", e.target.value)}>
-          <option value="">Seç</option>
-          {grades.map(g=> <option key={g} value={g}>{g}</option>)}
-        </select>
+          <label>
+            Ders Türü
+            <select value={form.mode} onChange={(e) => onChange("mode", e.target.value)}>
+              <option value="ONLINE">Online</option>
+              <option value="FACE_TO_FACE">Yüz yüze</option>
+            </select>
+          </label>
 
-        <label>Ders Modu</label>
-        <select value={form.mode} onChange={e=>onChange("mode", e.target.value)}>
-          {allowedModes.map(m=> <option key={m} value={m}>{m==="ONLINE"?"Online":"Yüz yüze"}</option>)}
-        </select>
+          {form.mode === "FACE_TO_FACE" && (
+            <>
+              <label>
+                İl
+                <select value={form.city} onChange={(e) => onChange("city", e.target.value)}>
+                  <option value="">Seçiniz</option>
+                  {TR_CITIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-        {form.mode==="FACE_TO_FACE" && (
-          <>
-            <label>İl</label>
-            <input value={form.city} onChange={e=>onChange("city", e.target.value)} />
+              <label>
+                İlçe
+                <select
+                  value={form.district}
+                  onChange={(e) => onChange("district", e.target.value)}
+                  disabled={!form.city}
+                >
+                  <option value="">
+                    {!form.city ? "Önce il seçiniz" : "Seçiniz"}
+                  </option>
+                  {availableDistricts.map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-            <label>İlçe</label>
-            <input value={form.district} onChange={e=>onChange("district", e.target.value)} />
+              <label>
+                Adres / Konum Notu
+                <input
+                  type="text"
+                  value={form.locationNote}
+                  onChange={(e) => onChange("locationNote", e.target.value)}
+                  placeholder="Adres veya semt bilgisi"
+                />
+              </label>
+            </>
+          )}
 
-            <label>Adres / Konum Notu (opsiyonel)</label>
-            <input value={form.locationNote} onChange={e=>onChange("locationNote", e.target.value)} />
-          </>
-        )}
+          <label>
+            Not (isteğe bağlı)
+            <textarea
+              value={form.note}
+              onChange={(e) => onChange("note", e.target.value)}
+              placeholder="Özel istek veya beklentilerinizi yazabilirsiniz"
+            />
+          </label>
 
-        <label>İstek ve beklentiler (opsiyonel)</label>
-        <textarea value={form.note} onChange={e=>onChange("note", e.target.value)} rows={5} />
-
-        {!!error && <div style={{color:"crimson", marginTop:8}}>{error}</div>}
-
-        <button onClick={submit} disabled={saving || !form.subject || !form.grade}>
-          {saving ? "Kaydediliyor..." : "Devam Et"}
-        </button>
-      </div>
+          <button className="lr-btn" disabled={saving} onClick={handleSubmit}>
+            {saving ? "Gönderiliyor…" : "Devam Et"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
