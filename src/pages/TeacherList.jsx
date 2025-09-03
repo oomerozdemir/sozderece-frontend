@@ -64,6 +64,10 @@ export default function TeachersList() {
   const onChange = (k, v) => setFilters((s)=>({ ...s, [k]: v, page: 1 }));
 
   return (
+
+    <> 
+    <TopBar />
+    <Navbar />
     <div className="tl-page">
       {/* Filtre barı */}
       <div className="tl-filters">
@@ -121,6 +125,7 @@ export default function TeachersList() {
         </>
       )}
     </div>
+    </>
   );
 }
 
@@ -129,6 +134,7 @@ function TeacherCard({ t }) {
   const cover = t.photoUrl || "https://placehold.co/400x240?text=Teacher";
 
   return (
+    <>
     <Link to={`/ogretmenler/${t.slug}`} className="tl-card">
       <img src={cover} alt={`${t.firstName} ${t.lastName}`} />
       <div className="tl-meta">
@@ -162,5 +168,7 @@ function TeacherCard({ t }) {
         </button>
       </div>
     </Link>
+    <Footer />
+    </>
   );
 }
