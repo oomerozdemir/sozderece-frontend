@@ -3,6 +3,9 @@ import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
 import "../cssFiles/teacher.css";
+import Navbar from "../components/navbar";
+import TopBar from "../components/TopBar";
+import Footer from "../components/Footer";
 
 const SUBJECTS = ["Matematik","Fen Bilimleri","Türkçe","Tarih","Coğrafya","Fizik","Kimya","Biyoloji","İngilizce","Almanca","Geometri","Edebiyat","Bilgisayar"];
 const GRADES   = ["İlkokul","Ortaokul","Lise","Üniversite","Mezun"];
@@ -17,7 +20,6 @@ const SORTS    = [
 ];
 
 export default function TeachersList() {
-  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
