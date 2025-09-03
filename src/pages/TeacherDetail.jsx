@@ -43,14 +43,12 @@ export default function TeacherDetail() {
 
       {t.bio && <p style={{ marginTop: 12 }}>{t.bio}</p>}
 
-      // ... (diğer kod aynı)
-<button
-  className="td-cta"
-  onClick={() => navigate(`/paket-sec?slug=${slug}`)}
->
-  Paket seç ve devam et
-</button>
-
+      <button
+        className="td-cta"
+        onClick={() => navigate(`/ogretmenler/${slug}/talep`)}
+      >
+        Ders talebi oluştur
+      </button>
     </div>
   );
 }

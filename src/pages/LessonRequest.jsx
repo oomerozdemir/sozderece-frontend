@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../utils/axios";
 import { isTokenValid } from "../utils/auth";
-import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo"; // ✅ artık kullanılıyor
-import "../cssFiles/teacher.css";
+import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
+import "../cssFiles/teacher.css"; // ✅ doğru CSS
 
 export default function LessonRequest() {
   const { slug } = useParams();
@@ -35,10 +35,29 @@ export default function LessonRequest() {
 
   const onChange = (k, v) => setForm((s) => ({ ...s, [k]: v }));
 
+  // Ders türü değiştiğinde yüz yüze -> online geçişte konum alanlarını temizle
+  const onChangeMode = (v) => {
+    if (v === "ONLINE") {
+      setForm((s) => ({ ...s, mode: v, city: "", district: "", locationNote: "" }));
+    } else {
+      setForm((s) => ({ ...s, mode: v }));
+    }
+  };
+
   const handleSubmit = async () => {
     if (!token || !isTokenValid(token)) {
       sessionStorage.setItem("skipSilentLoginOnce", "1");
       navigate(`/login?next=/ogretmenler/${slug}/talep`, { replace: true });
+      return;
+    }
+
+    // basit doğrulama
+    if (!form.subject || !form.grade) {
+      alert("Lütfen ders ve seviye seçiniz.");
+      return;
+    }
+    if (form.mode === "FACE_TO_FACE" && !form.city) {
+      alert("Yüz yüze ders için il seçiniz.");
       return;
     }
 
@@ -50,8 +69,10 @@ export default function LessonRequest() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      // → Paket seçimi
       navigate(`/paket-sec?requestId=${data.id}&slug=${slug}`, { replace: true });
     } catch (e) {
+      console.error(e);
       alert(e?.response?.data?.message || "Talep kaydedilemedi.");
     } finally {
       setSaving(false);
@@ -59,10 +80,12 @@ export default function LessonRequest() {
   };
 
   const availableDistricts = TR_DISTRICTS[form.city] || [];
+  const canSubmit = !!form.subject && !!form.grade && !(saving);
 
   return (
     <div className="lr-page">
       <h1>Ders Talebi Oluştur</h1>
+
       {!teacher ? (
         <div className="lr-loading">Yükleniyor…</div>
       ) : (
@@ -72,9 +95,7 @@ export default function LessonRequest() {
             <select value={form.subject} onChange={(e) => onChange("subject", e.target.value)}>
               <option value="">Seçiniz</option>
               {(teacher.subjects || []).map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
+                <option key={s} value={s}>{s}</option>
               ))}
             </select>
           </label>
@@ -84,16 +105,14 @@ export default function LessonRequest() {
             <select value={form.grade} onChange={(e) => onChange("grade", e.target.value)}>
               <option value="">Seçiniz</option>
               {(teacher.grades || []).map((g) => (
-                <option key={g} value={g}>
-                  {g}
-                </option>
+                <option key={g} value={g}>{g}</option>
               ))}
             </select>
           </label>
 
           <label>
             Ders Türü
-            <select value={form.mode} onChange={(e) => onChange("mode", e.target.value)}>
+            <select value={form.mode} onChange={(e) => onChangeMode(e.target.value)}>
               <option value="ONLINE">Online</option>
               <option value="FACE_TO_FACE">Yüz yüze</option>
             </select>
@@ -106,9 +125,7 @@ export default function LessonRequest() {
                 <select value={form.city} onChange={(e) => onChange("city", e.target.value)}>
                   <option value="">Seçiniz</option>
                   {TR_CITIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
+                    <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
               </label>
@@ -120,13 +137,9 @@ export default function LessonRequest() {
                   onChange={(e) => onChange("district", e.target.value)}
                   disabled={!form.city}
                 >
-                  <option value="">
-                    {!form.city ? "Önce il seçiniz" : "Seçiniz"}
-                  </option>
+                  <option value="">{!form.city ? "Önce il seçiniz" : "Seçiniz"}</option>
                   {availableDistricts.map((d) => (
-                    <option key={d} value={d}>
-                      {d}
-                    </option>
+                    <option key={d} value={d}>{d}</option>
                   ))}
                 </select>
               </label>
@@ -152,7 +165,7 @@ export default function LessonRequest() {
             />
           </label>
 
-          <button className="lr-btn" disabled={saving} onClick={handleSubmit}>
+          <button className="lr-btn" disabled={!canSubmit} onClick={handleSubmit}>
             {saving ? "Gönderiliyor…" : "Devam Et"}
           </button>
         </div>
