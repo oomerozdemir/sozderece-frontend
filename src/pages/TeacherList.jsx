@@ -17,6 +17,7 @@ const SORTS    = [
 ];
 
 export default function TeachersList() {
+  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
@@ -50,7 +51,7 @@ export default function TeachersList() {
       setLoading(true);
       try {
         const { data } = await axios.get("/api/v1/ogretmenler", { params: filters });
-        setItems(data.items || []);
+        setItems(data.items || data.teachers || []); // BE’ye göre fallback
         setTotal(data.total || 0);
       } finally {
         setLoading(false);
@@ -61,9 +62,9 @@ export default function TeachersList() {
   const onChange = (k, v) => setFilters((s)=>({ ...s, [k]: v, page: 1 }));
 
   return (
-    <div className="teachers-page">
+    <div className="tl-page">
       {/* Filtre barı */}
-      <div className="filters">
+      <div className="tl-filters">
         <select value={filters.city} onChange={(e)=>onChange("city", e.target.value)}>
           <option value="">İl (hepsi)</option>
           {TR_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
@@ -103,14 +104,14 @@ export default function TeachersList() {
       </div>
 
       {/* Kart grid */}
-      {loading ? <div className="loading">Yükleniyor…</div> : (
+      {loading ? <div className="tl-loading">Yükleniyor…</div> : (
         <>
-          <div className="grid">
+          <div className="tl-grid">
             {items.map(t => <TeacherCard key={t.id} t={t} />)}
           </div>
 
           {/* Sayfalama */}
-          <div className="pager">
+          <div className="tl-pager">
             <button disabled={filters.page<=1} onClick={()=>setFilters(s=>({...s, page: s.page-1}))}>Önceki</button>
             <span>Sayfa {filters.page}</span>
             <button disabled={(filters.page * filters.limit) >= total} onClick={()=>setFilters(s=>({...s, page: s.page+1}))}>Sonraki</button>
@@ -123,30 +124,40 @@ export default function TeachersList() {
 
 function TeacherCard({ t }) {
   const navigate = useNavigate();
-
   const cover = t.photoUrl || "https://placehold.co/400x240?text=Teacher";
+
   return (
-    <Link to={`/ogretmenler/${t.slug}`} className="teacher-card">
+    <Link to={`/ogretmenler/${t.slug}`} className="tl-card">
       <img src={cover} alt={`${t.firstName} ${t.lastName}`} />
-      <div className="meta">
-        <div className="name">{t.firstName} {t.lastName}</div>
-        <div className="subj">{(t.subjects||[]).join(", ")}</div>
-        <div className="row">
-          <span className="badge">{t.mode === "ONLINE" ? "Online" : t.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online + Yüz yüze"}</span>
-          <span className="price">
-            {t.priceOnline ? `Online ₺${t.priceOnline}` : ""}{t.priceOnline && t.priceF2F ? " • " : ""}{t.priceF2F ? `YY ₺${t.priceF2F}` : ""}
+      <div className="tl-meta">
+        <div className="tl-name">{t.firstName} {t.lastName}</div>
+        <div className="tl-subj">{(t.subjects||[]).join(", ")}</div>
+
+        <div className="tl-row">
+          <span className="tl-badge">
+            {t.mode === "ONLINE" ? "Online" : t.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online + Yüz yüze"}
+          </span>
+          <span className="tl-price">
+            {t.priceOnline ? `Online ₺${t.priceOnline}` : ""}
+            {t.priceOnline && t.priceF2F ? " • " : ""}
+            {t.priceF2F ? `YY ₺${t.priceF2F}` : ""}
           </span>
         </div>
-        <div className="row small">
+
+        <div className="tl-row small">
           <span>👁 {t.viewCount || 0}</span>
           <span>⭐ {t.ratingAverage?.toFixed?.(1) || "0.0"} ({t.ratingCount || 0})</span>
         </div>
-         <button
-                className="tl-cta"
-                onClick={() => navigate(`/ogretmenler/${t.slug}/talep`)}
-              >
-                Ders talebi oluştur
-              </button>
+
+        <button
+          className="tl-cta"
+          onClick={(e) => {
+            e.preventDefault(); // Link tıklamasını engelle
+            navigate(`/ogretmenler/${t.slug}/talep`);
+          }}
+        >
+          Ders talebi oluştur
+        </button>
       </div>
     </Link>
   );
