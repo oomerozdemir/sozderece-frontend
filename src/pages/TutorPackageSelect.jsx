@@ -98,39 +98,37 @@ export default function TutorPackageSelect() {
   }, [teacher, requestId, token, slug, navigate, location.search]);
 
   // 5) Paketleri öğretmenin fiyatına göre oluştur
-  const packages = useMemo(() => {
-    if (!teacher || !reqData) return [];
+ const packages = useMemo(() => {
+  if (!teacher || !reqData) return [];
 
     // base price (kuruş) – öğretmenin belirlediği
-    const base =
-      reqData.mode === "ONLINE"
-        ? (teacher.priceOnline ?? teacher.priceF2F ?? 0)
-        : (teacher.priceF2F ?? teacher.priceOnline ?? 0);
+   const base =
+    reqData.mode === "ONLINE"
+      ? (teacher.priceOnline ?? teacher.priceF2F ?? 0)
+      : (teacher.priceF2F ?? teacher.priceOnline ?? 0);
 
-    const mkPkg = (qty, discount = 0, slug) => {
-      const total = Math.round(base * qty * (1 - discount)); // kuruş
-      const perLesson = Math.round(total / qty);             // kuruş
-      return {
-        slug,
-        qty,
-        discountRate: Math.round(discount * 100), // %
-        title: qty === 1 ? "Tek Ders" : `${qty} Ders Paketi`,
-        subtitle:
-          qty === 1
-            ? (reqData.mode === "ONLINE" ? "Online tek ders" : "Yüz yüze tek ders")
-            : (reqData.mode === "ONLINE" ? "Online çoklu ders" : "Yüz yüze çoklu ders"),
-        unitPrice: total, // toplam paket fiyatı (kuruş)
-        priceText: `${(perLesson / 100).toLocaleString("tr-TR")} ₺ / ders`,
-        badge: discount > 0 ? `%${Math.round(discount * 100)} indirim` : null,
-      };
+     const mkPkg = (qty, discount = 0, slug) => {
+    const total = Math.round(base * qty * (1 - discount));
+    const perLesson = Math.round(total / qty);
+    return {
+      slug,
+      qty,
+      discountRate: Math.round(discount * 100),
+      title: qty === 1 ? "Tek Ders" : `${qty} Ders Paketi`,
+      subtitle:
+        qty === 1
+          ? (reqData.mode === "ONLINE" ? "Online tek ders" : "Yüz yüze tek ders")
+          : (reqData.mode === "ONLINE" ? "Online çoklu ders" : "Yüz yüze çoklu ders"),
+      unitPrice: total,
+      priceText: `${(perLesson / 100).toLocaleString("tr-TR")} ₺ / ders`,
+      badge: discount > 0 ? `%${Math.round(discount * 100)} indirim` : null,
     };
+  };
 
-    // 1 ders (indirimsiz), 5/15/30 ders (%5 indirim)
     return [
       mkPkg(1, 0, "tek-ders"),
-      mkPkg(5, 0.05, "paket-5"),
-      mkPkg(15, 0.05, "paket-15"),
-      mkPkg(30, 0.05, "paket-30"),
+      mkPkg(3, 0.05, "paket-3"),
+      mkPkg(6, 0.05, "paket-6"),
     ];
   }, [teacher, reqData]);
 
