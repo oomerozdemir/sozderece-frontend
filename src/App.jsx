@@ -174,6 +174,8 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
 *******************************ogrenci tarafi hoca secerken ki sorunlar ==>***********************
   1-ogretmene ozel sayfada css duzenlemesi ayni sekilde ogretmenler sayfasinda da
   2-ogretmen profil sayfasinda fiyat bilgisi ogretmenin resmi ve hakkinda kisminin daha uzun olmasi
+  3-ogretmen kartindaki sayacin kontrolu her seferinde gir cik yapinca olmasin ayni local storage la kontrolu yapilsin bir kisi sadece bir kere sayilsin birden fazla gir cik olunca saymasi kotuye kullanilabilir
+  
   
 
 özel ders oğretmenı ve öğrenci koçu özel giriş ve kayıt yeri açıcaz

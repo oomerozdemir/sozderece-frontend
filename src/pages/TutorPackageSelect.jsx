@@ -6,7 +6,9 @@ import "../cssFiles/teacher.css";
 
 export default function TutorPackageSelect() {
   const navigate = useNavigate();
-  const qs = new URLSearchParams(useLocation().search);
+  const location = useLocation();
+  const qs = new URLSearchParams(location.search);
+
   const requestId = qs.get("requestId");
   const slug = qs.get("slug");
 
@@ -18,31 +20,84 @@ export default function TutorPackageSelect() {
 
   const token = localStorage.getItem("token");
 
-  // 1) Auth guard
+  // 1) Auth guard (login değilse slug ile geri dön)
   useEffect(() => {
     if (!token || !isTokenValid(token)) {
       sessionStorage.setItem("skipSilentLoginOnce", "1");
-      navigate(`/login?next=/paket-sec?requestId=${requestId}&slug=${slug}`, { replace: true });
+      navigate(`/login?next=/paket-sec?slug=${encodeURIComponent(slug || "")}`, { replace: true });
     }
-  }, [token, requestId, slug, navigate]);
+  }, [token, slug, navigate]);
 
-  // 2) Öğretmen & talep bilgisini çek
+  // 2) Öğretmeni getir
   useEffect(() => {
+    if (!slug) return;
     (async () => {
       try {
-        const [tRes, rRes] = await Promise.all([
-          axios.get(`/api/v1/ogretmenler/${slug}`),
-          axios.get(`/api/v1/student-requests/${requestId}`, { headers: { Authorization: `Bearer ${token}` } }),
-        ]);
+        const tRes = await axios.get(`/api/v1/ogretmenler/${slug}`);
         setTeacher(tRes.data.teacher);
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  }, [slug]);
+
+  // 3) requestId varsa talebi getir
+  useEffect(() => {
+    if (!requestId || !token) return;
+    (async () => {
+      try {
+        const rRes = await axios.get(
+          `/api/v1/student-requests/${requestId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         setReqData(rRes.data.request);
       } catch (e) {
         console.error(e);
       }
     })();
-  }, [slug, requestId, token]);
+  }, [requestId, token]);
 
-  // 3) Paketleri öğretmenin fiyatına göre oluştur
+  // 4) requestId YOKSA: öğretmen yüklendikten sonra DRAFT talep oluştur ve URL'i güncelle
+  useEffect(() => {
+    (async () => {
+      if (!teacher) return;
+      if (requestId) return; // zaten var
+      if (!token || !isTokenValid(token)) return; // login guard yönlendirdi
+
+      try {
+        // Teacher.mode BOTH ise varsayılan ONLINE
+        const defaultMode =
+          teacher.mode === "ONLINE" ? "ONLINE" :
+          teacher.mode === "FACE_TO_FACE" ? "FACE_TO_FACE" :
+          "ONLINE";
+
+        const { data } = await axios.post(
+          "/api/v1/student-requests",
+          {
+            teacherSlug: slug,
+            subject: "",
+            grade: "",
+            mode: defaultMode,
+            city: "",
+            district: "",
+            locationNote: "",
+            note: "",
+            status: "DRAFT",
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        const s = new URLSearchParams(location.search);
+        s.set("requestId", data.id);
+        navigate(`/paket-sec?${s.toString()}`, { replace: true });
+      } catch (e) {
+        console.error(e);
+        alert("Paket seçimi için ön talep oluşturulamadı.");
+      }
+    })();
+  }, [teacher, requestId, token, slug, navigate, location.search]);
+
+  // 5) Paketleri öğretmenin fiyatına göre oluştur
   const packages = useMemo(() => {
     if (!teacher || !reqData) return [];
 
@@ -54,7 +109,7 @@ export default function TutorPackageSelect() {
 
     const mkPkg = (qty, discount = 0, slug) => {
       const total = Math.round(base * qty * (1 - discount)); // kuruş
-      const perLesson = Math.round((total / qty));           // kuruş
+      const perLesson = Math.round(total / qty);             // kuruş
       return {
         slug,
         qty,
@@ -79,8 +134,9 @@ export default function TutorPackageSelect() {
     ];
   }, [teacher, reqData]);
 
+  // 6) Paketi talebe yaz + sepete ekle
   const attachAndGoToCart = async () => {
-    if (!selected) return;
+    if (!selected || !requestId) return;
     try {
       setSaving(true);
 
@@ -128,7 +184,7 @@ export default function TutorPackageSelect() {
     <div className="pkc-container">
       <h1 className="pkc-title">Özel Ders Paketleri</h1>
 
-      {!teacher || !reqData ? (
+      {!teacher || (!reqData && !!requestId) ? (
         <div className="pkc-empty">Yükleniyor…</div>
       ) : packages.length === 0 ? (
         <div className="pkc-empty">Bu öğretmen için paket oluşturulamadı.</div>
