@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import { isTokenValid } from "../utils/auth";
 import "../cssFiles/teacher.css";
+import "../cssFiles/slot-select.css";
 
 export default function SlotSelect() {
   const navigate = useNavigate();
@@ -86,22 +87,70 @@ export default function SlotSelect() {
   };
 
   const saveAndGoCart = async () => {
-    if (picked.length !== qty) {
-      alert(`Lütfen ${qty} adet ders saati seçiniz.`);
-      return;
-    }
-    try {
-      await axios.post(
-        `/api/v1/student-requests/${requestId}/slots`,
-        { slots: picked },  // [{start,end,mode}]
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      navigate("/sepet", { replace: true });
-    } catch (e) {
-      console.error(e);
-      alert(e?.response?.data?.message || "Seçilen saatler kaydedilemedi.");
-    }
-  };
+  if (picked.length !== qty) {
+    alert(`Lütfen ${qty} adet ders saati seçiniz.`);
+    return;
+  }
+  try {
+    // 1) Slotları PENDING randevu olarak kaydet
+    await axios.post(
+      `/api/v1/student-requests/${requestId}/slots`,
+      { slots: picked },  // [{start,end,mode}]
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // 2) Sepete eklemek için talep ve öğretmen bilgilerini kullan
+    //    (packageUnitPrice kuruş cinsinden BE’de zaten duruyor)
+    const { data: rData } = await axios.get(
+      `/api/v1/student-requests/${requestId}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    const req = rData.request;
+
+    // lessonsCount & indirim oranı
+    const lessonsCount =
+      req.packageSlug === "paket-3" ? 3 :
+      req.packageSlug === "paket-6" ? 6 : 1;
+    const discountRate = req.packageSlug === "tek-ders" ? 0 : 5;
+
+    // Base fiyat (öğretmen + moda göre) — TL → kuruş
+    // (Sepet metasında göstermek için; ödeme tutarı req.packageUnitPrice’dan alınır)
+    const { data: tData } = await axios.get(`/api/v1/ogretmenler/${slug}`);
+    const tch = tData.teacher;
+    const baseTL = req.mode === "ONLINE"
+      ? (tch.priceOnline ?? tch.priceF2F ?? 0)
+      : (tch.priceF2F   ?? tch.priceOnline ?? 0);
+    const baseKurus = Math.round(baseTL * 100);
+
+    // 3) Sepete tek kalem ürün olarak ekle
+    await axios.post(
+      "/api/cart/items",
+      {
+        slug: req.packageSlug,               // "tek-ders" | "paket-3" | "paket-6"
+        title: req.packageTitle || "Özel ders paketi",
+        name: req.packageTitle || "Özel ders paketi",
+        unitPrice: Number(req.packageUnitPrice), // toplam paket fiyatı (kuruş)
+        quantity: 1,
+        meta: {
+          requestId,
+          teacherSlug: slug,
+          mode: req.mode,                 // ONLINE / FACE_TO_FACE
+          lessonsCount,
+          discountRate,                   // %
+          basePrice: baseKurus,           // tek ders baz fiyatı (kuruş)
+          pickedSlots: picked,            // seçilen slotların kopyası (opsiyonel)
+        },
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // 4) Sepete git
+    navigate("/sepet", { replace: true });
+  } catch (e) {
+    console.error(e);
+    alert(e?.response?.data?.message || "Seçimler sepete eklenemedi.");
+  }
+};
 
   return (
     <div className="pkc-container">

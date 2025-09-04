@@ -134,10 +134,13 @@ export default App;
 /*
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   3-ogretmen panelı duzenlemesı
+      - ogrencı talebını onayladıktan sonra ogretmenın takvımıne işlensin o dolu alan yeşil renktte gozuksun
+      - talepler kısmına onaylanmış taleplerım bekleyen taleplerım ve gecmıs taleplerım diye alan ekleyelım
+
+      
+      - ders tamamlandıktan sonra ogretmen de ogrencı de dersın tamamlandıgını onaylaması gereklı(bunu admın tarafında kontrol de edecegız)
   
       -degerlendirmelerin ve yorumlarin gozukecegi yeri yap(ogrenci kısmı halledilirken eşzamanlı)
-      -gelen özel ders taleplerini görüntüleme(ogrenci kısmı halledilirken eşzamanlı)
-      -taleplerı onaylama(ogrenci kısmı halledilirken eşzamanlı)
       -ogretmen yayina alirken admin tarafina talep gonderimi talep onaylandiktan sonra yayina alinir
       gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
   
