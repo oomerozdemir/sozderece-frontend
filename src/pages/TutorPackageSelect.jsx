@@ -20,7 +20,7 @@ export default function TutorPackageSelect() {
 
   const token = localStorage.getItem("token");
 
-  // 1) Auth guard (login değilse slug ile geri dön)
+  // Auth guard
   useEffect(() => {
     if (!token || !isTokenValid(token)) {
       sessionStorage.setItem("skipSilentLoginOnce", "1");
@@ -28,7 +28,7 @@ export default function TutorPackageSelect() {
     }
   }, [token, slug, navigate]);
 
-  // 2) Öğretmeni getir
+  // Öğretmen
   useEffect(() => {
     if (!slug) return;
     (async () => {
@@ -41,7 +41,7 @@ export default function TutorPackageSelect() {
     })();
   }, [slug]);
 
-  // 3) requestId varsa talebi getir
+  // Talep (varsa)
   useEffect(() => {
     if (!requestId || !token) return;
     (async () => {
@@ -57,74 +57,44 @@ export default function TutorPackageSelect() {
     })();
   }, [requestId, token]);
 
-  // 4) requestId YOKSA: öğretmen yüklendikten sonra DRAFT talep oluştur ve URL'i güncelle
-  useEffect(() => {
-    (async () => {
-      if (!teacher) return;
-      if (requestId) return; // zaten var
-      if (!token || !isTokenValid(token)) return; // login guard yönlendirdi
+  // Paketleri öğretmenin fiyatına göre oluştur (FİYATLAR TL!)
+  const packages = useMemo(() => {
+    if (!teacher || !reqData) return [];
 
-      try {
-        // Teacher.mode BOTH ise varsayılan ONLINE
-        const defaultMode =
-          teacher.mode === "ONLINE" ? "ONLINE" :
-          teacher.mode === "FACE_TO_FACE" ? "FACE_TO_FACE" :
-          "ONLINE";
+    // Öğretmenin belirlediği baz fiyat (TL)
+    // priceOnline / priceF2F değerlerini TL kabul ediyoruz (ör: 350)
+    const baseTL =
+      reqData.mode === "ONLINE"
+        ? (teacher.priceOnline ?? teacher.priceF2F ?? 0)
+        : (teacher.priceF2F ?? teacher.priceOnline ?? 0);
 
-        const { data } = await axios.post(
-          "/api/v1/student-requests",
-          {
-            teacherSlug: slug,
-            subject: "",
-            grade: "",
-            mode: defaultMode,
-            city: "",
-            district: "",
-            locationNote: "",
-            note: "",
-            status: "DRAFT",
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+    const mkPkg = (qty, discount = 0, slug) => {
+      // toplam TL
+      const totalTL = Math.round(baseTL * qty * (1 - discount));       // ör: 350 * 3 * 0.95 = 997.5 ≈ 998
+      const perLessonTL = Math.round(totalTL / qty);                    // ders başı TL
 
-        const s = new URLSearchParams(location.search);
-        s.set("requestId", data.id);
-        navigate(`/paket-sec?${s.toString()}`, { replace: true });
-      } catch (e) {
-        console.error(e);
-        alert("Paket seçimi için ön talep oluşturulamadı.");
-      }
-    })();
-  }, [teacher, requestId, token, slug, navigate, location.search]);
+      // sepete/DB'ye gönderirken kuruş
+      const totalKurus = totalTL * 100;
 
-  // 5) Paketleri öğretmenin fiyatına göre oluştur
- const packages = useMemo(() => {
-  if (!teacher || !reqData) return [];
-
-    // base price (kuruş) – öğretmenin belirlediği
-   const base =
-    reqData.mode === "ONLINE"
-      ? (teacher.priceOnline ?? teacher.priceF2F ?? 0)
-      : (teacher.priceF2F ?? teacher.priceOnline ?? 0);
-
-     const mkPkg = (qty, discount = 0, slug) => {
-    const total = Math.round(base * qty * (1 - discount));
-    const perLesson = Math.round(total / qty);
-    return {
-      slug,
-      qty,
-      discountRate: Math.round(discount * 100),
-      title: qty === 1 ? "Tek Ders" : `${qty} Ders Paketi`,
-      subtitle:
-        qty === 1
-          ? (reqData.mode === "ONLINE" ? "Online tek ders" : "Yüz yüze tek ders")
-          : (reqData.mode === "ONLINE" ? "Online çoklu ders" : "Yüz yüze çoklu ders"),
-      unitPrice: total,
-      priceText: `${(perLesson / 100).toLocaleString("tr-TR")} ₺ / ders`,
-      badge: discount > 0 ? `%${Math.round(discount * 100)} indirim` : null,
+      return {
+        slug,
+        qty,
+        discountRate: Math.round(discount * 100), // %
+        title: qty === 1 ? "Tek Ders" : `${qty} Ders Paketi`,
+        subtitle:
+          qty === 1
+            ? (reqData.mode === "ONLINE" ? "Online tek ders" : "Yüz yüze tek ders")
+            : (reqData.mode === "ONLINE" ? "Online çoklu ders" : "Yüz yüze çoklu ders"),
+        // Görüntü için TL:
+        displayPriceTL: totalTL,
+        displayPerLesson: perLessonTL,
+        // Sepet/BE için kuruş:
+        unitPrice: totalKurus,
+        badge: discount > 0 ? `%${Math.round(discount * 100)} indirim` : null,
+      };
     };
-  };
 
+    // Tek ders indirimsiz, 3 & 6 ders %5 indirim
     return [
       mkPkg(1, 0, "tek-ders"),
       mkPkg(3, 0.05, "paket-3"),
@@ -132,39 +102,44 @@ export default function TutorPackageSelect() {
     ];
   }, [teacher, reqData]);
 
-  // 6) Paketi talebe yaz + sepete ekle
+  // Paketi talebe yaz + sepete ekle
   const attachAndGoToCart = async () => {
     if (!selected || !requestId) return;
     try {
       setSaving(true);
 
-      // Talebe seçilen paketi yaz
+      // Talebe seçilen paketi yaz (unitPrice BE'de kuruş)
       await axios.put(
         `/api/v1/student-requests/${requestId}/package`,
         {
           packageSlug: selected.slug,
           packageTitle: selected.title,
-          unitPrice: Number(selected.unitPrice), // toplam paket kuruş
+          unitPrice: Number(selected.unitPrice), // kuruş
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Sepete ekle (toplam paket fiyatı ile)
+      // Sepete ekle (kuruş)
+      const baseTL =
+        reqData?.mode === "ONLINE"
+          ? (teacher?.priceOnline ?? teacher?.priceF2F ?? 0)
+          : (teacher?.priceF2F ?? teacher?.priceOnline ?? 0);
+
       await axios.post(
         "/api/cart/items",
         {
           slug: selected.slug,
           title: selected.title,
           name: selected.title,
-          unitPrice: Number(selected.unitPrice), // toplam paket kuruş
-          quantity: 1, // paket tek kalem
+          unitPrice: Number(selected.unitPrice), // kuruş
+          quantity: 1,
           meta: {
             requestId,
             teacherSlug: slug,
             mode: reqData?.mode,
             lessonsCount: selected.qty,
             discountRate: selected.discountRate, // %
-            basePrice: reqData?.mode === "ONLINE" ? teacher?.priceOnline : teacher?.priceF2F, // kuruş
+            basePrice: Math.round(baseTL * 100), // kuruş
           },
         },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -207,8 +182,11 @@ export default function TutorPackageSelect() {
                   </div>
                   <div className="pkc-subtitle">{p.subtitle}</div>
                   <div className="pkc-price">
-                    {(p.unitPrice / 100).toLocaleString("tr-TR")} ₺
-                    <span className="pkc-price-text"> ({p.priceText})</span>
+                    {p.displayPriceTL.toLocaleString("tr-TR")} ₺
+                    <span className="pkc-price-text">
+                      {" "}
+                      ({p.displayPerLesson.toLocaleString("tr-TR")} ₺ / ders)
+                    </span>
                   </div>
                 </div>
               </label>

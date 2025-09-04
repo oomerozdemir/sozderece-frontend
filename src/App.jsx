@@ -162,9 +162,8 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
 
 
 ******** ozel ders icin ogrenci tarafi ********
-1-ozel ders secerken satin alimi paketler halinde vericez tekli 5li 15li 30u cinsinden
-  -paketi hesabina tanimlayacagiz ogrencinin ve bu paketlerin her birinde sectigi pakete gore 5li ise 5 tane ders talebi gonderme hakki olucak ogrencinin
-  -bu gonderdigi talepleri ogretmen onaylayacak randevu secimini ogrenci bu talebi gonderirken yapicak.Ogretmen bunlara gorerek ogrenciyi onaylayacak
+  -ozel ders secerken satin alimi paketler halinde vericez tekli 5li 15li 30u cinsinden ✅
+  -paket secimi sonrasi randevu secimi yapsin ogrenci sectigi pakete bagli olarak 3 ders secti ise 3 tane bos yeri alsin takvimdeki uygunluga gore
   -ogretmene mail gondeririz talep geldikce
   -talep onaylandiginda ayni sekilde talep onaylandi diye ogrenciye de mail gider
   -ders bittiginde ogretmen ders tamamlandi diye isaretler.
@@ -172,7 +171,7 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   -bir chatbot yeri yapabiliriz ogretmen talebi onayladiginda konusabilecekleri ve iletisim saglayacaklari kolay bir yer olur.
   
 *******************************ogrenci tarafi hoca secerken ki sorunlar ==>***********************
-  1-ogretmene ozel sayfada css duzenlemesi ayni sekilde ogretmenler sayfasinda da
+  1-ogretmene ozel sayfada css duzenlemesi ayni sekilde ogretmenler sayfasinda da ✅
   2-ogretmen profil sayfasinda fiyat bilgisi ogretmenin resmi ve hakkinda kisminin daha uzun olmasi
   3-ogretmen kartindaki sayacin kontrolu her seferinde gir cik yapinca olmasin ayni local storage la kontrolu yapilsin bir kisi sadece bir kere sayilsin birden fazla gir cik olunca saymasi kotuye kullanilabilir
   

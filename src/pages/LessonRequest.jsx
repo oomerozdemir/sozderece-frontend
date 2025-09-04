@@ -161,7 +161,7 @@ export default function LessonRequest() {
             <textarea
               value={form.note}
               onChange={(e) => onChange("note", e.target.value)}
-              placeholder="Özel istek veya beklentilerinizi yazabilirsiniz"
+              placeholder="Öğretmenin sizle daha kolay iletişim kurabilmesi için kısa kendinizden bahsedin.Dersten beklentilerinizi yazın."
             />
           </label>
 
