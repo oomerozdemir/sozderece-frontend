@@ -15,6 +15,16 @@ export default function TeacherPanel() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const fileRef = useRef(null);
+  const togglePublish = async (next) => {
+  setMsg("");
+  try {
+    await axios.put("/api/v1/ogretmen/me/profil", { isPublic: !!next });
+    setProfile((p) => ({ ...p, isPublic: !!next }));
+    setMsg(!!next ? "Profil yayına alındı." : "Profil yayından kaldırıldı.");
+  } catch (e) {
+    setMsg(e?.response?.data?.message || "Yayın durumu kaydedilemedi.");
+  }
+};
 
   // Şifre değiştir
   const [pwd, setPwd] = useState({ current: "", next: "", next2: "" });
@@ -215,13 +225,14 @@ export default function TeacherPanel() {
               <div className="tp-slug">kullanıcı id: <code>{profile.slug}</code></div>
 
               <label className="tp-switch">
-                <input
-                  type="checkbox"
-                  checked={!!profile.isPublic}
-                  onChange={(e) => onChange("isPublic", e.target.checked)}
-                />
-                <span>Profili yayında göster</span>
-              </label>
+              <input
+                type="checkbox"
+                checked={!!profile.isPublic}
+                onChange={(e) => togglePublish(e.target.checked)}  // ✅ API'ye kaydet
+              />
+              <span>Profili yayında göster</span>
+            </label>
+
 
               <div className="tp-hint">Öğrenciler sadece <b>yayında</b> olan profilleri görebilir.</div>
             </aside>

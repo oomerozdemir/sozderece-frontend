@@ -135,34 +135,19 @@ export default App;
 
 /*
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
-  1-navbarda ogretmen panelı yonlendırmesı  ✅
-  2-ogretmen olarak gırıs yaparken de maıle kod gonderelım kayıt oncesı sadece ✅
   3-ogretmen panelı duzenlemesı
-    ogretmen panelı duzenlemesı ıcınde sunlar olacak;
-      -profıl fotografı ekleyebılme ✅
-      -randevu yapısını ekleme ✅
-      -randevularını duzenleyebılme ve goruntuleyebılme ✅
-      -randevu kismini tasarim olarak guzellestir kolaylastir ✅
+  
       -degerlendirmelerin ve yorumlarin gozukecegi yeri yap(ogrenci kısmı halledilirken eşzamanlı)
       -gelen özel ders taleplerini görüntüleme(ogrenci kısmı halledilirken eşzamanlı)
       -taleplerı onaylama(ogrenci kısmı halledilirken eşzamanlı)
-      -ogretmenler frontend de gozuktugunde resim yukleme sinirlamalarini gerekliyse yapalim. ✅
-      -ogretmen panelınde ogretmenın verebıldıgı ders alanını gorme ve duzenleyıp sılme ıslemlerını ekleyelım. ✅
-      -yuzyuze ders veryor ıse ogretmen ders verıcegı alanları duzenleyecegı bır yer ekleyelım. ✅
-      -
+      -ogretmen yayina alirken admin tarafina talep gonderimi talep onaylandiktan sonra yayina alinir
       gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
   
-  4-gırıs yaparken vesaıre sıfre sıfırlama sıfremı unuttum gıbı klasık şeylerı ekleyelım ✅
-  5-ogretmen olarak gırıs yaptıgında hesabım kısmında sınıf sectırıyor buna gerek yok ✅
-  6-sıparıslerım yonlendırmesı var bunu sadece ogrencıyse gosterelım ✅
-  7-yıne hesabım sayfasında user rolune gore panel yonlendırmesı yapalım ✅
-  8-aynı sekılde navbarda da sıparıslerım gozukmesın ogrencı degılse ✅
   9-ogretmen kayıt olurken fıyat belırlerken ona onerı yapalım size benzer öğretmenler şu aralıkta(min-max) fiyat belirledi diye
   10-Ogrenci tarafida yapilirken randevu kismini iki tarafli onaylamalari vesaire kontrol et ve yap
 
 
 ******** ozel ders icin ogrenci tarafi ********
-  -ozel ders secerken satin alimi paketler halinde vericez tekli 5li 15li 30u cinsinden ✅
   -paket secimi sonrasi randevu secimi yapsin ogrenci sectigi pakete bagli olarak 3 ders secti ise 3 tane bos yeri alsin takvimdeki uygunluga gore
   -ogretmene mail gondeririz talep geldikce
   -talep onaylandiginda ayni sekilde talep onaylandi diye ogrenciye de mail gider
@@ -171,7 +156,6 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   -bir chatbot yeri yapabiliriz ogretmen talebi onayladiginda konusabilecekleri ve iletisim saglayacaklari kolay bir yer olur.
   
 *******************************ogrenci tarafi hoca secerken ki sorunlar ==>***********************
-  1-ogretmene ozel sayfada css duzenlemesi ayni sekilde ogretmenler sayfasinda da ✅
   2-ogretmen profil sayfasinda fiyat bilgisi ogretmenin resmi ve hakkinda kisminin daha uzun olmasi
   3-ogretmen kartindaki sayacin kontrolu her seferinde gir cik yapinca olmasin ayni local storage la kontrolu yapilsin bir kisi sadece bir kere sayilsin birden fazla gir cik olunca saymasi kotuye kullanilabilir
   
