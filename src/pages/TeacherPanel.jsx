@@ -10,21 +10,133 @@ import SlotsPreview from "../components/teacherComps/SlotsPreview";
 import TimeOffManager from "../components/teacherComps/TimeOffManager";
 import TeacherLessons from "../components/teacherComps/TeacherLessons";
 
+/* =======================
+   Gelen Talepler Paneli
+======================= */
+function RequestsPanel() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState("");
+  const token = localStorage.getItem("token");
+
+  const load = async () => {
+    setLoading(true);
+    setMsg("");
+    try {
+      const { data } = await axios.get("/api/v1/ogretmen/me/requests", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setItems(data.items || []);
+    } catch (e) {
+      setMsg(e?.response?.data?.message || "Talepler getirilemedi.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const setStatus = async (id, status) => {
+    try {
+      await axios.patch(
+        `/api/v1/ogretmen/appointments/${id}/status`,
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      // UI: onaylanan/iptal edilen randevuyu listeden çıkar
+      setItems((list) =>
+        list.map((r) => ({
+          ...r,
+          appointments: (r.appointments || []).filter((a) => a.id !== id),
+        }))
+      );
+    } catch (e) {
+      alert(e?.response?.data?.message || "Durum güncellenemedi.");
+    }
+  };
+
+  return (
+    <div className="tp-section">
+      <div className="tp-head">
+        <h2 className="tp-title">Gelen Talepler</h2>
+        <button className="tp-btn" onClick={load}>Yenile</button>
+      </div>
+
+      {msg ? <div className="tp-alert">{msg}</div> : null}
+      {loading ? <div className="tp-loading">Yükleniyor…</div> : null}
+
+      {!loading && (!items || items.length === 0) ? (
+        <div className="tp-empty">Şu an görüntülenecek talep yok.</div>
+      ) : (
+        <div className="tp-req-list">
+          {items.map((r) => (
+            <div key={r.id} className="tp-card">
+              <div className="tp-card-head">
+                <div className="tp-card-title">
+                  {r.student?.name || "Öğrenci"} • {r.student?.email}
+                </div>
+                <div className="tp-badge">{r.packageTitle || "Paket"}</div>
+              </div>
+
+              <div className="tp-card-row">
+                <span>Ders:</span> <b>{r.subject}</b>
+                <span style={{marginLeft:10}}>Seviye:</span> <b>{r.grade}</b>
+                <span style={{marginLeft:10}}>Tür:</span> <b>{r.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</b>
+                {typeof r.packageUnitPrice === "number" ? (
+                  <span style={{marginLeft:10}}>
+                    Toplam: <b>{(r.packageUnitPrice/100).toLocaleString("tr-TR")} ₺</b>
+                  </span>
+                ) : null}
+              </div>
+
+              {(r.appointments || []).length === 0 ? (
+                <div className="tp-muted">Bu talepte onay bekleyen randevu yok.</div>
+              ) : (
+                <div className="tp-slots-grid">
+                  {r.appointments.map((a) => {
+                    const st = new Date(a.startsAt);
+                    const et = new Date(a.endsAt);
+                    return (
+                      <div key={a.id} className="tp-slot-card">
+                        <div className="tp-slot-time">
+                          {st.toLocaleDateString("tr-TR", { day:"2-digit", month:"2-digit" })}{" "}
+                          {st.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })} –{" "}
+                          {et.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })}
+                        </div>
+                        <div className="tp-slot-mode">{a.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</div>
+                        <div className="tp-slot-actions">
+                          <button className="tp-btn" onClick={()=>setStatus(a.id, "CONFIRMED")}>Onayla</button>
+                          <button className="tp-btn ghost" onClick={()=>setStatus(a.id, "CANCELLED")}>İptal</button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function TeacherPanel() {
   const [profile, setProfile] = useState(null);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const fileRef = useRef(null);
+
   const togglePublish = async (next) => {
-  setMsg("");
-  try {
-    await axios.put("/api/v1/ogretmen/me/profil", { isPublic: !!next });
-    setProfile((p) => ({ ...p, isPublic: !!next }));
-    setMsg(!!next ? "Profil yayına alındı." : "Profil yayından kaldırıldı.");
-  } catch (e) {
-    setMsg(e?.response?.data?.message || "Yayın durumu kaydedilemedi.");
-  }
-};
+    setMsg("");
+    try {
+      await axios.put("/api/v1/ogretmen/me/profil", { isPublic: !!next });
+      setProfile((p) => ({ ...p, isPublic: !!next }));
+      setMsg(!!next ? "Profil yayına alındı." : "Profil yayından kaldırıldı.");
+    } catch (e) {
+      setMsg(e?.response?.data?.message || "Yayın durumu kaydedilemedi.");
+    }
+  };
 
   // Şifre değiştir
   const [pwd, setPwd] = useState({ current: "", next: "", next2: "" });
@@ -44,7 +156,7 @@ export default function TeacherPanel() {
     saveAvailability, fetchSlots, addTimeOff, delTimeOff,
   } = useTeacherScheduling(setMsg);
 
-  // Sekmeler: availability | slots | timeoff | lessons | location
+  // Sekmeler: availability | slots | timeoff | lessons | location | requests
   const [tab, setTab] = useState("lessons");
 
   // Profil
@@ -222,17 +334,16 @@ export default function TeacherPanel() {
               </div>
 
               <div className="tp-name">{fullName || "İsimsiz"}</div>
-              <div className="tp-slug">kullanıcı id: <code>{profile.slug}</code></div>
+              <div className="tp-slug">kullanıcı slug: <code>{profile.slug}</code></div>
 
               <label className="tp-switch">
-              <input
-                type="checkbox"
-                checked={!!profile.isPublic}
-                onChange={(e) => togglePublish(e.target.checked)}  // ✅ API'ye kaydet
-              />
-              <span>Profili yayında göster</span>
-            </label>
-
+                <input
+                  type="checkbox"
+                  checked={!!profile.isPublic}
+                  onChange={(e) => togglePublish(e.target.checked)}
+                />
+                <span>Profili yayında göster</span>
+              </label>
 
               <div className="tp-hint">Öğrenciler sadece <b>yayında</b> olan profilleri görebilir.</div>
             </aside>
@@ -245,6 +356,7 @@ export default function TeacherPanel() {
                 <button type="button" className={`tp-tab ${tab === "timeoff" ? "active" : ""}`} onClick={() => setTab("timeoff")}>Tatil / Blokaj</button>
                 <button type="button" className={`tp-tab ${tab === "lessons" ? "active" : ""}`} onClick={() => setTab("lessons")}>Derslerim</button>
                 <button type="button" className={`tp-tab ${tab === "location" ? "active" : ""}`} onClick={() => setTab("location")}>Lokasyon</button>
+                <button type="button" className={`tp-tab ${tab === "requests" ? "active" : ""}`} onClick={() => setTab("requests")}>Talepler</button>
               </div>
 
               {/* Sekme içerikleri */}
@@ -327,6 +439,8 @@ export default function TeacherPanel() {
                   </div>
                 </form>
               )}
+
+              {tab === "requests" && <RequestsPanel />}
             </section>
 
             {/* Şifre Değiştir */}

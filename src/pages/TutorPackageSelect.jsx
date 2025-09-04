@@ -57,44 +57,36 @@ export default function TutorPackageSelect() {
     })();
   }, [requestId, token]);
 
-  // Paketleri öğretmenin fiyatına göre oluştur (FİYATLAR TL!)
+  // Paketleri öğretmenin fiyatına göre oluştur (TL bazlı, sepete kuruş gider)
   const packages = useMemo(() => {
     if (!teacher || !reqData) return [];
 
-    // Öğretmenin belirlediği baz fiyat (TL)
-    // priceOnline / priceF2F değerlerini TL kabul ediyoruz (ör: 350)
     const baseTL =
       reqData.mode === "ONLINE"
         ? (teacher.priceOnline ?? teacher.priceF2F ?? 0)
         : (teacher.priceF2F ?? teacher.priceOnline ?? 0);
 
     const mkPkg = (qty, discount = 0, slug) => {
-      // toplam TL
-      const totalTL = Math.round(baseTL * qty * (1 - discount));       // ör: 350 * 3 * 0.95 = 997.5 ≈ 998
-      const perLessonTL = Math.round(totalTL / qty);                    // ders başı TL
-
-      // sepete/DB'ye gönderirken kuruş
+      const totalTL = Math.round(baseTL * qty * (1 - discount));
+      const perLessonTL = Math.round(totalTL / qty);
       const totalKurus = totalTL * 100;
 
       return {
         slug,
         qty,
-        discountRate: Math.round(discount * 100), // %
+        discountRate: Math.round(discount * 100),
         title: qty === 1 ? "Tek Ders" : `${qty} Ders Paketi`,
         subtitle:
           qty === 1
             ? (reqData.mode === "ONLINE" ? "Online tek ders" : "Yüz yüze tek ders")
             : (reqData.mode === "ONLINE" ? "Online çoklu ders" : "Yüz yüze çoklu ders"),
-        // Görüntü için TL:
         displayPriceTL: totalTL,
         displayPerLesson: perLessonTL,
-        // Sepet/BE için kuruş:
         unitPrice: totalKurus,
         badge: discount > 0 ? `%${Math.round(discount * 100)} indirim` : null,
       };
     };
 
-    // Tek ders indirimsiz, 3 & 6 ders %5 indirim
     return [
       mkPkg(1, 0, "tek-ders"),
       mkPkg(3, 0.05, "paket-3"),
@@ -102,13 +94,12 @@ export default function TutorPackageSelect() {
     ];
   }, [teacher, reqData]);
 
-  // Paketi talebe yaz + sepete ekle
-  const attachAndGoToCart = async () => {
+  // Paketi talebe yaz + saat seçim sayfasına yönlendir
+  const attachAndGoToSlotSelect = async () => {
     if (!selected || !requestId) return;
     try {
       setSaving(true);
 
-      // Talebe seçilen paketi yaz (unitPrice BE'de kuruş)
       await axios.put(
         `/api/v1/student-requests/${requestId}/package`,
         {
@@ -119,33 +110,8 @@ export default function TutorPackageSelect() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Sepete ekle (kuruş)
-      const baseTL =
-        reqData?.mode === "ONLINE"
-          ? (teacher?.priceOnline ?? teacher?.priceF2F ?? 0)
-          : (teacher?.priceF2F ?? teacher?.priceOnline ?? 0);
-
-      await axios.post(
-        "/api/cart/items",
-        {
-          slug: selected.slug,
-          title: selected.title,
-          name: selected.title,
-          unitPrice: Number(selected.unitPrice), // kuruş
-          quantity: 1,
-          meta: {
-            requestId,
-            teacherSlug: slug,
-            mode: reqData?.mode,
-            lessonsCount: selected.qty,
-            discountRate: selected.discountRate, // %
-            basePrice: Math.round(baseTL * 100), // kuruş
-          },
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      navigate("/sepet", { replace: true });
+      // 👉 saat seçim sayfasına yönlendir
+      navigate(`/saat-sec?requestId=${requestId}&slug=${slug}&qty=${selected.qty}`, { replace: true });
     } catch (e) {
       alert(e?.response?.data?.message || "Paket eklenemedi.");
     } finally {
@@ -194,8 +160,8 @@ export default function TutorPackageSelect() {
           </div>
 
           <div className="pkc-actions">
-            <button className="pkc-btn" disabled={!selected || saving} onClick={attachAndGoToCart}>
-              {saving ? "Ekleniyor..." : "Devam et"}
+            <button className="pkc-btn" disabled={!selected || saving} onClick={attachAndGoToSlotSelect}>
+              {saving ? "Kaydediliyor..." : "Ders Saatlerini Seç"}
             </button>
           </div>
         </>
