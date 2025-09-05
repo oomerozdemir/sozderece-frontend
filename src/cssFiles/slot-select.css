@@ -8,7 +8,6 @@
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color: #0f172a;
 }
-
 .pkc-title {
   margin: 0 0 14px;
   font-size: 1.75rem;
@@ -20,6 +19,23 @@
   color: transparent;
 }
 
+/* --- Legend --- */
+.slot-legend {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 6px 0 10px;
+  font-size: 0.95rem;
+}
+.legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.legend-dot {
+  width: 10px; height: 10px; border-radius: 999px; display: inline-block;
+  border: 1px solid #e5e7eb;
+}
+.legend-free { background: #fff; }
+.legend-booked { background: #ecfdf5; border-color: #16a34a; }
+.legend-picked { background: #eef2ff; border-color: #3730a3; }
+
 /* --- Tarih aralığı formu --- */
 .tp-grid-2 {
   display: grid;
@@ -27,18 +43,13 @@
   gap: 12px;
   margin: 10px 0 8px;
 }
-
-@media (max-width: 640px) {
-  .tp-grid-2 { grid-template-columns: 1fr; }
-}
-
+@media (max-width: 640px) { .tp-grid-2 { grid-template-columns: 1fr; } }
 .tp-sublabel {
   display: block;
   font-size: .88rem;
   color: #6b7280;
   margin-bottom: 6px;
 }
-
 input[type="date"] {
   width: 100%;
   height: 40px;
@@ -92,34 +103,16 @@ input[type="date"]:focus {
 }
 
 /* --- Gün grubu --- */
-.tp-slot-group {
-  margin: 14px 0;
-  border: 1px solid #eef2ff;
-  border-radius: 16px;
-  background: #ffffff;
-  overflow: hidden;
-  box-shadow: 0 6px 22px rgba(2, 9, 95, 0.06);
-}
-
+.tp-slot-group { margin: 14px 0; border: 1px solid #eef2ff; border-radius: 16px; background: #fff; overflow: hidden; box-shadow: 0 6px 22px rgba(2, 9, 95, 0.06); }
 .tp-slot-group-head {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background:
-    linear-gradient(90deg, rgba(99,102,241,.06), rgba(14,165,233,.06));
-  padding: 10px 12px;
-  border-bottom: 1px solid #eef2ff;
+  position: sticky; top: 0; z-index: 2;
+  background: linear-gradient(90deg, rgba(99,102,241,.06), rgba(14,165,233,.06));
+  padding: 10px 12px; border-bottom: 1px solid #eef2ff;
 }
-
 .tp-badge {
-  display: inline-block;
-  font-size: .92rem;
-  font-weight: 800;
-  color: #02095f;
-  background: #eef2ff;
-  border: 1px solid #e0e7ff;
-  padding: 6px 10px;
-  border-radius: 999px;
+  display: inline-block; font-size: .92rem; font-weight: 800;
+  color: #02095f; background: #eef2ff; border: 1px solid #e0e7ff;
+  padding: 6px 10px; border-radius: 999px;
 }
 
 /* --- Slot grid --- */
@@ -129,15 +122,9 @@ input[type="date"]:focus {
   gap: 10px;
   padding: 12px;
 }
-@media (max-width: 1024px) {
-  .tp-slots-grid { grid-template-columns: repeat(3, 1fr); }
-}
-@media (max-width: 720px) {
-  .tp-slots-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 460px) {
-  .tp-slots-grid { grid-template-columns: 1fr; }
-}
+@media (max-width: 1024px) { .tp-slots-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 720px)  { .tp-slots-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 460px)  { .tp-slots-grid { grid-template-columns: 1fr; } }
 
 /* --- Slot kartı (takvim butonu görünümü) --- */
 .tp-slot-card {
@@ -166,17 +153,31 @@ input[type="date"]:focus {
   outline: 3px solid rgba(99,102,241,.35);
   outline-offset: 2px;
 }
+.tp-slot-time { font-weight: 800; letter-spacing: .2px; }
+.tp-slot-mode { font-size: .85rem; color: #475569; }
 
-.tp-slot-time {
-  font-weight: 800;
-  letter-spacing: .2px;
+/* --- DOLU (onaylı) slot görünümü --- */
+.tp-slot-card.slot-confirmed {
+  border-color: #16a34a;
+  background: #ecfdf5;
+  color: #065f46;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  pointer-events: none; /* tıklanamaz */
 }
-.tp-slot-mode {
-  font-size: .85rem;
-  color: #475569;
+.tp-slot-card.slot-confirmed:hover { border-color: #16a34a; box-shadow: none; transform: none; }
+
+/* --- Seçili (öğrencinin seçtiği) --- */
+.tp-slot-card.slot-picked {
+  border-color: #3730a3;
+  box-shadow: 0 0 0 3px rgba(55,48,163,.15);
+  background:
+    linear-gradient(180deg, rgba(99,102,241,.10), rgba(99,102,241,.06)),
+    #ffffff;
 }
 
-/* --- Seçili durum --- */
+/* --- Eski seçili sınıfıyla geriye uyum --- */
 .tp-slot-card.is-selected {
   border-color: #6366f1;
   background:
@@ -188,17 +189,10 @@ input[type="date"]:focus {
 .tp-slot-card.is-selected::after {
   content: "✓";
   position: absolute;
-  top: 8px;
-  right: 10px;
-  width: 22px;
-  height: 22px;
-  display: grid;
-  place-items: center;
-  font-weight: 900;
-  font-size: .86rem;
-  color: #fff;
-  background: #16a34a;
-  border-radius: 999px;
+  top: 8px; right: 10px;
+  width: 22px; height: 22px; display: grid; place-items: center;
+  font-weight: 900; font-size: .86rem; color: #fff;
+  background: #16a34a; border-radius: 999px;
   box-shadow: 0 4px 10px rgba(22,163,74,.35);
 }
 
@@ -212,13 +206,7 @@ input[type="date"]:focus {
   padding-top: 10px;
   border-top: 1px dashed #e5e7eb;
 }
-
-.pkc-actions .tp-sublabel {
-  margin: 0;
-  color: #334155;
-  font-weight: 600;
-}
-
+.pkc-actions .tp-sublabel { margin: 0; color: #334155; font-weight: 600; }
 .pkc-btn {
   height: 42px;
   padding: 0 16px;
@@ -231,15 +219,8 @@ input[type="date"]:focus {
   cursor: pointer;
   transition: transform .06s ease, box-shadow .15s ease, background .15s ease;
 }
-.pkc-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 26px rgba(2, 9, 95, .25);
-}
-.pkc-btn:disabled {
-  opacity: .55;
-  cursor: not-allowed;
-  box-shadow: none;
-}
+.pkc-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(2, 9, 95, .25); }
+.pkc-btn:disabled { opacity: .55; cursor: not-allowed; box-shadow: none; }
 
 /* --- Minör yardımcılar --- */
 .tp-muted { color: #6b7280; }
