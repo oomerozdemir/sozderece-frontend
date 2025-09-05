@@ -115,20 +115,21 @@ export default function SlotsPreview({ range, setRange, slots, confirmed = [], f
                   <span className="tp-badge">{fmtDayTitle(dayISO)}</span>
                 </div>
 
-                {/* Onaylı randevular — YEŞİL + öğrenci ismi */}
-                {confirmedList.length > 0 && (
-                  <div className="tp-slots-grid">
-                    {confirmedList.map((c) => (
-                      <div key={c.id} className="tp-slot-card slot-confirmed">
-                        <div className="tp-slot-time">
-                          {fmtTime(c.startsAt)} – {fmtTime(c.endsAt)}
-                        </div>
-                        <div className="tp-slot-mode">Onaylı</div>
-                        <div className="tp-slot-student">{studentLabel(c.student)}</div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                {/* Onaylı randevular — YEŞİL (öğrenci ismiyle) */}
+{confirmedList.length > 0 && (
+  <div className="tp-slots-grid">
+    {confirmedList.map((c) => (
+      <div key={c.id} className="tp-slot-card slot-confirmed">
+        <div className="tp-slot-time">
+          {fmtTime(c.startsAt)} – {fmtTime(c.endsAt)}
+        </div>
+        <div className="tp-slot-mode">
+          Onaylı {c.student?.name ? <>• <b>{c.student.name}</b></> : null}
+        </div>
+      </div>
+    ))}
+  </div>
+)}
 
                 {/* Müsait slotlar — NORMAL */}
                 {availableList.length > 0 && (
