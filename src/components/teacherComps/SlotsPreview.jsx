@@ -1,24 +1,35 @@
 // src/components/teacherComps/SlotsPreview.jsx
 import { useMemo } from "react";
 
-export default function SlotsPreview({ range, setRange, slots, confirmed, fetchSlots }) {
+/**
+ * @param {Array} slots      - müsait slotlar [{start,end,mode}]
+ * @param {Array} confirmed  - onaylı randevular [{id,startsAt,endsAt,mode,student?}]
+ * @param {Function} fetchSlots
+ */
+export default function SlotsPreview({ range, setRange, slots, confirmed = [], fetchSlots }) {
   // ---- helpers ----
   const fmtTime = (iso) =>
-    new Date(iso).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+    new Date(iso).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
 
   const fmtDayTitle = (isoDay) =>
-    new Date(isoDay).toLocaleDateString(undefined, {
+    new Date(isoDay).toLocaleDateString("tr-TR", {
       year: "numeric",
       month: "long",
       day: "numeric",
       weekday: "long",
     });
 
+  const studentLabel = (stu) => {
+    if (!stu) return "Onaylandı";
+    if (stu.name) return stu.name;
+    if (stu.email) return stu.email;
+    return "Onaylandı";
+  };
+
   const toDayISO = (d) => {
     const dt = new Date(d);
     dt.setHours(0, 0, 0, 0);
-    // YYYY-MM-DD
-    return dt.toISOString().slice(0, 10);
+    return dt.toISOString().slice(0, 10); // YYYY-MM-DD
   };
 
   const daysInRange = (r) => {
@@ -29,7 +40,7 @@ export default function SlotsPreview({ range, setRange, slots, confirmed, fetchS
     start.setHours(0, 0, 0, 0);
     end.setHours(0, 0, 0, 0);
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      days.push(new Date(d).toISOString().slice(0, 10)); // YYYY-MM-DD
+      days.push(new Date(d).toISOString().slice(0, 10));
     }
     return days;
   };
@@ -44,28 +55,25 @@ export default function SlotsPreview({ range, setRange, slots, confirmed, fetchS
   };
 
   // ---- groups ----
-  // slots: {start,end,mode}
   const byDayAvailable = useMemo(
     () => groupByDay(slots, (s) => s.start),
     [slots]
   );
 
-  // confirmed: {id,startsAt,endsAt,mode,notes}
   const byDayConfirmed = useMemo(
     () => groupByDay(confirmed, (c) => c.startsAt),
     [confirmed]
   );
 
   const dayList = useMemo(() => daysInRange(range), [range]);
-  const hasAny =
-    (slots && slots.length > 0) || (confirmed && confirmed.length > 0);
+  const hasAny = (slots?.length || 0) > 0 || (confirmed?.length || 0) > 0;
 
   return (
     <div className="tp-section">
       <div className="tp-section-head">
         <div className="tp-section-title">Takvim Önizleme</div>
         <div className="tp-section-sub">
-          Seçili tarih aralığında <b>onaylı</b> (yeşil) ve <b>müsait</b> saatler.
+          Seçili aralıkta <b>onaylı</b> (yeşil, öğrenci adıyla) ve <b>müsait</b> saatler.
         </div>
       </div>
 
@@ -107,7 +115,7 @@ export default function SlotsPreview({ range, setRange, slots, confirmed, fetchS
                   <span className="tp-badge">{fmtDayTitle(dayISO)}</span>
                 </div>
 
-                {/* Onaylı randevular — YEŞİL */}
+                {/* Onaylı randevular — YEŞİL + öğrenci ismi */}
                 {confirmedList.length > 0 && (
                   <div className="tp-slots-grid">
                     {confirmedList.map((c) => (
@@ -116,6 +124,7 @@ export default function SlotsPreview({ range, setRange, slots, confirmed, fetchS
                           {fmtTime(c.startsAt)} – {fmtTime(c.endsAt)}
                         </div>
                         <div className="tp-slot-mode">Onaylı</div>
+                        <div className="tp-slot-student">{studentLabel(c.student)}</div>
                       </div>
                     ))}
                   </div>
