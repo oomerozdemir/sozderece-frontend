@@ -124,7 +124,7 @@ export default function SlotsPreview({ range, setRange, slots, confirmed = [], f
           {fmtTime(c.startsAt)} – {fmtTime(c.endsAt)}
         </div>
         <div className="tp-slot-mode">
-          Onaylı {c.student?.name ? <>• <b>{c.student.name}</b></> : null}
+          Onaylı {c.student?.name ? <>• <b> Öğrenci Adı: {c.student.name}</b></> : null}
         </div>
       </div>
     ))}
