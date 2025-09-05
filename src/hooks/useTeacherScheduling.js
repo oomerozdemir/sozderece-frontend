@@ -1,3 +1,4 @@
+// src/hooks/useTeacherScheduling.js
 import { useEffect, useState, useCallback } from "react";
 import axios from "../utils/axios";
 
@@ -5,20 +6,21 @@ export default function useTeacherScheduling(onMessage) {
   const [avail, setAvail] = useState({
     timeZone: "Europe/Istanbul",
     items: Array.from({ length: 7 }, (_, i) => ({
-      weekday: i,            
-      startMin: 9 * 60,      
-      endMin: 17 * 60,     
+      weekday: i,             // 0..6
+      startMin: 9 * 60,       // 09:00
+      endMin: 17 * 60,        // 17:00
       mode: "BOTH",
-      isActive: i > 0 && i < 6, 
+      isActive: i > 0 && i < 6,
     })),
   });
 
-  const [slots, setSlots] = useState([]);            
-  const [confirmed, setConfirmed] = useState([]);    
+  const [slots, setSlots] = useState([]);          // müsait slotlar
+  const [confirmed, setConfirmed] = useState([]);  // CONFIRMED randevular (öğrenci bilgisiyle)
   const [range, setRange] = useState({ from: "", to: "" });
   const [timeOffs, setTimeOffs] = useState([]);
   const [creatingOff, setCreatingOff] = useState({ startsAt: "", endsAt: "", reason: "" });
 
+  // init: uygunluk + timeoff
   useEffect(() => {
     (async () => {
       try {
@@ -29,19 +31,18 @@ export default function useTeacherScheduling(onMessage) {
             items: a.data.items,
           });
         }
-      } catch {
-      }
+      } catch {}
       try {
         const t = await axios.get("/api/v1/ogretmen/me/timeoff");
         setTimeOffs(t?.data?.items || []);
-      } catch {
-      }
+      } catch {}
     })();
   }, []);
 
   // helpers
   const minToStr = (m) =>
     `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+
   const strToMin = (s) => {
     const [h, mm] = String(s || "").split(":");
     return Number(h) * 60 + Number(mm);
@@ -67,7 +68,41 @@ export default function useTeacherScheduling(onMessage) {
     });
   };
 
-  // actions
+  // --- API actions ---
+
+  // Onaylı randevuları ayrı endpoint’ten çek
+  const fetchConfirmed = useCallback(async () => {
+    try {
+      const { data } = await axios.get("/api/v1/ogretmen/me/appointments/confirmed");
+      setConfirmed(data?.items || []);
+    } catch {
+      onMessage?.("Onaylı randevular alınamadı.");
+    }
+  }, [onMessage]);
+
+  // Müsait slotları çek + paralelde onaylı randevuları güncelle
+  const fetchSlots = useCallback(async () => {
+    if (!range.from || !range.to) return;
+    try {
+      const [slotsRes] = await Promise.all([
+        axios.get("/api/v1/ogretmen/me/slots", {
+          params: {
+            from: range.from,
+            to: range.to,
+            tz: avail.timeZone || "Europe/Istanbul",
+            mode: "BOTH",
+            duration: 60,
+          },
+        }),
+        // confirmed’u da aynı anda güncelleyelim
+        fetchConfirmed(),
+      ]);
+      setSlots(slotsRes?.data?.slots || []);
+    } catch {
+      onMessage?.("Slotlar alınamadı.");
+    }
+  }, [range.from, range.to, avail.timeZone, fetchConfirmed, onMessage]);
+
   const saveAvailability = async () => {
     try {
       await axios.put("/api/v1/ogretmen/me/availability", avail);
@@ -76,25 +111,6 @@ export default function useTeacherScheduling(onMessage) {
       onMessage?.("Uygunluk kaydedilemedi.");
     }
   };
-
-  const fetchSlots = useCallback(async () => {
-    if (!range.from || !range.to) return;
-    try {
-      const { data } = await axios.get("/api/v1/ogretmen/me/slots", {
-        params: {
-          from: range.from,
-          to: range.to,
-          tz: avail.timeZone || "Europe/Istanbul",
-          mode: "BOTH",
-          duration: 60,
-        },
-      });
-      setSlots(data?.slots || []);
-      setConfirmed(data?.confirmed || []); // ✅ onaylıları da al
-    } catch {
-      onMessage?.("Slotlar alınamadı.");
-    }
-  }, [range.from, range.to, avail.timeZone, onMessage]);
 
   const addTimeOff = async () => {
     try {
@@ -122,13 +138,13 @@ export default function useTeacherScheduling(onMessage) {
     // state
     avail, setAvail,
     slots, setSlots,
-    confirmed, setConfirmed,   
+    confirmed, setConfirmed,
     range, setRange,
     timeOffs, setTimeOffs,
     creatingOff, setCreatingOff,
     // helpers
     minToStr, strToMin, onAvailChange,
     // actions
-    saveAvailability, fetchSlots, addTimeOff, delTimeOff,
+    saveAvailability, fetchSlots, fetchConfirmed, addTimeOff, delTimeOff,
   };
 }
