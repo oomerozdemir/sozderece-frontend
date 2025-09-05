@@ -303,7 +303,12 @@
 .tp-chip.danger  { border-color:#fecaca; background:#fff1f2; color:#991b1b; }
 .tp-chip.muted   { color:#64748b; }
 
-
+/* slot onay kartında öğrenci ismi */
+.tp-slot-card.slot-confirmed .tp-slot-note{
+  margin-top: 4px;
+  font-size: .92rem;
+  color: #065f46;
+}
 
 @media (max-width: 900px) {
   .tp-layout { grid-template-columns: 1fr; }

@@ -14,6 +14,13 @@ import TeacherLessons from "../components/teacherComps/TeacherLessons";
    Gelen Talepler Paneli
 ======================= */
 function RequestsPanel() {
+
+  const statusMap = {
+  SUBMITTED: "Gönderildi",
+  PACKAGE_SELECTED: "Paket seçildi",
+  PAID: "Ödendi",
+  CANCELLED: "İptal",
+};
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
@@ -102,6 +109,9 @@ function RequestsPanel() {
 
   const list = groups[tab] || [];
 
+
+  
+
   return (
     <div className="tp-section">
       <div className="tp-head">
@@ -175,10 +185,12 @@ function RequestsPanel() {
                   </span>
                 )}
 
-                <span style={{marginLeft:10}} className="tp-chip muted">
-                  Durum: {r.status}
-                </span>
-              </div>
+                <div className="tp-chip">
+              {statusMap[r.status] || r.status}
+            </div>
+                      </div>
+
+              
 
               {/* Onay bekleyen randevular (bu kartın içinde) */}
               {(r.appointments || []).length > 0 && (
@@ -212,21 +224,26 @@ function RequestsPanel() {
                 <>
                   <div className="tp-section-sub" style={{marginTop:8}}>Onaylanmış saatler</div>
                   <div className="tp-slots-grid">
-                    {r.appointmentsConfirmed.map((a) => {
-                      const st = new Date(a.startsAt || a.startsAtISO || a.startsAtUtc || a.startsAtLocal || a.startsAt);
-                      const et = new Date(a.endsAt);
-                      return (
-                        <div key={a.id} className="tp-slot-card slot-confirmed">
-                          <div className="tp-slot-time">
-                            {st.toLocaleDateString("tr-TR", { day:"2-digit", month:"2-digit" })}{" "}
-                            {st.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })} –{" "}
-                            {et.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })}
-                          </div>
-                          <div className="tp-slot-mode">Onaylı</div>
-                        </div>
-                      );
-                    })}
-                  </div>
+  {r.appointmentsConfirmed?.map((a) => {
+    const st = new Date(a.startsAt);
+    const et = new Date(a.endsAt);
+    return (
+      <div key={a.id} className="tp-slot-card slot-confirmed">
+        <div className="tp-slot-time">
+          {st.toLocaleDateString("tr-TR", { day:"2-digit", month:"2-digit" })}{" "}
+          {st.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })} –{" "}
+          {et.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })}
+        </div>
+        <div className="tp-slot-mode">Onaylı</div>
+
+        {/* 🔽 öğrenci adı/bilgisi varsa göster */}
+        {a.studentName && (
+          <div className="tp-slot-note">Öğrenci: <b>{a.studentName}</b></div>
+        )}
+      </div>
+    );
+  })}
+</div>
                 </>
               )}
             </div>
