@@ -6,16 +6,16 @@ export default function useTeacherScheduling(onMessage) {
   const [avail, setAvail] = useState({
     timeZone: "Europe/Istanbul",
     items: Array.from({ length: 7 }, (_, i) => ({
-      weekday: i,             // 0..6
-      startMin: 9 * 60,       // 09:00
-      endMin: 17 * 60,        // 17:00
+      weekday: i,            // 0..6
+      startMin: 9 * 60,
+      endMin: 17 * 60,
       mode: "BOTH",
       isActive: i > 0 && i < 6,
     })),
   });
 
-  const [slots, setSlots] = useState([]);          // müsait slotlar
-  const [confirmed, setConfirmed] = useState([]);  // CONFIRMED randevular (öğrenci bilgisiyle)
+  const [slots, setSlots] = useState([]);         // müsait slotlar
+  const [confirmed, setConfirmed] = useState([]); // onaylı randevular (takvimde yeşil)
   const [range, setRange] = useState({ from: "", to: "" });
   const [timeOffs, setTimeOffs] = useState([]);
   const [creatingOff, setCreatingOff] = useState({ startsAt: "", endsAt: "", reason: "" });
@@ -32,6 +32,7 @@ export default function useTeacherScheduling(onMessage) {
           });
         }
       } catch {}
+
       try {
         const t = await axios.get("/api/v1/ogretmen/me/timeoff");
         setTimeOffs(t?.data?.items || []);
@@ -41,8 +42,7 @@ export default function useTeacherScheduling(onMessage) {
 
   // helpers
   const minToStr = (m) =>
-    `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
-
+    `${String(Math.floor(m / 60)).padStart(2,"0")}:${String(m % 60).padStart(2,"0")}`;
   const strToMin = (s) => {
     const [h, mm] = String(s || "").split(":");
     return Number(h) * 60 + Number(mm);
@@ -53,14 +53,7 @@ export default function useTeacherScheduling(onMessage) {
       const items = a.items.slice();
       const idx = items.findIndex((x) => x.weekday === weekday);
       if (idx === -1) {
-        items.push({
-          weekday,
-          startMin: 9 * 60,
-          endMin: 17 * 60,
-          mode: "BOTH",
-          isActive: true,
-          [field]: val,
-        });
+        items.push({ weekday, startMin: 9*60, endMin: 17*60, mode: "BOTH", isActive: true, [field]: val });
       } else {
         items[idx] = { ...items[idx], [field]: val };
       }
@@ -68,41 +61,7 @@ export default function useTeacherScheduling(onMessage) {
     });
   };
 
-  // --- API actions ---
-
-  // Onaylı randevuları ayrı endpoint’ten çek
-  const fetchConfirmed = useCallback(async () => {
-    try {
-      const { data } = await axios.get("/api/v1/ogretmen/me/appointments/confirmed");
-      setConfirmed(data?.items || []);
-    } catch {
-      onMessage?.("Onaylı randevular alınamadı.");
-    }
-  }, [onMessage]);
-
-  // Müsait slotları çek + paralelde onaylı randevuları güncelle
-  const fetchSlots = useCallback(async () => {
-    if (!range.from || !range.to) return;
-    try {
-      const [slotsRes] = await Promise.all([
-        axios.get("/api/v1/ogretmen/me/slots", {
-          params: {
-            from: range.from,
-            to: range.to,
-            tz: avail.timeZone || "Europe/Istanbul",
-            mode: "BOTH",
-            duration: 60,
-          },
-        }),
-        // confirmed’u da aynı anda güncelleyelim
-        fetchConfirmed(),
-      ]);
-      setSlots(slotsRes?.data?.slots || []);
-    } catch {
-      onMessage?.("Slotlar alınamadı.");
-    }
-  }, [range.from, range.to, avail.timeZone, fetchConfirmed, onMessage]);
-
+  // actions
   const saveAvailability = async () => {
     try {
       await axios.put("/api/v1/ogretmen/me/availability", avail);
@@ -111,6 +70,26 @@ export default function useTeacherScheduling(onMessage) {
       onMessage?.("Uygunluk kaydedilemedi.");
     }
   };
+
+  // 🔑 Tek çağrı: slots + confirmed birlikte gelir
+  const fetchSlots = useCallback(async () => {
+    if (!range.from || !range.to) return;
+    try {
+      const { data } = await axios.get("/api/v1/ogretmen/me/slots", {
+        params: {
+          from: range.from,
+          to: range.to,
+          tz: avail.timeZone || "Europe/Istanbul",
+          mode: "BOTH",
+          duration: 60,
+        },
+      });
+      setSlots(data?.slots || []);
+      setConfirmed(data?.confirmed || []); // backend bu alanı sağlamalı
+    } catch {
+      onMessage?.("Slotlar alınamadı.");
+    }
+  }, [range.from, range.to, avail.timeZone, onMessage]);
 
   const addTimeOff = async () => {
     try {
@@ -145,6 +124,6 @@ export default function useTeacherScheduling(onMessage) {
     // helpers
     minToStr, strToMin, onAvailChange,
     // actions
-    saveAvailability, fetchSlots, fetchConfirmed, addTimeOff, delTimeOff,
+    saveAvailability, fetchSlots, addTimeOff, delTimeOff,
   };
 }
