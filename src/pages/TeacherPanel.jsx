@@ -1,4 +1,3 @@
-// src/pages/TeacherPanel.jsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
@@ -14,13 +13,13 @@ import TeacherLessons from "../components/teacherComps/TeacherLessons";
    Gelen Talepler Paneli
 ======================= */
 function RequestsPanel() {
-
   const statusMap = {
-  SUBMITTED: "Gönderildi",
-  PACKAGE_SELECTED: "Paket seçildi",
-  PAID: "Ödendi",
-  CANCELLED: "İptal",
-};
+    SUBMITTED: "Gönderildi",
+    PACKAGE_SELECTED: "Paket seçildi",
+    PAID: "Ödendi",
+    CANCELLED: "İptal",
+  };
+
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
@@ -76,10 +75,9 @@ function RequestsPanel() {
 
   // Talepleri kovana ayır
   const bucketOf = (req) => {
-    // İsteğiniz doğrultusunda:
-    // SUBMITTED / PACKAGE_SELECTED  -> BEKLEYEN
-    // PAID                           -> ONAYLANMIŞ
-    // CANCELLED                      -> REDDEDİLMİŞ
+    // SUBMITTED / PACKAGE_SELECTED -> Bekleyen
+    // PAID                         -> Onaylanmış
+    // CANCELLED                    -> Reddedilmiş
     switch (req.status) {
       case "PAID": return "approved";
       case "CANCELLED": return "rejected";
@@ -109,9 +107,6 @@ function RequestsPanel() {
 
   const list = groups[tab] || [];
 
-
-  
-
   return (
     <div className="tp-section">
       <div className="tp-head">
@@ -123,32 +118,16 @@ function RequestsPanel() {
 
       {/* Sekmeler */}
       <div className="tp-tabs" style={{marginBottom:8}}>
-        <button
-          type="button"
-          className={`tp-tab ${tab === "pending" ? "active" : ""}`}
-          onClick={() => setTab("pending")}
-        >
+        <button type="button" className={`tp-tab ${tab === "pending" ? "active" : ""}`} onClick={() => setTab("pending")}>
           Bekleyen <span className="tp-chip">{counts.pending}</span>
         </button>
-        <button
-          type="button"
-          className={`tp-tab ${tab === "approved" ? "active" : ""}`}
-          onClick={() => setTab("approved")}
-        >
+        <button type="button" className={`tp-tab ${tab === "approved" ? "active" : ""}`} onClick={() => setTab("approved")}>
           Onaylanmış <span className="tp-chip success">{counts.approved}</span>
         </button>
-        <button
-          type="button"
-          className={`tp-tab ${tab === "rejected" ? "active" : ""}`}
-          onClick={() => setTab("rejected")}
-        >
+        <button type="button" className={`tp-tab ${tab === "rejected" ? "active" : ""}`} onClick={() => setTab("rejected")}>
           Reddedilmiş <span className="tp-chip danger">{counts.rejected}</span>
         </button>
-        <button
-          type="button"
-          className={`tp-tab ${tab === "all" ? "active" : ""}`}
-          onClick={() => setTab("all")}
-        >
+        <button type="button" className={`tp-tab ${tab === "all" ? "active" : ""}`} onClick={() => setTab("all")}>
           Tümü <span className="tp-chip muted">{counts.all}</span>
         </button>
       </div>
@@ -185,14 +164,12 @@ function RequestsPanel() {
                   </span>
                 )}
 
-                <div className="tp-chip">
-              {statusMap[r.status] || r.status}
-            </div>
-                      </div>
+                <div className="tp-chip" style={{marginLeft:10}}>
+                  {statusMap[r.status] || r.status}
+                </div>
+              </div>
 
-              
-
-              {/* Onay bekleyen randevular (bu kartın içinde) */}
+              {/* Onay bekleyen randevular */}
               {(r.appointments || []).length > 0 && (
                 <>
                   <div className="tp-section-sub" style={{marginTop:8}}>Onay bekleyen saatler</div>
@@ -219,31 +196,29 @@ function RequestsPanel() {
                 </>
               )}
 
-              {/* Onaylanmış randevular (bilgi amaçlı) */}
+              {/* Onaylanmış randevular */}
               {(r.appointmentsConfirmed || []).length > 0 && (
                 <>
                   <div className="tp-section-sub" style={{marginTop:8}}>Onaylanmış saatler</div>
                   <div className="tp-slots-grid">
-  {r.appointmentsConfirmed?.map((a) => {
-    const st = new Date(a.startsAt);
-    const et = new Date(a.endsAt);
-    return (
-      <div key={a.id} className="tp-slot-card slot-confirmed">
-        <div className="tp-slot-time">
-          {st.toLocaleDateString("tr-TR", { day:"2-digit", month:"2-digit" })}{" "}
-          {st.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })} –{" "}
-          {et.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })}
-        </div>
-        <div className="tp-slot-mode">Onaylı</div>
-
-        {/* 🔽 öğrenci adı/bilgisi varsa göster */}
-        {a.studentName && (
-          <div className="tp-slot-note">Öğrenci: <b>{a.studentName}</b></div>
-        )}
-      </div>
-    );
-  })}
-</div>
+                    {r.appointmentsConfirmed.map((a) => {
+                      const st = new Date(a.startsAt);
+                      const et = new Date(a.endsAt);
+                      return (
+                        <div key={a.id} className="tp-slot-card slot-confirmed">
+                          <div className="tp-slot-time">
+                            {st.toLocaleDateString("tr-TR", { day:"2-digit", month:"2-digit" })}{" "}
+                            {st.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })} –{" "}
+                            {et.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })}
+                          </div>
+                          <div className="tp-slot-mode">Onaylı</div>
+                          {a.studentName && (
+                            <div className="tp-slot-note">Öğrenci: <b>{a.studentName}</b></div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </>
               )}
             </div>
@@ -254,37 +229,30 @@ function RequestsPanel() {
   );
 }
 
-
 export default function TeacherPanel() {
   const [profile, setProfile] = useState(null);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const fileRef = useRef(null);
-  
-   // Scheduling
+
+  // Scheduling
   const {
-  avail, setAvail,
-  slots,
-  range, setRange,
-  timeOffs,
-  creatingOff, setCreatingOff,
-  minToStr, strToMin, onAvailChange,
-  saveAvailability, fetchSlots, addTimeOff, delTimeOff,
-  confirmed, 
-} = useTeacherScheduling(setMsg);
+    avail, setAvail,
+    slots,
+    range, setRange,
+    timeOffs,
+    creatingOff, setCreatingOff,
+    minToStr, strToMin, onAvailChange,
+    saveAvailability, fetchSlots, addTimeOff, delTimeOff,
+    confirmed,
+  } = useTeacherScheduling(setMsg);
 
-
-  // ✅ RANDEVU ONAY/İPTAL SONRASI TAKVİMİ YENİLE
+  // RANDEVU ONAY/İPTAL SONRASI TAKVİMİ YENİLE
   useEffect(() => {
-    const onChanged = () => {
-      fetchSlots();
-    };
-    // dispatch tarafındaki adla aynı olmalı:
+    const onChanged = () => { fetchSlots(); };
     window.addEventListener("refresh-slots", onChanged);
     return () => window.removeEventListener("refresh-slots", onChanged);
   }, [fetchSlots]);
-
-
 
   const togglePublish = async (next) => {
     setMsg("");
@@ -304,9 +272,7 @@ export default function TeacherPanel() {
   // Biyografi
   const [bioSaving, setBioSaving] = useState(false);
 
- 
-
-  // Sekmeler: availability | slots | timeoff | lessons | location | requests
+  // Sekmeler
   const [tab, setTab] = useState("lessons");
 
   // Profil
@@ -522,13 +488,13 @@ export default function TeacherPanel() {
               )}
 
               {tab === "slots" && (
-               <SlotsPreview
-    range={range}
-    setRange={setRange}
-    slots={slots}
-    fetchSlots={fetchSlots}
-    confirmed={confirmed}   
-  />
+                <SlotsPreview
+                  range={range}
+                  setRange={setRange}
+                  slots={slots}
+                  fetchSlots={fetchSlots}
+                  confirmed={confirmed}
+                />
               )}
 
               {tab === "timeoff" && (
