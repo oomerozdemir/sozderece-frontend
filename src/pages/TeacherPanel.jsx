@@ -17,6 +17,7 @@ function RequestsPanel() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
+  const [tab, setTab] = useState("pending"); // 'pending' | 'approved' | 'rejected' | 'all'
   const token = localStorage.getItem("token");
 
   const load = async () => {
@@ -36,56 +37,120 @@ function RequestsPanel() {
 
   useEffect(() => { load(); }, []);
 
-const setStatus = async (id, status) => {
-  try {
-    const { data } = await axios.patch(
-      `/api/v1/ogretmen/appointments/${id}/status`,
-      { status },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+  // Öğretmen, randevuyu onay/iptal eder
+  const setStatus = async (id, status) => {
+    try {
+      const { data } = await axios.patch(
+        `/api/v1/ogretmen/appointments/${id}/status`,
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    const updated = data?.appointment || { id, status };
+      const updated = data?.appointment || { id, status };
 
-    setItems((list) =>
-      list.map((r) => {
-        const stillPending = (r.appointments || []).filter((a) => a.id !== id);
-        let confirmed = r.appointmentsConfirmed || [];
+      // UI güncelle: pending listesinden çıkar, confirmed’e ekle (CONFIRMED ise)
+      setItems((list) =>
+        list.map((r) => {
+          const stillPending = (r.appointments || []).filter((a) => a.id !== id);
+          let appointmentsConfirmed = r.appointmentsConfirmed || [];
+          if (status === "CONFIRMED") {
+            appointmentsConfirmed = [...appointmentsConfirmed, updated];
+          }
+          return { ...r, appointments: stillPending, appointmentsConfirmed };
+        })
+      );
 
-        if (status === "CONFIRMED") {
-          confirmed = [...confirmed, updated];
-        }
+      // Takvim önizlemeyi yenile
+      window.dispatchEvent(new Event("refresh-slots"));
+    } catch (e) {
+      alert(e?.response?.data?.message || "Durum güncellenemedi.");
+    }
+  };
 
-        return {
-          ...r,
-          appointments: stillPending,
-          appointmentsConfirmed: confirmed,
-        };
-      })
-    );
+  // Talepleri kovana ayır
+  const bucketOf = (req) => {
+    // İsteğiniz doğrultusunda:
+    // SUBMITTED / PACKAGE_SELECTED  -> BEKLEYEN
+    // PAID                           -> ONAYLANMIŞ
+    // CANCELLED                      -> REDDEDİLMİŞ
+    switch (req.status) {
+      case "PAID": return "approved";
+      case "CANCELLED": return "rejected";
+      case "SUBMITTED":
+      case "PACKAGE_SELECTED":
+      default:
+        return "pending";
+    }
+  };
 
-    window.dispatchEvent(new Event("refresh-slots"));
-  } catch (e) {
-    alert(e?.response?.data?.message || "Durum güncellenemedi.");
-  }
-};
+  const groups = useMemo(() => {
+    const g = { pending: [], approved: [], rejected: [], all: [] };
+    for (const r of items) {
+      const b = bucketOf(r);
+      g[b].push(r);
+      g.all.push(r);
+    }
+    return g;
+  }, [items]);
 
+  const counts = {
+    pending: groups.pending.length,
+    approved: groups.approved.length,
+    rejected: groups.rejected.length,
+    all: groups.all.length,
+  };
 
+  const list = groups[tab] || [];
 
   return (
     <div className="tp-section">
       <div className="tp-head">
         <h2 className="tp-title">Gelen Talepler</h2>
-        <button className="tp-btn" onClick={load}>Yenile</button>
+        <div style={{display:"flex", gap:8, alignItems:"center"}}>
+          <button className="tp-btn ghost" onClick={load}>Yenile</button>
+        </div>
+      </div>
+
+      {/* Sekmeler */}
+      <div className="tp-tabs" style={{marginBottom:8}}>
+        <button
+          type="button"
+          className={`tp-tab ${tab === "pending" ? "active" : ""}`}
+          onClick={() => setTab("pending")}
+        >
+          Bekleyen <span className="tp-chip">{counts.pending}</span>
+        </button>
+        <button
+          type="button"
+          className={`tp-tab ${tab === "approved" ? "active" : ""}`}
+          onClick={() => setTab("approved")}
+        >
+          Onaylanmış <span className="tp-chip success">{counts.approved}</span>
+        </button>
+        <button
+          type="button"
+          className={`tp-tab ${tab === "rejected" ? "active" : ""}`}
+          onClick={() => setTab("rejected")}
+        >
+          Reddedilmiş <span className="tp-chip danger">{counts.rejected}</span>
+        </button>
+        <button
+          type="button"
+          className={`tp-tab ${tab === "all" ? "active" : ""}`}
+          onClick={() => setTab("all")}
+        >
+          Tümü <span className="tp-chip muted">{counts.all}</span>
+        </button>
       </div>
 
       {msg ? <div className="tp-alert">{msg}</div> : null}
       {loading ? <div className="tp-loading">Yükleniyor…</div> : null}
 
-      {!loading && (!items || items.length === 0) ? (
-        <div className="tp-empty">Şu an görüntülenecek talep yok.</div>
+      {!loading && (!list || list.length === 0) ? (
+        <div className="tp-empty">Bu bölümde gösterilecek talep yok.</div>
       ) : (
         <div className="tp-req-list">
-          {items.map((r) => (
+          {list.map((r) => (
             <div key={r.id} className="tp-card">
               <div className="tp-card-head">
                 <div className="tp-card-title">
@@ -95,48 +160,74 @@ const setStatus = async (id, status) => {
               </div>
 
               <div className="tp-card-row">
-            <span>Ders:</span> <b>{r.subject}</b>
-            <span style={{marginLeft:10}}>Seviye:</span> <b>{r.grade}</b>
-            <span style={{marginLeft:10}}>Tür:</span> <b>{r.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</b>
+                <span>Ders:</span> <b>{r.subject}</b>
+                <span style={{marginLeft:10}}>Seviye:</span> <b>{r.grade}</b>
+                <span style={{marginLeft:10}}>Tür:</span> <b>{r.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</b>
 
-            {/* Ödenen tutar */}
-            {typeof r.paidTL === "number" && (
-              <span style={{marginLeft:10}}>
-                Ödenen: <b>{r.paidTL.toLocaleString("tr-TR")} ₺</b>
-              </span>
-            )}
+                {typeof r.paidTL === "number" && (
+                  <span style={{marginLeft:10}}>
+                    Ödenen: <b>{r.paidTL.toLocaleString("tr-TR")} ₺</b>
+                  </span>
+                )}
+                {typeof r.lessonsCount === "number" && (
+                  <span style={{marginLeft:10}}>
+                    Adet: <b>{r.lessonsCount}</b>
+                  </span>
+                )}
 
-            {/* Ders adedi */}
-            {typeof r.lessonsCount === "number" && (
-              <span style={{marginLeft:10}}>
-                Adet: <b>{r.lessonsCount}</b>
-              </span>
-            )}
-          </div>
+                <span style={{marginLeft:10}} className="tp-chip muted">
+                  Durum: {r.status}
+                </span>
+              </div>
 
-              {(r.appointments || []).length === 0 ? (
-                <div className="tp-muted">Bu talepte onay bekleyen randevu yok.</div>
-              ) : (
-                <div className="tp-slots-grid">
-                  {r.appointments.map((a) => {
-                    const st = new Date(a.startsAt);
-                    const et = new Date(a.endsAt);
-                    return (
-                      <div key={a.id} className="tp-slot-card">
-                        <div className="tp-slot-time">
-                          {st.toLocaleDateString("tr-TR", { day:"2-digit", month:"2-digit" })}{" "}
-                          {st.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })} –{" "}
-                          {et.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })}
+              {/* Onay bekleyen randevular (bu kartın içinde) */}
+              {(r.appointments || []).length > 0 && (
+                <>
+                  <div className="tp-section-sub" style={{marginTop:8}}>Onay bekleyen saatler</div>
+                  <div className="tp-slots-grid">
+                    {r.appointments.map((a) => {
+                      const st = new Date(a.startsAt);
+                      const et = new Date(a.endsAt);
+                      return (
+                        <div key={a.id} className="tp-slot-card">
+                          <div className="tp-slot-time">
+                            {st.toLocaleDateString("tr-TR", { day:"2-digit", month:"2-digit" })}{" "}
+                            {st.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })} –{" "}
+                            {et.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })}
+                          </div>
+                          <div className="tp-slot-mode">{a.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</div>
+                          <div className="tp-slot-actions">
+                            <button className="tp-btn" onClick={()=>setStatus(a.id, "CONFIRMED")}>Onayla</button>
+                            <button className="tp-btn ghost" onClick={()=>setStatus(a.id, "CANCELLED")}>İptal</button>
+                          </div>
                         </div>
-                        <div className="tp-slot-mode">{a.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</div>
-                        <div className="tp-slot-actions">
-                          <button className="tp-btn" onClick={()=>setStatus(a.id, "CONFIRMED")}>Onayla</button>
-                          <button className="tp-btn ghost" onClick={()=>setStatus(a.id, "CANCELLED")}>İptal</button>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+
+              {/* Onaylanmış randevular (bilgi amaçlı) */}
+              {(r.appointmentsConfirmed || []).length > 0 && (
+                <>
+                  <div className="tp-section-sub" style={{marginTop:8}}>Onaylanmış saatler</div>
+                  <div className="tp-slots-grid">
+                    {r.appointmentsConfirmed.map((a) => {
+                      const st = new Date(a.startsAt || a.startsAtISO || a.startsAtUtc || a.startsAtLocal || a.startsAt);
+                      const et = new Date(a.endsAt);
+                      return (
+                        <div key={a.id} className="tp-slot-card slot-confirmed">
+                          <div className="tp-slot-time">
+                            {st.toLocaleDateString("tr-TR", { day:"2-digit", month:"2-digit" })}{" "}
+                            {st.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })} –{" "}
+                            {et.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" })}
+                          </div>
+                          <div className="tp-slot-mode">Onaylı</div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+                </>
               )}
             </div>
           ))}
@@ -145,6 +236,7 @@ const setStatus = async (id, status) => {
     </div>
   );
 }
+
 
 export default function TeacherPanel() {
   const [profile, setProfile] = useState(null);
