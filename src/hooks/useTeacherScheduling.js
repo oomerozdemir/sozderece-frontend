@@ -1,24 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "../utils/axios";
 
 export default function useTeacherScheduling(onMessage) {
   const [avail, setAvail] = useState({
     timeZone: "Europe/Istanbul",
     items: Array.from({ length: 7 }, (_, i) => ({
-      weekday: i,            // 0..6 (Pazar..Cumartesi)
-      startMin: 9 * 60,      // 09:00
-      endMin: 17 * 60,       // 17:00
+      weekday: i,            
+      startMin: 9 * 60,      
+      endMin: 17 * 60,     
       mode: "BOTH",
-      isActive: i > 0 && i < 6, // hafta içi açık
+      isActive: i > 0 && i < 6, 
     })),
   });
 
-  const [slots, setSlots] = useState([]);
+  const [slots, setSlots] = useState([]);            
+  const [confirmed, setConfirmed] = useState([]);    
   const [range, setRange] = useState({ from: "", to: "" });
   const [timeOffs, setTimeOffs] = useState([]);
   const [creatingOff, setCreatingOff] = useState({ startsAt: "", endsAt: "", reason: "" });
 
-  // init: uygunluk + timeoff çek
   useEffect(() => {
     (async () => {
       try {
@@ -29,11 +29,13 @@ export default function useTeacherScheduling(onMessage) {
             items: a.data.items,
           });
         }
-      } catch {}
+      } catch {
+      }
       try {
         const t = await axios.get("/api/v1/ogretmen/me/timeoff");
         setTimeOffs(t?.data?.items || []);
-      } catch {}
+      } catch {
+      }
     })();
   }, []);
 
@@ -50,7 +52,14 @@ export default function useTeacherScheduling(onMessage) {
       const items = a.items.slice();
       const idx = items.findIndex((x) => x.weekday === weekday);
       if (idx === -1) {
-        items.push({ weekday, startMin: 9 * 60, endMin: 17 * 60, mode: "BOTH", isActive: true, [field]: val });
+        items.push({
+          weekday,
+          startMin: 9 * 60,
+          endMin: 17 * 60,
+          mode: "BOTH",
+          isActive: true,
+          [field]: val,
+        });
       } else {
         items[idx] = { ...items[idx], [field]: val };
       }
@@ -68,17 +77,24 @@ export default function useTeacherScheduling(onMessage) {
     }
   };
 
-  const fetchSlots = async () => {
+  const fetchSlots = useCallback(async () => {
     if (!range.from || !range.to) return;
     try {
       const { data } = await axios.get("/api/v1/ogretmen/me/slots", {
-        params: { from: range.from, to: range.to, tz: avail.timeZone, mode: "BOTH", duration: 60 },
+        params: {
+          from: range.from,
+          to: range.to,
+          tz: avail.timeZone || "Europe/Istanbul",
+          mode: "BOTH",
+          duration: 60,
+        },
       });
       setSlots(data?.slots || []);
+      setConfirmed(data?.confirmed || []); // ✅ onaylıları da al
     } catch {
       onMessage?.("Slotlar alınamadı.");
     }
-  };
+  }, [range.from, range.to, avail.timeZone, onMessage]);
 
   const addTimeOff = async () => {
     try {
@@ -86,6 +102,7 @@ export default function useTeacherScheduling(onMessage) {
       const { data } = await axios.get("/api/v1/ogretmen/me/timeoff");
       setTimeOffs(data?.items || []);
       setCreatingOff({ startsAt: "", endsAt: "", reason: "" });
+      onMessage?.("Tatil/blokaj eklendi.");
     } catch {
       onMessage?.("Tatil/blokaj eklenemedi.");
     }
@@ -95,6 +112,7 @@ export default function useTeacherScheduling(onMessage) {
     try {
       await axios.delete(`/api/v1/ogretmen/me/timeoff/${id}`);
       setTimeOffs((s) => s.filter((x) => x.id !== id));
+      onMessage?.("Blokaj kaldırıldı.");
     } catch {
       onMessage?.("Silinemedi.");
     }
@@ -104,6 +122,7 @@ export default function useTeacherScheduling(onMessage) {
     // state
     avail, setAvail,
     slots, setSlots,
+    confirmed, setConfirmed,   
     range, setRange,
     timeOffs, setTimeOffs,
     creatingOff, setCreatingOff,

@@ -413,11 +413,12 @@ export default function TeacherPanel() {
 
               {tab === "slots" && (
                 <SlotsPreview
-                  range={range}
-                  setRange={setRange}
-                  slots={slots}
-                  fetchSlots={fetchSlots}
-                />
+                range={range}
+                setRange={setRange}
+                slots={slots}
+                confirmed={confirmed}
+                fetchSlots={fetchSlots}
+              />
               )}
 
               {tab === "timeoff" && (
