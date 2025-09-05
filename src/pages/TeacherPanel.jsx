@@ -154,14 +154,15 @@ export default function TeacherPanel() {
   
    // Scheduling
   const {
-    avail, setAvail,
-    slots,
-    range, setRange,
-    timeOffs,
-    creatingOff, setCreatingOff,
-    minToStr, strToMin, onAvailChange,
-    saveAvailability, fetchSlots, addTimeOff, delTimeOff,
-  } = useTeacherScheduling(setMsg);
+  avail, setAvail,
+  slots,
+  range, setRange,
+  timeOffs,
+  creatingOff, setCreatingOff,
+  minToStr, strToMin, onAvailChange,
+  saveAvailability, fetchSlots, addTimeOff, delTimeOff,
+  confirmed, 
+} = useTeacherScheduling(setMsg);
 
 
   // ✅ RANDEVU ONAY/İPTAL SONRASI TAKVİMİ YENİLE
@@ -412,13 +413,13 @@ export default function TeacherPanel() {
               )}
 
               {tab === "slots" && (
-                <SlotsPreview
-                range={range}
-                setRange={setRange}
-                slots={slots}
-                confirmed={confirmed}
-                fetchSlots={fetchSlots}
-              />
+               <SlotsPreview
+    range={range}
+    setRange={setRange}
+    slots={slots}
+    fetchSlots={fetchSlots}
+    confirmed={confirmed}   
+  />
               )}
 
               {tab === "timeoff" && (
