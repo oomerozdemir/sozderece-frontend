@@ -36,24 +36,40 @@ function RequestsPanel() {
 
   useEffect(() => { load(); }, []);
 
-  const setStatus = async (id, status) => {
-    try {
-      await axios.patch(
-        `/api/v1/ogretmen/appointments/${id}/status`,
-        { status },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      // UI: onaylanan/iptal edilen randevuyu listeden çıkar
-      setItems((list) =>
-        list.map((r) => ({
+const setStatus = async (id, status) => {
+  try {
+    const { data } = await axios.patch(
+      `/api/v1/ogretmen/appointments/${id}/status`,
+      { status },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const updated = data?.appointment || { id, status };
+
+    setItems((list) =>
+      list.map((r) => {
+        const stillPending = (r.appointments || []).filter((a) => a.id !== id);
+        let confirmed = r.appointmentsConfirmed || [];
+
+        if (status === "CONFIRMED") {
+          confirmed = [...confirmed, updated];
+        }
+
+        return {
           ...r,
-          appointments: (r.appointments || []).filter((a) => a.id !== id),
-        }))
-      );
-    } catch (e) {
-      alert(e?.response?.data?.message || "Durum güncellenemedi.");
-    }
-  };
+          appointments: stillPending,
+          appointmentsConfirmed: confirmed,
+        };
+      })
+    );
+
+    window.dispatchEvent(new Event("refresh-slots"));
+  } catch (e) {
+    alert(e?.response?.data?.message || "Durum güncellenemedi.");
+  }
+};
+
+
 
   return (
     <div className="tp-section">
@@ -79,15 +95,24 @@ function RequestsPanel() {
               </div>
 
               <div className="tp-card-row">
-                <span>Ders:</span> <b>{r.subject}</b>
-                <span style={{marginLeft:10}}>Seviye:</span> <b>{r.grade}</b>
-                <span style={{marginLeft:10}}>Tür:</span> <b>{r.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</b>
-                {typeof r.packageUnitPrice === "number" ? (
-                  <span style={{marginLeft:10}}>
-                    Toplam: <b>{(r.packageUnitPrice/100).toLocaleString("tr-TR")} ₺</b>
-                  </span>
-                ) : null}
-              </div>
+            <span>Ders:</span> <b>{r.subject}</b>
+            <span style={{marginLeft:10}}>Seviye:</span> <b>{r.grade}</b>
+            <span style={{marginLeft:10}}>Tür:</span> <b>{r.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</b>
+
+            {/* Ödenen tutar */}
+            {typeof r.paidTL === "number" && (
+              <span style={{marginLeft:10}}>
+                Ödenen: <b>{r.paidTL.toLocaleString("tr-TR")} ₺</b>
+              </span>
+            )}
+
+            {/* Ders adedi */}
+            {typeof r.lessonsCount === "number" && (
+              <span style={{marginLeft:10}}>
+                Adet: <b>{r.lessonsCount}</b>
+              </span>
+            )}
+          </div>
 
               {(r.appointments || []).length === 0 ? (
                 <div className="tp-muted">Bu talepte onay bekleyen randevu yok.</div>
@@ -126,6 +151,30 @@ export default function TeacherPanel() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const fileRef = useRef(null);
+  
+   // Scheduling
+  const {
+    avail, setAvail,
+    slots,
+    range, setRange,
+    timeOffs,
+    creatingOff, setCreatingOff,
+    minToStr, strToMin, onAvailChange,
+    saveAvailability, fetchSlots, addTimeOff, delTimeOff,
+  } = useTeacherScheduling(setMsg);
+
+
+  // ✅ RANDEVU ONAY/İPTAL SONRASI TAKVİMİ YENİLE
+  useEffect(() => {
+    const onChanged = () => {
+      fetchSlots();
+    };
+    // dispatch tarafındaki adla aynı olmalı:
+    window.addEventListener("refresh-slots", onChanged);
+    return () => window.removeEventListener("refresh-slots", onChanged);
+  }, [fetchSlots]);
+
+
 
   const togglePublish = async (next) => {
     setMsg("");
@@ -145,16 +194,7 @@ export default function TeacherPanel() {
   // Biyografi
   const [bioSaving, setBioSaving] = useState(false);
 
-  // Scheduling
-  const {
-    avail, setAvail,
-    slots,
-    range, setRange,
-    timeOffs,
-    creatingOff, setCreatingOff,
-    minToStr, strToMin, onAvailChange,
-    saveAvailability, fetchSlots, addTimeOff, delTimeOff,
-  } = useTeacherScheduling(setMsg);
+ 
 
   // Sekmeler: availability | slots | timeoff | lessons | location | requests
   const [tab, setTab] = useState("lessons");
