@@ -302,8 +302,8 @@
   --pkc-primary: #ff6a00;      /* indigo-500 */
   --pkc-primary-600:#002bff;   /* indigo-600 */
   --pkc-accent:  #22c55e;      /* green-500 */
-  --pkc-text:    #111827;      /* gray-900 */
-  --pkc-muted:   #6b7280;      /* gray-500 */
+      --pkc-text: #ff7d0a;
+    --pkc-muted: #6b7280;      /* gray-500 */
   --pkc-border:  #e5e7eb;      /* gray-200 */
   --pkc-card:    #ffffff;      /* white */
   --pkc-soft:    #f8fafc;      /* slate-50 */
