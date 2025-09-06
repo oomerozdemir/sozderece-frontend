@@ -328,15 +328,15 @@
 
 /* ---- Fancy Refresh Button ---- */
 .tp-refresh {
-  --bg1: #0ea5e9;        /* tailwind sky-500 */
-  --bg2: #22c55e;        /* tailwind green-500 */
+  --bg1: #0d256d;
+  --bg2: #b7afaf;
   --ring: rgba(14,165,233,.35);
-  --shadow: rgba(2,6,23,.12);
+  --shadow: #0206171f;
 
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 14px;
+  padding: 3px 5px;
   border: 0;
   border-radius: 12px;
   background: linear-gradient(135deg, var(--bg1), var(--bg2));
