@@ -299,8 +299,8 @@
    Modern, siteye uyumlu görünüm
    ================================ */
 :root{
-  --pkc-primary: #6366f1;      /* indigo-500 */
-  --pkc-primary-600:#4f46e5;   /* indigo-600 */
+  --pkc-primary: #ff6a00;      /* indigo-500 */
+  --pkc-primary-600:#002bff;   /* indigo-600 */
   --pkc-accent:  #22c55e;      /* green-500 */
   --pkc-text:    #111827;      /* gray-900 */
   --pkc-muted:   #6b7280;      /* gray-500 */
