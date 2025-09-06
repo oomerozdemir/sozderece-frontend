@@ -134,7 +134,6 @@ export default App;
 /*
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   3-ogretmen panelı duzenlemesı
-      -ogretmen talebı onayladıgında ogrencıye de mail gitsin ve ogrencı panelınde de onaylanmış ders talepleri alanında gözüksün
       
       - ders tamamlandıktan sonra ogretmen de ogrencı de dersın tamamlandıgını onaylaması gereklı(bunu admın tarafında kontrol de edecegız)
   
@@ -147,7 +146,6 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
 
 
 ******** ozel ders icin ogrenci tarafi ********
-  -paket secimi sonrasi randevu secimi yapsin ogrenci sectigi pakete bagli olarak 3 ders secti ise 3 tane bos yeri alsin takvimdeki uygunluga gore
   -ogretmene mail gondeririz talep geldikce
   -talep onaylandiginda ayni sekilde talep onaylandi diye ogrenciye de mail gider
   -ders bittiginde ogretmen ders tamamlandi diye isaretler.
