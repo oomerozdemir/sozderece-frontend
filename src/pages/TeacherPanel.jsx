@@ -44,34 +44,59 @@ function RequestsPanel() {
   useEffect(() => { load(); }, []);
 
   // Öğretmen, randevuyu onay/iptal eder
-  const setStatus = async (id, status) => {
-    try {
-      const { data } = await axios.patch(
-        `/api/v1/ogretmen/appointments/${id}/status`,
-        { status },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+ const setStatus = async (id, status) => {
+  try {
+    const { data } = await axios.patch(
+      `/api/v1/ogretmen/appointments/${id}/status`,
+      { status },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-      const updated = data?.appointment || { id, status };
+    const updated = data?.appointment || { id, status };
 
-      // UI güncelle: pending listesinden çıkar, confirmed’e ekle (CONFIRMED ise)
-      setItems((list) =>
-        list.map((r) => {
-          const stillPending = (r.appointments || []).filter((a) => a.id !== id);
-          let appointmentsConfirmed = r.appointmentsConfirmed || [];
-          if (status === "CONFIRMED") {
-            appointmentsConfirmed = [...appointmentsConfirmed, updated];
-          }
-          return { ...r, appointments: stillPending, appointmentsConfirmed };
-        })
-      );
+    setItems((list) =>
+      list.map((r) => {
+        const hadThisPending   = (r.appointments || []).some((a) => a.id === id);
+        const wasConfirmedSlot = (r.appointmentsConfirmed || []).some((a) => a.id === id);
 
-      // Takvim önizlemeyi yenile
-      window.dispatchEvent(new Event("refresh-slots"));
-    } catch (e) {
-      alert(e?.response?.data?.message || "Durum güncellenemedi.");
+        const stillPending   = (r.appointments || []).filter((a) => a.id !== id);
+        let   stillConfirmed = (r.appointmentsConfirmed || []).filter((a) => a.id !== id);
+
+        // CONFIRMED: pending'den çıkar + confirmed'e ekle
+        if (status === "CONFIRMED" && hadThisPending) {
+          stillConfirmed = [...stillConfirmed, updated];
+        }
+
+        // CANCELLED: bu talepte başka aktif slot kalmadıysa talep durumunu CANCELLED yap
+        let newStatus = r.status;
+        if (status === "CANCELLED" && (hadThisPending || wasConfirmedSlot)) {
+          const noPending   = stillPending.length === 0;
+          const noConfirmed = (stillConfirmed?.length || 0) === 0;
+          if (noPending && noConfirmed) newStatus = "CANCELLED";
+        }
+
+        return {
+          ...r,
+          status: newStatus,
+          appointments: stillPending,
+          appointmentsConfirmed: stillConfirmed,
+        };
+      })
+    );
+
+    // Takvim önizlemeyi yenile
+    window.dispatchEvent(new Event("refresh-slots"));
+
+    // BE senkronu ve görünürlük için iptalden sonra listeyi tazele
+    if (status === "CANCELLED") {
+      load();
+      // İstersen iptal sonrası "Reddedilmiş" sekmesine geç:
+      // setTab("rejected");
     }
-  };
+  } catch (e) {
+    alert(e?.response?.data?.message || "Durum güncellenemedi.");
+  }
+};
 
   // Talepleri kovana ayır
   const bucketOf = (req) => {
