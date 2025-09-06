@@ -135,6 +135,9 @@ function TeacherCard({ t }) {
   const navigate = useNavigate();
   const cover = t.photoUrl || "https://placehold.co/400x240?text=Teacher";
 
+  const showOnline = t.mode !== "FACE_TO_FACE" && typeof t.priceOnline === "number" && t.priceOnline > 0;
+  const showF2F    = t.mode !== "ONLINE"      && typeof t.priceF2F    === "number" && t.priceF2F    > 0;
+
   return (
     <Link to={`/ogretmenler/${t.slug}`} className="tl-card">
       <img src={cover} alt={`${t.firstName} ${t.lastName}`} />
@@ -146,16 +149,12 @@ function TeacherCard({ t }) {
           <span className="tl-badge">
             {t.mode === "ONLINE" ? "Online" : t.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online + Yüz yüze"}
           </span>
-           <span className="tl-price">
-            {typeof t.priceOnline === "number"
-              ? `Online ₺${t.priceOnline.toLocaleString("tr-TR")}`
-              : ""}
-            {typeof t.priceOnline === "number" && typeof t.priceF2F === "number" ? " • " : ""}
-            {typeof t.priceF2F === "number"
-              ? `Yüz yüze ₺${t.priceF2F.toLocaleString("tr-TR")}`
-              : ""}
+          <span className="tl-price">
+            {showOnline ? `Online ₺${t.priceOnline.toLocaleString("tr-TR")}` : ""}
+            {showOnline && showF2F ? " • " : ""}
+            {showF2F ? `Yüz yüze ₺${t.priceF2F.toLocaleString("tr-TR")}` : ""}
           </span>
-                  </div>
+        </div>
 
         <div className="tl-row small">
           <span>👁 {t.viewCount || 0}</span>
