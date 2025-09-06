@@ -84,7 +84,7 @@ function RequestsPanel() {
    }
  };
 
- 
+
   const groups = useMemo(() => {
     const g = { pending: [], approved: [], rejected: [], all: [] };
     for (const r of items) {
@@ -140,8 +140,12 @@ function RequestsPanel() {
             <div key={r.id} className="tp-card">
               <div className="tp-card-head">
                 <div className="tp-card-title">
-                  {r.student?.name || "Öğrenci"} • {r.student?.email}
+                {r.student?.name || "Öğrenci"}
+              <div className="tp-card-subtle">
+                  {r.student?.email || "—"}
+                  {r.student?.phone ? <> • {r.student.phone}</> : null}
                 </div>
+              </div>
                 <div className="tp-badge">{r.packageTitle || "Paket"}</div>
               </div>
 
