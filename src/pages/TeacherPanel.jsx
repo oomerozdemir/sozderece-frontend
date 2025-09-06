@@ -15,7 +15,7 @@ import TeacherLessons from "../components/teacherComps/TeacherLessons";
 function RequestsPanel() {
   const statusMap = {
     SUBMITTED: "Gönderildi",
-    PACKAGE_SELECTED: "Paket seçildi",
+    PACKAGE_SELECTED: "Paket seçildi,sepette",
     PAID: "Ödendi",
     CANCELLED: "İptal",
   };
@@ -75,19 +75,16 @@ function RequestsPanel() {
 
   // Talepleri kovana ayır
   const bucketOf = (req) => {
-    // SUBMITTED / PACKAGE_SELECTED -> Bekleyen
-    // PAID                         -> Onaylanmış
-    // CANCELLED                    -> Reddedilmiş
-    switch (req.status) {
-      case "PAID": return "approved";
-      case "CANCELLED": return "rejected";
-      case "SUBMITTED":
-      case "PACKAGE_SELECTED":
-      default:
-        return "pending";
-    }
-  };
+ // Eğer bu talepte CONFIRMED randevu varsa, "Onaylanmış" sekmesine koy.
+  if ((req.appointmentsConfirmed || []).length > 0) return "approved";
+   switch (req.status) {
+     case "PAID": return "approved";
+     case "CANCELLED": return "rejected";
+     default: return "pending"; // SUBMITTED | PACKAGE_SELECTED
+   }
+ };
 
+ 
   const groups = useMemo(() => {
     const g = { pending: [], approved: [], rejected: [], all: [] };
     for (const r of items) {
