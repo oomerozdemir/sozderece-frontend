@@ -40,6 +40,7 @@ export default function TeachersList() {
 
   const districts = useMemo(() => TR_DISTRICTS[filters.city] || [], [filters.city]);
 
+  // URL barını güncelle (boş olanları yazma)
   useEffect(() => {
     const p = new URLSearchParams();
     Object.entries(filters).forEach(([k,v]) => {
@@ -48,12 +49,18 @@ export default function TeachersList() {
     setParams(p, { replace: true });
   }, [filters, setParams]);
 
+  // Listeyi getir (boş olanları API'ye göndermeden)
   useEffect(() => {
     (async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get("/api/v1/ogretmenler", { params: filters });
-        setItems(data.items || data.teachers || []); // BE’ye göre fallback
+        // boş string / null / undefined değerleri çıkar
+        const apiParams = Object.fromEntries(
+          Object.entries(filters).filter(([_, v]) => v !== "" && v !== null && v !== undefined)
+        );
+
+        const { data } = await axios.get("/api/v1/ogretmenler", { params: apiParams });
+        setItems(data.items || data.teachers || []);
         setTotal(data.total || 0);
       } finally {
         setLoading(false);
@@ -64,69 +71,67 @@ export default function TeachersList() {
   const onChange = (k, v) => setFilters((s)=>({ ...s, [k]: v, page: 1 }));
 
   return (
-
     <> 
-    <TopBar />
-    <Navbar />
-    <div className="tl-page">
-      {/* Filtre barı */}
-      <div className="tl-filters">
-        <select value={filters.city} onChange={(e)=>onChange("city", e.target.value)}>
-          <option value="">İl (hepsi)</option>
-          {TR_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
+      <TopBar />
+      <Navbar />
+      <div className="tl-page">
+        {/* Filtre barı */}
+        <div className="tl-filters">
+          <select value={filters.city} onChange={(e)=>onChange("city", e.target.value)}>
+            <option value="">İl (hepsi)</option>
+            {TR_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
 
-        <select
-          value={filters.district}
-          onChange={(e)=>onChange("district", e.target.value)}
-          disabled={!filters.city || districts.length === 0}
-        >
-          <option value="">
-            {!filters.city ? "Önce il seçin" : (districts.length ? "İlçe (hepsi)" : "İlçe verisi yok")}
-          </option>
-          {districts.map(d => <option key={d} value={d}>{d}</option>)}
-        </select>
+          <select
+            value={filters.district}
+            onChange={(e)=>onChange("district", e.target.value)}
+            disabled={!filters.city || districts.length === 0}
+          >
+            <option value="">
+              {!filters.city ? "Önce il seçin" : (districts.length ? "İlçe (hepsi)" : "İlçe verisi yok")}
+            </option>
+            {districts.map(d => <option key={d} value={d}>{d}</option>)}
+          </select>
 
-        <select value={filters.subject} onChange={(e)=>onChange("subject", e.target.value)}>
-          <option value="">Ders (hepsi)</option>
-          {SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
-        </select>
+          <select value={filters.subject} onChange={(e)=>onChange("subject", e.target.value)}>
+            <option value="">Ders (hepsi)</option>
+            {SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
 
-        <select value={filters.grade} onChange={(e)=>onChange("grade", e.target.value)}>
-          <option value="">Sınıf (hepsi)</option>
-          {GRADES.map(g => <option key={g} value={g}>{g}</option>)}
-        </select>
+          <select value={filters.grade} onChange={(e)=>onChange("grade", e.target.value)}>
+            <option value="">Sınıf (hepsi)</option>
+            {GRADES.map(g => <option key={g} value={g}>{g}</option>)}
+          </select>
 
-        <select value={filters.mode} onChange={(e)=>onChange("mode", e.target.value)}>
-          {MODES.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
-        </select>
+          <select value={filters.mode} onChange={(e)=>onChange("mode", e.target.value)}>
+            {MODES.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+          </select>
 
-        <input type="number" inputMode="numeric" placeholder="Min ₺" value={filters.minPrice} onChange={(e)=>onChange("minPrice", e.target.value)} />
-        <input type="number" inputMode="numeric" placeholder="Max ₺" value={filters.maxPrice} onChange={(e)=>onChange("maxPrice", e.target.value)} />
+          <input type="number" inputMode="numeric" placeholder="Min ₺" value={filters.minPrice} onChange={(e)=>onChange("minPrice", e.target.value)} />
+          <input type="number" inputMode="numeric" placeholder="Max ₺" value={filters.maxPrice} onChange={(e)=>onChange("maxPrice", e.target.value)} />
 
-        <select value={filters.sort} onChange={(e)=>onChange("sort", e.target.value)}>
-          {SORTS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-        </select>
+          <select value={filters.sort} onChange={(e)=>onChange("sort", e.target.value)}>
+            {SORTS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+          </select>
+        </div>
+
+        {/* Kart grid */}
+        {loading ? <div className="tl-loading">Yükleniyor…</div> : (
+          <>
+            <div className="tl-grid">
+              {items.map(t => <TeacherCard key={t.id} t={t} />)}
+            </div>
+
+            {/* Sayfalama */}
+            <div className="tl-pager">
+              <button disabled={filters.page<=1} onClick={()=>setFilters(s=>({...s, page: s.page-1}))}>Önceki</button>
+              <span>Sayfa {filters.page}</span>
+              <button disabled={(filters.page * filters.limit) >= total} onClick={()=>setFilters(s=>({...s, page: s.page+1}))}>Sonraki</button>
+            </div>
+          </>
+        )}
       </div>
-
-      {/* Kart grid */}
-      {loading ? <div className="tl-loading">Yükleniyor…</div> : (
-        <>
-          <div className="tl-grid">
-            {items.map(t => <TeacherCard key={t.id} t={t} />)}
-          </div>
-
-          {/* Sayfalama */}
-          <div className="tl-pager">
-            <button disabled={filters.page<=1} onClick={()=>setFilters(s=>({...s, page: s.page-1}))}>Önceki</button>
-            <span>Sayfa {filters.page}</span>
-            <button disabled={(filters.page * filters.limit) >= total} onClick={()=>setFilters(s=>({...s, page: s.page+1}))}>Sonraki</button>
-          </div>
-        </>
-      )}
-    </div>
-    <Footer />
-
+      <Footer />
     </>
   );
 }
@@ -158,13 +163,13 @@ function TeacherCard({ t }) {
 
         <div className="tl-row small">
           <span>👁 {t.viewCount || 0}</span>
-          <span>⭐ {t.ratingAverage?.toFixed?.(1) || "0.0"} ({t.ratingCount || 0})</span>
+          <span>⭐ {Number(t.ratingAverage || 0).toFixed(1)} ({t.ratingCount || 0})</span>
         </div>
 
         <button
           className="tl-cta"
           onClick={(e) => {
-            e.preventDefault(); // Link tıklamasını engelle
+            e.preventDefault();
             navigate(`/ogretmenler/${t.slug}/talep`);
           }}
         >
