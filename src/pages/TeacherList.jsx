@@ -146,12 +146,16 @@ function TeacherCard({ t }) {
           <span className="tl-badge">
             {t.mode === "ONLINE" ? "Online" : t.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online + Yüz yüze"}
           </span>
-          <span className="tl-price">
-            {t.priceOnline ? `Online ₺${t.priceOnline}` : ""}
-            {t.priceOnline && t.priceF2F ? " • " : ""}
-            {t.priceF2F ? `YY ₺${t.priceF2F}` : ""}
+           <span className="tl-price">
+            {typeof t.priceOnline === "number"
+              ? `Online ₺${t.priceOnline.toLocaleString("tr-TR")}`
+              : ""}
+            {typeof t.priceOnline === "number" && typeof t.priceF2F === "number" ? " • " : ""}
+            {typeof t.priceF2F === "number"
+              ? `Yüz yüze ₺${t.priceF2F.toLocaleString("tr-TR")}`
+              : ""}
           </span>
-        </div>
+                  </div>
 
         <div className="tl-row small">
           <span>👁 {t.viewCount || 0}</span>
