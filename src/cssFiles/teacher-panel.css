@@ -310,8 +310,94 @@
   color: #065f46;
 }
 
+
+
+
+
+
 @media (max-width: 900px) {
   .tp-layout { grid-template-columns: 1fr; }
 }
 @media (max-width: 900px){ .tp-slots-grid { grid-template-columns: repeat(2,1fr); } }
 @media (max-width: 600px){ .tp-slots-grid { grid-template-columns: 1fr; } }
+
+
+
+
+
+
+/* ---- Fancy Refresh Button ---- */
+.tp-refresh {
+  --bg1: #0ea5e9;        /* tailwind sky-500 */
+  --bg2: #22c55e;        /* tailwind green-500 */
+  --ring: rgba(14,165,233,.35);
+  --shadow: rgba(2,6,23,.12);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--bg1), var(--bg2));
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: .2px;
+  box-shadow: 0 6px 18px var(--shadow);
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, filter .2s ease;
+  will-change: transform, box-shadow, filter;
+}
+
+.tp-refresh .icon {
+  display: inline-block;
+  opacity: .95;
+  transform-origin: 50% 50%;
+}
+
+.tp-refresh:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px var(--shadow);
+  filter: saturate(1.05);
+}
+
+.tp-refresh:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 18px var(--shadow);
+}
+
+.tp-refresh:focus-visible {
+  outline: 0;
+  box-shadow:
+    0 6px 18px var(--shadow),
+    0 0 0 6px var(--ring);
+}
+
+.tp-refresh.is-loading {
+  cursor: default;
+  opacity: .9;
+}
+
+.tp-refresh.is-loading .icon {
+  animation: spin 1s linear infinite;
+}
+
+.tp-refresh:disabled {
+  opacity: .7;
+  cursor: not-allowed;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Küçük ekranlarda sıkıştırma */
+@media (max-width: 420px) {
+  .tp-refresh {
+    padding: 9px 12px;
+    border-radius: 10px;
+  }
+  .tp-refresh .label {
+    font-size: 14px;
+  }
+}

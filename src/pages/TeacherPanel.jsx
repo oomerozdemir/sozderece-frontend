@@ -134,7 +134,17 @@ function RequestsPanel() {
       <div className="tp-head">
         <h2 className="tp-title">Gelen Talepler</h2>
         <div style={{display:"flex", gap:8, alignItems:"center"}}>
-          <button className="tp-btn ghost" onClick={load}>Yenile</button>
+          <button
+  className={`tp-refresh ${loading ? "is-loading" : ""}`}
+  onClick={load}
+  disabled={loading}
+  title="Yenile"
+>
+  <svg className="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 5V2L7 7l5 5V9a5 5 0 1 1-5 5H5a7 7 0 1 0 7-9z" fill="currentColor"/>
+  </svg>
+  <span className="label">{loading ? "Yükleniyor…" : "Yenile"}</span>
+</button>
         </div>
       </div>
 
