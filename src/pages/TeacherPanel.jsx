@@ -14,7 +14,6 @@ import TeacherLessons from "../components/teacherComps/TeacherLessons";
 ======================= */
 function RequestsPanel() {
   const statusMap = {
-    SUBMITTED: "Gönderildi",
     PACKAGE_SELECTED: "Paket seçildi,sepette",
     PAID: "Ödendi",
     CANCELLED: "İptal",
@@ -22,8 +21,6 @@ function RequestsPanel() {
 
   // status açıklamaları (ünleme hover)
 const statusHelp = {
-  SUBMITTED:
-    "Gönderildi: Ders talebi oluşturulma aşamasında ancak daha randevu saati seçmedi. Öğrenci ile iletişime geçerek talebi tamamlamasına yardımcı olabilirsiniz.",
   PACKAGE_SELECTED:
     "Sepette: Öğrenci ders talebini tamamlamış ve ürünü sepete eklemiştir ancak ödemeyi tamamlamamış. Talebi onaylamadan önce ödemeyi tamamlaması için öğrenciyle iletişime geçebilirsiniz.",
   PAID:

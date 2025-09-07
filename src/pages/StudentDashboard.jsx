@@ -4,15 +4,12 @@ import Navbar from "../components/navbar";
 import "../cssFiles/studentPage.css";
 
 const statusMap = {
-  SUBMITTED: "Gönderildi",
   PACKAGE_SELECTED: "Sepette",
   PAID: "Ödendi",
   CANCELLED: "İptal",
 };
 
 const statusHelp = {
-  SUBMITTED:
-    "Gönderildi: Talebiniz alındı ancak henüz ders saatlerini seçmediniz. Size uygun zamanları seçerek talebi tamamlayabilirsiniz.",
   PACKAGE_SELECTED:
     "Sepette: Talebiniz sepetinizde. Ödemeyi tamamladığınızda talebiniz öğretmeninize iletilecek ve onay sürecine geçilecektir.",
   PAID:
