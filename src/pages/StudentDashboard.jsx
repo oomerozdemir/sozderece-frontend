@@ -48,7 +48,7 @@ export default function StudentDashboard() {
 
   const token = useMemo(() => localStorage.getItem("token"), []);
 
-  // Profil bilgisi (mevcut akış)
+  // Profil bilgisi
   useEffect(() => {
     (async () => {
       try {
@@ -69,7 +69,8 @@ export default function StudentDashboard() {
   const loadRequests = async () => {
     try {
       setReqLoading(true);
-      const { data } = await axios.get("/api/v1/ogrenci/me/requests", {
+      // ⬇️ Doğru endpoint
+      const { data } = await axios.get("/api/v1/student-requests/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setRequests(data?.items || data || []);
@@ -88,7 +89,6 @@ export default function StudentDashboard() {
       const { data } = await axios.get("/api/v1/ogrenci/me/orders", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // Beklenen alanlar: id, status, amountTL, createdAt
       const items = (data?.items || data || []).map((o) => ({
         id: o.id,
         status: o.status,
@@ -134,7 +134,7 @@ export default function StudentDashboard() {
 
       <div className="student-page-wrapper">
         <div className="student-dashboard-grid">
-          {/* Sol: Koç Kartı (mevcut) */}
+          {/* Sol: Koç Kartı */}
           <div className="studentPage-coach-card">
             <h3>Atanmış Koçunuz</h3>
 
@@ -232,7 +232,6 @@ export default function StudentDashboard() {
 
             {tab === "requests" ? (
               <div className="sdb-requests">
-                {/* Sekme başlıkları */}
                 <div className="sdb-groups">
                   <Group
                     title={`Bekleyen (${groups.pending.length})`}
@@ -322,9 +321,6 @@ function Group({ title, color, loading, children }) {
 }
 
 function RequestCard({ r }) {
-  const showOnline = r.mode !== "FACE_TO_FACE";
-  const showF2F = r.mode !== "ONLINE";
-
   return (
     <div className="sdb-card">
       <div className="sdb-card-head">
