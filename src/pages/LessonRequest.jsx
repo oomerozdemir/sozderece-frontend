@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../utils/axios";
-import { isTokenValid } from "../utils/auth";
 import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
 import "../cssFiles/teacher.css";
 
 export default function LessonRequest() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   const [teacher, setTeacher] = useState(null);
   const [form, setForm] = useState({
@@ -20,12 +18,6 @@ export default function LessonRequest() {
     locationNote: "",
     note: "",
   });
-
-  // ⬇️ Yeni: slotlar
-  const [slots, setSlots] = useState([]);
-  const [draft, setDraft] = useState({ start: "", end: "" });
-
-  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -39,8 +31,6 @@ export default function LessonRequest() {
   }, [slug]);
 
   const onChange = (k, v) => setForm((s) => ({ ...s, [k]: v }));
-
-  // Ders türü değişince: ONLINE'a dönünce konum alanlarını temizle
   const onChangeMode = (v) => {
     if (v === "ONLINE") {
       setForm((s) => ({ ...s, mode: v, city: "", district: "", locationNote: "" }));
@@ -49,47 +39,30 @@ export default function LessonRequest() {
     }
   };
 
-  // Slot ekleme/silme
-  const addSlot = () => {
-    if (!draft.start || !draft.end) return alert("Başlangıç ve bitiş saatini seçin.");
-    const start = new Date(draft.start);
-    const end = new Date(draft.end);
-    if (!(+start) || !(+end) || start >= end) return alert("Geçersiz saat aralığı.");
-    setSlots((arr) => [...arr, { start: start.toISOString(), end: end.toISOString() }]);
-    setDraft({ start: "", end: "" });
-  };
-  const removeSlot = (idx) => setSlots((arr) => arr.filter((_, i) => i !== idx));
-
-  const handleSubmit = async () => {
-    if (!token || !isTokenValid(token)) {
-      sessionStorage.setItem("skipSilentLoginOnce", "1");
-      navigate(`/login?next=/ogretmenler/${slug}/talep`, { replace: true });
+  const goPackageSelect = () => {
+    if (!form.subject || !form.grade) {
+      alert("Lütfen ders ve seviye seçiniz.");
       return;
     }
-
-    if (!form.subject || !form.grade) return alert("Lütfen ders ve seviye seçiniz.");
-    if (form.mode === "FACE_TO_FACE" && !form.city) return alert("Yüz yüze ders için il seçiniz.");
-    if (!slots.length) return alert("Lütfen en az bir ders saati ekleyiniz.");
-
-    try {
-      setSaving(true);
-      await axios.post(
-        "/api/v1/student-requests", // tek adım: talep + randevular
-        { ...form, teacherSlug: slug, slots },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      // başarı → öğrenci paneline
-      navigate(`/ogrenci/panel?ok=talep-olusturuldu`, { replace: true });
-    } catch (e) {
-      console.error(e);
-      alert(e?.response?.data?.message || "Talep kaydedilemedi.");
-    } finally {
-      setSaving(false);
+    if (form.mode === "FACE_TO_FACE" && !form.city) {
+      alert("Yüz yüze ders için il seçiniz.");
+      return;
     }
+    // Tüm verileri paket sayfasına taşı
+    const qs = new URLSearchParams({
+      slug,
+      subject: form.subject,
+      grade: form.grade,
+      mode: form.mode,
+      city: form.city || "",
+      district: form.district || "",
+      locationNote: form.locationNote || "",
+      note: form.note || "",
+    });
+    navigate(`/paket-sec?${qs.toString()}`, { replace: true });
   };
 
-  const availableDistricts = TR_DISTRICTS[form.city] || [];
-  const canSubmit = !!form.subject && !!form.grade && !!slots.length && !saving;
+  const districts = TR_DISTRICTS[form.city] || [];
 
   return (
     <div className="lr-page">
@@ -147,7 +120,7 @@ export default function LessonRequest() {
                   disabled={!form.city}
                 >
                   <option value="">{!form.city ? "Önce il seçiniz" : "Seçiniz"}</option>
-                  {availableDistricts.map((d) => (
+                  {districts.map((d) => (
                     <option key={d} value={d}>{d}</option>
                   ))}
                 </select>
@@ -174,55 +147,9 @@ export default function LessonRequest() {
             />
           </label>
 
-          {/* ⬇️ Yeni: Saat seçimi */}
-          <div className="lr-section">
-            <div className="lr-section-title">Saat Seçimi</div>
-            <div className="lr-slots-grid">
-              <div className="lr-slot-input">
-                <label>Başlangıç</label>
-                <input
-                  type="datetime-local"
-                  value={draft.start}
-                  onChange={(e) => setDraft((s) => ({ ...s, start: e.target.value }))}
-                />
-              </div>
-              <div className="lr-slot-input">
-                <label>Bitiş</label>
-                <input
-                  type="datetime-local"
-                  value={draft.end}
-                  onChange={(e) => setDraft((s) => ({ ...s, end: e.target.value }))}
-                />
-              </div>
-              <button type="button" className="lr-btn ghost" onClick={addSlot}>
-                + Ekle
-              </button>
-            </div>
-
-            {slots.length > 0 && (
-              <ul className="lr-slots-list">
-                {slots.map((s, i) => {
-                  const st = new Date(s.start);
-                  const et = new Date(s.end);
-                  return (
-                    <li key={i} className="lr-slot-row">
-                      <span>
-                        {st.toLocaleString("tr-TR", { dateStyle: "medium", timeStyle: "short" })}
-                        {" — "}
-                        {et.toLocaleString("tr-TR", { timeStyle: "short" })}
-                      </span>
-                      <button type="button" className="lr-btn small" onClick={() => removeSlot(i)}>
-                        Kaldır
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
-
-          <button className="lr-btn" disabled={!canSubmit} onClick={handleSubmit}>
-            {saving ? "Gönderiliyor…" : "Talebi Gönder"}
+          {/* Talep GÖNDERMEK YOK; sadece paket seçime geç */}
+          <button className="lr-btn" onClick={goPackageSelect}>
+            Paket seç ve devam et
           </button>
         </div>
       )}

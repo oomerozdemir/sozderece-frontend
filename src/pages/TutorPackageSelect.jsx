@@ -1,36 +1,56 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import { isTokenValid } from "../utils/auth";
 import "../cssFiles/teacher.css";
+import "../cssFiles/slot-select.css";
 
-export default function TutorPackageSelect() {
+export default function SlotSelect() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const qs = new URLSearchParams(location.search);
+  const qs = new URLSearchParams(useLocation().search);
 
-  const requestId = qs.get("requestId");
-  const slug = qs.get("slug");
+  // İlk iki adımdan gelen tüm veriler
+  const slug         = qs.get("slug") || "";
+  const subject      = qs.get("subject") || "";
+  const grade        = qs.get("grade") || "";
+  const mode         = qs.get("mode") || "ONLINE";
+  const city         = qs.get("city") || "";
+  const district     = qs.get("district") || "";
+  const locationNote = qs.get("locationNote") || "";
+  const note         = qs.get("note") || "";
+  const qty          = Number(qs.get("qty") || 1);
 
-  const [saving, setSaving] = useState(false);
-  const [selected, setSelected] = useState(null);
-
-  const [teacher, setTeacher] = useState(null);
-  const [reqData, setReqData] = useState(null);
+  const packageSlug   = qs.get("packageSlug") || "";
+  const packageTitle  = qs.get("packageTitle") || "Özel ders paketi";
+  const unitPrice     = Number(qs.get("unitPrice") || 0);       // kuruş
+  const discountRate  = Number(qs.get("discountRate") || 0);    // %
 
   const token = localStorage.getItem("token");
+  const [teacher, setTeacher] = useState(null);
 
-  // Auth guard
+  const todayISO = new Date().toISOString().slice(0,10);
+  const weekAheadISO = new Date(Date.now() + 7*24*60*60*1000).toISOString().slice(0,10);
+
+  const [range, setRange] = useState({ from: todayISO, to: weekAheadISO });
+  const [slots, setSlots] = useState([]);                // müsait
+  const [busyPending, setBusyPending] = useState([]);    // dolu - bekleyen
+  const [busyConfirmed, setBusyConfirmed] = useState([]);// dolu - onaylı
+  const [picked, setPicked] = useState([]); // {start, end, mode?}
+
+  // Auth
   useEffect(() => {
     if (!token || !isTokenValid(token)) {
       sessionStorage.setItem("skipSilentLoginOnce", "1");
-      navigate(`/login?next=/paket-sec?slug=${encodeURIComponent(slug || "")}`, { replace: true });
+      const back = new URLSearchParams({
+        slug, subject, grade, mode, city, district, locationNote, note,
+        qty: String(qty), packageSlug, packageTitle, unitPrice: String(unitPrice), discountRate: String(discountRate),
+      });
+      navigate(`/login?next=/saat-sec?${back.toString()}`, { replace: true });
     }
-  }, [token, slug, navigate]);
+  }, [token]); // eslint-disable-line
 
   // Öğretmen
   useEffect(() => {
-    if (!slug) return;
     (async () => {
       try {
         const tRes = await axios.get(`/api/v1/ogretmenler/${slug}`);
@@ -41,131 +61,225 @@ export default function TutorPackageSelect() {
     })();
   }, [slug]);
 
-  // Talep (varsa)
-  useEffect(() => {
-    if (!requestId || !token) return;
-    (async () => {
-      try {
-        const rRes = await axios.get(
-          `/api/v1/student-requests/${requestId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setReqData(rRes.data.request);
-      } catch (e) {
-        console.error(e);
-      }
-    })();
-  }, [requestId, token]);
-
-  // Paketleri öğretmenin fiyatına göre oluştur (TL bazlı, sepete kuruş gider)
-  const packages = useMemo(() => {
-    if (!teacher || !reqData) return [];
-
-    const baseTL =
-      reqData.mode === "ONLINE"
-        ? (teacher.priceOnline ?? teacher.priceF2F ?? 0)
-        : (teacher.priceF2F ?? teacher.priceOnline ?? 0);
-
-    const mkPkg = (qty, discount = 0, slug) => {
-      const totalTL = Math.round(baseTL * qty * (1 - discount));
-      const perLessonTL = Math.round(totalTL / qty);
-      const totalKurus = totalTL * 100;
-
-      return {
-        slug,
-        qty,
-        discountRate: Math.round(discount * 100),
-        title: qty === 1 ? "Tek Ders" : `${qty} Ders Paketi`,
-        subtitle:
-          qty === 1
-            ? (reqData.mode === "ONLINE" ? "Online tek ders" : "Yüz yüze tek ders")
-            : (reqData.mode === "ONLINE" ? "Online çoklu ders" : "Yüz yüze çoklu ders"),
-        displayPriceTL: totalTL,
-        displayPerLesson: perLessonTL,
-        unitPrice: totalKurus,
-        badge: discount > 0 ? `%${Math.round(discount * 100)} indirim` : null,
-      };
-    };
-
-    return [
-      mkPkg(1, 0, "tek-ders"),
-      mkPkg(3, 0.05, "paket-3"),
-      mkPkg(6, 0.05, "paket-6"),
-    ];
-  }, [teacher, reqData]);
-
-  // Paketi talebe yaz + saat seçim sayfasına yönlendir
-  const attachAndGoToSlotSelect = async () => {
-    if (!selected || !requestId) return;
+  // Slotları getir (dolu alanlar dahil)
+  const fetchSlots = async () => {
     try {
-      setSaving(true);
+      const { data } = await axios.get(`/api/v1/ogretmenler/${slug}/slots`, {
+        params: {
+          from: range.from,
+          to: range.to,
+          mode,
+          durationMin: 60,
+        },
+      });
+      setSlots(data?.slots || []);
+      setBusyPending(data?.busy?.pending || []);
+      setBusyConfirmed(data?.busy?.confirmed || []);
+    } catch (e) {
+      console.error(e);
+      alert("Uygun saatler getirilemedi.");
+    }
+  };
 
-      await axios.put(
-        `/api/v1/student-requests/${requestId}/package`,
+  const groupByDayISO = (arr, key) => {
+    const map = {};
+    for (const it of arr || []) {
+      const d = new Date(it[key]);
+      d.setHours(0,0,0,0);
+      const iso = d.toISOString().slice(0,10);
+      (map[iso] ||= []).push(it);
+    }
+    return map;
+  };
+
+  const daysInRange = useMemo(() => {
+    const out = [];
+    const from = new Date(range.from);
+    const to   = new Date(range.to);
+    from.setHours(0,0,0,0); to.setHours(0,0,0,0);
+    for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
+      out.push(new Date(d).toISOString().slice(0,10));
+    }
+    return out;
+  }, [range]);
+
+  const byAvail = useMemo(() => groupByDayISO(slots, "start"), [slots]);
+  const byPend  = useMemo(() => groupByDayISO(busyPending, "start"), [busyPending]);
+  const byConf  = useMemo(() => groupByDayISO(busyConfirmed, "start"), [busyConfirmed]);
+
+  // seçim
+  const isBusy = (s) => {
+    const k = s.start + "|" + s.end;
+    return [...busyPending, ...busyConfirmed].some(x => (x.start + "|" + x.end) === k);
+  };
+
+  const togglePick = (s) => {
+    if (isBusy(s)) return; // doluysa seçme
+    const k = s.start + "|" + s.end;
+    setPicked((arr) => {
+      const exists = arr.find((x) => (x.start + "|" + x.end) === k);
+      if (exists) return arr.filter((x) => (x.start + "|" + x.end) !== k);
+      if (arr.length >= qty) return arr;
+      return [...arr, s];
+    });
+  };
+
+  const fmtDay = (iso) =>
+    new Date(iso).toLocaleDateString("tr-TR", { year:"numeric", month:"long", day:"numeric", weekday:"long" });
+  const fmtTime = (iso) =>
+    new Date(iso).toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" });
+
+  // Kaydet + Talep oluştur + Sepete ekle
+  const saveCreateAndGoCart = async () => {
+    if (picked.length !== qty) {
+      alert(`Lütfen ${qty} adet ders saati seçiniz.`);
+      return;
+    }
+    try {
+      // 1) Tek POST ile talep + randevular
+      const { data: createRes } = await axios.post(
+        "/api/v1/student-requests",
         {
-          packageSlug: selected.slug,
-          packageTitle: selected.title,
-          unitPrice: Number(selected.unitPrice), // kuruş
+          teacherSlug: slug,
+          subject, grade, mode, city, district, locationNote, note,
+          slots: picked,
+          packageSlug,
+          packageTitle,
+          unitPrice, // kuruş
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const requestId = createRes?.id;
+
+      // 2) Sepete ekle (toplam fiyat = unitPrice, adet = 1; meta'da seçilen slotlar)
+      // base price (öğretmenin tek ders TL) sadece analitik/özet için meta’ya
+      const baseTL = mode === "ONLINE"
+        ? (teacher?.priceOnline ?? teacher?.priceF2F ?? 0)
+        : (teacher?.priceF2F ?? teacher?.priceOnline ?? 0);
+      const baseKurus = Math.round((baseTL || 0) * 100);
+
+      await axios.post(
+        "/api/cart/items",
+        {
+          slug: packageSlug,
+          title: packageTitle || "Özel ders paketi",
+          name: packageTitle || "Özel ders paketi",
+          unitPrice: Number(unitPrice),
+          quantity: 1,
+          meta: {
+            requestId,
+            teacherSlug: slug,
+            mode,
+            lessonsCount: qty,
+            discountRate,
+            basePrice: baseKurus,
+            pickedSlots: picked,
+          },
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // 👉 saat seçim sayfasına yönlendir
-      navigate(`/saat-sec?requestId=${requestId}&slug=${slug}&qty=${selected.qty}`, { replace: true });
+      navigate("/sepet", { replace: true });
     } catch (e) {
-      alert(e?.response?.data?.message || "Paket eklenemedi.");
-    } finally {
-      setSaving(false);
+      console.error(e);
+      alert(e?.response?.data?.message || "Seçimler sepete eklenemedi.");
     }
   };
 
+  const any =
+    Object.keys(byAvail).length ||
+    Object.keys(byPend).length ||
+    Object.keys(byConf).length;
+
   return (
     <div className="pkc-container">
-      <h1 className="pkc-title">Özel Ders Paketleri</h1>
+      <h1 className="pkc-title">Ders Saatlerini Seç</h1>
 
-      {!teacher || (!reqData && !!requestId) ? (
-        <div className="pkc-empty">Yükleniyor…</div>
-      ) : packages.length === 0 ? (
-        <div className="pkc-empty">Bu öğretmen için paket oluşturulamadı.</div>
+      <div className="tp-grid-2">
+        <div>
+          <label className="tp-sublabel">Başlangıç</label>
+          <input type="date" value={range.from} onChange={(e)=>setRange(r=>({...r, from: e.target.value}))}/>
+        </div>
+        <div>
+          <label className="tp-sublabel">Bitiş</label>
+          <input type="date" value={range.to} onChange={(e)=>setRange(r=>({...r, to: e.target.value}))}/>
+        </div>
+      </div>
+
+      <div className="tp-actions">
+        <button type="button" onClick={fetchSlots}>Uygun Saatleri Göster</button>
+      </div>
+
+      {!any ? (
+        <div className="tp-empty">Bu aralıkta kayıt bulunamadı.</div>
       ) : (
-        <>
-          <div className="pkc-grid">
-            {packages.map((p) => (
-              <label
-                key={p.slug}
-                className={`pkc-card ${selected?.slug === p.slug ? "is-selected" : ""}`}
-              >
-                <input
-                  type="radio"
-                  name="pkg"
-                  value={p.slug}
-                  checked={selected?.slug === p.slug}
-                  onChange={() => setSelected(p)}
-                />
-                <div className="pkc-body">
-                  <div className="pkc-card-title">
-                    {p.title} {p.badge ? <span className="tl-badge" style={{ marginLeft: 8 }}>{p.badge}</span> : null}
-                  </div>
-                  <div className="pkc-subtitle">{p.subtitle}</div>
-                  <div className="pkc-price">
-                    {p.displayPriceTL.toLocaleString("tr-TR")} ₺
-                    <span className="pkc-price-text">
-                      {" "}
-                      ({p.displayPerLesson.toLocaleString("tr-TR")} ₺ / ders)
-                    </span>
-                  </div>
-                </div>
-              </label>
-            ))}
-          </div>
+        daysInRange.map((d) => {
+          const avail = byAvail[d] || [];
+          const pend  = byPend[d] || [];
+          const conf  = byConf[d] || [];
+          if (!avail.length && !pend.length && !conf.length) return null;
 
-          <div className="pkc-actions">
-            <button className="pkc-btn" disabled={!selected || saving} onClick={attachAndGoToSlotSelect}>
-              {saving ? "Kaydediliyor..." : "Ders Saatlerini Seç"}
-            </button>
-          </div>
-        </>
+          return (
+            <div key={d} className="tp-slot-group">
+              <div className="tp-slot-group-head">
+                <span className="tp-badge">{fmtDay(d)}</span>
+              </div>
+
+              {/* Onaylı (gri/yeşil) */}
+              {conf.length > 0 && (
+                <div className="tp-slots-grid">
+                  {conf.map(c => (
+                    <div key={`${c.start}-${c.end}`} className="tp-slot-card slot-confirmed">
+                      <div className="tp-slot-time">{fmtTime(c.start)} – {fmtTime(c.end)}</div>
+                      <div className="tp-slot-mode">Onaylı</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Bekleyen (kırmızımsı) */}
+              {pend.length > 0 && (
+                <div className="tp-slots-grid">
+                  {pend.map(c => (
+                    <div key={`${c.start}-${c.end}`} className="tp-slot-card slot-busy">
+                      <div className="tp-slot-time">{fmtTime(c.start)} – {fmtTime(c.end)}</div>
+                      <div className="tp-slot-mode">Onay bekliyor</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Müsait (seçilebilir) */}
+              {avail.length > 0 && (
+                <div className="tp-slots-grid">
+                  {avail.map(s => {
+                    const key = s.start + "|" + s.end;
+                    const chosen = picked.find(x => (x.start + "|" + x.end) === key);
+                    return (
+                      <button
+                        key={key}
+                        className={`tp-slot-card ${chosen ? "is-selected" : ""}`}
+                        onClick={()=>togglePick(s)}
+                        type="button"
+                      >
+                        <div className="tp-slot-time">{fmtTime(s.start)} – {fmtTime(s.end)}</div>
+                        <div className="tp-slot-mode">{s.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })
       )}
+
+      <div className="pkc-actions">
+        <div className="tp-sublabel">Seçili: {picked.length} / {qty}</div>
+        <button className="pkc-btn" disabled={picked.length !== qty} onClick={saveCreateAndGoCart}>
+          Sepete devam et
+        </button>
+      </div>
     </div>
   );
 }
