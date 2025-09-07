@@ -158,15 +158,15 @@ input[type="date"]:focus {
 
 /* --- DOLU (onaylı) slot görünümü --- */
 .tp-slot-card.slot-confirmed {
-  border-color: #16a34a;
+  border-color: #ec0000;
   background: #ecfdf5;
-  color: #065f46;
+  color: #ff0000;
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
   pointer-events: none; /* tıklanamaz */
 }
-.tp-slot-card.slot-confirmed:hover { border-color: #16a34a; box-shadow: none; transform: none; }
+.tp-slot-card.slot-confirmed:hover { border-color: #ff0000; box-shadow: none; transform: none; }
 
 /* --- Seçili (öğrencinin seçtiği) --- */
 .tp-slot-card.slot-picked {

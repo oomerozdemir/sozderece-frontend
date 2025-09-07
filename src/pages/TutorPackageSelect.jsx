@@ -152,7 +152,6 @@ export default function SlotSelect() {
       const requestId = createRes?.id;
 
       // 2) Sepete ekle (toplam fiyat = unitPrice, adet = 1; meta'da seçilen slotlar)
-      // base price (öğretmenin tek ders TL) sadece analitik/özet için meta’ya
       const baseTL = mode === "ONLINE"
         ? (teacher?.priceOnline ?? teacher?.priceF2F ?? 0)
         : (teacher?.priceF2F ?? teacher?.priceOnline ?? 0);
@@ -225,19 +224,19 @@ export default function SlotSelect() {
                 <span className="tp-badge">{fmtDay(d)}</span>
               </div>
 
-              {/* Onaylı (gri/yeşil) */}
+              {/* ONAYLI → DOLU (seçilemez) */}
               {conf.length > 0 && (
                 <div className="tp-slots-grid">
                   {conf.map(c => (
-                    <div key={`${c.start}-${c.end}`} className="tp-slot-card slot-confirmed">
+                    <div key={`${c.start}-${c.end}`} className="tp-slot-card slot-busy">
                       <div className="tp-slot-time">{fmtTime(c.start)} – {fmtTime(c.end)}</div>
-                      <div className="tp-slot-mode">Onaylı</div>
+                      <div className="tp-slot-mode">Dolu</div>
                     </div>
                   ))}
                 </div>
               )}
 
-              {/* Bekleyen (kırmızımsı) */}
+              {/* Bekleyen (seçilemez) */}
               {pend.length > 0 && (
                 <div className="tp-slots-grid">
                   {pend.map(c => (

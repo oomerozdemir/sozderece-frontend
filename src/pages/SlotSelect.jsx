@@ -223,7 +223,7 @@ export default function SlotSelect() {
                   {conf.map(c => (
                     <div key={`${c.start}-${c.end}`} className="tp-slot-card slot-confirmed">
                       <div className="tp-slot-time">{fmtTime(c.start)} – {fmtTime(c.end)}</div>
-                      <div className="tp-slot-mode">Onaylı</div>
+                      <div className="tp-slot-mode">Dolu</div>
                     </div>
                   ))}
                 </div>
