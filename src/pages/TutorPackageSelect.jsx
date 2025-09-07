@@ -28,13 +28,15 @@ export default function SlotSelect() {
   const token = localStorage.getItem("token");
   const [teacher, setTeacher] = useState(null);
 
-  const todayISO = new Date().toISOString().slice(0,10);
-  const weekAheadISO = new Date(Date.now() + 7*24*60*60*1000).toISOString().slice(0,10);
+  const todayISO = new Date().toISOString().slice(0, 10);
+  const weekAheadISO = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
 
   const [range, setRange] = useState({ from: todayISO, to: weekAheadISO });
-  const [slots, setSlots] = useState([]);                // müsait
-  const [busyPending, setBusyPending] = useState([]);    // dolu - bekleyen
-  const [busyConfirmed, setBusyConfirmed] = useState([]);// dolu - onaylı
+  const [slots, setSlots] = useState([]); // müsait
+  const [busyPending, setBusyPending] = useState([]); // dolu - bekleyen
+  const [busyConfirmed, setBusyConfirmed] = useState([]); // dolu - onaylı
   const [picked, setPicked] = useState([]); // {start, end, mode?}
 
   // Auth
@@ -42,8 +44,19 @@ export default function SlotSelect() {
     if (!token || !isTokenValid(token)) {
       sessionStorage.setItem("skipSilentLoginOnce", "1");
       const back = new URLSearchParams({
-        slug, subject, grade, mode, city, district, locationNote, note,
-        qty: String(qty), packageSlug, packageTitle, unitPrice: String(unitPrice), discountRate: String(discountRate),
+        slug,
+        subject,
+        grade,
+        mode,
+        city,
+        district,
+        locationNote,
+        note,
+        qty: String(qty),
+        packageSlug,
+        packageTitle,
+        unitPrice: String(unitPrice),
+        discountRate: String(discountRate),
       });
       navigate(`/login?next=/saat-sec?${back.toString()}`, { replace: true });
     }
@@ -85,8 +98,8 @@ export default function SlotSelect() {
     const map = {};
     for (const it of arr || []) {
       const d = new Date(it[key]);
-      d.setHours(0,0,0,0);
-      const iso = d.toISOString().slice(0,10);
+      d.setHours(0, 0, 0, 0);
+      const iso = d.toISOString().slice(0, 10);
       (map[iso] ||= []).push(it);
     }
     return map;
@@ -95,39 +108,45 @@ export default function SlotSelect() {
   const daysInRange = useMemo(() => {
     const out = [];
     const from = new Date(range.from);
-    const to   = new Date(range.to);
-    from.setHours(0,0,0,0); to.setHours(0,0,0,0);
+    const to = new Date(range.to);
+    from.setHours(0, 0, 0, 0);
+    to.setHours(0, 0, 0, 0);
     for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
-      out.push(new Date(d).toISOString().slice(0,10));
+      out.push(new Date(d).toISOString().slice(0, 10));
     }
     return out;
   }, [range]);
 
   const byAvail = useMemo(() => groupByDayISO(slots, "start"), [slots]);
-  const byPend  = useMemo(() => groupByDayISO(busyPending, "start"), [busyPending]);
-  const byConf  = useMemo(() => groupByDayISO(busyConfirmed, "start"), [busyConfirmed]);
+  const byPend = useMemo(() => groupByDayISO(busyPending, "start"), [busyPending]);
+  const byConf = useMemo(() => groupByDayISO(busyConfirmed, "start"), [busyConfirmed]);
 
   // seçim
   const isBusy = (s) => {
     const k = s.start + "|" + s.end;
-    return [...busyPending, ...busyConfirmed].some(x => (x.start + "|" + x.end) === k);
+    return [...busyPending, ...busyConfirmed].some((x) => x.start + "|" + x.end === k);
   };
 
   const togglePick = (s) => {
     if (isBusy(s)) return; // doluysa seçme
     const k = s.start + "|" + s.end;
     setPicked((arr) => {
-      const exists = arr.find((x) => (x.start + "|" + x.end) === k);
-      if (exists) return arr.filter((x) => (x.start + "|" + x.end) !== k);
+      const exists = arr.find((x) => x.start + "|" + x.end === k);
+      if (exists) return arr.filter((x) => x.start + "|" + x.end !== k);
       if (arr.length >= qty) return arr;
       return [...arr, s];
     });
   };
 
   const fmtDay = (iso) =>
-    new Date(iso).toLocaleDateString("tr-TR", { year:"numeric", month:"long", day:"numeric", weekday:"long" });
+    new Date(iso).toLocaleDateString("tr-TR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "long",
+    });
   const fmtTime = (iso) =>
-    new Date(iso).toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" });
+    new Date(iso).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
 
   // Kaydet + Talep oluştur + Sepete ekle
   const saveCreateAndGoCart = async () => {
@@ -141,7 +160,13 @@ export default function SlotSelect() {
         "/api/v1/student-requests",
         {
           teacherSlug: slug,
-          subject, grade, mode, city, district, locationNote, note,
+          subject,
+          grade,
+          mode,
+          city,
+          district,
+          locationNote,
+          note,
           slots: picked,
           packageSlug,
           packageTitle,
@@ -152,18 +177,19 @@ export default function SlotSelect() {
       const requestId = createRes?.id;
 
       // 2) Sepete ekle (toplam fiyat = unitPrice, adet = 1; meta'da seçilen slotlar)
-      const baseTL = mode === "ONLINE"
-        ? (teacher?.priceOnline ?? teacher?.priceF2F ?? 0)
-        : (teacher?.priceF2F ?? teacher?.priceOnline ?? 0);
+      const baseTL =
+        mode === "ONLINE"
+          ? teacher?.priceOnline ?? teacher?.priceF2F ?? 0
+          : teacher?.priceF2F ?? teacher?.priceOnline ?? 0;
       const baseKurus = Math.round((baseTL || 0) * 100);
 
       await axios.post(
         "/api/cart/items",
         {
-          slug: packageSlug,
-          title: packageTitle || "Özel ders paketi",
+          slug: packageSlug, // zorunlu
+          title: packageTitle || "Özel ders paketi", // zorunlu
           name: packageTitle || "Özel ders paketi",
-          unitPrice: Number(unitPrice),
+          unitPrice: Number(unitPrice), // zorunlu (kuruş)
           quantity: 1,
           meta: {
             requestId,
@@ -197,16 +223,26 @@ export default function SlotSelect() {
       <div className="tp-grid-2">
         <div>
           <label className="tp-sublabel">Başlangıç</label>
-          <input type="date" value={range.from} onChange={(e)=>setRange(r=>({...r, from: e.target.value}))}/>
+        <input
+            type="date"
+            value={range.from}
+            onChange={(e) => setRange((r) => ({ ...r, from: e.target.value }))}
+          />
         </div>
         <div>
           <label className="tp-sublabel">Bitiş</label>
-          <input type="date" value={range.to} onChange={(e)=>setRange(r=>({...r, to: e.target.value}))}/>
+          <input
+            type="date"
+            value={range.to}
+            onChange={(e) => setRange((r) => ({ ...r, to: e.target.value }))}
+          />
         </div>
       </div>
 
       <div className="tp-actions">
-        <button type="button" onClick={fetchSlots}>Uygun Saatleri Göster</button>
+        <button type="button" onClick={fetchSlots}>
+          Uygun Saatleri Göster
+        </button>
       </div>
 
       {!any ? (
@@ -214,8 +250,8 @@ export default function SlotSelect() {
       ) : (
         daysInRange.map((d) => {
           const avail = byAvail[d] || [];
-          const pend  = byPend[d] || [];
-          const conf  = byConf[d] || [];
+          const pend = byPend[d] || [];
+          const conf = byConf[d] || [];
           if (!avail.length && !pend.length && !conf.length) return null;
 
           return (
@@ -227,9 +263,11 @@ export default function SlotSelect() {
               {/* ONAYLI → DOLU (seçilemez) */}
               {conf.length > 0 && (
                 <div className="tp-slots-grid">
-                  {conf.map(c => (
+                  {conf.map((c) => (
                     <div key={`${c.start}-${c.end}`} className="tp-slot-card slot-busy">
-                      <div className="tp-slot-time">{fmtTime(c.start)} – {fmtTime(c.end)}</div>
+                      <div className="tp-slot-time">
+                        {fmtTime(c.start)} – {fmtTime(c.end)}
+                      </div>
                       <div className="tp-slot-mode">Dolu</div>
                     </div>
                   ))}
@@ -239,9 +277,11 @@ export default function SlotSelect() {
               {/* Bekleyen (seçilemez) */}
               {pend.length > 0 && (
                 <div className="tp-slots-grid">
-                  {pend.map(c => (
+                  {pend.map((c) => (
                     <div key={`${c.start}-${c.end}`} className="tp-slot-card slot-busy">
-                      <div className="tp-slot-time">{fmtTime(c.start)} – {fmtTime(c.end)}</div>
+                      <div className="tp-slot-time">
+                        {fmtTime(c.start)} – {fmtTime(c.end)}
+                      </div>
                       <div className="tp-slot-mode">Onay bekliyor</div>
                     </div>
                   ))}
@@ -251,18 +291,22 @@ export default function SlotSelect() {
               {/* Müsait (seçilebilir) */}
               {avail.length > 0 && (
                 <div className="tp-slots-grid">
-                  {avail.map(s => {
+                  {avail.map((s) => {
                     const key = s.start + "|" + s.end;
-                    const chosen = picked.find(x => (x.start + "|" + x.end) === key);
+                    const chosen = picked.find((x) => x.start + "|" + x.end === key);
                     return (
                       <button
                         key={key}
                         className={`tp-slot-card ${chosen ? "is-selected" : ""}`}
-                        onClick={()=>togglePick(s)}
+                        onClick={() => togglePick(s)}
                         type="button"
                       >
-                        <div className="tp-slot-time">{fmtTime(s.start)} – {fmtTime(s.end)}</div>
-                        <div className="tp-slot-mode">{s.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</div>
+                        <div className="tp-slot-time">
+                          {fmtTime(s.start)} – {fmtTime(s.end)}
+                        </div>
+                        <div className="tp-slot-mode">
+                          {s.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}
+                        </div>
                       </button>
                     );
                   })}
@@ -274,8 +318,14 @@ export default function SlotSelect() {
       )}
 
       <div className="pkc-actions">
-        <div className="tp-sublabel">Seçili: {picked.length} / {qty}</div>
-        <button className="pkc-btn" disabled={picked.length !== qty} onClick={saveCreateAndGoCart}>
+        <div className="tp-sublabel">
+          Seçili: {picked.length} / {qty}
+        </div>
+        <button
+          className="pkc-btn"
+          disabled={picked.length !== qty}
+          onClick={saveCreateAndGoCart}
+        >
           Sepete devam et
         </button>
       </div>
