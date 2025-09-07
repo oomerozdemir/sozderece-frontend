@@ -1,3 +1,179 @@
+.student-page-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.student-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  max-width: 1100px;
+  width: 100%;
+}
+
+.studentPage-coach-card {
+  background: white;
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+  text-align: center;
+}
+
+.studentPage-coach-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #1f2937;
+}
+
+.student-dashboard-coach-image {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #2563eb;
+  margin: 0 auto 16px auto;
+  display: block;
+}
+
+.student-info-item {
+  background-color: #f9fafb;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.student-welcome {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #2563eb;
+  margin-bottom: 12px;
+}
+
+.studentPage-button-group {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.studentPage-button {
+  padding: 10px 16px;
+  background-color: #dd8115;
+  color: white;
+  text-decoration: none;
+  border-radius: 52px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.studentPage-button:hover {
+  background-color: #003db3;
+}
+
+.studentPage-button.whatsapp {
+  background-color: #03973a;
+}
+
+.studentPage-button.whatsapp:hover {
+  background-color: #03973a;
+}
+
+.studentPage-side-info {
+  background-color: #f0f4ff;
+  border-left: 6px solid #3b82f6;
+  padding: 24px;
+  border-radius: 12px;
+  color: #1e3a8a;
+}
+
+.studentPage-side-info h4 {
+  font-size: 1.1rem;
+  color: #1d4ed8;
+  margin-bottom: 10px;
+}
+
+.studentPage-info-note {
+  font-style: italic;
+  color: #1e40af;
+  margin-top: 10px;
+}
+.studentPage-info-box {
+  background-color: #f0f4ff;
+  border-left: 6px solid #3b82f6;
+  padding: 24px;
+  margin-top: 40px; /* Daha net ayırmak için artırıldı */
+  border-radius: 12px;
+  text-align: center;
+  color: #1e3a8a;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.badge-upcoming {
+  display: inline-block;
+  background-color: #10b981;
+  color: white;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+  margin-top: 6px; /* Yukarıdan boşluk bırak */
+}
+.studentPage-side-info h4 {
+  font-size: 1.25rem;
+  margin: 12px 0 14px 0; /* üst-alt boşluk dengelendi */
+  color: #e65100;
+  font-weight: bold;
+}
+
+.studentPage-side-info ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.studentPage-side-info ul li {
+  margin-bottom: 8px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.studentPage-side-info ul li::before {
+  content: "✔";
+  position: absolute;
+  left: 0;
+  color: #10b981;
+}
+
+@media screen and (max-width: 768px) {
+  .student-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .studentPage-coach-card {
+    padding: 20px;
+  }
+
+  .studentPage-side-info {
+    margin-top: 24px;
+  }
+
+  .studentPage-button-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .studentPage-button {
+    flex: 1 1 100%;
+    text-align: center;
+  }
+}
+
 /* ===========================
    Student Dashboard – Lists
    =========================== */
@@ -119,3 +295,4 @@
   .sdb-tab{ padding:7px 10px; }
   .sdb-card{ padding:12px; }
 }
+
