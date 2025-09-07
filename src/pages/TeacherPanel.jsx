@@ -20,6 +20,18 @@ function RequestsPanel() {
     CANCELLED: "İptal",
   };
 
+  // status açıklamaları (ünleme hover)
+const statusHelp = {
+  SUBMITTED:
+    "Gönderildi: Ders talebi oluşturulma aşamasında ancak daha randevu saati seçmedi. Öğrenci ile iletişime geçerek talebi tamamlamasına yardımcı olabilirsiniz.",
+  PACKAGE_SELECTED:
+    "Sepette: Öğrenci ders talebini tamamlamış ve ürünü sepete eklemiştir ancak ödemeyi tamamlamamış. Talebi onaylamadan önce ödemeyi tamamlaması için öğrenciyle iletişime geçebilirsiniz.",
+  PAID:
+    "Ödendi: Öğrenci talebi oluşturmuş ve ödemeyi tamamlamıştır. Planlanan saat size uygunsa talebi onaylayıp ders platformunu öğrenciyle planlamak üzere iletişime geçebilirsiniz.",
+  CANCELLED:
+    "İptal: Bu talep iptal edilmiştir.",
+};
+
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
@@ -185,25 +197,46 @@ function RequestsPanel() {
               </div>
 
               <div className="tp-card-row">
-                <span>Ders:</span> <b>{r.subject}</b>
-                <span style={{marginLeft:10}}>Seviye:</span> <b>{r.grade}</b>
-                <span style={{marginLeft:10}}>Tür:</span> <b>{r.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</b>
+  <span>Ders:</span> <b>{r.subject}</b>
+  <span style={{ margin: "0 8px" }}>•</span>
+  <span>Seviye:</span> <b>{r.grade}</b>
+  <span style={{ margin: "0 8px" }}>•</span>
+  <span>Tür:</span> <b>{r.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</b>
 
-                {typeof r.paidTL === "number" && (
-                  <span style={{marginLeft:10}}>
-                    Ödenen: <b>{r.paidTL.toLocaleString("tr-TR")} ₺</b>
-                  </span>
-                )}
-                {typeof r.lessonsCount === "number" && (
-                  <span style={{marginLeft:10}}>
-                    Adet: <b>{r.lessonsCount}</b>
-                  </span>
-                )}
+  {typeof r.paidTL === "number" && (
+    <>
+      <span style={{ margin: "0 8px" }}>•</span>
+      <span>Ödenen:</span> <b>{r.paidTL.toLocaleString("tr-TR")} ₺</b>
+    </>
+  )}
 
-                <div className="tp-chip" style={{marginLeft:10}}>
-                  {statusMap[r.status] || r.status}
-                </div>
-              </div>
+  {typeof r.lessonsCount === "number" && (
+    <>
+      <span style={{ margin: "0 8px" }}>•</span>
+      <span>Adet:</span> <b>{r.lessonsCount}</b>
+    </>
+  )}
+
+  {/* Durum + açıklama ünlemi */}
+  <div className="tp-status" style={{ marginLeft: 10 }}>
+    <span
+      className={
+        "tp-chip " +
+        (r.status === "PAID" ? "success" : r.status === "CANCELLED" ? "danger" : "")
+      }
+    >
+      {statusMap[r.status] || r.status}
+    </span>
+
+    <span className="tp-info" tabIndex={0} aria-label="Durum açıklaması">
+      !
+      <span className="tp-tooltip">
+        {statusHelp[r.status] || "Durum açıklaması bulunamadı."}
+      </span>
+    </span>
+  </div>
+</div>
+
 
               {/* Onay bekleyen randevular */}
               {(r.appointments || []).length > 0 && (
