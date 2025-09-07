@@ -135,11 +135,12 @@ export default App;
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   3-ogretmen panelı duzenlemesı
       
-      
       - ders tamamlandıktan sonra ogretmen de ogrencı de dersın tamamlandıgını onaylaması gereklı(bunu admın tarafında kontrol de edecegız)
   
       -degerlendirmelerin ve yorumlarin gozukecegi yeri yap(ogrenci kısmı halledilirken eşzamanlı)
       -ogretmen yayina alirken admin tarafina talep gonderimi talep onaylandiktan sonra yayina alinir
+      teacher ve ogrenci panellerinde arsiv bolumu ekleyelim gecmis bitmis siparisleri oraya eklerriz
+
       gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
   
   9-ogretmen kayıt olurken fıyat belırlerken ona onerı yapalım size benzer öğretmenler şu aralıkta(min-max) fiyat belirledi diye
@@ -147,8 +148,9 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
 
 
 ******** ozel ders icin ogrenci tarafi ********
-  -ogretmene mail gondeririz talep geldikce
   -talep onaylandiginda ayni sekilde talep onaylandi diye ogrenciye de mail gider
+  -talepler bolumunde talep durumunu ogrenciye gore duzenleyelim
+  -siparislerim sekme ismini kocluk siparislerim diye duzenleyelim
   -ders bittiginde ogretmen ders tamamlandi diye isaretler.
   -ogrenci de ayni sekilde dersi tamamlandi diye isaretler ve yorum degerlendirme yonlendirmesi yapilir ogrenciye.
   -bir chatbot yeri yapabiliriz ogretmen talebi onayladiginda konusabilecekleri ve iletisim saglayacaklari kolay bir yer olur.
