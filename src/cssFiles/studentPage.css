@@ -1,175 +1,121 @@
-.student-page-wrapper {
-  display: flex;
-  justify-content: center;
-  padding: 60px 20px;
+/* ===========================
+   Student Dashboard – Lists
+   =========================== */
+.sdb-tabs{
+  display:flex; align-items:center; gap:8px; margin-bottom:12px;
+}
+.sdb-tab{
+  border:1px solid #e5e7eb; background:#fff; color:#1f2937;
+  font-weight:700; padding:8px 12px; border-radius:10px; cursor:pointer;
+  transition:transform .12s ease, box-shadow .2s ease, background .2s ease;
+}
+.sdb-tab:hover{ transform: translateY(-1px); box-shadow:0 8px 20px rgba(2,6,23,.08); }
+.sdb-tab.active{
+  background:#1d4ed8; color:#fff; border-color:#1d4ed8;
+  box-shadow:0 8px 20px rgba(29,78,216,.25);
 }
 
-.student-dashboard-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  max-width: 1100px;
-  width: 100%;
+.sdb-refresh{
+  margin-left:auto;
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 12px; border-radius:10px; border:0;
+  background:linear-gradient(135deg,#0ea5e9,#22c55e); color:#fff; font-weight:700;
+  cursor:pointer; box-shadow:0 8px 24px rgba(2,6,23,.12);
+  transition:transform .12s ease, box-shadow .2s ease, filter .2s ease;
+}
+.sdb-refresh:hover{ transform: translateY(-1px); box-shadow:0 12px 30px rgba(2,6,23,.16); }
+.sdb-refresh.is-loading .icon{ animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg);} }
+
+.sdb-groups{
+  display:grid; gap:12px;
+}
+.sdb-group-title{
+  margin: 8px 0;
+  font-weight:800; color:#1d4ed8;
+}
+.sdb-group.ok .sdb-group-title{ color:#065f46; }
+.sdb-group.bad .sdb-group-title{ color:#b91c1c; }
+
+.sdb-empty{
+  border:1px dashed #d1d5db; background:#f9fafb; color:#6b7280;
+  padding:14px; border-radius:12px;
 }
 
-.studentPage-coach-card {
-  background: white;
-  padding: 30px 40px;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
-  text-align: center;
+.sdb-list{ display:grid; gap:12px; }
+
+/* Card */
+.sdb-card{
+  background:#fff; border:1px solid #e5e7eb; border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,.06); padding:12px 14px;
 }
-
-.studentPage-coach-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-  color: #1f2937;
+.sdb-card-head{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
 }
-
-.student-dashboard-coach-image {
-  width: 140px;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 3px solid #2563eb;
-  margin: 0 auto 16px auto;
-  display: block;
+.sdb-card-title{
+  font-weight:800; color:#111827; display:flex; align-items:center; gap:8px;
 }
+.sdb-card-title .muted{ color:#6b7280; font-weight:600; }
 
-.student-info-item {
-  background-color: #f9fafb;
-  border-radius: 6px;
-  padding: 10px;
-  margin-bottom: 10px;
-  text-align: left;
-  font-size: 0.95rem;
-  color: #333;
+.sdb-card-row{
+  display:flex; align-items:center; gap:8px; margin-top:8px;
 }
+.sdb-card-row.wrap{ flex-wrap:wrap; align-items:flex-start; }
+.sdb-card-row .sep{ margin:0 6px; color:#9ca3af; }
+.sdb-card-row .muted{ color:#9ca3af; }
+.label-ok{ color:#065f46; font-weight:700; }
+.label-warn{ color:#92400e; font-weight:700; }
 
-.student-welcome {
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #2563eb;
-  margin-bottom: 12px;
+/* Status chip (tp-chip yerine) */
+.sdb-status-chip{
+  display:inline-flex; align-items:center; gap:8px;
+  font-weight:700; font-size:12px; padding:4px 8px; border-radius:999px;
+  background:#f3f4f6; color:#111827; border:1px solid #e5e7eb;
 }
+.sdb-status-chip .dot{ width:8px; height:8px; border-radius:999px; display:inline-block; }
+.sdb-status-chip.ok   { background:#ecfdf5; color:#065f46; border-color:#a7f3d0; }
+.sdb-status-chip.ok .dot   { background:#10b981; }
+.sdb-status-chip.warn { background:#fffbeb; color:#92400e; border-color:#fde68a; }
+.sdb-status-chip.warn .dot { background:#f59e0b; }
+.sdb-status-chip.bad  { background:#fef2f2; color:#991b1b; border-color:#fecaca; }
+.sdb-status-chip.bad .dot  { background:#ef4444; }
 
-.studentPage-button-group {
-  margin-top: 20px;
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+/* Status tooltip */
+.sdb-status-wrap{ display:flex; align-items:center; gap:6px; }
+.sdb-info{
+  position:relative; display:inline-flex; align-items:center; justify-content:center;
+  width:18px; height:18px; border-radius:999px; background:#f59e0b; color:#fff; font-weight:800;
+  font-size:12px; box-shadow:0 2px 6px rgba(2,6,23,.12); cursor:help; user-select:none;
 }
-
-.studentPage-button {
-  padding: 10px 16px;
-  background-color: #dd8115;
-  color: white;
-  text-decoration: none;
-  border-radius: 52px;
-  font-weight: 500;
-  transition: background 0.2s;
+.sdb-info .sdb-tooltip{
+  display:none; position:absolute; bottom:calc(100% + 8px); right:0; z-index:20;
+  max-width:min(360px,80vw); padding:10px 12px; border-radius:10px;
+  background:#111827; color:#fff; font-size:12px; line-height:1.35;
+  box-shadow:0 10px 26px rgba(2,6,23,.18);
 }
-
-.studentPage-button:hover {
-  background-color: #003db3;
+.sdb-info .sdb-tooltip::after{
+  content:""; position:absolute; top:100%; right:10px; border:6px solid transparent; border-top-color:#111827;
 }
+.sdb-info:hover .sdb-tooltip,
+.sdb-info:focus .sdb-tooltip{ display:block; }
 
-.studentPage-button.whatsapp {
-  background-color: #03973a;
+/* Chips (saatler) */
+.sdb-chips{ display:flex; gap:8px; flex-wrap:wrap; }
+.chip{
+  font-weight:700; font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid #e5e7eb;
+  background:#f8fafc; color:#111827;
 }
+.chip.ok{ background:#ecfdf5; border-color:#a7f3d0; color:#065f46; }
+.chip.warn{ background:#fffbeb; border-color:#fde68a; color:#92400e; }
 
-.studentPage-button.whatsapp:hover {
-  background-color: #03973a;
-}
+/* Orders status */
+.sdb-status.paid{ color:#065f46; }
+.sdb-status.pending{ color:#92400e; }
+.sdb-status.failed, .sdb-status.cancelled{ color:#991b1b; }
 
-.studentPage-side-info {
-  background-color: #f0f4ff;
-  border-left: 6px solid #3b82f6;
-  padding: 24px;
-  border-radius: 12px;
-  color: #1e3a8a;
-}
-
-.studentPage-side-info h4 {
-  font-size: 1.1rem;
-  color: #1d4ed8;
-  margin-bottom: 10px;
-}
-
-.studentPage-info-note {
-  font-style: italic;
-  color: #1e40af;
-  margin-top: 10px;
-}
-.studentPage-info-box {
-  background-color: #f0f4ff;
-  border-left: 6px solid #3b82f6;
-  padding: 24px;
-  margin-top: 40px; /* Daha net ayırmak için artırıldı */
-  border-radius: 12px;
-  text-align: center;
-  color: #1e3a8a;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-
-.badge-upcoming {
-  display: inline-block;
-  background-color: #10b981;
-  color: white;
-  font-size: 0.75rem;
-  padding: 4px 8px;
-  border-radius: 999px;
-  margin-bottom: 10px;
-  margin-top: 6px; /* Yukarıdan boşluk bırak */
-}
-.studentPage-side-info h4 {
-  font-size: 1.25rem;
-  margin: 12px 0 14px 0; /* üst-alt boşluk dengelendi */
-  color: #e65100;
-  font-weight: bold;
-}
-
-.studentPage-side-info ul {
-  list-style: none;
-  padding-left: 0;
-}
-
-.studentPage-side-info ul li {
-  margin-bottom: 8px;
-  padding-left: 20px;
-  position: relative;
-}
-
-.studentPage-side-info ul li::before {
-  content: "✔";
-  position: absolute;
-  left: 0;
-  color: #10b981;
-}
-
-@media screen and (max-width: 768px) {
-  .student-dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .studentPage-coach-card {
-    padding: 20px;
-  }
-
-  .studentPage-side-info {
-    margin-top: 24px;
-  }
-
-  .studentPage-button-group {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .studentPage-button {
-    flex: 1 1 100%;
-    text-align: center;
-  }
+/* Responsive */
+@media (max-width: 768px){
+  .sdb-tabs{ gap:6px; }
+  .sdb-tab{ padding:7px 10px; }
+  .sdb-card{ padding:12px; }
 }

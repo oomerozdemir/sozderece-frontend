@@ -134,7 +134,7 @@ export default App;
 /*
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   3-ogretmen panelı duzenlemesı
-  -gelen taleplerde gonderildi,sepette gibi seyler yaziyor bunlarin ne anlama geldigini gosteren bir unlem ile ogretmeni bilgilendirelim
+      
       
       - ders tamamlandıktan sonra ogretmen de ogrencı de dersın tamamlandıgını onaylaması gereklı(bunu admın tarafında kontrol de edecegız)
   
