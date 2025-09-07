@@ -290,18 +290,6 @@
 .sdb-status.failed, .sdb-status.cancelled{ color:#991b1b; }
 
 
-.sdb-actions{ display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
-.sdb-btn{
-  height:40px; padding:0 14px; border-radius:10px; border:1px solid #e5e7eb;
-  background:#fff; color:#111827; font-weight:800; cursor:pointer;
-  transition:transform .12s ease, box-shadow .2s ease, background .2s ease;
-}
-.sdb-btn:hover{ transform: translateY(-1px); box-shadow:0 10px 24px rgba(2,6,23,.08); }
-.sdb-btn.primary{ background:#1d4ed8; color:#fff; border-color:#1d4ed8; }
-.sdb-btn.primary:hover{ box-shadow:0 10px 24px rgba(29,78,216,.28); }
-.sdb-btn.success{ background:#10b981; color:#fff; border-color:#10b981; }
-.sdb-btn.success:hover{ box-shadow:0 10px 24px rgba(16,185,129,.28); }
-.sdb-btn.ghost{ background:#fff; color:#1f2937; }
 
 
 /* Responsive */

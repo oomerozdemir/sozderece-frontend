@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ⬅️ eklendi
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
 import "../cssFiles/studentPage.css";
@@ -21,7 +20,6 @@ const statusHelp = {
   CANCELLED:
     "İptal: Bu talep iptal edildi. İsterseniz yeni bir talep oluşturabilir veya farklı saatler deneyebilirsiniz.",
 };
-
 const bucketOf = (req) => {
   if ((req.appointmentsConfirmed || []).length > 0) return "approved";
   switch (req.status) {
@@ -49,7 +47,6 @@ export default function StudentDashboard() {
   const [orders, setOrders] = useState([]);
 
   const token = useMemo(() => localStorage.getItem("token"), []);
-  const navigate = useNavigate(); // ⬅️ eklendi
 
   // Profil bilgisi
   useEffect(() => {
@@ -72,6 +69,7 @@ export default function StudentDashboard() {
   const loadRequests = async () => {
     try {
       setReqLoading(true);
+      // ⬇️ Doğru endpoint
       const { data } = await axios.get("/api/v1/student-requests/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -121,8 +119,14 @@ export default function StudentDashboard() {
   if (!student) return <p>Öğrenci verisi bulunamadı.</p>;
 
   // Talepleri kovala
-  const groups = { pending: [], approved: [], rejected: [] };
-  for (const r of requests) groups[bucketOf(r)].push(r);
+  const groups = {
+    pending: [],
+    approved: [],
+    rejected: [],
+  };
+  for (const r of requests) {
+    groups[bucketOf(r)].push(r);
+  }
 
   return (
     <>
@@ -143,21 +147,53 @@ export default function StudentDashboard() {
                   alabilirsiniz.
                 </p>
                 <div className="studentPage-button-group">
-                  <a href="/paket-detay" className="studentPage-button">📦 Paketleri İncele</a>
-                  <a href="/ucretsiz-on-gorusme" className="studentPage-button">🗓️ Ücretsiz Ön Görüşme</a>
-                  <a href="https://wa.me/905312546701" target="_blank" rel="noopener noreferrer" className="studentPage-button whatsapp">💬 WhatsApp Destek</a>
+                  <a href="/paket-detay" className="studentPage-button">
+                    📦 Paketleri İncele
+                  </a>
+                  <a href="/ucretsiz-on-gorusme" className="studentPage-button">
+                    🗓️ Ücretsiz Ön Görüşme
+                  </a>
+                  <a
+                    href="https://wa.me/905312546701"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="studentPage-button whatsapp"
+                  >
+                    💬 WhatsApp Destek
+                  </a>
                 </div>
               </>
             ) : (
               <>
                 <p className="student-welcome">Hoş geldiniz! 👋</p>
-                <img src={student.assignedCoach.image} alt={student.assignedCoach.name} className="student-dashboard-coach-image" />
-                <p className="student-info-item"><strong>👨‍🏫 Koç Adı:</strong> {student.assignedCoach.name}</p>
-                <p className="student-info-item"><strong>📘 Üniversite:</strong> {student.assignedCoach.subject}</p>
-                <p className="student-info-item"><strong>📝 Alanı ve Derecesi:</strong> {student.assignedCoach.description}</p>
-                <p className="student-info-item"><strong>📧 Email:</strong> {student.assignedCoach.user?.email}</p>
-                <p className="student-info-item"><strong>📞 Telefon:</strong> {student.assignedCoach.user?.phone || "Belirtilmemiş"}</p>
-                <a href="https://wa.me/905312546701" target="_blank" rel="noopener noreferrer" className="studentPage-button whatsapp">💬 WhatsApp Destek</a>
+                <img
+                  src={student.assignedCoach.image}
+                  alt={student.assignedCoach.name}
+                  className="student-dashboard-coach-image"
+                />
+                <p className="student-info-item">
+                  <strong>👨‍🏫 Koç Adı:</strong> {student.assignedCoach.name}
+                </p>
+                <p className="student-info-item">
+                  <strong>📘 Üniversite:</strong> {student.assignedCoach.subject}
+                </p>
+                <p className="student-info-item">
+                  <strong>📝 Alanı ve Derecesi:</strong> {student.assignedCoach.description}
+                </p>
+                <p className="student-info-item">
+                  <strong>📧 Email:</strong> {student.assignedCoach.user?.email}
+                </p>
+                <p className="student-info-item">
+                  <strong>📞 Telefon:</strong> {student.assignedCoach.user?.phone || "Belirtilmemiş"}
+                </p>
+                <a
+                  href="https://wa.me/905312546701"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="studentPage-button whatsapp"
+                >
+                  💬 WhatsApp Destek
+                </a>
               </>
             )}
           </div>
@@ -165,12 +201,25 @@ export default function StudentDashboard() {
           {/* Sağ: Taleplerim / Siparişlerim */}
           <div className="studentPage-side-info">
             <div className="sdb-tabs">
-              <button className={`sdb-tab ${tab === "requests" ? "active" : ""}`} onClick={() => setTab("requests")}>Taleplerim</button>
-              <button className={`sdb-tab ${tab === "orders" ? "active" : ""}`} onClick={() => setTab("orders")}>Siparişlerim</button>
+              <button
+                className={`sdb-tab ${tab === "requests" ? "active" : ""}`}
+                onClick={() => setTab("requests")}
+              >
+                Taleplerim
+              </button>
+              <button
+                className={`sdb-tab ${tab === "orders" ? "active" : ""}`}
+                onClick={() => setTab("orders")}
+              >
+                Siparişlerim
+              </button>
 
               <button
                 className={`sdb-refresh ${reqLoading || ordersLoading ? "is-loading" : ""}`}
-                onClick={() => (tab === "requests" ? loadRequests() : loadOrders())}
+                onClick={() => {
+                  if (tab === "requests") loadRequests();
+                  else loadOrders();
+                }}
                 disabled={reqLoading || ordersLoading}
                 title="Yenile"
               >
@@ -184,27 +233,39 @@ export default function StudentDashboard() {
             {tab === "requests" ? (
               <div className="sdb-requests">
                 <div className="sdb-groups">
-                  <Group title={`Bekleyen (${groups.pending.length})`} color="warn" loading={reqLoading}>
+                  <Group
+                    title={`Bekleyen (${groups.pending.length})`}
+                    color="warn"
+                    loading={reqLoading}
+                  >
                     {groups.pending.length === 0 ? (
                       <div className="sdb-empty">Bekleyen talebiniz yok.</div>
                     ) : (
-                      groups.pending.map((r) => <RequestCard key={r.id} r={r} navigate={navigate} />)
+                      groups.pending.map((r) => <RequestCard key={r.id} r={r} />)
                     )}
                   </Group>
 
-                  <Group title={`Onaylanmış (${groups.approved.length})`} color="ok" loading={reqLoading}>
+                  <Group
+                    title={`Onaylanmış (${groups.approved.length})`}
+                    color="ok"
+                    loading={reqLoading}
+                  >
                     {groups.approved.length === 0 ? (
                       <div className="sdb-empty">Onaylanmış talebiniz yok.</div>
                     ) : (
-                      groups.approved.map((r) => <RequestCard key={r.id} r={r} navigate={navigate} />)
+                      groups.approved.map((r) => <RequestCard key={r.id} r={r} />)
                     )}
                   </Group>
 
-                  <Group title={`Reddedilmiş (${groups.rejected.length})`} color="bad" loading={reqLoading}>
+                  <Group
+                    title={`Reddedilmiş (${groups.rejected.length})`}
+                    color="bad"
+                    loading={reqLoading}
+                  >
                     {groups.rejected.length === 0 ? (
                       <div className="sdb-empty">Reddedilmiş talebiniz yok.</div>
                     ) : (
-                      groups.rejected.map((r) => <RequestCard key={r.id} r={r} navigate={navigate} />)
+                      groups.rejected.map((r) => <RequestCard key={r.id} r={r} />)
                     )}
                   </Group>
                 </div>
@@ -226,10 +287,16 @@ export default function StudentDashboard() {
                         </div>
                         <div className="sdb-card-row">
                           <span>Tutar:</span>{" "}
-                          <b>{typeof o.amountTL === "number" ? `${o.amountTL.toLocaleString("tr-TR")} ₺` : "—"}</b>
+                          <b>
+                            {typeof o.amountTL === "number"
+                              ? `${o.amountTL.toLocaleString("tr-TR")} ₺`
+                              : "—"}
+                          </b>
                           <span className="sep">•</span>
                           <span>Durum:</span>{" "}
-                          <b className={`sdb-status ${o.status?.toLowerCase?.() || ""}`}>{o.status || "—"}</b>
+                          <b className={`sdb-status ${o.status?.toLowerCase?.() || ""}`}>
+                            {o.status || "—"}
+                          </b>
                         </div>
                       </div>
                     ))}
@@ -253,19 +320,7 @@ function Group({ title, color, loading, children }) {
   );
 }
 
-function RequestCard({ r, navigate }) {
-  // SUBMITTED ve PACKAGE_SELECTED için yönlendirme butonları
-  const goComplete = () => {
-    // Tercih edilen akış: öğretmen talep sayfası + requestId ile
-    if (r.teacher?.slug) {
-      navigate(`/ogretmenler/${r.teacher.slug}/talep?requestId=${r.id}`);
-    } else {
-      // yedek: paket sayfasına düş (talep id’yi taşı)
-      navigate(`/paket-detay?requestId=${r.id}`);
-    }
-  };
-  const goCart = () => navigate(`/sepet?requestId=${r.id}`);
-
+function RequestCard({ r }) {
   return (
     <div className="sdb-card">
       <div className="sdb-card-head">
@@ -296,7 +351,7 @@ function RequestCard({ r, navigate }) {
         {typeof r.paidTL === "number" && (
           <>
             <span className="sep">•</span>
-            <span>Ödenen:</span> <b>{r.paidTL.toLocaleString("tr-TR")} ₺</b>
+            <span>Fiyat:</span> <b>{r.paidTL.toLocaleString("tr-TR")} ₺</b>
           </>
         )}
         {typeof r.lessonsCount === "number" && (
@@ -339,27 +394,6 @@ function RequestCard({ r, navigate }) {
       ) : (
         <div className="sdb-card-row">
           <span className="muted">Saat seçimi henüz yapılmamış.</span>
-        </div>
-      )}
-
-      {/* ⬇️ Aksiyonlar: Gönderildi / Sepette */}
-      {(r.status === "SUBMITTED" || r.status === "PACKAGE_SELECTED") && (
-        <div className="sdb-actions">
-          {r.status === "SUBMITTED" && (
-            <>
-              <button className="sdb-btn primary" onClick={goComplete}>
-                Saat Seç ve Talebi Tamamla
-              </button>
-              <button className="sdb-btn ghost" onClick={() => navigate(`/paket-detay?requestId=${r.id}`)}>
-                Paketi Seç
-              </button>
-            </>
-          )}
-          {r.status === "PACKAGE_SELECTED" && (
-            <button className="sdb-btn success" onClick={goCart}>
-              Sepete Git ve Öde
-            </button>
-          )}
         </div>
       )}
     </div>
