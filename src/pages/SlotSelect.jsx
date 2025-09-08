@@ -253,6 +253,14 @@ export default function SlotSelect() {
     <div className="pkc-container">
       <h1 className="pkc-title">Ders Saatlerini Seç</h1>
 
+      <div className="slot-legend">
+  <span className="legend-item"><i className="legend-dot legend-free" /> Müsait</span>
+  <span className="legend-item"><i className="legend-dot legend-busy" /> Onay bekliyor</span>
+  <span className="legend-item"><i className="legend-dot legend-confirmed" /> Dolu</span>
+  <span className="legend-item"><i className="legend-dot legend-picked" /> Seçili</span>
+</div>
+
+
       <div className="tp-grid-2">
         <div>
           <label className="tp-sublabel">Başlangıç</label>
