@@ -8,13 +8,25 @@ import "../cssFiles/slot-select.css";
 export default function SlotSelect() {
   const navigate = useNavigate();
   const qs = new URLSearchParams(useLocation().search);
-  const requestId = qs.get("requestId");
-  const slug = qs.get("slug");
-  const qty = Number(qs.get("qty") || 1);
+
+  // İlk iki adımdan gelen veriler
+  const slug         = qs.get("slug") || "";
+  const subject      = qs.get("subject") || "";
+  const grade        = qs.get("grade") || "";
+  const mode         = qs.get("mode") || "ONLINE";
+  const city         = qs.get("city") || "";
+  const district     = qs.get("district") || "";
+  const locationNote = qs.get("locationNote") || "";
+  const note         = qs.get("note") || "";
+  const qty          = Number(qs.get("qty") || 1);
+
+  const packageSlug   = qs.get("packageSlug") || "";
+  const packageTitle  = qs.get("packageTitle") || "Özel ders paketi";
+  const unitPrice     = Number(qs.get("unitPrice") || 0);       // kuruş
+  const discountRate  = Number(qs.get("discountRate") || 0);    // %
 
   const token = localStorage.getItem("token");
   const [teacher, setTeacher] = useState(null);
-  const [reqData, setReqData] = useState(null);
 
   const todayISO = new Date().toISOString().slice(0,10);
   const weekAheadISO = new Date(Date.now() + 7*24*60*60*1000).toISOString().slice(0,10);
@@ -23,41 +35,46 @@ export default function SlotSelect() {
   const [slots, setSlots] = useState([]);                // müsait
   const [busyPending, setBusyPending] = useState([]);    // dolu - bekleyen
   const [busyConfirmed, setBusyConfirmed] = useState([]);// dolu - onaylı
-  const [picked, setPicked] = useState([]); // {start, end, mode}
+  const [picked, setPicked] = useState([]); // {start, end, mode?}
 
   // Auth
   useEffect(() => {
     if (!token || !isTokenValid(token)) {
       sessionStorage.setItem("skipSilentLoginOnce", "1");
-      navigate(`/login?next=/saat-sec?requestId=${requestId}&slug=${slug}&qty=${qty}`, { replace: true });
+      const back = new URLSearchParams({
+        slug, subject, grade, mode, city, district, locationNote, note,
+        qty: String(qty), packageSlug, packageTitle,
+        unitPrice: String(unitPrice), discountRate: String(discountRate),
+      });
+      navigate(`/login?next=/saat-sec?${back.toString()}`, { replace: true });
     }
-  }, [token, requestId, slug, qty, navigate]);
+  }, [token]); // eslint-disable-line
 
-  // Öğretmen + Talep
+  // Öğretmen
   useEffect(() => {
+    if (!slug) return;
     (async () => {
       try {
-        const [tRes, rRes] = await Promise.all([
-          axios.get(`/api/v1/ogretmenler/${slug}`),
-          axios.get(`/api/v1/student-requests/${requestId}`, { headers: { Authorization: `Bearer ${token}` } }),
-        ]);
+        const tRes = await axios.get(`/api/v1/ogretmenler/${slug}`);
         setTeacher(tRes.data.teacher);
-        setReqData(rRes.data.request);
       } catch (e) {
         console.error(e);
       }
     })();
-  }, [slug, requestId, token]);
+  }, [slug]);
 
-  // Slotları getir (artık busy’yi de alıyoruz)
+  // Slotları getir (dolu alanlar dahil)
   const fetchSlots = async () => {
-    if (!reqData) return;
+    if (!slug) {
+      alert("Öğretmen bilgisi eksik (slug). Lütfen geri dönüp tekrar deneyin.");
+      return;
+    }
     try {
       const { data } = await axios.get(`/api/v1/ogretmenler/${slug}/slots`, {
         params: {
           from: range.from,
           to: range.to,
-          mode: reqData.mode,
+          mode,
           durationMin: 60,
         },
       });
@@ -66,11 +83,10 @@ export default function SlotSelect() {
       setBusyConfirmed(data?.busy?.confirmed || []);
     } catch (e) {
       console.error(e);
-      alert("Uygun saatler getirilemedi.");
+      alert(e?.response?.data?.message || "Uygun saatler getirilemedi.");
     }
   };
 
-  // Günlük gruplama
   const groupByDayISO = (arr, key) => {
     const map = {};
     for (const it of arr || []) {
@@ -97,7 +113,7 @@ export default function SlotSelect() {
   const byPend  = useMemo(() => groupByDayISO(busyPending, "start"), [busyPending]);
   const byConf  = useMemo(() => groupByDayISO(busyConfirmed, "start"), [busyConfirmed]);
 
-  // seçim – dolu slotlar tıklanamaz
+  // seçim
   const isBusy = (s) => {
     const k = s.start + "|" + s.end;
     return [...busyPending, ...busyConfirmed].some(x => (x.start + "|" + x.end) === k);
@@ -119,50 +135,47 @@ export default function SlotSelect() {
   const fmtTime = (iso) =>
     new Date(iso).toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" });
 
-  // Kaydet + Sepete
-  const saveAndGoCart = async () => {
+  // Kaydet + Talep oluştur + Sepete ekle
+  const saveCreateAndGoCart = async () => {
     if (picked.length !== qty) {
       alert(`Lütfen ${qty} adet ders saati seçiniz.`);
       return;
     }
     try {
-      await axios.post(
-        `/api/v1/student-requests/${requestId}/slots`,
-        { slots: picked },
+      // 1) Tek POST ile talep + randevular
+      const { data: createRes } = await axios.post(
+        "/api/v1/student-requests",
+        {
+          teacherSlug: slug,
+          subject, grade, mode, city, district, locationNote, note,
+          slots: picked,
+          packageSlug,
+          packageTitle,
+          unitPrice, // kuruş
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      const requestId = createRes?.id;
 
-      // Talep + öğretmen → sepet
-      const { data: rData } = await axios.get(`/api/v1/student-requests/${requestId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const req = rData.request;
-
-      const lessonsCount =
-        req.packageSlug === "paket-3" ? 3 :
-        req.packageSlug === "paket-6" ? 6 : 1;
-      const discountRate = req.packageSlug === "tek-ders" ? 0 : 5;
-
-      const { data: tData } = await axios.get(`/api/v1/ogretmenler/${slug}`);
-      const tch = tData.teacher;
-      const baseTL = req.mode === "ONLINE"
-        ? (tch.priceOnline ?? tch.priceF2F ?? 0)
-        : (tch.priceF2F   ?? tch.priceOnline ?? 0);
-      const baseKurus = Math.round(baseTL * 100);
+      // 2) Sepete ekle (toplam fiyat = unitPrice, adet = 1; meta'da seçilen slotlar)
+      const baseTL = mode === "ONLINE"
+        ? (teacher?.priceOnline ?? teacher?.priceF2F ?? 0)
+        : (teacher?.priceF2F ?? teacher?.priceOnline ?? 0);
+      const baseKurus = Math.round((baseTL || 0) * 100);
 
       await axios.post(
         "/api/cart/items",
         {
-          slug: req.packageSlug,
-          title: req.packageTitle || "Özel ders paketi",
-          name: req.packageTitle || "Özel ders paketi",
-          unitPrice: Number(req.packageUnitPrice),
+          slug: packageSlug,                               // zorunlu
+          title: packageTitle || "Özel ders paketi",       // zorunlu
+          name: packageTitle || "Özel ders paketi",
+          unitPrice: Number(unitPrice),                    // zorunlu (kuruş)
           quantity: 1,
           meta: {
             requestId,
             teacherSlug: slug,
-            mode: req.mode,
-            lessonsCount,
+            mode,
+            lessonsCount: qty,
             discountRate,
             basePrice: baseKurus,
             pickedSlots: picked,
@@ -217,11 +230,11 @@ export default function SlotSelect() {
                 <span className="tp-badge">{fmtDay(d)}</span>
               </div>
 
-              {/* Onaylı (yeşil) */}
+              {/* ONAYLI → DOLU (seçilemez) */}
               {conf.length > 0 && (
                 <div className="tp-slots-grid">
                   {conf.map(c => (
-                    <div key={`${c.start}-${c.end}`} className="tp-slot-card slot-confirmed">
+                    <div key={`${c.start}-${c.end}`} className="tp-slot-card slot-busy">
                       <div className="tp-slot-time">{fmtTime(c.start)} – {fmtTime(c.end)}</div>
                       <div className="tp-slot-mode">Dolu</div>
                     </div>
@@ -229,7 +242,7 @@ export default function SlotSelect() {
                 </div>
               )}
 
-              {/* Bekleyen (kırmızımsı) */}
+              {/* Bekleyen (seçilemez) */}
               {pend.length > 0 && (
                 <div className="tp-slots-grid">
                   {pend.map(c => (
@@ -268,7 +281,7 @@ export default function SlotSelect() {
 
       <div className="pkc-actions">
         <div className="tp-sublabel">Seçili: {picked.length} / {qty}</div>
-        <button className="pkc-btn" disabled={picked.length !== qty} onClick={saveAndGoCart}>
+        <button className="pkc-btn" disabled={picked.length !== qty} onClick={saveCreateAndGoCart}>
           Sepete devam et
         </button>
       </div>

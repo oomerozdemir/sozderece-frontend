@@ -148,11 +148,13 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
 
 
 ******** ozel ders icin ogrenci tarafi ********
+
   -talep onaylandiginda ayni sekilde talep onaylandi diye ogrenciye de mail gider
   -talepler bolumunde talep durumunu ogrenciye gore duzenleyelim
   -siparislerim sekme ismini kocluk siparislerim diye duzenleyelim
   -ders bittiginde ogretmen ders tamamlandi diye isaretler.
   -ogrenci de ayni sekilde dersi tamamlandi diye isaretler ve yorum degerlendirme yonlendirmesi yapilir ogrenciye.
+  -takvım secımı yapılırken gecmıs gozukmesın sadece gunumuz ve sonrası
   -bir chatbot yeri yapabiliriz ogretmen talebi onayladiginda konusabilecekleri ve iletisim saglayacaklari kolay bir yer olur.
   
 *******************************ogrenci tarafi hoca secerken ki sorunlar ==>***********************
