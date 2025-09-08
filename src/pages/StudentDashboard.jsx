@@ -4,11 +4,11 @@ import Navbar from "../components/navbar";
 import "../cssFiles/studentPage.css";
 
 const statusMap = {
+  SUBMITTED: "Sepette",            // geçiş için
   PACKAGE_SELECTED: "Sepette",
   PAID: "Ödendi",
   CANCELLED: "İptal",
 };
-
 const statusHelp = {
   PACKAGE_SELECTED:
     "Sepette: Talebiniz sepetinizde. Ödemeyi tamamladığınızda talebiniz öğretmeninize iletilecek ve onay sürecine geçilecektir.",

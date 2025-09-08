@@ -14,10 +14,11 @@ import TeacherLessons from "../components/teacherComps/TeacherLessons";
 ======================= */
 function RequestsPanel() {
   const statusMap = {
-    PACKAGE_SELECTED: "Paket seçildi,sepette",
-    PAID: "Ödendi",
-    CANCELLED: "İptal",
-  };
+  SUBMITTED: "Sepette",            // geçiş için
+  PACKAGE_SELECTED: "Paket seçildi,sepette",
+  PAID: "Ödendi",
+  CANCELLED: "İptal",
+};
 
   // status açıklamaları (ünleme hover)
 const statusHelp = {
