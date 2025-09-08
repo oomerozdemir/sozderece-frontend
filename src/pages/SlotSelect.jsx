@@ -9,16 +9,16 @@ export default function SlotSelect() {
   const navigate = useNavigate();
   const qs = new URLSearchParams(useLocation().search);
 
-  // İlk iki adımdan gelen veriler
+  // İlk iki adımdan gelen tüm veriler
   const slug         = qs.get("slug") || "";
   const subject      = qs.get("subject") || "";
   const grade        = qs.get("grade") || "";
-  const mode         = qs.get("mode") || "ONLINE";
+  const mode         = (qs.get("mode") || "ONLINE").toUpperCase();
   const city         = qs.get("city") || "";
   const district     = qs.get("district") || "";
   const locationNote = qs.get("locationNote") || "";
   const note         = qs.get("note") || "";
-  const qty          = Number(qs.get("qty") || 1);
+  const qty          = Math.max(1, Number(qs.get("qty") || 1));
 
   const packageSlug   = qs.get("packageSlug") || "";
   const packageTitle  = qs.get("packageTitle") || "Özel ders paketi";
@@ -32,25 +32,30 @@ export default function SlotSelect() {
   const weekAheadISO = new Date(Date.now() + 7*24*60*60*1000).toISOString().slice(0,10);
 
   const [range, setRange] = useState({ from: todayISO, to: weekAheadISO });
+
+  // normalize’lı diziler
   const [slots, setSlots] = useState([]);                // müsait
   const [busyPending, setBusyPending] = useState([]);    // dolu - bekleyen
   const [busyConfirmed, setBusyConfirmed] = useState([]);// dolu - onaylı
+
+  // kullanıcı seçimleri
   const [picked, setPicked] = useState([]); // {start, end, mode?}
 
-  // Auth
+  // --- Auth ---
   useEffect(() => {
     if (!token || !isTokenValid(token)) {
+      // login sonrası geri dönebilmesi için query’yi koru
       sessionStorage.setItem("skipSilentLoginOnce", "1");
       const back = new URLSearchParams({
         slug, subject, grade, mode, city, district, locationNote, note,
-        qty: String(qty), packageSlug, packageTitle,
-        unitPrice: String(unitPrice), discountRate: String(discountRate),
+        qty: String(qty), packageSlug, packageTitle, unitPrice: String(unitPrice), discountRate: String(discountRate),
       });
       navigate(`/login?next=/saat-sec?${back.toString()}`, { replace: true });
     }
-  }, [token]); // eslint-disable-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
-  // Öğretmen
+  // --- Öğretmen bilgisi (fiyat meta’sı için) ---
   useEffect(() => {
     if (!slug) return;
     (async () => {
@@ -63,12 +68,29 @@ export default function SlotSelect() {
     })();
   }, [slug]);
 
-  // Slotları getir (dolu alanlar dahil)
+  /* ============================
+     ZAMAN NORMALİZASYONU (KRİTİK)
+     ============================ */
+
+  // Her şeyi dakikaya indirip UTC ISO üretir -> karşılaştırmalar birebir tutar
+  const toIsoMinute = (v) => {
+    const d = new Date(v);
+    d.setSeconds(0, 0);
+    return d.toISOString();
+  };
+  // slot anahtarı (hızlı membership)
+  const keyOf = (s) => `${new Date(s.start).getTime()}|${new Date(s.end).getTime()}`;
+
+  // API farklı alan isimleri döndürebilir → tek tipe çevir
+  const normalizeArr = (arr = [], fallbackMode) =>
+    arr.map((x) => ({
+      start: toIsoMinute(x.start || x.startsAt),
+      end:   toIsoMinute(x.end   || x.endsAt),
+      mode:  (x.mode || fallbackMode || mode || "ONLINE").toUpperCase(),
+    }));
+
+  // Slotları getir (müsait + dolular)
   const fetchSlots = async () => {
-    if (!slug) {
-      alert("Öğretmen bilgisi eksik (slug). Lütfen geri dönüp tekrar deneyin.");
-      return;
-    }
     try {
       const { data } = await axios.get(`/api/v1/ogretmenler/${slug}/slots`, {
         params: {
@@ -78,19 +100,55 @@ export default function SlotSelect() {
           durationMin: 60,
         },
       });
-      setSlots(data?.slots || []);
-      setBusyPending(data?.busy?.pending || []);
-      setBusyConfirmed(data?.busy?.confirmed || []);
+
+      const avail = normalizeArr(data?.slots || [], mode);
+      const pend  = normalizeArr(data?.busy?.pending || [], mode);
+      const conf  = normalizeArr(data?.busy?.confirmed || [], mode);
+
+      setSlots(avail);
+      setBusyPending(pend);
+      setBusyConfirmed(conf);
     } catch (e) {
       console.error(e);
-      alert(e?.response?.data?.message || "Uygun saatler getirilemedi.");
+      alert("Uygun saatler getirilemedi.");
     }
   };
 
-  const groupByDayISO = (arr, key) => {
+  // Hızlı membership set’leri
+  const busyKeys = useMemo(() => {
+    const s = new Set();
+    for (const x of busyPending)   s.add(keyOf(x));
+    for (const x of busyConfirmed) s.add(keyOf(x));
+    return s;
+  }, [busyPending, busyConfirmed]);
+
+  const pickedKeys = useMemo(
+    () => new Set((picked || []).map(keyOf)),
+    [picked]
+  );
+
+  // seçim kuralları
+  const isBusy = (s) => busyKeys.has(keyOf(s));
+
+  const togglePick = (s) => {
+    if (isBusy(s)) return; // doluysa asla seçilmez
+    const k = keyOf(s);
+    setPicked((arr) => {
+      // seçiliyse kaldır
+      if (arr.find((x) => keyOf(x) === k)) {
+        return arr.filter((x) => keyOf(x) !== k);
+      }
+      // kapasite sınırı
+      if (arr.length >= qty) return arr;
+      return [...arr, s];
+    });
+  };
+
+  // Günlere gruplama (normalize edilmiş start alanına göre)
+  const groupByDayISO = (arr) => {
     const map = {};
     for (const it of arr || []) {
-      const d = new Date(it[key]);
+      const d = new Date(it.start);
       d.setHours(0,0,0,0);
       const iso = d.toISOString().slice(0,10);
       (map[iso] ||= []).push(it);
@@ -98,6 +156,7 @@ export default function SlotSelect() {
     return map;
   };
 
+  // Range gün listesi
   const daysInRange = useMemo(() => {
     const out = [];
     const from = new Date(range.from);
@@ -109,38 +168,31 @@ export default function SlotSelect() {
     return out;
   }, [range]);
 
-  const byAvail = useMemo(() => groupByDayISO(slots, "start"), [slots]);
-  const byPend  = useMemo(() => groupByDayISO(busyPending, "start"), [busyPending]);
-  const byConf  = useMemo(() => groupByDayISO(busyConfirmed, "start"), [busyConfirmed]);
+  // Gruplar
+  const byAvail = useMemo(() => groupByDayISO(slots), [slots]);
+  const byPend  = useMemo(() => groupByDayISO(busyPending), [busyPending]);
+  const byConf  = useMemo(() => groupByDayISO(busyConfirmed), [busyConfirmed]);
 
-  // seçim
-  const isBusy = (s) => {
-    const k = s.start + "|" + s.end;
-    return [...busyPending, ...busyConfirmed].some(x => (x.start + "|" + x.end) === k);
-  };
-
-  const togglePick = (s) => {
-    if (isBusy(s)) return; // doluysa seçme
-    const k = s.start + "|" + s.end;
-    setPicked((arr) => {
-      const exists = arr.find((x) => (x.start + "|" + x.end) === k);
-      if (exists) return arr.filter((x) => (x.start + "|" + x.end) !== k);
-      if (arr.length >= qty) return arr;
-      return [...arr, s];
-    });
-  };
-
+  // Görüntüleme yardımcıları
   const fmtDay = (iso) =>
     new Date(iso).toLocaleDateString("tr-TR", { year:"numeric", month:"long", day:"numeric", weekday:"long" });
   const fmtTime = (iso) =>
     new Date(iso).toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" });
 
-  // Kaydet + Talep oluştur + Sepete ekle
+  /* ============================
+     KAYDET → TALEP + SEPET
+     ============================ */
   const saveCreateAndGoCart = async () => {
+    // Zorunlu alan kontrolleri
+    if (!packageSlug || !packageTitle || !Number.isFinite(unitPrice) || unitPrice <= 0) {
+      alert("Paket bilgisi eksik. Lütfen paket seçiminden yeniden başlayın.");
+      return;
+    }
     if (picked.length !== qty) {
       alert(`Lütfen ${qty} adet ders saati seçiniz.`);
       return;
     }
+
     try {
       // 1) Tek POST ile talep + randevular
       const { data: createRes } = await axios.post(
@@ -148,29 +200,30 @@ export default function SlotSelect() {
         {
           teacherSlug: slug,
           subject, grade, mode, city, district, locationNote, note,
-          slots: picked,
+          slots: picked,               // normalize edilmiş {start,end,mode}
           packageSlug,
           packageTitle,
-          unitPrice, // kuruş
+          unitPrice,                   // kuruş
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const requestId = createRes?.id;
 
-      // 2) Sepete ekle (toplam fiyat = unitPrice, adet = 1; meta'da seçilen slotlar)
-      const baseTL = mode === "ONLINE"
-        ? (teacher?.priceOnline ?? teacher?.priceF2F ?? 0)
-        : (teacher?.priceF2F ?? teacher?.priceOnline ?? 0);
+      // 2) Sepete ekle (meta ile birlikte)
+      const baseTL =
+        mode === "ONLINE"
+          ? (teacher?.priceOnline ?? teacher?.priceF2F ?? 0)
+          : (teacher?.priceF2F   ?? teacher?.priceOnline ?? 0);
       const baseKurus = Math.round((baseTL || 0) * 100);
 
       await axios.post(
         "/api/cart/items",
         {
-          slug: packageSlug,                               // zorunlu
-          title: packageTitle || "Özel ders paketi",       // zorunlu
-          name: packageTitle || "Özel ders paketi",
-          unitPrice: Number(unitPrice),                    // zorunlu (kuruş)
-          quantity: 1,
+          slug: packageSlug,
+          title: packageTitle,
+          name: packageTitle,
+          unitPrice: Number(unitPrice), // kuruş
+          quantity: 1,                  // paketler tekil
           meta: {
             requestId,
             teacherSlug: slug,
@@ -178,7 +231,7 @@ export default function SlotSelect() {
             lessonsCount: qty,
             discountRate,
             basePrice: baseKurus,
-            pickedSlots: picked,
+            pickedSlots: picked,        // seçilen saatler
           },
         },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -203,11 +256,19 @@ export default function SlotSelect() {
       <div className="tp-grid-2">
         <div>
           <label className="tp-sublabel">Başlangıç</label>
-          <input type="date" value={range.from} onChange={(e)=>setRange(r=>({...r, from: e.target.value}))}/>
+          <input
+            type="date"
+            value={range.from}
+            onChange={(e)=>setRange(r=>({...r, from: e.target.value}))}
+          />
         </div>
         <div>
           <label className="tp-sublabel">Bitiş</label>
-          <input type="date" value={range.to} onChange={(e)=>setRange(r=>({...r, to: e.target.value}))}/>
+          <input
+            type="date"
+            value={range.to}
+            onChange={(e)=>setRange(r=>({...r, to: e.target.value}))}
+          />
         </div>
       </div>
 
@@ -230,11 +291,11 @@ export default function SlotSelect() {
                 <span className="tp-badge">{fmtDay(d)}</span>
               </div>
 
-              {/* ONAYLI → DOLU (seçilemez) */}
+              {/* ONAYLI → DOLU */}
               {conf.length > 0 && (
                 <div className="tp-slots-grid">
                   {conf.map(c => (
-                    <div key={`${c.start}-${c.end}`} className="tp-slot-card slot-busy">
+                    <div key={keyOf(c)} className="tp-slot-card slot-busy" title="Dolu">
                       <div className="tp-slot-time">{fmtTime(c.start)} – {fmtTime(c.end)}</div>
                       <div className="tp-slot-mode">Dolu</div>
                     </div>
@@ -242,11 +303,11 @@ export default function SlotSelect() {
                 </div>
               )}
 
-              {/* Bekleyen (seçilemez) */}
+              {/* BEKLEYEN → DOLU */}
               {pend.length > 0 && (
                 <div className="tp-slots-grid">
                   {pend.map(c => (
-                    <div key={`${c.start}-${c.end}`} className="tp-slot-card slot-busy">
+                    <div key={keyOf(c)} className="tp-slot-card slot-busy" title="Onay bekliyor">
                       <div className="tp-slot-time">{fmtTime(c.start)} – {fmtTime(c.end)}</div>
                       <div className="tp-slot-mode">Onay bekliyor</div>
                     </div>
@@ -254,18 +315,21 @@ export default function SlotSelect() {
                 </div>
               )}
 
-              {/* Müsait (seçilebilir) */}
+              {/* MÜSAİT → SEÇİLEBİLİR */}
               {avail.length > 0 && (
                 <div className="tp-slots-grid">
                   {avail.map(s => {
-                    const key = s.start + "|" + s.end;
-                    const chosen = picked.find(x => (x.start + "|" + x.end) === key);
+                    const k = keyOf(s);
+                    const chosen = pickedKeys.has(k);
+                    const disabled = isBusy(s);
                     return (
                       <button
-                        key={key}
-                        className={`tp-slot-card ${chosen ? "is-selected" : ""}`}
-                        onClick={()=>togglePick(s)}
+                        key={k}
+                        className={`tp-slot-card ${chosen ? "is-selected" : ""} ${disabled ? "slot-busy" : ""}`}
+                        onClick={()=>!disabled && togglePick(s)}
                         type="button"
+                        disabled={disabled}
+                        title={disabled ? "Dolu" : ""}
                       >
                         <div className="tp-slot-time">{fmtTime(s.start)} – {fmtTime(s.end)}</div>
                         <div className="tp-slot-mode">{s.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</div>
@@ -281,7 +345,11 @@ export default function SlotSelect() {
 
       <div className="pkc-actions">
         <div className="tp-sublabel">Seçili: {picked.length} / {qty}</div>
-        <button className="pkc-btn" disabled={picked.length !== qty} onClick={saveCreateAndGoCart}>
+        <button
+          className="pkc-btn"
+          disabled={picked.length !== qty || !packageSlug || !unitPrice}
+          onClick={saveCreateAndGoCart}
+        >
           Sepete devam et
         </button>
       </div>
