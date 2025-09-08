@@ -25,7 +25,7 @@ export default function TeacherDetail() {
     (async () => {
       try {
         const { data } = await axios.get(`/api/v1/ogretmenler/${slug}/reviews`);
-        setReviews(data?.items || []);
+        setReviews(data?.reviews || []);
       } catch (e) {
         setReviews([]);
       }
