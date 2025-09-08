@@ -158,7 +158,7 @@ export default function StudentDashboard() {
   const loadPastAppointments = async () => {
     try {
       setPastLoading(true);
-      const { data } = await axios.get("/api/v1/ogrenci/me/appointments/past", {
+      const { data } = await axios.get("/api/student/v1/ogrenci/me/appointments/past", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPastLessons(data?.items || []);
@@ -174,7 +174,7 @@ export default function StudentDashboard() {
   const completeAsStudent = async (id) => {
     try {
       await axios.patch(
-        `/api/v1/ogrenci/appointments/${id}/complete`,
+        `/api/student/v1/ogrenci/appointments/${id}/complete`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
