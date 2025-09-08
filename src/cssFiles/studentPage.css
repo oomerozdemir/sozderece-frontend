@@ -290,7 +290,22 @@
 .sdb-status.failed, .sdb-status.cancelled{ color:#991b1b; }
 
 
-
+/* chip içi küçük buton */
+.chip-btn {
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  background: #f9fafb;
+  cursor: pointer;
+}
+.chip-btn:hover { background: #eef2ff; }
+.chip-check {
+  margin-left: 6px;
+  font-weight: 700;
+  color: #10b981;
+}
 
 /* Responsive */
 @media (max-width: 768px){

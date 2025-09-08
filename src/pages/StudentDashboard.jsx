@@ -35,10 +35,7 @@ const bucketOf = (req) => {
 const fmtDate = (d) =>
   d ? new Date(d).toLocaleString("tr-TR", { dateStyle: "medium", timeStyle: "short" }) : "";
 
-/** Koçluk siparişi filtresi:
- *  - type/category alanında “coaching/koçluk/kocluk/coach” içeriyorsa
- *  - veya paket/başlık içinde bu ifadeler geçiyorsa
- */
+/** Koçluk siparişi filtresi */
 const isCoachingOrder = (o = {}) => {
   const t = (o.type || o.category || "").toString().toLowerCase();
   if (["coaching", "coach", "koçluk", "kocluk", "coaching_package"].some((k) => t.includes(k)))
@@ -50,8 +47,7 @@ const isCoachingOrder = (o = {}) => {
   return false;
 };
 
-// /api/my-orders → yeni yapı (OrdersPage.jsx ile uyumlu)
-// Fallback: /api/v1/ogrenci/me/orders → eski yapı
+// /api/my-orders → yeni, /api/v1/ogrenci/me/orders → eski
 const normalizeOrdersNew = (list = []) =>
   list.map((o) => ({
     id: o.id,
@@ -86,14 +82,16 @@ const normalizeOrdersLegacy = (list = []) =>
 
 export default function StudentDashboard() {
   const [student, setStudent] = useState(null);
-  const [tab, setTab] = useState("requests"); // "requests" | "orders"
+  const [tab, setTab] = useState("requests"); // "requests" | "orders" | "past"
   const [loading, setLoading] = useState(true);
 
   const [reqLoading, setReqLoading] = useState(false);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [pastLoading, setPastLoading] = useState(false);
 
   const [requests, setRequests] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [pastLessons, setPastLessons] = useState([]);
 
   const token = useMemo(() => localStorage.getItem("token"), []);
 
@@ -134,15 +132,12 @@ export default function StudentDashboard() {
   const loadOrders = async () => {
     try {
       setOrdersLoading(true);
-
-      // 1) Yeni uç: /api/my-orders (OrdersPage.jsx ile aynı)
       try {
         const { data } = await axios.get("/api/my-orders", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setOrders(normalizeOrdersNew(data?.orders || []));
       } catch (e1) {
-        // 2) Eski uç: /api/v1/ogrenci/me/orders
         try {
           const { data } = await axios.get("/api/v1/ogrenci/me/orders", {
             headers: { Authorization: `Bearer ${token}` },
@@ -159,11 +154,54 @@ export default function StudentDashboard() {
     }
   };
 
-  // İlk yüklemede talepler ve siparişleri getir
+  // Geçmiş derslerim
+  const loadPastAppointments = async () => {
+    try {
+      setPastLoading(true);
+      const { data } = await axios.get("/api/v1/ogrenci/me/appointments/past", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setPastLessons(data?.items || []);
+    } catch (e) {
+      console.error("Geçmiş dersler alınamadı:", e?.message);
+      setPastLessons([]);
+    } finally {
+      setPastLoading(false);
+    }
+  };
+
+  // “Ders tamamlandı” (öğrenci)
+  const completeAsStudent = async (id) => {
+    try {
+      await axios.patch(
+        `/api/v1/ogrenci/appointments/${id}/complete`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      // UI lokal güncelle
+      setRequests((list) =>
+        list.map((r) => ({
+          ...r,
+          appointmentsConfirmed: (r.appointmentsConfirmed || []).map((a) =>
+            a.id === id
+              ? { ...a, notes: (a.notes || "") + `;doneStudentAt=${new Date().toISOString()}` }
+              : a
+          ),
+        }))
+      );
+      // Geçmişi tazele
+      loadPastAppointments();
+    } catch (e) {
+      alert(e?.response?.data?.message || "Tamamlandı olarak işaretlenemedi.");
+    }
+  };
+
+  // İlk yükleme
   useEffect(() => {
     loadRequests();
     loadOrders();
-  }, []); // token sabit varsayıldı
+    loadPastAppointments();
+  }, []); // token sabit varsayımı
 
   if (loading) return <p>Yükleniyor...</p>;
   if (!student) return <p>Öğrenci verisi bulunamadı.</p>;
@@ -175,13 +213,19 @@ export default function StudentDashboard() {
   // Yalnız koçluk siparişleri
   const coachingOrders = (orders || []).filter(isCoachingOrder);
 
+  const onRefresh = () => {
+    if (tab === "requests") return loadRequests();
+    if (tab === "orders") return loadOrders();
+    if (tab === "past") return loadPastAppointments();
+  };
+
   return (
     <>
       <Navbar />
 
       <div className="student-page-wrapper">
         <div className="student-dashboard-grid">
-          {/* Sol: Koç Kartı (mevcut) */}
+          {/* Sol: Koç Kartı */}
           <div className="studentPage-coach-card">
             <h3>Atanmış Koçunuz</h3>
 
@@ -217,7 +261,7 @@ export default function StudentDashboard() {
             )}
           </div>
 
-          {/* Sağ: Taleplerim / Koçluk Siparişlerim */}
+          {/* Sağ: Sekmeler */}
           <div className="studentPage-side-info">
             <div className="sdb-tabs">
               <button
@@ -232,20 +276,25 @@ export default function StudentDashboard() {
               >
                 Koçluk Siparişlerim
               </button>
+              <button
+                className={`sdb-tab ${tab === "past" ? "active" : ""}`}
+                onClick={() => setTab("past")}
+              >
+                Geçmiş Derslerim
+              </button>
 
               <button
-                className={`sdb-refresh ${reqLoading || ordersLoading ? "is-loading" : ""}`}
-                onClick={() => {
-                  if (tab === "requests") loadRequests();
-                  else loadOrders();
-                }}
-                disabled={reqLoading || ordersLoading}
+                className={`sdb-refresh ${(reqLoading || ordersLoading || pastLoading) ? "is-loading" : ""}`}
+                onClick={onRefresh}
+                disabled={reqLoading || ordersLoading || pastLoading}
                 title="Yenile"
               >
                 <svg className="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 5V2L7 7l5 5V9a5 5 0 1 1-5 5H5a7 7 0 1 0 7-9z" fill="currentColor" />
                 </svg>
-                <span className="label">{reqLoading || ordersLoading ? "Yükleniyor…" : "Yenile"}</span>
+                <span className="label">
+                  {(reqLoading || ordersLoading || pastLoading) ? "Yükleniyor…" : "Yenile"}
+                </span>
               </button>
             </div>
 
@@ -256,7 +305,9 @@ export default function StudentDashboard() {
                     {groups.pending.length === 0 ? (
                       <div className="sdb-empty">Bekleyen talebiniz yok.</div>
                     ) : (
-                      groups.pending.map((r) => <RequestCard key={r.id} r={r} />)
+                      groups.pending.map((r) => (
+                        <RequestCard key={r.id} r={r} completeAsStudent={completeAsStudent} />
+                      ))
                     )}
                   </Group>
 
@@ -264,7 +315,9 @@ export default function StudentDashboard() {
                     {groups.approved.length === 0 ? (
                       <div className="sdb-empty">Onaylanmış talebiniz yok.</div>
                     ) : (
-                      groups.approved.map((r) => <RequestCard key={r.id} r={r} />)
+                      groups.approved.map((r) => (
+                        <RequestCard key={r.id} r={r} completeAsStudent={completeAsStudent} />
+                      ))
                     )}
                   </Group>
 
@@ -272,16 +325,18 @@ export default function StudentDashboard() {
                     {groups.rejected.length === 0 ? (
                       <div className="sdb-empty">Reddedilmiş talebiniz yok.</div>
                     ) : (
-                      groups.rejected.map((r) => <RequestCard key={r.id} r={r} />)
+                      groups.rejected.map((r) => (
+                        <RequestCard key={r.id} r={r} completeAsStudent={completeAsStudent} />
+                      ))
                     )}
                   </Group>
                 </div>
               </div>
-            ) : (
+            ) : tab === "orders" ? (
               <div className="sdb-orders">
                 {ordersLoading ? (
                   <div className="sdb-empty">Yükleniyor…</div>
-                ) : coachingOrders.length === 0 ? (
+                ) : (coachingOrders.length === 0) ? (
                   <div className="sdb-empty">Koçluk siparişiniz bulunmuyor.</div>
                 ) : (
                   <div className="sdb-list">
@@ -305,9 +360,30 @@ export default function StudentDashboard() {
                           ) : null}
                           <span className="sep">•</span>
                           <span>Durum:</span>{" "}
-                          <b className={`sdb-status ${o.status?.toLowerCase?.() || ""}`}>
-                            {o.status || "—"}
-                          </b>
+                          <b className={`sdb-status ${o.status?.toLowerCase?.() || ""}`}>{o.status || "—"}</b>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              // Geçmiş Derslerim
+              <div className="sdb-orders">
+                {pastLoading ? (
+                  <div className="sdb-empty">Yükleniyor…</div>
+                ) : (pastLessons.length === 0) ? (
+                  <div className="sdb-empty">Geçmiş dersiniz bulunmuyor.</div>
+                ) : (
+                  <div className="sdb-list">
+                    {pastLessons.map((a) => (
+                      <div className="sdb-card" key={a.id}>
+                        <div className="sdb-card-row">
+                          <span>🗓</span>{" "}
+                          <b>{fmtDate(a.startsAt)} — {fmtDate(a.endsAt)}</b>
+                          <span className="sep">•</span>
+                          <span>Tür:</span>{" "}
+                          <b>{a.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</b>
                         </div>
                       </div>
                     ))}
@@ -331,7 +407,10 @@ function Group({ title, color, loading, children }) {
   );
 }
 
-function RequestCard({ r }) {
+function RequestCard({ r, completeAsStudent }) {
+  const isPast = (dt) => new Date(dt) <= new Date();
+  const hasDoneStudent = (notes = "") => /doneStudentAt=/.test(notes);
+
   return (
     <div className="sdb-card">
       <div className="sdb-card-head">
@@ -382,6 +461,15 @@ function RequestCard({ r }) {
                 {r.appointmentsConfirmed.map((a) => (
                   <span className="chip ok" key={a.id}>
                     {fmtDate(a.startsAt)} — {fmtDate(a.endsAt)}
+                    {hasDoneStudent(a.notes) ? (
+                      <span className="chip-check">✓</span>
+                    ) : (
+                      isPast(a.endsAt) && (
+                        <button className="chip-btn" onClick={() => completeAsStudent?.(a.id)}>
+                          Ders tamamlandı
+                        </button>
+                      )
+                    )}
                   </span>
                 ))}
               </div>
