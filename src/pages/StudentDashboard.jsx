@@ -118,7 +118,7 @@ export default function StudentDashboard() {
   const loadRequests = async () => {
     try {
       setReqLoading(true);
-      const { data } = await axios.get("/api/v1/ogrenci/me/requests", {
+      const { data } = await axios.get("/api/v1/student-requests/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setRequests(data?.items || data || []);
