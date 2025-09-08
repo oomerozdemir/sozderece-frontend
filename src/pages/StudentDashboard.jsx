@@ -93,6 +93,13 @@ export default function StudentDashboard() {
   const [orders, setOrders] = useState([]);
   const [pastLessons, setPastLessons] = useState([]);
 
+  // REVIEW MODAL STATE
+  const [showReview, setShowReview] = useState(false);
+  const [reviewAppt, setReviewAppt] = useState(null); // { id, startsAt, endsAt, ... }
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
   const token = useMemo(() => localStorage.getItem("token"), []);
 
   // Profil
@@ -117,7 +124,7 @@ export default function StudentDashboard() {
     try {
       setReqLoading(true);
       const { data } = await axios.get("/api/v1/student-requests/me", {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: { toString: () => `Bearer ${token}` } },
       });
       setRequests(data?.items || data || []);
     } catch (e) {
@@ -170,29 +177,49 @@ export default function StudentDashboard() {
     }
   };
 
-  // “Ders tamamlandı” (öğrenci)
-  const completeAsStudent = async (id) => {
+  // Review modalını aç
+  const openReview = (appt) => {
+    setReviewAppt(appt);
+    setRating(5);
+    setComment("");
+    setShowReview(true);
+  };
+
+  // Review submit (tamamla + yorum)
+  const submitReview = async () => {
+    if (!reviewAppt) return;
     try {
+      setSubmitting(true);
+      // 1) Tamamlandı işaretle
       await axios.patch(
-        `/api/student/v1/ogrenci/appointments/${id}/complete`,
+        `/api/student/v1/ogrenci/appointments/${reviewAppt.id}/complete`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // UI lokal güncelle
+      // 2) Değerlendirme gönder
+      await axios.post(
+        `/api/student/v1/ogrenci/appointments/${reviewAppt.id}/review`,
+        { rating: Number(rating), comment: comment.trim() },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      // 3) UI güncelle: ilgili slotun notuna doneStudentAt ekle
       setRequests((list) =>
         list.map((r) => ({
           ...r,
           appointmentsConfirmed: (r.appointmentsConfirmed || []).map((a) =>
-            a.id === id
+            a.id === reviewAppt.id
               ? { ...a, notes: (a.notes || "") + `;doneStudentAt=${new Date().toISOString()}` }
               : a
           ),
         }))
       );
-      // Geçmişi tazele
+      // 4) Geçmişi tazele
       loadPastAppointments();
+      setShowReview(false);
     } catch (e) {
-      alert(e?.response?.data?.message || "Tamamlandı olarak işaretlenemedi.");
+      alert(e?.response?.data?.message || "Değerlendirme gönderilemedi.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -299,102 +326,171 @@ export default function StudentDashboard() {
             </div>
 
             {tab === "requests" ? (
-              <div className="sdb-requests">
-                <div className="sdb-groups">
-                  <Group title={`Bekleyen (${groups.pending.length})`} color="warn" loading={reqLoading}>
-                    {groups.pending.length === 0 ? (
-                      <div className="sdb-empty">Bekleyen talebiniz yok.</div>
-                    ) : (
-                      groups.pending.map((r) => (
-                        <RequestCard key={r.id} r={r} completeAsStudent={completeAsStudent} />
-                      ))
-                    )}
-                  </Group>
-
-                  <Group title={`Onaylanmış (${groups.approved.length})`} color="ok" loading={reqLoading}>
-                    {groups.approved.length === 0 ? (
-                      <div className="sdb-empty">Onaylanmış talebiniz yok.</div>
-                    ) : (
-                      groups.approved.map((r) => (
-                        <RequestCard key={r.id} r={r} completeAsStudent={completeAsStudent} />
-                      ))
-                    )}
-                  </Group>
-
-                  <Group title={`Reddedilmiş (${groups.rejected.length})`} color="bad" loading={reqLoading}>
-                    {groups.rejected.length === 0 ? (
-                      <div className="sdb-empty">Reddedilmiş talebiniz yok.</div>
-                    ) : (
-                      groups.rejected.map((r) => (
-                        <RequestCard key={r.id} r={r} completeAsStudent={completeAsStudent} />
-                      ))
-                    )}
-                  </Group>
-                </div>
-              </div>
+              <RequestsGroups
+                groups={groups}
+                loading={reqLoading}
+                openReview={openReview}
+              />
             ) : tab === "orders" ? (
-              <div className="sdb-orders">
-                {ordersLoading ? (
-                  <div className="sdb-empty">Yükleniyor…</div>
-                ) : (coachingOrders.length === 0) ? (
-                  <div className="sdb-empty">Koçluk siparişiniz bulunmuyor.</div>
-                ) : (
-                  <div className="sdb-list">
-                    {coachingOrders.map((o) => (
-                      <div className="sdb-card" key={o.id}>
-                        <div className="sdb-card-row">
-                          <span>Sipariş No:</span> <b>{o.id}</b>
-                          <span className="sep">•</span>
-                          <span>Tarih:</span> <b>{fmtDate(o.createdAt)}</b>
-                        </div>
-                        <div className="sdb-card-row">
-                          <span>Paket:</span> <b>{o.package || "Koçluk Paketi"}</b>
-                          <span className="sep">•</span>
-                          <span>Tutar:</span>{" "}
-                          <b>{typeof o.amountTL === "number" ? `${o.amountTL.toLocaleString("tr-TR")} ₺` : "—"}</b>
-                          {o.endDate ? (
-                            <>
-                              <span className="sep">•</span>
-                              <span>Bitiş:</span> <b>{fmtDate(o.endDate)}</b>
-                            </>
-                          ) : null}
-                          <span className="sep">•</span>
-                          <span>Durum:</span>{" "}
-                          <b className={`sdb-status ${o.status?.toLowerCase?.() || ""}`}>{o.status || "—"}</b>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <OrdersList loading={ordersLoading} orders={coachingOrders} />
             ) : (
-              // Geçmiş Derslerim
-              <div className="sdb-orders">
-                {pastLoading ? (
-                  <div className="sdb-empty">Yükleniyor…</div>
-                ) : (pastLessons.length === 0) ? (
-                  <div className="sdb-empty">Geçmiş dersiniz bulunmuyor.</div>
-                ) : (
-                  <div className="sdb-list">
-                    {pastLessons.map((a) => (
-                      <div className="sdb-card" key={a.id}>
-                        <div className="sdb-card-row">
-                          <span>🗓</span>{" "}
-                          <b>{fmtDate(a.startsAt)} — {fmtDate(a.endsAt)}</b>
-                          <span className="sep">•</span>
-                          <span>Tür:</span>{" "}
-                          <b>{a.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</b>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <PastLessons loading={pastLoading} items={pastLessons} />
             )}
           </div>
         </div>
       </div>
+
+      {/* REVIEW MODAL */}
+      {showReview && (
+        <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="Ders değerlendirme">
+          <div className="modal-card">
+            <div className="modal-head">
+              <div className="modal-title">Ders Değerlendirmesi</div>
+              <button className="modal-close" onClick={()=>!submitting && setShowReview(false)} aria-label="Kapat">×</button>
+            </div>
+
+            <div className="modal-body">
+              <div className="modal-row">
+                <div className="modal-label">Puanınız</div>
+                <div className="rating">
+                  {[1,2,3,4,5].map(v => (
+                    <button
+                      key={v}
+                      type="button"
+                      className={"star" + (v <= rating ? " active" : "")}
+                      onClick={() => setRating(v)}
+                      aria-label={`${v} yıldız`}
+                    >★</button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="modal-row">
+                <div className="modal-label">Yorumunuz (isteğe bağlı)</div>
+                <textarea
+                  rows={4}
+                  placeholder="Ders deneyiminizi kısaca paylaşın…"
+                  value={comment}
+                  onChange={(e)=>setComment(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button className="btn ghost" onClick={()=>!submitting && setShowReview(false)}>Vazgeç</button>
+              <button className="btn" disabled={submitting} onClick={submitReview}>
+                {submitting ? "Gönderiliyor…" : "Gönder"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
+  );
+}
+
+/* ----------------- parçalar ----------------- */
+
+function RequestsGroups({ groups, loading, openReview }) {
+  return (
+    <div className="sdb-requests">
+      <div className="sdb-groups">
+        <Group title={`Bekleyen (${groups.pending.length})`} color="warn" loading={loading}>
+          {groups.pending.length === 0 ? (
+            <div className="sdb-empty">Bekleyen talebiniz yok.</div>
+          ) : (
+            groups.pending.map((r) => (
+              <RequestCard key={r.id} r={r} openReview={openReview} />
+            ))
+          )}
+        </Group>
+
+        <Group title={`Onaylanmış (${groups.approved.length})`} color="ok" loading={loading}>
+          {groups.approved.length === 0 ? (
+            <div className="sdb-empty">Onaylanmış talebiniz yok.</div>
+          ) : (
+            groups.approved.map((r) => (
+              <RequestCard key={r.id} r={r} openReview={openReview} />
+            ))
+          )}
+        </Group>
+
+        <Group title={`Reddedilmiş (${groups.rejected.length})`} color="bad" loading={loading}>
+          {groups.rejected.length === 0 ? (
+            <div className="sdb-empty">Reddedilmiş talebiniz yok.</div>
+          ) : (
+            groups.rejected.map((r) => (
+              <RequestCard key={r.id} r={r} openReview={openReview} />
+            ))
+          )}
+        </Group>
+      </div>
+    </div>
+  );
+}
+
+function OrdersList({ loading, orders }) {
+  return (
+    <div className="sdb-orders">
+      {loading ? (
+        <div className="sdb-empty">Yükleniyor…</div>
+      ) : (orders.length === 0) ? (
+        <div className="sdb-empty">Koçluk siparişiniz bulunmuyor.</div>
+      ) : (
+        <div className="sdb-list">
+          {orders.map((o) => (
+            <div className="sdb-card" key={o.id}>
+              <div className="sdb-card-row">
+                <span>Sipariş No:</span> <b>{o.id}</b>
+                <span className="sep">•</span>
+                <span>Tarih:</span> <b>{fmtDate(o.createdAt)}</b>
+              </div>
+              <div className="sdb-card-row">
+                <span>Paket:</span> <b>{o.package || "Koçluk Paketi"}</b>
+                <span className="sep">•</span>
+                <span>Tutar:</span>{" "}
+                <b>{typeof o.amountTL === "number" ? `${o.amountTL.toLocaleString("tr-TR")} ₺` : "—"}</b>
+                {o.endDate ? (
+                  <>
+                    <span className="sep">•</span>
+                    <span>Bitiş:</span> <b>{fmtDate(o.endDate)}</b>
+                  </>
+                ) : null}
+                <span className="sep">•</span>
+                <span>Durum:</span>{" "}
+                <b className={`sdb-status ${o.status?.toLowerCase?.() || ""}`}>{o.status || "—"}</b>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PastLessons({ loading, items }) {
+  return (
+    <div className="sdb-orders">
+      {loading ? (
+        <div className="sdb-empty">Yükleniyor…</div>
+      ) : (items.length === 0) ? (
+        <div className="sdb-empty">Geçmiş dersiniz bulunmuyor.</div>
+      ) : (
+        <div className="sdb-list">
+          {items.map((a) => (
+            <div className="sdb-card" key={a.id}>
+              <div className="sdb-card-row">
+                <span>🗓</span>{" "}
+                <b>{fmtDate(a.startsAt)} — {fmtDate(a.endsAt)}</b>
+                <span className="sep">•</span>
+                <span>Tür:</span>{" "}
+                <b>{a.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</b>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -407,7 +503,7 @@ function Group({ title, color, loading, children }) {
   );
 }
 
-function RequestCard({ r, completeAsStudent }) {
+function RequestCard({ r, openReview }) {
   const isPast = (dt) => new Date(dt) <= new Date();
   const hasDoneStudent = (notes = "") => /doneStudentAt=/.test(notes);
 
@@ -458,20 +554,24 @@ function RequestCard({ r, completeAsStudent }) {
             <div className="sdb-card-row wrap">
               <span className="label-ok">Onaylanan saatler:</span>
               <div className="sdb-chips">
-                {r.appointmentsConfirmed.map((a) => (
-                  <span className="chip ok" key={a.id}>
-                    {fmtDate(a.startsAt)} — {fmtDate(a.endsAt)}
-                    {hasDoneStudent(a.notes) ? (
-                      <span className="chip-check">✓</span>
-                    ) : (
-                      isPast(a.endsAt) && (
-                        <button className="chip-btn" onClick={() => completeAsStudent?.(a.id)}>
-                          Ders tamamlandı
-                        </button>
-                      )
-                    )}
-                  </span>
-                ))}
+                {r.appointmentsConfirmed.map((a) => {
+                  const past = isPast(a.endsAt);
+                  const done = hasDoneStudent(a.notes);
+                  return (
+                    <span className="chip ok" key={a.id}>
+                      {fmtDate(a.startsAt)} — {fmtDate(a.endsAt)}
+                      {done ? (
+                        <span className="chip-check">✓</span>
+                      ) : (
+                        past && (
+                          <button className="chip-btn" onClick={() => openReview?.(a)}>
+                            Ders tamamlandı
+                          </button>
+                        )
+                      )}
+                    </span>
+                  );
+                })}
               </div>
             </div>
           )}
