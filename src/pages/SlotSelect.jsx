@@ -101,13 +101,18 @@ export default function SlotSelect() {
         },
       });
 
-      const avail = normalizeArr(data?.slots || [], mode);
-      const pend  = normalizeArr(data?.busy?.pending || [], mode);
-      const conf  = normalizeArr(data?.busy?.confirmed || [], mode);
+// Şimdiki zaman (dakikaya hizalanmış)
+const now = new Date();
+now.setSeconds(0,0);
+const futureOnly = (arr=[]) => arr.filter(x => new Date(x.start) >= now); 
 
-      setSlots(avail);
-      setBusyPending(pend);
-      setBusyConfirmed(conf);
+const avail = normalizeArr(data?.slots || [], mode);
+const pend  = normalizeArr(data?.busy?.pending || [], mode);
+const conf  = normalizeArr(data?.busy?.confirmed || [], mode);
+
+      setSlots(futureOnly(avail));            
+      setBusyPending(futureOnly(pend));       
+      setBusyConfirmed(futureOnly(conf)); 
     } catch (e) {
       console.error(e);
       alert("Uygun saatler getirilemedi.");
@@ -158,16 +163,16 @@ export default function SlotSelect() {
 
   // Range gün listesi
   const daysInRange = useMemo(() => {
-    const out = [];
-    const from = new Date(range.from);
-    const to   = new Date(range.to);
-    from.setHours(0,0,0,0); to.setHours(0,0,0,0);
-    for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
-      out.push(new Date(d).toISOString().slice(0,10));
-    }
-    return out;
-  }, [range]);
-
+  const out = [];
+  const startIso = (range.from < todayISO) ? todayISO : range.from;   
+  const from = new Date(startIso);
+  const to   = new Date(range.to);
+  from.setHours(0,0,0,0); to.setHours(0,0,0,0);
+  for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
+    out.push(new Date(d).toISOString().slice(0,10));
+  }
+  return out;
+}, [range, todayISO]);
   // Gruplar
   const byAvail = useMemo(() => groupByDayISO(slots), [slots]);
   const byPend  = useMemo(() => groupByDayISO(busyPending), [busyPending]);
@@ -268,6 +273,7 @@ export default function SlotSelect() {
             type="date"
             value={range.from}
             onChange={(e)=>setRange(r=>({...r, from: e.target.value}))}
+            min={todayISO}
           />
         </div>
         <div>
@@ -276,6 +282,8 @@ export default function SlotSelect() {
             type="date"
             value={range.to}
             onChange={(e)=>setRange(r=>({...r, to: e.target.value}))}
+            min={todayISO}
+
           />
         </div>
       </div>

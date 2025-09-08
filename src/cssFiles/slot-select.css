@@ -29,11 +29,12 @@
 }
 .legend-item { display: inline-flex; align-items: center; gap: 6px; }
 .legend-dot {
-  width: 10px; height: 10px; border-radius: 999px; display: inline-block;
+  width: 12px; height: 12px; border-radius: 999px; display: inline-block;
   border: 1px solid #e5e7eb;
 }
-.legend-free { background: #fff; }
-.legend-booked { background: #ecfdf5; border-color: #16a34a; }
+.legend-free { background: #ffffff; }
+.legend-busy { background: #fff7ed; border-color: #fdba74; }      /* onay bekliyor */
+.legend-confirmed { background: #fee2e2; border-color: #fca5a5; } /* kesin dolu */
 .legend-picked { background: #eef2ff; border-color: #3730a3; }
 
 /* --- Tarih aralığı formu --- */
@@ -156,17 +157,51 @@ input[type="date"]:focus {
 .tp-slot-time { font-weight: 800; letter-spacing: .2px; }
 .tp-slot-mode { font-size: .85rem; color: #475569; }
 
-/* --- DOLU (onaylı) slot görünümü --- */
-.tp-slot-card.slot-confirmed {
-  border-color: #ec0000;
-  background: #ecfdf5;
-  color: #ff0000;
+/* === DOLU SLOTLAR: iki ton === */
+
+/* Onay bekleyen (amber) */
+.tp-slot-card.slot-busy,
+.tp-slot-card[disabled].slot-busy {
+  border-color: #f59e0b;
+  background:
+    repeating-linear-gradient(135deg, rgba(245, 158, 11, 0.10) 0 8px, rgba(245, 158, 11, 0.16) 8px 16px),
+    #fff7ed;
+  color: #9a3412;
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
-  pointer-events: none; /* tıklanamaz */
+  pointer-events: none;
 }
-.tp-slot-card.slot-confirmed:hover { border-color: #ff0000; box-shadow: none; transform: none; }
+.tp-slot-card.slot-busy::after {
+  content: "!";
+  position: absolute;
+  top: 8px; right: 10px;
+  width: 22px; height: 22px; display: grid; place-items: center;
+  font-weight: 900; font-size: .86rem; color: #fff;
+  background: #f59e0b; border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(245,158,11,.35);
+}
+
+/* Kesin dolu (kırmızı) */
+.tp-slot-card.slot-confirmed {
+  border-color: #dc2626;
+  background:
+    repeating-linear-gradient(135deg, rgba(220, 38, 38, 0.10) 0 8px, rgba(220, 38, 38, 0.18) 8px 16px),
+    #fee2e2;
+  color: #7f1d1d;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  pointer-events: none;
+}
+.tp-slot-card.slot-confirmed::after {
+  content: "⛔";
+  position: absolute;
+  top: 8px; right: 10px;
+  font-size: .88rem;
+  color: #dc2626;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.12));
+}
 
 /* --- Seçili (öğrencinin seçtiği) --- */
 .tp-slot-card.slot-picked {
@@ -177,7 +212,7 @@ input[type="date"]:focus {
     #ffffff;
 }
 
-/* --- Eski seçili sınıfıyla geriye uyum --- */
+/* Geriye uyum: .is-selected kullanılıyorsa */
 .tp-slot-card.is-selected {
   border-color: #6366f1;
   background:

@@ -148,7 +148,6 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
 
 
 ******** ozel ders icin ogrenci tarafi ********
-  -ders bittiginde ogretmen ders tamamlandi diye isaretler.
   -ogrenci de ayni sekilde dersi tamamlandi diye isaretler ve yorum degerlendirme yonlendirmesi yapilir ogrenciye.
   -takvım secımı yapılırken gecmıs gozukmesın sadece gunumuz ve sonrası
   - slotselecteki dolu gozuken yerlerin kirmizi renk olmasi
