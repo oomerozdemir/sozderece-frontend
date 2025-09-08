@@ -338,13 +338,18 @@ function RequestsPanel() {
                           )}
 
                           <div className="tp-slot-actions">
-                            {done ? (
-                              <span className="tp-chip success">✓ Tamamlandı</span>
-                            ) : past ? (
-                              <button className="tp-btn" onClick={() => completeAsTeacher(a.id)}>
-                                Ders tamamlandı
-                              </button>
-                            ) : null}
+                            + {done ? (
+   <span className="tp-chip success">✓ Tamamlandı</span>
+ ) : (
+   <button
+     className="tp-btn"
+     disabled={!past}
+     title={!past ? "Ders saati geçtikten sonra aktif olur" : ""}
+     onClick={() => past && completeAsTeacher(a.id)}
+   >
+     Ders tamamlandı
+   </button>
+ )}
                           </div>
                         </div>
                       );
