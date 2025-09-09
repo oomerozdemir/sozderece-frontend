@@ -47,7 +47,6 @@ const isCoachingOrder = (o = {}) => {
   return false;
 };
 
-// /api/my-orders → yeni, /api/v1/ogrenci/me/orders → eski
 const normalizeOrdersNew = (list = []) =>
   list.map((o) => ({
     id: o.id,
@@ -107,7 +106,7 @@ export default function StudentDashboard() {
     (async () => {
       try {
         setLoading(true);
-        const res = await axios.get("/api/student/me", {
+        const res = await axios.get("/api/v1/ogrenci/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setStudent(res.data);
@@ -146,7 +145,7 @@ export default function StudentDashboard() {
         setOrders(normalizeOrdersNew(data?.orders || []));
       } catch (e1) {
         try {
-          const { data } = await axios.get("/api/v1/ogrenci/me/orders", {
+          const { data } = await axios.get("api/my-orders", {
             headers: { Authorization: `Bearer ${token}` },
           });
           const list = Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : [];
@@ -165,7 +164,7 @@ export default function StudentDashboard() {
   const loadPastAppointments = async () => {
     try {
       setPastLoading(true);
-      const { data } = await axios.get("/api/student/v1/ogrenci/me/appointments/past", {
+      const { data } = await axios.get("/api/v1/ogrenci/me/appointments/past", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPastLessons(data?.items || []);
@@ -192,13 +191,13 @@ export default function StudentDashboard() {
       setSubmitting(true);
       // 1) Tamamlandı işaretle
       await axios.patch(
-        `/api/student/v1/ogrenci/appointments/${reviewAppt.id}/complete`,
+        `/api/v1/ogrenci/appointments/${reviewAppt.id}/complete`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
       // 2) Değerlendirme gönder
       await axios.post(
-        `/api/student/v1/ogrenci/appointments/${reviewAppt.id}/review`,
+        `/api/v1/ogrenci/appointments/${reviewAppt.id}/review`,
         { rating: Number(rating), comment: comment.trim() },
         { headers: { Authorization: `Bearer ${token}` } }
       );
