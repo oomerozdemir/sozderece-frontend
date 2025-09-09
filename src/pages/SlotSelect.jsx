@@ -91,34 +91,30 @@ export default function SlotSelect() {
 
   // Slotları getir (müsait + dolular)
   const fetchSlots = async () => {
-    try {
-      const { data } = await axios.get(`/api/v1/ogretmenler/${slug}/slots`, {
+  if (!slug) {
+    alert("Öğretmen slug bulunamadı.");
+    return;
+  }
+  try {
+    const { data } = await axios.get(
+      `/api/v1/ogretmenler/${encodeURIComponent(slug)}/slots`,
+      {
         params: {
-          from: range.from,
-          to: range.to,
-          mode,
-          durationMin: 60,
+          from: range.from,      // YYYY-MM-DD
+          to: range.to,          // YYYY-MM-DD
+          mode,                  // "ONLINE" | "FACE_TO_FACE"
+          durationMin: 60
         },
-      });
-
-// Şimdiki zaman (dakikaya hizalanmış)
-const now = new Date();
-now.setSeconds(0,0);
-const futureOnly = (arr=[]) => arr.filter(x => new Date(x.start) >= now); 
-
-const avail = normalizeArr(data?.slots || [], mode);
-const pend  = normalizeArr(data?.busy?.pending || [], mode);
-const conf  = normalizeArr(data?.busy?.confirmed || [], mode);
-
-      setSlots(futureOnly(avail));            
-      setBusyPending(futureOnly(pend));       
-      setBusyConfirmed(futureOnly(conf)); 
-    } catch (e) {
-      console.error(e);
-      alert("Uygun saatler getirilemedi.");
-    }
-  };
-
+      }
+    );
+    setSlots(data?.slots || []);
+    setBusyPending(data?.busy?.pending || []);
+    setBusyConfirmed(data?.busy?.confirmed || []);
+  } catch (e) {
+    console.error("slots error:", e?.response?.data || e.message);
+    alert(e?.response?.data?.message || "Uygun saatler getirilemedi.");
+  }
+};
   // Hızlı membership set’leri
   const busyKeys = useMemo(() => {
     const s = new Set();
