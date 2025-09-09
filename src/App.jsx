@@ -135,7 +135,7 @@ export default App;
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   3-ogretmen panelı duzenlemesı
       
-  
+    profile giris sayacini duzelt
       -ogretmen yayina alirken admin tarafina talep gonderimi talep onaylandiktan sonra yayina alinir
 
       gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
