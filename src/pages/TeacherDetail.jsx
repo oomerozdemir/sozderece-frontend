@@ -37,73 +37,109 @@ export default function TeacherDetail() {
 
   if (!t) return <div className="tl-loading">Yükleniyor…</div>;
 
+  const modeLabel = t.mode === "FACE_TO_FACE" ? "Yüz yüze" : "ONLINE";
+  const subjects = Array.isArray(t.subjects) ? t.subjects : [];
+  const grades = Array.isArray(t.grades) ? t.grades : [];
+
   return (
     <>
-    <TopBar />
-    <Navbar/>
-    <div className="td-page">
-      <div className="td-header">
-        <img
-          className="td-photo"
-          src={t.photoUrl || "https://placehold.co/200x200?text=Teacher"}
-          alt={`${t.firstName} ${t.lastName}`}
-          loading="lazy"
-        />
-        <div className="td-meta">
-          <h1>{t.firstName} {t.lastName}</h1>
-          <div>{t.city} / {t.district} • {t.mode}</div>
-          <div>{(t.subjects || []).join(", ")} — {(t.grades || []).join(", ")}</div>
-          <div>
-            👁 {t.viewCount} • ⭐ {t.ratingAverage?.toFixed?.(1) || "0.0"} ({t.ratingCount})
-          </div>
-        </div>
-      </div>
+      <TopBar />
+      <Navbar />
+      <div className="td-page">
+        {/* HEADER CARD */}
+        <section className="td-header-card">
+          <div className="td-header">
+            <img
+              className="td-photo"
+              src={t.photoUrl || "https://placehold.co/200x200?text=Teacher"}
+              alt={`${t.firstName} ${t.lastName}`}
+              loading="lazy"
+            />
+            <div className="td-meta">
+              <h1 className="td-title">{t.firstName} {t.lastName}</h1>
 
-
-      
-      <button
-        className="td-cta"
-        onClick={() => navigate(`/ogretmenler/${slug}/talep`)}
-      >
-        Ders talebi oluştur
-      </button>
-
-      <h2 className="td-section-title">Hakkımda</h2>
-      {t.bio && <p style={{ marginTop: 12 }}>{t.bio}</p>}
-
-      {t.whyMe && (
-  <div className="td-whyme-card" style={{ marginTop: 16 }}>
-    <h2 className="td-section-title">Neden benden ders almalısınız?</h2>
-    <p className="td-whyme-text">{t.whyMe}</p>
-  </div>
-)}
-
-
-      {/* Yorumlar */}
-      <div style={{ marginTop: 24 }}>
-        <h2 style={{ marginBottom: 8 }}>Öğrenci Yorumları</h2>
-        {reviews.length === 0 ? (
-          <div className="tp-empty">Bu öğretmen için henüz yorum bulunmuyor.</div>
-        ) : (
-          <div className="tp-reviews">
-            {reviews.map((rv) => (
-              <div key={rv.id} className="tp-review">
-                <div className="tp-review-head">
-                  <div className="tp-stars">
-                    {"★★★★★".slice(0, rv.rating)}
-                    <span className="tp-stars-muted">{"★★★★★".slice(rv.rating)}</span>
-                  </div>
-                  <div className="tp-review-date">{new Date(rv.createdAt).toLocaleDateString("tr-TR")}</div>
-                </div>
-                {rv.comment ? <div className="tp-review-body">{rv.comment}</div> : null}
+              <div className="td-badges">
+                {(t.city || t.district) && (
+                  <span className="td-chip">
+                    {t.city || "—"}{t.district ? ` / ${t.district}` : ""}
+                  </span>
+                )}
+                <span className={`td-chip ${modeLabel === "ONLINE" ? "chip-online" : "chip-face"}`}>
+                  {modeLabel}
+                </span>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
 
-    </div>
-    <Footer/>
+              {(subjects.length || grades.length) ? (
+                <div className="td-tags">
+                  {subjects.slice(0, 4).map((s) => (
+                    <span key={`s-${s}`} className="td-tag">{s}</span>
+                  ))}
+                  {grades.slice(0, 3).map((g) => (
+                    <span key={`g-${g}`} className="td-tag muted">{g}</span>
+                  ))}
+                </div>
+              ) : null}
+
+              <div className="td-stats">
+                <span className="td-stat">👁 {t.viewCount ?? 0}</span>
+                <span className="td-stat">⭐ {t.ratingAverage?.toFixed?.(1) || "0.0"} ({t.ratingCount ?? 0})</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="td-header-cta">
+            <button className="td-cta" onClick={() => navigate(`/ogretmenler/${slug}/talep`)}>
+              Ders talebi oluştur
+            </button>
+          </div>
+        </section>
+
+        {/* HAKKIMDA */}
+        {t.bio && (
+          <section className="td-section">
+            <h2 className="td-section-title">Hakkımda</h2>
+            <div className="td-card">
+              <p className="td-paragraph">{t.bio}</p>
+            </div>
+          </section>
+        )}
+
+        {/* NEDEN BEN */}
+        {t.whyMe && (
+          <section className="td-section">
+            <div className="td-card td-whyme">
+              <h2 className="td-section-title">Neden benden ders almalısınız?</h2>
+              <p className="td-paragraph">{t.whyMe}</p>
+            </div>
+          </section>
+        )}
+
+        {/* YORUMLAR */}
+        <section className="td-section">
+          <h2 className="td-section-title">Öğrenci Yorumları</h2>
+          {reviews.length === 0 ? (
+            <div className="td-empty">Bu öğretmen için henüz yorum bulunmuyor.</div>
+          ) : (
+            <div className="td-reviews">
+              {reviews.map((rv) => (
+                <div key={rv.id} className="td-review">
+                  <div className="td-review-head">
+                    <div className="td-stars">
+                      {"★★★★★".slice(0, rv.rating)}
+                      <span className="td-stars-muted">{"★★★★★".slice(rv.rating)}</span>
+                    </div>
+                    <div className="td-review-date">
+                      {new Date(rv.createdAt).toLocaleDateString("tr-TR")}
+                    </div>
+                  </div>
+                  {rv.comment ? <div className="td-review-body">{rv.comment}</div> : null}
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
+      <Footer />
     </>
   );
 }
