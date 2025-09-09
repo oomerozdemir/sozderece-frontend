@@ -986,7 +986,7 @@ export default function TeacherPanel() {
             </section>
 
             {/* Neden benden ders almalısınız? */}
-            <section className="tp-card" style={{ marginTop: 16 }}>
+            <section className="tp-card" style={{ marginTop: 16, gridColumn: "2 / 3" }}>
               <form className="tp-form" onSubmit={saveWhyMe}>
                 <div className="tp-section">
                   <div className="tp-section-title">Neden benden ders almalısınız?</div>
