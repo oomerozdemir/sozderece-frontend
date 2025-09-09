@@ -338,18 +338,18 @@ function RequestsPanel() {
                           )}
 
                           <div className="tp-slot-actions">
-                            + {done ? (
-   <span className="tp-chip success">✓ Tamamlandı</span>
- ) : (
-   <button
-     className="tp-btn"
-     disabled={!past}
-     title={!past ? "Ders saati geçtikten sonra aktif olur" : ""}
-     onClick={() => past && completeAsTeacher(a.id)}
-   >
-     Ders tamamlandı
-   </button>
- )}
+                            {done ? (
+                              <span className="tp-chip success">✓ Tamamlandı</span>
+                            ) : (
+                              <button
+                                className="tp-btn"
+                                disabled={!past}
+                                title={!past ? "Ders saati geçtikten sonra aktif olur" : ""}
+                                onClick={() => past && completeAsTeacher(a.id)}
+                              >
+                                Ders tamamlandı
+                              </button>
+                            )}
                           </div>
                         </div>
                       );
@@ -440,8 +440,9 @@ export default function TeacherPanel() {
   const [pwd, setPwd] = useState({ current: "", next: "", next2: "" });
   const [pwdLoading, setPwdLoading] = useState(false);
 
-  // Biyografi
+  // Biyografi ve WhyMe kayıt durumları
   const [bioSaving, setBioSaving] = useState(false);
+  const [whySaving, setWhySaving] = useState(false);
 
   // Sekmeler
   const [tab, setTab] = useState("lessons");
@@ -561,6 +562,22 @@ export default function TeacherPanel() {
     }
   };
 
+  // WhyMe
+  const saveWhyMe = async (e) => {
+    e?.preventDefault?.();
+    if (!profile) return;
+    setWhySaving(true);
+    setMsg("");
+    try {
+      await axios.put("/api/v1/ogretmen/me/profil", { whyMe: (profile.whyMe || "").trim() });
+      setMsg("“Neden benden ders almalısınız?” güncellendi.");
+    } catch (e) {
+      setMsg(e?.response?.data?.message || "Metin kaydedilemedi.");
+    } finally {
+      setWhySaving(false);
+    }
+  };
+
   if (!profile) {
     return (
       <>
@@ -589,6 +606,9 @@ export default function TeacherPanel() {
 
   const bioLen = (profile.bio || "").length;
   const BIO_MAX = 1200;
+
+  const whyLen = (profile.whyMe || "").length;
+  const WHY_MAX = 1200;
 
   return (
     <>
@@ -960,6 +980,30 @@ export default function TeacherPanel() {
                 <div className="tp-actions">
                   <button type="submit" disabled={bioSaving}>
                     {bioSaving ? "Kaydediliyor…" : "Biyografiyi Kaydet"}
+                  </button>
+                </div>
+              </form>
+            </section>
+
+            {/* Neden benden ders almalısınız? */}
+            <section className="tp-card" style={{ marginTop: 16 }}>
+              <form className="tp-form" onSubmit={saveWhyMe}>
+                <div className="tp-section">
+                  <div className="tp-section-title">Neden benden ders almalısınız?</div>
+                  <textarea
+                    placeholder="Öğrencilerin sizi seçmesi için güçlü yanlarınızı, yöntemlerinizi ve sonuçlarınızı yazın."
+                    rows={8}
+                    maxLength={WHY_MAX}
+                    value={profile.whyMe ?? ""}
+                    onChange={(e) => onChange("whyMe", e.target.value)}
+                  />
+                  <div className="tp-hint" style={{ textAlign: "right" }}>
+                    {whyLen}/{WHY_MAX}
+                  </div>
+                </div>
+                <div className="tp-actions">
+                  <button type="submit" disabled={whySaving}>
+                    {whySaving ? "Kaydediliyor…" : "Metni Kaydet"}
                   </button>
                 </div>
               </form>

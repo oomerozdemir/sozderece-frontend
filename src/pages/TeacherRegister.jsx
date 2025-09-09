@@ -7,15 +7,12 @@ import { getRoleFromToken, isTokenValid } from "../utils/auth";
 import "../cssFiles/teacher-register.css";
 import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
 
-const SUBJECTS = ["Matematik","Fen Bilimleri","Türkçe","Tarih","Coğrafya","Fizik","Kimya","Biyoloji","İngilizce","Almanca","Geometri","Edebiyat","Bilgisayar"];
-const GRADES = ["İlkokul","Ortaokul","Lise","Üniversite","Mezun"];
-
 export default function TeacherRegister() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     firstName:"", lastName:"", email:"", password:"", phone:"",
     subjects:[], grades:[], city:"", district:"",
-    mode:"BOTH", priceOnline:"", priceF2F:"", bio:""
+    mode:"BOTH", priceOnline:"", priceF2F:"", bio:"", whyMe: "",
   });
 
   const [step, setStep] = useState("form"); // form | verify
@@ -227,9 +224,20 @@ export default function TeacherRegister() {
 
               {/* Bio */}
               <div className="tr-card">
-                <div className="section-title">Kısa Tanıtım</div>
-                <textarea placeholder="Kendinden ve tecrübenden kısaca bahset..." value={form.bio} onChange={(e)=>onChange("bio", e.target.value)} rows={4} />
+                <div className="section-title">Hakkımda</div>
+                <textarea placeholder="Kendinden ve tecrübenden bahset..." value={form.bio} onChange={(e)=>onChange("bio", e.target.value)} rows={4} />
               </div>
+            </div>
+
+              {/* WhyMe */}
+            <div className="tr-card">
+              <div className="section-title">Neden benden ders almalısınız?</div>
+              <textarea
+                placeholder="Öğrencilerin sizi seçmesi için güçlü yanlarınızı, yöntemlerinizi, sonuçlarınızı yazın"
+                value={form.whyMe}
+                onChange={(e)=>onChange("whyMe", e.target.value)}
+                rows={5}
+              />
             </div>
 
             <div className="tr-actions">

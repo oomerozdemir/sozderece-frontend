@@ -138,7 +138,6 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   
       -degerlendirmelerin ve yorumlarin gozukecegi yeri yap(ogrenci kısmı halledilirken eşzamanlı)
       -ogretmen yayina alirken admin tarafina talep gonderimi talep onaylandiktan sonra yayina alinir
-      teacher ve ogrenci panellerinde arsiv bolumu ekleyelim gecmis bitmis siparisleri oraya eklerriz
 
       gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
   

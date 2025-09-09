@@ -199,6 +199,26 @@
 }
 .td-cta:hover { background: #0b1220; }
 
+/* teacher.css */
+.td-whyme-card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.06);
+}
+.td-section-title{
+  margin:0 0 8px 0;
+  font-weight:800;
+  color:#111827;
+}
+.td-whyme-text{
+  color:#334155;
+  line-height:1.6;
+  white-space:pre-wrap;
+}
+
+
 /* ================================
    TEACHER LOGIN (tlogin-*)
    ================================ */

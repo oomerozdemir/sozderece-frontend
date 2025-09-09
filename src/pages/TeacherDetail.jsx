@@ -59,7 +59,6 @@ export default function TeacherDetail() {
         </div>
       </div>
 
-      {t.bio && <p style={{ marginTop: 12 }}>{t.bio}</p>}
 
       
       <button
@@ -68,6 +67,17 @@ export default function TeacherDetail() {
       >
         Ders talebi oluştur
       </button>
+
+      <h2 className="td-section-title">Hakkımda</h2>
+      {t.bio && <p style={{ marginTop: 12 }}>{t.bio}</p>}
+
+      {t.whyMe && (
+  <div className="td-whyme-card" style={{ marginTop: 16 }}>
+    <h2 className="td-section-title">Neden benden ders almalısınız?</h2>
+    <p className="td-whyme-text">{t.whyMe}</p>
+  </div>
+)}
+
 
       {/* Yorumlar */}
       <div style={{ marginTop: 24 }}>
