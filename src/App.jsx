@@ -136,7 +136,6 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   3-ogretmen panelı duzenlemesı
       
   
-      -degerlendirmelerin ve yorumlarin gozukecegi yeri yap(ogrenci kısmı halledilirken eşzamanlı)
       -ogretmen yayina alirken admin tarafina talep gonderimi talep onaylandiktan sonra yayina alinir
 
       gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır

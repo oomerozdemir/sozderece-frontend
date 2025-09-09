@@ -12,6 +12,7 @@ import {
   Legend,
 } from "chart.js";
 import AdminCoachPage from "../pages/AdminCoachPage";
+import AdminTeacherApprovals from "../pages/AdminTeacherApprovels";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -321,10 +322,12 @@ const handleSendReminders = async () => {
 
       <div className="admin-tabs">
         <button onClick={() => setView("coaches")} className={view === "coaches" ? "active-tab" : ""}>👨‍🏫 Koçlar</button>
+        <button onClick={() => setView("teacher-approvals")} className={view === "teacher-approvals" ? "active-tab" : ""}>🧑‍🏫 Öğretmen Onayları</button>
       </div>
   
 
 {view === "coaches" && <AdminCoachPage />}
+{view === "teacher-approvals" && <AdminTeacherApprovals />}
 
 
 

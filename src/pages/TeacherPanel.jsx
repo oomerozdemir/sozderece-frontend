@@ -425,20 +425,12 @@ export default function TeacherPanel() {
     return () => window.removeEventListener("refresh-past-lessons", onPast);
   }, []);
 
-  const togglePublish = async (next) => {
-    setMsg("");
-    try {
-      await axios.put("/api/v1/ogretmen/me/profil", { isPublic: !!next });
-      setProfile((p) => ({ ...p, isPublic: !!next }));
-      setMsg(!!next ? "Profil yayına alındı." : "Profil yayından kaldırıldı.");
-    } catch (e) {
-      setMsg(e?.response?.data?.message || "Yayın durumu kaydedilemedi.");
-    }
-  };
-
   // Şifre değiştir
   const [pwd, setPwd] = useState({ current: "", next: "", next2: "" });
   const [pwdLoading, setPwdLoading] = useState(false);
+
+  // Yayın talebi state
+  const [publishing, setPublishing] = useState(false);
 
   // Biyografi ve WhyMe kayıt durumları
   const [bioSaving, setBioSaving] = useState(false);
@@ -578,16 +570,31 @@ export default function TeacherPanel() {
     }
   };
 
+  // Yayın talebi gönder
+  const requestPublish = async () => {
+    try {
+      setPublishing(true);
+      setMsg("");
+      const { data } = await axios.post("/api/v1/ogretmen/me/publish-request");
+      setProfile((p) => ({ ...p, ...data.profile }));
+      setMsg(data.message || "Talebiniz iletildi.");
+    } catch (e) {
+      setMsg(e?.response?.data?.message || "Talep gönderilemedi.");
+    } finally {
+      setPublishing(false);
+    }
+  };
+
   if (!profile) {
     return (
-      <>
-        <Navbar />
-        <div className="tpanel">
-          <div className="tp-wrap">
-            <div className="tp-loading">Yükleniyor…</div>
-          </div>
+    <>
+      <Navbar />
+      <div className="tpanel">
+        <div className="tp-wrap">
+          <div className="tp-loading">Yükleniyor…</div>
         </div>
-      </>
+      </div>
+    </>
     );
   }
 
@@ -606,9 +613,10 @@ export default function TeacherPanel() {
 
   const bioLen = (profile.bio || "").length;
   const BIO_MAX = 1200;
-
   const whyLen = (profile.whyMe || "").length;
   const WHY_MAX = 1200;
+
+  const publishStatus = profile.publishStatus || "DRAFT";
 
   return (
     <>
@@ -667,16 +675,44 @@ export default function TeacherPanel() {
                 kullanıcı slug: <code>{profile.slug}</code>
               </div>
 
-              <label className="tp-switch">
-                <input
-                  type="checkbox"
-                  checked={!!profile.isPublic}
-                  onChange={(e) => togglePublish(e.target.checked)}
-                />
-                <span>Profili yayında göster</span>
-              </label>
+              {/* Yayın durumu ve talep */}
+              <div className="tp-publish-state" style={{ marginTop: 8 }}>
+                <b>Yayın Durumu:</b>{" "}
+                {publishStatus === "APPROVED" && <span className="tp-chip success">Yayında</span>}
+                {publishStatus === "PENDING"  && <span className="tp-chip warn">Onay bekliyor</span>}
+                {publishStatus === "REJECTED" && <span className="tp-chip danger">Reddedildi</span>}
+                {publishStatus === "DRAFT"    && <span className="tp-chip">Taslak</span>}
+              </div>
 
-              <div className="tp-hint">
+              {/* Taslak veya reddedildiyse tekrar talep gönderilebilir */}
+              {(publishStatus === "DRAFT" || publishStatus === "REJECTED") && (
+                <button
+                  type="button"
+                  className="tp-btn"
+                  onClick={requestPublish}
+                  disabled={publishing}
+                  title="Yayına alma talebi admin onayına gönderilir"
+                  style={{ marginTop: 8 }}
+                >
+                  {publishing ? "Gönderiliyor…" : "🔔 Yayın talebi gönder"}
+                </button>
+              )}
+
+              {/* Onay beklerken bilgilendirme */}
+              {publishStatus === "PENDING" && (
+                <div className="tp-hint" style={{ marginTop: 8 }}>
+                  Talebiniz admin tarafından inceleniyor.
+                </div>
+              )}
+
+              {/* Admin notu */}
+              {profile.reviewNote && (
+                <div className="tp-hint" style={{ marginTop: 6 }}>
+                  <b>Admin Notu:</b> {profile.reviewNote}
+                </div>
+              )}
+
+              <div className="tp-hint" style={{ marginTop: 8 }}>
                 Öğrenciler sadece <b>yayında</b> olan profilleri görebilir.
               </div>
             </aside>
@@ -798,19 +834,21 @@ export default function TeacherPanel() {
                         <label className="tp-label">İlçe</label>
                         <select
                           value={
-                            districts.includes(profile.district) ? profile.district : ""
+                            (profile.district && (TR_DISTRICTS[profile.city] || []).includes(profile.district))
+                              ? profile.district
+                              : ""
                           }
                           onChange={(e) => onChange("district", e.target.value)}
-                          disabled={!profile.city || districts.length === 0}
+                          disabled={!profile.city || (TR_DISTRICTS[profile.city] || []).length === 0}
                         >
                           <option value="">
                             {!profile.city
                               ? "Önce il seçin"
-                              : districts.length
+                              : (TR_DISTRICTS[profile.city] || []).length
                               ? "İlçe seçin"
                               : "Bu il için ilçe listesi yakında"}
                           </option>
-                          {districts.map((d) => (
+                          {(TR_DISTRICTS[profile.city] || []).map((d) => (
                             <option key={d} value={d}>
                               {d}
                             </option>
