@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import "../cssFiles/teacher.css";
+import Navbar from "../components/navbar";
+import Footer from "../components/Footer";
+import TopBar from "../components/TopBar";
 
 export default function TeacherDetail() {
   const { slug } = useParams();
@@ -35,6 +38,9 @@ export default function TeacherDetail() {
   if (!t) return <div className="tl-loading">Yükleniyor…</div>;
 
   return (
+    <>
+    <TopBar />
+    <Navbar/>
     <div className="td-page">
       <div className="td-header">
         <img
@@ -54,6 +60,14 @@ export default function TeacherDetail() {
       </div>
 
       {t.bio && <p style={{ marginTop: 12 }}>{t.bio}</p>}
+
+      
+      <button
+        className="td-cta"
+        onClick={() => navigate(`/ogretmenler/${slug}/talep`)}
+      >
+        Ders talebi oluştur
+      </button>
 
       {/* Yorumlar */}
       <div style={{ marginTop: 24 }}>
@@ -78,12 +92,8 @@ export default function TeacherDetail() {
         )}
       </div>
 
-      <button
-        className="td-cta"
-        onClick={() => navigate(`/ogretmenler/${slug}/talep`)}
-      >
-        Ders talebi oluştur
-      </button>
     </div>
+    <Footer/>
+    </>
   );
 }
