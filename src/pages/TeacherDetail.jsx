@@ -48,51 +48,66 @@ export default function TeacherDetail() {
       <div className="td-page">
         {/* HEADER CARD */}
         <section className="td-header-card">
-          <div className="td-header">
-            <img
-              className="td-photo"
-              src={t.photoUrl || "https://placehold.co/200x200?text=Teacher"}
-              alt={`${t.firstName} ${t.lastName}`}
-              loading="lazy"
-            />
-            <div className="td-meta">
-              <h1 className="td-title">{t.firstName} {t.lastName}</h1>
+    <div className="td-header">
+      <img
+        className="td-photo"
+        src={t.photoUrl || "https://placehold.co/200x200?text=Teacher"}
+        alt={`${t.firstName} ${t.lastName}`}
+        loading="lazy"
+      />
 
-              <div className="td-badges">
-                {(t.city || t.district) && (
-                  <span className="td-chip">
-                    {t.city || "—"}{t.district ? ` / ${t.district}` : ""}
-                  </span>
-                )}
-                <span className={`td-chip ${modeLabel === "ONLINE" ? "chip-online" : "chip-face"}`}>
-                  {modeLabel}
-                </span>
-              </div>
+      <div className="td-meta">
+        <h1 className="td-title">{t.firstName} {t.lastName}</h1>
 
-              {(subjects.length || grades.length) ? (
-                <div className="td-tags">
-                  {subjects.slice(0, 4).map((s) => (
-                    <span key={`s-${s}`} className="td-tag">{s}</span>
-                  ))}
-                  {grades.slice(0, 3).map((g) => (
-                    <span key={`g-${g}`} className="td-tag muted">{g}</span>
-                  ))}
-                </div>
-              ) : null}
+        <div className="td-row">
+          <span className="td-icon" aria-hidden>📍</span>
+          <span className="td-label">Konum</span>
+          <span className="td-value">
+            {t.city || "—"}{t.district ? ` / ${t.district}` : ""}
+          </span>
+        </div>
 
-              <div className="td-stats">
-                <span className="td-stat">👁 {t.viewCount ?? 0}</span>
-                <span className="td-stat">⭐ {t.ratingAverage?.toFixed?.(1) || "0.0"} ({t.ratingCount ?? 0})</span>
-              </div>
-            </div>
-          </div>
+        <div className="td-row">
+          <span className="td-icon" aria-hidden>📚</span>
+          <span className="td-label">Verdiği dersler</span>
+          <span className="td-value">
+            {(Array.isArray(t.subjects) ? t.subjects : []).join(", ") || "—"}
+          </span>
+        </div>
 
-          <div className="td-header-cta">
-            <button className="td-cta" onClick={() => navigate(`/ogretmenler/${slug}/talep`)}>
-              Ders talebi oluştur
-            </button>
-          </div>
-        </section>
+        <div className="td-row">
+          <span className="td-icon" aria-hidden>🎓</span>
+          <span className="td-label">Seviyeler</span>
+          <span className="td-value">
+            {(Array.isArray(t.grades) ? t.grades : []).join(", ") || "—"}
+          </span>
+        </div>
+
+        <div className="td-row">
+          <span className="td-icon" aria-hidden>{t.mode === "FACE_TO_FACE" ? "🤝" : "💻"}</span>
+          <span className="td-label">Ders tipi</span>
+          <span className="td-value">
+            <span className={`td-chip ${t.mode === "FACE_TO_FACE" ? "chip-face" : "chip-online"}`}>
+              {t.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}
+            </span>
+          </span>
+        </div>
+
+        <div className="td-row td-stats">
+          <span>👁 {t.viewCount ?? 0}</span>
+          <span className="sep">•</span>
+          <span>⭐ {t.ratingAverage?.toFixed?.(1) || "0.0"} ({t.ratingCount ?? 0})</span>
+        </div>
+      </div>
+    </div>
+
+    <div className="td-header-cta">
+      <button className="td-cta" onClick={() => navigate(`/ogretmenler/${slug}/talep`)}>
+        Ders talebi oluştur
+      </button>
+    </div>
+  </section>
+
 
         {/* HAKKIMDA */}
         {t.bio && (
