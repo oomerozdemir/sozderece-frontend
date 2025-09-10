@@ -13,16 +13,29 @@ export default function TeacherDetail() {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await axios.get(`/api/v1/ogretmenler/${slug}`);
-        setT(data.teacher);
-        axios.post(`/api/v1/ogretmenler/${slug}/view`).catch(() => {});
-      } catch (e) {
-        console.error(e);
+  if (!slug) return;
+
+  (async () => {
+    try {
+      // 1) Sayaç (bir oturumda bir kez)
+      const key = `tview:${slug}`;
+      if (!sessionStorage.getItem(key)) {
+        const { data } = await axios.post(`/api/v1/ogretmenler/${slug}/track-view`);
+        // backend viewCount döndürüyor → UI’ye anında yaz
+        if (typeof data?.viewCount === "number") {
+          setT((old) => old ? { ...old, viewCount: data.viewCount } : old);
+        }
+        sessionStorage.setItem(key, "1");
       }
-    })();
-  }, [slug]);
+
+      // 2) Öğretmeni çek (güncel sayıyı da almış olacağız)
+      const { data: tData } = await axios.get(`/api/v1/ogretmenler/${slug}`);
+      setT(tData.teacher);
+    } catch (e) {
+      console.debug("detail load failed", e);
+    }
+  })();
+}, [slug]);
 
   useEffect(() => {
     (async () => {
