@@ -49,6 +49,40 @@ const badgeForType = (type) => {
   }
 };
 
+
+const benefitItems = [
+    {
+      title: "Koçluk Görüşmeleri",
+      icon: <FaChalkboardTeacher />,
+      points: ["Birebir takip sistemi", "Planlama & geri bildirim", "Motivasyon desteği"],
+    },
+    {
+      title: "Kişiye Özel Planlama",
+      icon: <FaCalendarCheck />,
+      points: ["Haftalık/derslik program", "Deneme sonuçlarına göre güncelleme"],
+    },
+    {
+      title: "Deneme Analizi",
+      icon: <FaChartLine />,
+      points: ["Net-zaman takibi", "Gelişim çizelgesi", "Net artışı"],
+    },
+    {
+      title: "Soru & Kaynak Takibi",
+      icon: <FaClipboardList />,
+      points: ["Yayın takibi", "Eksik konu yönlendirmesi"],
+    },
+    {
+      title: "Veliyle Etkileşim",
+      icon: <FaUsers />,
+      points: ["Aylık geri bildirim", "Veli–koç iletişimi"],
+    },
+    {
+      title: "Psikolojik Destek",
+      icon: <FaSmile />,
+      points: ["Stres yönetimi", "Sınav taktikleri"],
+    },
+  ];
+
 export default function PricingSection() {
   const navigate = useNavigate();
 
