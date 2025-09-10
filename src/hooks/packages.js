@@ -1,4 +1,3 @@
-// src/hooks/packages.js
 
 export const PACKAGES = {
   /* 1) ÖZEL DERS – dinamik fiyat (öğretmen belirler) */

@@ -7,110 +7,143 @@
 .pricing-section-title {
   font-size: 2rem;
   color: #0f172a;
-  margin-bottom: 3rem;
+  margin-bottom: .5rem;
   font-weight: 700;
 }
 
-.pricing-card-horizontal.no-image {
-  position: relative; /* 🔧 Bunu ekliyoruz */
-  display: flex;
-  background: #fff7e6;
-  border: 3px solid #fbbf24;
-  border-radius: 20px;
-  padding: 30px 40px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-  max-width: 900px;
-  margin: 0 auto 4rem;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
+.pricing-section-sub {
+  color: #475569;
+  margin-bottom: 2rem;
 }
 
+/* === Grid of cards === */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(240px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto 2.5rem;
+  padding: 0 16px;
+}
+@media (max-width: 1024px) { .pricing-grid { grid-template-columns: repeat(2, minmax(240px, 1fr)); } }
+@media (max-width: 640px)  { .pricing-grid { grid-template-columns: 1fr; } }
 
-.pricing-card-content {
-  flex: 1;
-  max-width: 600px;
-  text-align: center;
-  margin: 0 auto;
+.pricing-card {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: left;
+  box-shadow: 0 8px 28px rgba(16,24,40,.06);
+  transition: box-shadow .2s ease, transform .05s ease;
+  display: flex;
+  flex-direction: column;
+}
+.pricing-card:hover {
+  box-shadow: 0 12px 40px rgba(16,24,40,.10);
+  transform: translateY(-1px);
+}
+
+.badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: #f59e0b;
+  color: #fff;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
 }
 
 .package-icon {
-  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  font-size: 1.2rem;
+  width: 44px;
+  height: 44px;
+  font-size: 1.1rem;
   border-radius: 50%;
   background-color: #fef3c7;
   color: #f59e0b;
   margin-right: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
 }
 
-.pricing-card-content h3 {
-  font-size: 1.4rem;
-  color: #030b53;
-  margin-bottom: 0.5rem;
-  align-items: center;
+.pricing-head { margin-bottom: 10px; }
+.pricing-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 10px 0 4px;
 }
-
-.pricing-subtitle {
-  font-size: 1.1rem;
-  color: #475569;
-  margin-bottom: 1rem;
-  line-height: 1.4;
-  min-height: 48px;
-}
-
-.price {
-  font-size: 1.8rem;
+.pricing-price {
+  font-size: 1.25rem;
+  font-weight: 800;
   color: #f59e0b;
-  font-weight: bold;
-  margin: 0.5rem 0 1rem;
+  margin-bottom: 6px;
+}
+.pricing-note {
+  font-size: .95rem;
+  color: #475569;
+  margin: 0 0 10px;
+  min-height: 38px;
 }
 
-.pricing-card-content ul {
-  text-align: center;
+/* Features list */
+.pricing-features {
   list-style: none;
+  margin: 0 0 14px;
   padding: 0;
-  margin-bottom: 1.5rem;
 }
-
-.pricing-card-content ul li {
-  position: relative;
-  padding-left: 1.5rem;
-  margin-bottom: 0.75rem;
-  font-size: 1rem;
+.pricing-features .feat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .95rem;
   color: #1e293b;
+  margin: 6px 0;
 }
-
-.pricing-card-content ul li::before {
-  content: "✔";
-  margin-right: 5px;
+.pricing-features .feat .tick {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: .8rem;
+  line-height: 1;
+}
+.pricing-features .feat.on .tick {
+  background: #ecfdf5;
   color: #10b981;
-  font-weight: bold;
+  border: 1px solid #a7f3d0;
+}
+.pricing-features .feat.off { color: #9ca3af; }
+.pricing-features .feat.off .tick {
+  background: #f3f4f6;
+  color: #9ca3af;
+  border: 1px solid #e5e7eb;
 }
 
-.pricing-button {
+/* CTA */
+.pricing-cta {
   display: inline-block;
-  background-color: #f59e0b;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 2rem;
-  font-size: 1.2rem;
-  font-weight: bold;
+  text-align: center;
+  background: #f59e0b;
+  color: #fff;
+  padding: .7rem 1.1rem;
+  border-radius: 9999px;
+  font-weight: 800;
   text-decoration: none;
-  transition: background-color 0.3s ease;
+  margin-top: auto;
+  transition: background .2s ease, transform .05s ease;
 }
+.pricing-cta:hover { background: #011546; color: #fff; transform: translateY(-1px); }
 
-.pricing-button:hover {
-  background-color: #011546;
-  color: white;
-}
-
+/* Benefits (alttaki grid) */
 .benefit-title {
   text-align: center;
   font-size: 1.8rem;
@@ -136,10 +169,9 @@
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform .2s ease, box-shadow .2s ease;
   text-align: center;
 }
-
 .benefit-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
@@ -150,14 +182,12 @@
   color: #f59e0b;
   margin-bottom: 10px;
 }
-
 .benefit-card h4 {
   font-size: 1.1rem;
   font-weight: bold;
   color: #1e293b;
   margin-bottom: 10px;
 }
-
 .benefit-card ul {
   list-style-type: disc;
   padding-left: 20px;
@@ -166,211 +196,18 @@
   line-height: 1.5;
   text-align: left;
 }
-.grade-badge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background-color: #f59e0b;
-  color: white;
-  padding: 4px 10px;
-  font-size: 0.75rem;
-  border-radius: 9999px;
-  font-weight: 500;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  z-index: 5;
-}
 
-.verified-paragraph {
-  color: #201932a6;
-  padding-top: 8px;
-}
-
-.verified-paragraph img {
-  height: 16px;
-  vertical-align: middle;
-  margin-right: 8px;
-}
-.kontenjan-bilgi-pricingSection {
-  color: #c82333; 
-  font-weight: 500;
-  margin-bottom: 12px;
-  align-items: center;
-  font-size: 0.95rem;
-}
-
-
-/* === Mobil ve küçük ekran optimizasyonları === */
+/* === Responsive tweaks === */
 @media (max-width: 768px) {
-  .pricing-section {
-    padding: 2.25rem 0.8rem; /* üst-alt alanı küçült */
-  }
-
-  .pricing-section-title {
-    font-size: 1.35rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .pricing-card-horizontal.no-image {
-    padding: 16px 14px;         /* kart iç boşluk küçüldü */
-    border-radius: 14px;
-    border-width: 2px;          /* borduru incelt */
-    margin-bottom: 1.5rem;
-    gap: 12px;                  /* wrap olduğunda nefes alanı */
-  }
-
-  .grade-badge {
-    top: 8px;
-    right: 8px;
-    padding: 3px 8px;
-    font-size: 0.65rem;         /* rozeti küçült */
-  }
-
-  .pricing-card-content {
-    max-width: 100%;
-    margin: 0 auto;
-  }
-
-  .package-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
-    margin-right: 8px;
-  }
-
-  .pricing-card-content h3 {
-    font-size: 1.05rem;
-    margin-bottom: 0.4rem;
-  }
-
-  .pricing-subtitle {
-    font-size: 0.95rem;
-    line-height: 1.35;
-    margin-bottom: 0.75rem;
-    min-height: auto;           /* sabit yüksekliği kaldır */
-  }
-
-  .price {
-    font-size: 1.35rem;
-    margin: 0.35rem 0 0.75rem;
-  }
-
-  .pricing-card-content ul {
-    margin-bottom: 1rem;
-  }
-
-  .pricing-card-content ul li {
-    font-size: 0.92rem;
-    margin-bottom: 0.55rem;
-    padding-left: 1.2rem;
-  }
-
-  .pricing-button {
-    padding: 0.55rem 1.1rem;
-    font-size: 0.95rem;
-    border-radius: 1.5rem;
-  }
-
-  .benefit-title {
-    font-size: 1.35rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .benefit-grid {
-    grid-template-columns: 1fr; /* kartlar tek sütun */
-    gap: 16px;
-    padding: 0 8px;
-  }
-
-  .benefit-card {
-    padding: 16px;
-    border-radius: 10px;
-  }
-
-  .benefit-icon {
-    font-size: 1.6rem;
-    margin-bottom: 8px;
-  }
-
-  .benefit-card h4 {
-    font-size: 1rem;
-    margin-bottom: 8px;
-  }
-
-  .benefit-card ul {
-    font-size: 0.92rem;
-    line-height: 1.45;
-    padding-left: 18px;
-  }
-
-  .verified-paragraph {
-    font-size: 0.9rem;
-    padding-top: 6px;
-  }
-
-  .kontenjan-bilgi-pricingSection {
-    font-size: 0.9rem;
-    margin-bottom: 10px;
-  }
+  .pricing-section { padding: 2.25rem .8rem; }
+  .pricing-section-title { font-size: 1.35rem; margin-bottom: .75rem; }
+  .package-icon { width: 40px; height: 40px; font-size: 1rem; }
+  .pricing-name { font-size: 1.05rem; }
+  .pricing-price { font-size: 1.15rem; }
+  .pricing-note { font-size: .9rem; min-height: auto; }
+  .benefit-title { font-size: 1.35rem; margin-bottom: 1.25rem; }
 }
 
-/* Daha küçük cihazlar için ekstra sıkılaştırma */
-@media (max-width: 560px) {
-  .pricing-section {
-    padding: 5.8rem 4.75rem;
-  }
-
-  .pricing-card-horizontal.no-image {
-    padding: 14px 12px;
-    border-radius: 12px;
-    margin-bottom: 1.2rem;
-  }
-
-  .pricing-section-title {
-    font-size: 1.25rem;
-  }
-
-  .pricing-card-content h3 {
-    font-size: 1rem;
-  }
-
-  .pricing-subtitle {
-    font-size: 0.9rem;
-  }
-
-  .price {
-    font-size: 1.25rem;
-  }
-
-  .pricing-card-content ul li {
-    font-size: 0.88rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .pricing-button {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-  }
-  .grade-badge {
-    font-size: 0.50rem;
-  }
-}
-
-/* En küçük cihazlar (SE vb.) */
 @media (max-width: 380px) {
-  .pricing-card-horizontal.no-image {
-    padding: 12px 10px;
-  }
-
-  .pricing-section-title {
-    font-size: 1.15rem;
-  }
-
-  .price {
-    font-size: 1.15rem;
-  }
-
-  .pricing-button {
-    width: 100%;           /* tek satır ve rahat tıklama alanı */
-    padding: 0.55rem 0.9rem;
-  }
+  .pricing-cta { width: 100%; padding: .6rem .9rem; }
 }
