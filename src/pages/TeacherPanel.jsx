@@ -429,7 +429,7 @@ export default function TeacherPanel() {
   const [pwd, setPwd] = useState({ current: "", next: "", next2: "" });
   const [pwdLoading, setPwdLoading] = useState(false);
 
-  // Yayın talebi state
+  // Yayın işlemleri
   const [publishing, setPublishing] = useState(false);
 
   // Biyografi ve WhyMe kayıt durumları
@@ -585,16 +585,31 @@ export default function TeacherPanel() {
     }
   };
 
+  // PROFİLİ YAYINDAN KALDIR
+  const unpublish = async () => {
+    try {
+      setPublishing(true);
+      setMsg("");
+      const { data } = await axios.post("/api/v1/ogretmen/me/unpublish");
+      setProfile((p) => ({ ...p, ...data.profile }));
+      setMsg(data?.message || "Profil yayından kaldırıldı.");
+    } catch (e) {
+      setMsg(e?.response?.data?.message || "Profil yayından kaldırılamadı.");
+    } finally {
+      setPublishing(false);
+    }
+  };
+
   if (!profile) {
     return (
-    <>
-      <Navbar />
-      <div className="tpanel">
-        <div className="tp-wrap">
-          <div className="tp-loading">Yükleniyor…</div>
+      <>
+        <Navbar />
+        <div className="tpanel">
+          <div className="tp-wrap">
+            <div className="tp-loading">Yükleniyor…</div>
+          </div>
         </div>
-      </div>
-    </>
+      </>
     );
   }
 
@@ -679,10 +694,24 @@ export default function TeacherPanel() {
               <div className="tp-publish-state" style={{ marginTop: 8 }}>
                 <b>Yayın Durumu:</b>{" "}
                 {publishStatus === "APPROVED" && <span className="tp-chip success">Yayında</span>}
-                {publishStatus === "PENDING"  && <span className="tp-chip warn">Onay bekliyor</span>}
+                {publishStatus === "PENDING" && <span className="tp-chip warn">Onay bekliyor</span>}
                 {publishStatus === "REJECTED" && <span className="tp-chip danger">Reddedildi</span>}
-                {publishStatus === "DRAFT"    && <span className="tp-chip">Taslak</span>}
+                {publishStatus === "DRAFT" && <span className="tp-chip">Taslak</span>}
               </div>
+
+              {/* Yayından kaldır (APPROVED & isPublic) */}
+              {publishStatus === "APPROVED" && profile.isPublic && (
+                <button
+                  type="button"
+                  className="tp-btn ghost"
+                  onClick={unpublish}
+                  disabled={publishing}
+                  title="Profili geçici olarak yayından kaldırır"
+                  style={{ marginTop: 8 }}
+                >
+                  {publishing ? "İşleniyor…" : "🚫 Yayından kaldır"}
+                </button>
+              )}
 
               {/* Taslak veya reddedildiyse tekrar talep gönderilebilir */}
               {(publishStatus === "DRAFT" || publishStatus === "REJECTED") && (
