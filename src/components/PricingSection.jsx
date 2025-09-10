@@ -8,7 +8,7 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { PACKAGES, PACKAGES_ORDER } from "../data/packages"; // ← tek kaynak
+import { PACKAGES, PACKAGES_ORDER } from "../hooks/packages.js"; 
 
 function FeatureItem({ label, included }) {
   return (
@@ -102,7 +102,7 @@ export default function PricingSection() {
         })}
       </div>
 
-      
+
       <h3 className="benefit-title">YKS/LGS Koçluk Paketi Size Ne Kazandırır?</h3>
       <div className="benefit-grid">
         {benefitItems.map((item, index) => (
