@@ -1,3 +1,4 @@
+// src/components/PricingSection.jsx
 import "../cssFiles/PricingSection.css";
 import {
   FaUserCheck,
@@ -6,9 +7,14 @@ import {
   FaBookOpen,
   FaCheck,
   FaTimes,
+  FaCalendarCheck,
+  FaChartLine,
+  FaClipboardList,
+  FaUsers,
+  FaSmile,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { PACKAGES, PACKAGES_ORDER } from "../hooks/packages.js"; 
+import { PACKAGES, PACKAGES_ORDER } from "../data/packages"; // ✅ tek kaynak
 
 function FeatureItem({ label, included }) {
   return (
@@ -49,39 +55,38 @@ const badgeForType = (type) => {
   }
 };
 
-
 const benefitItems = [
-    {
-      title: "Koçluk Görüşmeleri",
-      icon: <FaChalkboardTeacher />,
-      points: ["Birebir takip sistemi", "Planlama & geri bildirim", "Motivasyon desteği"],
-    },
-    {
-      title: "Kişiye Özel Planlama",
-      icon: <FaCalendarCheck />,
-      points: ["Haftalık/derslik program", "Deneme sonuçlarına göre güncelleme"],
-    },
-    {
-      title: "Deneme Analizi",
-      icon: <FaChartLine />,
-      points: ["Net-zaman takibi", "Gelişim çizelgesi", "Net artışı"],
-    },
-    {
-      title: "Soru & Kaynak Takibi",
-      icon: <FaClipboardList />,
-      points: ["Yayın takibi", "Eksik konu yönlendirmesi"],
-    },
-    {
-      title: "Veliyle Etkileşim",
-      icon: <FaUsers />,
-      points: ["Aylık geri bildirim", "Veli–koç iletişimi"],
-    },
-    {
-      title: "Psikolojik Destek",
-      icon: <FaSmile />,
-      points: ["Stres yönetimi", "Sınav taktikleri"],
-    },
-  ];
+  {
+    title: "Koçluk Görüşmeleri",
+    icon: <FaChalkboardTeacher />,
+    points: ["Birebir takip sistemi", "Planlama & geri bildirim", "Motivasyon desteği"],
+  },
+  {
+    title: "Kişiye Özel Planlama",
+    icon: <FaCalendarCheck />,
+    points: ["Haftalık/derslik program", "Deneme sonuçlarına göre güncelleme"],
+  },
+  {
+    title: "Deneme Analizi",
+    icon: <FaChartLine />,
+    points: ["Net-zaman takibi", "Gelişim çizelgesi", "Net artışı"],
+  },
+  {
+    title: "Soru & Kaynak Takibi",
+    icon: <FaClipboardList />,
+    points: ["Yayın takibi", "Eksik konu yönlendirmesi"],
+  },
+  {
+    title: "Veliyle Etkileşim",
+    icon: <FaUsers />,
+    points: ["Aylık geri bildirim", "Veli–koç iletişimi"],
+  },
+  {
+    title: "Psikolojik Destek",
+    icon: <FaSmile />,
+    points: ["Stres yönetimi", "Sınav taktikleri"],
+  },
+];
 
 export default function PricingSection() {
   const navigate = useNavigate();
@@ -109,9 +114,7 @@ export default function PricingSection() {
                 <div className="package-icon">{icon}</div>
                 <h3 className="pricing-name">{p.title}</h3>
 
-                {/* priceText varsa onu göster; yoksa unitPrice’tan türetilebilir (şimdilik priceText yeterli) */}
                 {p.priceText && <div className="pricing-price">{p.priceText}</div>}
-
                 {p.subtitle && <p className="pricing-note">{p.subtitle}</p>}
               </div>
 
@@ -124,10 +127,7 @@ export default function PricingSection() {
               )}
 
               {p.cta?.href && (
-                <button
-                  className="pricing-cta"
-                  onClick={() => navigate(p.cta.href)}
-                >
+                <button className="pricing-cta" onClick={() => navigate(p.cta.href)}>
                   {p.cta.label || "Detayları Gör"}
                 </button>
               )}
@@ -135,7 +135,6 @@ export default function PricingSection() {
           );
         })}
       </div>
-
 
       <h3 className="benefit-title">YKS/LGS Koçluk Paketi Size Ne Kazandırır?</h3>
       <div className="benefit-grid">
