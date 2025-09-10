@@ -25,7 +25,7 @@ export const PACKAGES = {
     unitPrice: 150000,                       // 1500 TL (kuruş)
     priceText: "1500₺ / ay",
     subtitle:
-      "Koçluk paketine uygun bütçeli ara çözüm: hazır aylık program + 2 haftada bir 40 dk görüşme + 1 özel ders.",
+      "Koçluk paketine uygun bütçeli ara çözüm: hazır aylık program + 2 haftada bir 40 dk görüşme + 2 özel ders.",
     type: "hybrid_light",
     cta: { label: "Paketi seç", href: "/pre-auth?slug=ozel-ders-plus-hazir-2026" },
     features: [
