@@ -14,8 +14,7 @@ import {
   FaSmile,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { PACKAGES, PACKAGES_ORDER } from "../data/packages"; // ✅ tek kaynak
-
+import { PACKAGES, PACKAGES_ORDER } from "../hooks/packages.js"; 
 function FeatureItem({ label, included }) {
   return (
     <li className={`feat ${included ? "on" : "off"}`}>
