@@ -1,7 +1,7 @@
 // src/components/PricingSection.jsx
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import "../cssFiles/PricingSection.js";
+import "../cssFiles/PricingSection.jsx";
 
 import {
   FaChalkboardTeacher,
