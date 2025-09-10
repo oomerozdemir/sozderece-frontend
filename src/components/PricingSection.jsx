@@ -1,10 +1,9 @@
 // src/components/PricingSection.jsx
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import "../cssFiles/PricingSection.css";
+import "../cssFiles/PricingSection.js";
 
 import {
-  FaUserCheck,
   FaChalkboardTeacher,
   FaCalendarCheck,
   FaChartLine,
