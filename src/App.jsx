@@ -135,7 +135,6 @@ export default App;
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   3-ogretmen panelı duzenlemesı
       
-        -profili yayindan kaldirirma ozelligini ekle
       gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
   
   9-ogretmen kayıt olurken fıyat belırlerken ona onerı yapalım size benzer öğretmenler şu aralıkta(min-max) fiyat belirledi diye
@@ -143,22 +142,14 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
 
 
 ******** ozel ders icin ogrenci tarafi ********
-  -ogrenci de ayni sekilde dersi tamamlandi diye isaretler ve yorum degerlendirme yonlendirmesi yapilir ogrenciye.
 
   -bir chatbot yeri yapabiliriz ogretmen talebi onayladiginda konusabilecekleri ve iletisim saglayacaklari kolay bir yer olur.
   
 *******************************ogrenci tarafi hoca secerken ki sorunlar ==>***********************
-  2-ogretmen profil sayfasinda fiyat bilgisi ogretmenin resmi ve hakkinda kisminin daha uzun olmasi
-  3-ogretmen kartindaki sayacin kontrolu her seferinde gir cik yapinca olmasin ayni local storage la kontrolu yapilsin bir kisi sadece bir kere sayilsin birden fazla gir cik olunca saymasi kotuye kullanilabilir
   
   
 
-özel ders oğretmenı ve öğrenci koçu özel giriş ve kayıt yeri açıcaz
-öğrencilerin giriş yaptıgı yerden farklı olucak bu
-öğrenci koçu girişini şu anki sistemle aynı tutabiliriz çok fazla koç girişi olmayacaktır bizim kontrolumuzde kalsın o
-özel ders öğretmeni girişi ve kayıt yeri farklı olucak sadece orda da sistemi özeldersalanından kopyalayabiliriz.
-******onemli DEGISIKLIK********
-1-Ders ve ardindan hoca sistemi eklenicek
+
 2-Yeni paketler eklenecek
 3-özel ders öğretmenleri için de bir sözleşme hazırlamak gerekli
 
@@ -169,43 +160,12 @@ Frontend görünen yüzde
 o derse özel öne çıkan hocalar
 3-navbar da yönlendirmeler
 4-pricingSection da 3 yeni paket daha eklenicek.Özel Ders Paketi,Özel Ders + sınırlı Koçluk,Normal sözderece koçluk paketi,Premium Paket
-5-her öğretmen kartının biyografisi,değerlendirmesi ve hocanın öne çıkan özellikleri olucak(özel ders alanı sitesinden örnekleme yap)
 6-Tabiki özel ders öğretmenlerine özel sayfaya yönlendirme için daha fazla göster butonu.HomePage de öne çıkan öğretmenlerin altında
-7-Hocayı sectıklerınde dırekt randevu olusturma sayfasına gıdıcek hangı sayfada olursa olsun
 8-hocaların kart yapısı bır kere hocaların sayfasında ayarlanıcak ve her yerde onları kullanıcaz
-9-Her öğretmenin kendisine ait bir hakkında kısmı da olsun
 10-ogretmen kartında degerlendırmeler ve yorumlar olucak
-11-yorum yapma ve degerlendırme kısmını ogretmene ozel hakkında sayfasından yapılacak
-12-Hocayı sectıklerınde ilerlenecek yapı şu şekilde olucak 
-sırasıyla
-Ögretmenın ufak bılgısı altında verdıgı ders/dersler ve ogrencı dersı secer
-ardından sevıyesını belırler.Burda da sevıyeyı her ogretmene gore koyarız ornegın bazıları sadece ortaokul vermek ıstersen ortaokul sevıyesı cıkar seceneklerde
-sevıyesını sectıkten sonra 
-Onlıne mı yuz yuze mı olucak(eger varsa) onu secer 
-sonrasında o ogretmenın bos saatlerını gorucegı bır takvım sayfası acılır oradan ogrencı bos saatlerden birini secer
-randevu saatı secımını de yaptıktan sonra bu bılgılerle dırekt olarak odeme sayfasına gıder
-Odeme sayfasında secılen paket de eger ozel ders var randevu gıbı bılgıler varsa
-ogrencıye gıden maıl ıcerıgını degıstırelım kı karısıklık olmasın dıger paketler ıle
-ayrıca kupon gıbı seylerı sepet bolumune alalım burda kuponu uygulasınlar paymentPage de uygulamak yerıne
-bu özel ders secımı asla sepete eklenmıcek
-Bunun ayarlamasını detaylı olarak yapacagız karısıklıklar yasanmaması adına if senaryoları bolca olacak
-Backend kısmında
-1-tabıkı özel ders hocasından alacagımız bılgıler ıcın bır schema olusturacagız
-2-eklenecek paketlerı eskısı gıbı sadece front da tutalım gerek yok backende almamıza
-3-hocaların eklenmesını admın panelınden rahatca yapmak ıcın kurulacak sıstem(gereklı tum bılgılerı burdan gırecegız ve otomatık olarak olusturulacak)
-4-Admın panelınden eklenen özel ders hocası ders verdıgı alana(matematik,tarih vesaire) göre ayrılması gereklı bunun da ayrımları yapılcak
-5-Randevu olusturma sıstemı ıcın her ogretmenın takvımı olucak ogretmen kendı bos zamanlarını duzenleyebılecek
-6-ayrıyeten bu özel ders hocası kendısı de kendı panelınden resım ekleyebılecek takvımını duzenleyebılecek,kendısıne aıt sayfasındakı bılgılerı duzenleyebılecegı bır panel kuracagız.
-7-degerlendırmelerı ve yorumları da özel ders öğretmenlerinin schemasında saklarız burdan cekılır.
-8-özel ders öğretmen panelınde öğretmen kendı randevularını geçmiş randevuları vesaire görüntüleyebilecek
-9-satın alınan özel ders sonrası öğretmene de bir mail gidecek yeni bir randevunuz var diye.
-10-randevu takvımını öğretmen kendisi düzenleyebilecek burada boş zamanlarını dolu zamanlarını silip düzenleyebilecek.
-ayrıca yeni öğrenci eklemesi de yapabilecek öğrenci silme işlemi olmucak ama.Atanan bir randevuyu geri almayı sadece admin panelinden yapılabilir olucak.
-sımdılık bu kadar daha da eklenicek şey olucaktır
 
-paketler sayfasını yenıleyecegız
-artık 4 ayrı paket oldugu ıcın 
-goruntusu aynı prıcıngSectıondakı gıbı olucak ama daha detaylı 
+5-Randevu olusturma sıstemı ıcın her ogretmenın takvımı olucak ogretmen kendı bos zamanlarını duzenleyebılecek
+
 
 tc yi billinginfodan kaldiralim
 billinginfodan aldigimiz bazi bilgiler isim soyisim gibi bunlar eger userda eksikse orayi da doldurabilsin.

@@ -1,4 +1,8 @@
+// src/components/PricingSection.jsx
+import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import "../cssFiles/PricingSection.css";
+
 import {
   FaUserCheck,
   FaChalkboardTeacher,
@@ -8,28 +12,83 @@ import {
   FaUsers,
   FaSmile,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 
-const packageData = {
-  name: "Koçluk Paketi (YKS/LGS 2026)",
-  price: "2500₺ / ay",
-  subtitle:
-    "Hedefe yönelik birebir koçluk, programlama, deneme takibi ve veli bilgilendirmesi.",
-  features: [
-    "Hedefe yönelik birebir koçluk",
-    "Haftalık birebir görüşmeler",
-    "Kişiye özel haftalık/günlük program",
-    "Tüm haftayı analiz ederek her hafta yenilenen özel programlar",
-    "Deneme analizi ve net gelişimi takibi",
-    "Soru takibi ve kaynak yönlendirmesi",
-    "Saat saat bilgi alma ve plan kontrolü",
-    " Öğrenciye disiplin kazandırma",
-    "Sürekli psikolojik destek ve motivasyon",
-    "Planlı, takipli ve sonuç odaklı süreç",
 
-  ],
-  icon: <FaUserCheck />,
-};
+import { PACKAGES, PACKAGES_ORDER } from "../hooks/packages.js";
+
+function PricingSection() {
+  // Vitrin sırasına göre 4 paket
+  const list = useMemo(
+    () => PACKAGES_ORDER.map((k) => PACKAGES[k]).filter(Boolean),
+    []
+  );
+
+  return (
+    <div className="pricing-section" id="paketler">
+      <h2 className="pricing-section-title">Koçluk & Özel Ders Paketleri</h2>
+      <p className="pricing-section-sub">Bütçenize ve ihtiyacınıza uygun çözümü seçin.</p>
+
+      {/* 4'lü paket ızgarası */}
+      <div className="pricing-grid">
+        {list.map((p) => {
+          const isTutoringOnly = p.unitPrice == null || p.type === "tutoring_only";
+          return (
+            <article key={p.slug} className="pricing-card">
+              <div className="pricing-head">
+                <h3 className="pricing-name">{p.title}</h3>
+                <div className="pricing-price">{p.priceText}</div>
+                <p className="pricing-note">{p.subtitle}</p>
+              </div>
+
+              <ul className="pricing-features">
+                {(p.features || []).map((f, i) => (
+                  <li key={i} className={`feat ${f.included ? "on" : "off"}`}>
+                    <span className="tick" aria-hidden>
+                      {f.included ? "✓" : "—"}
+                    </span>
+                    {f.label}
+                  </li>
+                ))}
+              </ul>
+
+              {/* CTA: Özel Ders → /ogretmenler, diğerleri → /paket-detay?slug=... */}
+              {isTutoringOnly ? (
+                <Link className="pricing-cta" to="/ogretmenler">
+                  Öğretmen seç ve ders al
+                </Link>
+              ) : (
+                <Link className="pricing-cta" to={`/paket-detay?slug=${encodeURIComponent(p.slug)}`}>
+                  Paketi seç
+                </Link>
+              )}
+
+              <p className="verified-paragraph">
+                <img src="/images/verified.png" alt="doğrulama simgesi" />
+                5 gün içinde koşulsuz cayma hakkı
+              </p>
+            </article>
+          );
+        })}
+      </div>
+
+      {/* Bilgilendirici faydalar (mevcut blok korunuyor) */}
+      <h3 className="benefit-title">YKS/LGS Koçluk Paketi Size Ne Kazandırır?</h3>
+      <div className="benefit-grid">
+        {benefitItems.map((item, index) => (
+          <div className="benefit-card" key={index}>
+            <div className="benefit-icon">{item.icon}</div>
+            <h4>{item.title}</h4>
+            <ul>
+              {item.points.map((point, idx) => (
+                <li key={idx}>{point}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 const benefitItems = [
   {
@@ -63,60 +122,5 @@ const benefitItems = [
     points: ["Stres yönetimi", "Sınav taktikleri"],
   },
 ];
-
-function PricingSection() {
-  const navigate = useNavigate();
-
-  return (
-    <div
-      className="pricing-section"
-      id="paketler"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-      viewport={{ once: true, amount: 0.3 }}
-    >
-      <h2 className="pricing-section-title">Koçluk Paketimiz ile Hedefinize Ulaşın!</h2>
-
-      <div className="pricing-card-horizontal no-image">
-        <div className="grade-badge" title="5–7: Ara sınıf, 8–12 ve Mezun: Sınav grubu">
-          🎓 8-12-Mezun Ve Ara Sınıflar
-        </div>
-        <div className="pricing-card-content">
-          <h3>
-            <span className="package-icon">{packageData.icon}</span> {packageData.name}
-          </h3>
-          <p className="kontenjan-bilgi-pricingSection">Sınırlı kontenjan — Erkenden başvurun!</p>
-          <p className="pricing-subtitle">{packageData.subtitle}</p>
-          <p className="price">{packageData.price}</p>
-          <ul>
-            {packageData.features.map((feature, i) => (
-              <li key={i}>{feature}</li>
-            ))}
-          </ul>
-          <button className="pricing-button" onClick={() => navigate("/paket-detay")}>
-            Hemen Başla!
-          </button>
-          <p className="verified-paragraph"><img src="/images/verified.png" alt="doğrulama simgesi"></img>5 gün içinde koşulsuz cayma hakkı</p>
-        </div>
-      </div>
-
-      <h3 className="benefit-title">YKS/LGS Koçluk Paketi Size Ne Kazandırır?</h3>
-      <div className="benefit-grid">
-        {benefitItems.map((item, index) => (
-          <div className="benefit-card" key={index}>
-            <div className="benefit-icon">{item.icon}</div>
-            <h4>{item.title}</h4>
-            <ul>
-              {item.points.map((point, idx) => (
-                <li key={idx}>{point}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 export default PricingSection;
