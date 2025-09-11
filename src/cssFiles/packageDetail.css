@@ -346,6 +346,29 @@
   display: none;
 }
 
+
+.feature-list {
+  list-style: none;
+  margin: 16px 0 24px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.feature-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+.feature-list li.inc { color: #0f766e; }
+.feature-list li.exc { color: #9ca3af; text-decoration: line-through; }
+.package-subtitle {
+  margin: 4px 0 8px;
+  color: #475569;
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
 /* Masaüstü için: dikey scroll listesi aktif */
 @media (min-width: 1001px) {
   .desktop-image-list {

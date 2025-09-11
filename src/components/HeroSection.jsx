@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "../cssFiles/heroSection.css";
 import { motion } from "framer-motion";
-import { FaPlay, FaChevronLeft, FaChevronRight, FaShieldAlt, FaRegClock, FaChartLine } from "react-icons/fa";
+import { FaPlay, FaChevronLeft, FaChevronRight, FaShieldAlt, FaRegClock, FaChartLine, FaQuestionCircle, FaChalkboardTeacher } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -77,8 +77,8 @@ export default function HeroSection() {
         <span className="highlight">Sözderece Koçluk</span>
       </h1>
       <p className="hero-subtext">
-        Online koçluk sistemi ile disiplinli çalışma, motivasyon desteği,
-        bireysel programlama ve veli bilgilendirmesi bir arada. <br />
+        Online koçluk ve özel ders sistemi ile disiplinli çalışma, motivasyon desteği,
+        bireysel programlama,soru çözümleri, konu anlatımları ve veli bilgilendirmesi bir arada. <br />
         Net artışı için doğru yerdesiniz.
       </p>
 
@@ -93,9 +93,11 @@ export default function HeroSection() {
 
       {/* Güven satırı */}
       <ul className="hero-trust">
-        <li><FaShieldAlt /><span>Kişiye özel program</span></li>
-        <li><FaRegClock /><span>7/24 koç desteği</span></li>
-        <li><FaChartLine /><span>Kanıtlı net artışı</span></li>
+        <li><FaShieldAlt /><span>Kişiye Özel Programlar</span></li>
+        <li><FaRegClock /><span>7/24 Koç Desteği</span></li>
+        <li><FaChartLine /><span>Kanıtlı Net Artışı</span></li>
+        <li><FaQuestionCircle /><span>Soru Çözümleri</span></li>
+        <li><FaChalkboardTeacher /><span>Konu Anlatımları</span></li>
       </ul>
     </motion.div>
   );
@@ -193,8 +195,8 @@ export default function HeroSection() {
             Net artışı için doğru yerdesiniz.
           </p>
           <div className="hero-buttons">
-            <a href="/paket-detay" className="hero-btn primary">Hemen Başla</a>
-            <a href="/ucretsiz-on-gorusme" className="hero-btn secondary">Ücretsiz Ön Görüşme</a>
+            <a href="/paket-detay" className="hero-btn primary">Koçluk Sürecini Başlat</a>
+            <a href="/ogretmenler" className="hero-btn secondary">Hemen Özel Ders Al</a>
           </div>
 
           <ul className="hero-trust hero-trust--mobile">

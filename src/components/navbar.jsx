@@ -140,6 +140,7 @@ const Navbar = () => {
 
                 <li><NavLink to="/ekibimiz">Ekibimiz</NavLink></li>
                 <li><NavLink to="/paket-detay">Koçluk Al!</NavLink></li>
+                <li><NavLink to="/ogretmenler">Özel Ders Al!</NavLink></li>
                 <li><NavLink to="/blog">Blog</NavLink></li>
               </ul>
             </div>

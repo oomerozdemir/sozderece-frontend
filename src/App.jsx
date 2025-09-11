@@ -132,6 +132,11 @@ export default App;
 
 
 /*
+
+Ozel ders sectıklerınde ogrencıler sepete veya payment Page e geldıgınde kdvyı dahıl edelım %20 olarak ekstra yansısın
+-fiyatlara kdv dahildir yazısı ekleyelım özel ders ögretmen profıl kartlarının orda
+
+
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   3-ogretmen panelı duzenlemesı
       
@@ -150,19 +155,13 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   
 
 
-2-Yeni paketler eklenecek
 3-özel ders öğretmenleri için de bir sözleşme hazırlamak gerekli
 
 Özel ders sistemi ile eklenicek yenilikler
 Frontend görünen yüzde
-1-heroSectıon de uyarıcılar button vs.
 2-HomePage de hangı özel derslerden hizmet verdiğimiz ve o derslerden birine tıklandıgında
 o derse özel öne çıkan hocalar
-3-navbar da yönlendirmeler
-4-pricingSection da 3 yeni paket daha eklenicek.Özel Ders Paketi,Özel Ders + sınırlı Koçluk,Normal sözderece koçluk paketi,Premium Paket
 6-Tabiki özel ders öğretmenlerine özel sayfaya yönlendirme için daha fazla göster butonu.HomePage de öne çıkan öğretmenlerin altında
-8-hocaların kart yapısı bır kere hocaların sayfasında ayarlanıcak ve her yerde onları kullanıcaz
-10-ogretmen kartında degerlendırmeler ve yorumlar olucak
 
 5-Randevu olusturma sıstemı ıcın her ogretmenın takvımı olucak ogretmen kendı bos zamanlarını duzenleyebılecek
 
@@ -173,6 +172,19 @@ Her seyi ogrenci,ogretmen gozunden kontrol et eklemeler bittikten sonra
 
 tc yi billinginfodan kaldiralim
 billinginfodan aldigimiz bazi bilgiler isim soyisim gibi bunlar eger userda eksikse orayi da doldurabilsin.
+
+
+
+*******************************ılerde sıstem yogunlasmasına karsı yapılabılecekler ==>***********************
+1-ozel ders haklı paketı alan ogrencının hakkını kullanıp kullanmaması ve ucret odemeden talep gonderebılme durumu
+  -Bu durumda yapılabilecekler sırasıyla;
+    -Ozel ders haklı paketı alan ogrencıye pakkette belirtilen sayıda özel ders hakkı tanımlanır
+    -sadece paketle baglantılı olacak şekilde öğretmen ve ardından randevu seçme aşaması sonrası öğretmene direkt talep gider.
+    -öğretmene giden talep paket aracılığıyla gelen öğrencileri gösteren ayrı bir sekmede gösterilir
+    -öğrencinin her sectiği saatten pakete baglı olarak ogrenciye tanımlanan saat secme hakkı eksiltilir
+    -paketteki özel ders hakkı biten öğrencinin ona özel açılan öğretmen seçme butonu kaybolur ve gizlenir
+    -admin panelinden bunları kontrol edebileceğimiz bir yer kurarız.Hali hazırda olan siparişlerim bölümünü güncelleyerek olabilir 
+
 
 
 cerezlerin nasil calistigini ogren tamamiyle

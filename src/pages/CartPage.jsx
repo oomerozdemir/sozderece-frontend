@@ -40,6 +40,7 @@ const CartPage = () => {
   const getTitle = (it) => it.title || it.name || "Ürün";
 
   const getSlug = (it) => it.slug || it.id || getTitle(it);
+  const hasTutoring = items.some(isTutoringItem);
 
   const total = useMemo(() => {
     return items.reduce((sum, it) => {
@@ -146,7 +147,11 @@ const CartPage = () => {
               <p className="cart-total">
                 <strong>Toplam:</strong> ₺{total.toFixed(2)}
               </p>
-              <p className="cart-note">İndirim kuponları ödeme kısmında uygulanır.</p>
+             {hasTutoring && (
+  <p className="cart-note">
+    Özel ders seçimleri için <strong>%20 KDV</strong> ödeme adımında hesaplanır ve eklenir.
+  </p>
+)}
 
               <div className="cart-check">
                 <input
