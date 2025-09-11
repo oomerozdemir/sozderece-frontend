@@ -3,7 +3,7 @@ import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 import "../cssFiles/payment.css";
-import { isValidEmail, isValidName, isValidPhone, isValidTcNo, isValidPostalCode, isValidAddress } from "../utils/validation";
+import { isValidEmail, isValidName, isValidPhone, isValidPostalCode, isValidAddress } from "../utils/validation";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
@@ -20,7 +20,6 @@ const PaymentPage = () => {
     district: "",
     city: "",
     postalCode: "",
-    tcNo: "",
     phone: "",
     allowEmails: false,
   });
@@ -134,7 +133,6 @@ const PaymentPage = () => {
     if (!isValidEmail(formData.email)) newErrors.email = "Geçerli bir e-posta girin.";
     if (!isValidName(formData.name)) newErrors.name = "Ad sadece harf içermelidir.";
     if (!isValidName(formData.surname)) newErrors.surname = "Soyad sadece harf içermelidir.";
-    if (!isValidTcNo(formData.tcNo)) newErrors.tcNo = "11 haneli geçerli TC Kimlik No girin.";
     if (!isValidPhone(formData.phone)) newErrors.phone = "Telefon numarası 05XXXXXXXXX formatında olmalı.";
     if (!isValidAddress(formData.address)) newErrors.address = "Lütfen geçerli bir adres girin. Emoji veya anlamsız karakter içermemelidir.";
     if (!formData.city.trim()) newErrors.city = "Şehir boş bırakılamaz.";
@@ -234,21 +232,7 @@ const PaymentPage = () => {
         </div>
 
         <div className="input-row-half">
-          <div>
-            <input
-              name="tcNo"
-              value={formData.tcNo}
-              placeholder="TC Kimlik Numarası"
-              maxLength="11"
-              onChange={handleInputChange}
-              className={errors.tcNo ? "error-input" : ""}
-              required
-            />
-            {errors.tcNo && <span className="error-text">{errors.tcNo}</span>}
-            <p className="info-text">
-              Fatura düzenlemek için TC Kimlik Numaranız yasal zorunluluktur. Bilgileriniz gizli tutulur.
-            </p>
-          </div>
+          
 
           <div>
             <input

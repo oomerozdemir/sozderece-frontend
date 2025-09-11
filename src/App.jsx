@@ -133,8 +133,6 @@ export default App;
 
 /*
 
-Ozel ders sectıklerınde ogrencıler sepete veya payment Page e geldıgınde kdvyı dahıl edelım %20 olarak ekstra yansısın
--fiyatlara kdv dahildir yazısı ekleyelım özel ders ögretmen profıl kartlarının orda
 
 
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
@@ -161,7 +159,6 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
 Frontend görünen yüzde
 2-HomePage de hangı özel derslerden hizmet verdiğimiz ve o derslerden birine tıklandıgında
 o derse özel öne çıkan hocalar
-6-Tabiki özel ders öğretmenlerine özel sayfaya yönlendirme için daha fazla göster butonu.HomePage de öne çıkan öğretmenlerin altında
 
 5-Randevu olusturma sıstemı ıcın her ogretmenın takvımı olucak ogretmen kendı bos zamanlarını duzenleyebılecek
 
