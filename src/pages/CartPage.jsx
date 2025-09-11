@@ -40,7 +40,22 @@ const CartPage = () => {
   const getTitle = (it) => it.title || it.name || "Ürün";
 
   const getSlug = (it) => it.slug || it.id || getTitle(it);
+
   const hasTutoring = items.some(isTutoringItem);
+
+  // EKLE —— özel dersi tespit et
+const isTutoringItem = (it) => {
+  if (it?.itemType === "tutoring") return true; // varsa en sağlam sinyal
+  const slug = (it?.slug || "").toLowerCase();
+  const name = (it?.name || it?.title || "").toLowerCase();
+  return (
+    /^tek-ders$/.test(slug) ||     // tek ders
+    /^paket-\d+$/.test(slug) ||    // paket-3, paket-6 vb.
+    /ozel-ders/.test(slug) ||      // ozel-ders, ozel-ders-paketi
+    /özel ders|tutor|ders/.test(name) // isim bazlı emare
+  );
+};
+
 
   const total = useMemo(() => {
     return items.reduce((sum, it) => {
@@ -149,7 +164,7 @@ const CartPage = () => {
               </p>
              {hasTutoring && (
   <p className="cart-note">
-    Özel ders seçimleri için <strong>%20 KDV</strong> ödeme adımında hesaplanır ve eklenir.
+    Özel ders seçimleri için <strong>KDV</strong> ödeme adımında hesaplanır ve eklenir.
   </p>
 )}
 
