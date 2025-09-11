@@ -19,19 +19,30 @@ const PackageDetail = () => {
   const [selectedSlug, setSelectedSlug] = useState(defaultSlug);
   const selected = PACKAGES[selectedSlug];
 
+  //ilk paket mi?
+const isFirstPackage = selectedSlug === defaultSlug;
+
   // Paket değiştiğinde slider ve accordion'ı sıfırla
   useEffect(() => {
     setCurrentIndex(0);
     setActiveIndex(null);
   }, [selectedSlug]);
 
-  const handleContinue = () => {
-    if (isPaymentDisabled) {
-      alert("Sipariş vermek istiyorsanız lütfen WhatsApp üzerinden destek ekibimizle görüşün. Şu anda ödeme sistemiyle ilgili bir sorun üzerinde çalışıyoruz.");
-      return;
-    }
-    navigate(`/pre-auth?slug=${encodeURIComponent(selected.slug)}`);
-  };
+ const handleContinue = () => {
+  if (isPaymentDisabled) {
+    alert("Sipariş vermek istiyorsanız lütfen WhatsApp üzerinden destek ekibimizle görüşün. Şu anda ödeme sistemiyle ilgili bir sorun üzerinde çalışıyoruz.");
+    return;
+  }
+
+  if (isFirstPackage) {
+    // Özel Ders paketi (ilk paket): Öğretmenler sayfasına yönlendir
+    navigate("/ogretmenler");
+    return;
+  }
+
+  // Diğer paketlerde mevcut davranış
+  navigate(`/pre-auth?slug=${encodeURIComponent(selected.slug)}`);
+};
 
   // FB Pixel - fiyat guard
   useEffect(() => {
@@ -277,9 +288,9 @@ const PackageDetail = () => {
             Tüm ödemeler 256-bit SSL sertifikası ile güvence altındadır.
           </p>
 
-          <button className="choose-coach-button" onClick={handleContinue}>
-            Hemen Süreci Başlat!
-          </button>
+         <button className="choose-coach-button" onClick={handleContinue}>
+  {isFirstPackage ? "Öğretmenleri Gör" : "Hemen Süreci Başlat!"}
+</button>
 
           {/* Paket özel SSS: ÜSTTE paket özel + ALTA default + dedupe */}
           <div className="accordion-container">

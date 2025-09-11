@@ -41,7 +41,6 @@ const CartPage = () => {
 
   const getSlug = (it) => it.slug || it.id || getTitle(it);
 
-  const hasTutoring = items.some(isTutoringItem);
 
   // EKLE —— özel dersi tespit et
 const isTutoringItem = (it) => {
@@ -55,6 +54,9 @@ const isTutoringItem = (it) => {
     /özel ders|tutor|ders/.test(name) // isim bazlı emare
   );
 };
+
+  const hasTutoring = items.some(isTutoringItem);
+
 
 
   const total = useMemo(() => {

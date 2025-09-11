@@ -84,10 +84,10 @@ export default function HeroSection() {
 
       <div className="hero-buttons">
         <a href="/paket-detay" className="hero-btn primary" aria-label="Hemen Başla">
-          Hemen Başla
+          Hemen Koçluk Sürecini Başlat
         </a>
-        <a href="/ucretsiz-on-gorusme" className="hero-btn secondary" aria-label="Ücretsiz Ön Görüşme">
-          Ücretsiz Ön Görüşme
+        <a href="/ogretmenler" className="hero-btn secondary" aria-label="Özel Ders Öğretmenleri">
+          Özel Ders Al
         </a>
       </div>
 
