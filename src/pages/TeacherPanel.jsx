@@ -13,31 +13,23 @@ import TeacherLessons from "../components/teacherComps/TeacherLessons";
    Gelen Talepler Paneli
 ======================= */
 function RequestsPanel() {
-  // ✅ Etiketler düzeltildi
   const statusMap = {
-    SUBMITTED: "Gönderildi",
-    PACKAGE_SELECTED: "Sepette",
+    SUBMITTED: "Sepette",
+    PACKAGE_SELECTED: "Paket seçildi, sepette",
     PAID: "Ödendi",
     CANCELLED: "İptal",
   };
 
-  // ✅ Sadece backend callback teyidi 'paid' ise true
-  const isPaidConfirmed = (r = {}) => {
-    const s = String(r?.order?.status || r?.orderStatus || "").toLowerCase();
-    return s === "paid";
-  };
-
-  // ✅ UI'da güvenli durum (callback yoksa PAID göstermeyiz)
-  const getSafeStatus = (r = {}) => {
-    if (isPaidConfirmed(r)) return "PAID";
-    const raw = String(r?.status || "").toUpperCase();
-    if (raw === "PAID") return "PACKAGE_SELECTED";
-    return raw || "SUBMITTED";
+  // 🔎 Öğretmen tarafında “ödenmişe yakın” sinyaller
+  const isPaidLike = (r = {}) => {
+    const s = String(r?.order?.status || r?.orderStatus || r?.status || "").toLowerCase();
+    if (s === "paid") return true;
+    if (typeof r.paidTL === "number" && r.paidTL > 0) return true;
+    if (r?.invoice?.vatAmount > 0 || r?.meta?.tax?.vatAmount > 0) return true;
+    return false;
   };
 
   const statusHelp = {
-    SUBMITTED:
-      "Gönderildi: Öğrenci talebini oluşturdu; paket seçimi/ödeme henüz yapılmadı.",
     PACKAGE_SELECTED:
       "Sepette: Öğrenci ders talebini tamamlamış ve ürünü sepete eklemiştir ancak ödemeyi tamamlamamış. Talebi onaylamadan önce ödemeyi tamamlaması için öğrenciyle iletişime geçebilirsiniz.",
     PAID:
@@ -150,10 +142,10 @@ function RequestsPanel() {
     }
   };
 
-  // ✅ Kovalamada sadece kesin paid'i onaylı say
+  // Talepleri kovana ayır (ödenmiş/benzeri → approved)
   const bucketOf = (req) => {
     if ((req.appointmentsConfirmed || []).length > 0) return "approved";
-    if (isPaidConfirmed(req)) return "approved";
+    if (isPaidLike(req)) return "approved";
     if (req.status === "CANCELLED") return "rejected";
     return "pending"; // SUBMITTED | PACKAGE_SELECTED
   };
@@ -235,147 +227,143 @@ function RequestsPanel() {
         <div className="tp-empty">Bu bölümde gösterilecek talep yok.</div>
       ) : (
         <div className="tp-req-list">
-          {list.map((r) => {
-            const uiStatus = getSafeStatus(r); // ✅ tek kaynak
-
-            return (
-              <div key={r.id} className="tp-card">
-                <div className="tp-card-head">
-                  <div className="tp-card-title">
-                    {r.student?.name || "Öğrenci"}
-                    <div className="tp-card-subtle">
-                      {r.student?.email || "—"}
-                      {r.student?.phone ? <> • {r.student.phone}</> : null}
-                    </div>
-                  </div>
-                  <div className="tp-badge">{r.packageTitle || "Paket"}</div>
-                </div>
-
-                <div className="tp-card-row">
-                  <span>Ders:</span> <b>{r.subject}</b>
-                  <span style={{ margin: "0 8px" }}>•</span>
-                  <span>Seviye:</span> <b>{r.grade}</b>
-                  <span style={{ margin: "0 8px" }}>•</span>
-                  <span>Tür:</span>{" "}
-                  <b>{r.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</b>
-                  {typeof r.paidTL === "number" && (
-                    <>
-                      <span style={{ margin: "0 8px" }}>•</span>
-                      <span>Ödenen:</span> <b>{r.paidTL.toLocaleString("tr-TR")} ₺</b>
-                    </>
-                  )}
-                  {typeof r.lessonsCount === "number" && (
-                    <>
-                      <span style={{ margin: "0 8px" }}>•</span>
-                      <span>Adet:</span> <b>{r.lessonsCount}</b>
-                    </>
-                  )}
-
-                  {/* Durum + açıklama */}
-                  <div className="tp-status" style={{ marginLeft: 10 }}>
-                    <span
-                      className={
-                        "tp-chip " +
-                        (uiStatus === "PAID" ? "success" : uiStatus === "CANCELLED" ? "danger" : "")
-                      }
-                    >
-                      {statusMap[uiStatus] || uiStatus}
-                    </span>
-
-                    <span className="tp-info" tabIndex={0} aria-label="Durum açıklaması">
-                      !
-                      <span className="tp-tooltip">
-                        {statusHelp[uiStatus] || "Durum açıklaması bulunamadı."}
-                      </span>
-                    </span>
+          {list.map((r) => (
+            <div key={r.id} className="tp-card">
+              <div className="tp-card-head">
+                <div className="tp-card-title">
+                  {r.student?.name || "Öğrenci"}
+                  <div className="tp-card-subtle">
+                    {r.student?.email || "—"}
+                    {r.student?.phone ? <> • {r.student.phone}</> : null}
                   </div>
                 </div>
-
-                {/* Onay bekleyen randevular */}
-                {(r.appointments || []).length > 0 && (
-                  <>
-                    <div className="tp-section-sub" style={{ marginTop: 8 }}>
-                      Onay bekleyen saatler
-                    </div>
-                    <div className="tp-slots-grid">
-                      {r.appointments.map((a) => {
-                        const st = new Date(a.startsAt);
-                        const et = new Date(a.endsAt);
-                        return (
-                          <div key={a.id} className="tp-slot-card">
-                            <div className="tp-slot-time">
-                              {st.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit" })}{" "}
-                              {st.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}{" "}
-                              – {et.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}
-                            </div>
-                            <div className="tp-slot-mode">
-                              {a.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}
-                            </div>
-                            <div className="tp-slot-actions">
-                              <button className="tp-btn" onClick={() => setStatus(a.id, "CONFIRMED")}>
-                                Onayla
-                              </button>
-                              <button className="tp-btn ghost" onClick={() => setStatus(a.id, "CANCELLED")}>
-                                İptal
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </>
-                )}
-
-                {/* Onaylanmış randevular */}
-                {(r.appointmentsConfirmed || []).length > 0 && (
-                  <>
-                    <div className="tp-section-sub" style={{ marginTop: 8 }}>
-                      Onaylanmış saatler
-                    </div>
-                    <div className="tp-slots-grid">
-                      {r.appointmentsConfirmed.map((a) => {
-                        const st = new Date(a.startsAt);
-                        const et = new Date(a.endsAt);
-                        const past = isPast(a.endsAt);
-                        const done = hasDoneTeacher(a.notes);
-
-                        return (
-                          <div key={a.id} className="tp-slot-card slot-confirmed">
-                            <div className="tp-slot-time">
-                              {st.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit" })}{" "}
-                              {st.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}{" "}
-                              – {et.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}
-                            </div>
-                            <div className="tp-slot-mode">Onaylı</div>
-                            {a.studentName && (
-                              <div className="tp-slot-note">
-                                Öğrenci: <b>{a.studentName}</b>
-                              </div>
-                            )}
-
-                            <div className="tp-slot-actions">
-                              {done ? (
-                                <span className="tp-chip success">✓ Tamamlandı</span>
-                              ) : (
-                                <button
-                                  className="tp-btn"
-                                  disabled={!past}
-                                  title={!past ? "Ders saati geçtikten sonra aktif olur" : ""}
-                                  onClick={() => past && completeAsTeacher(a.id)}
-                                >
-                                  Ders tamamlandı
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </>
-                )}
+                <div className="tp-badge">{r.packageTitle || "Paket"}</div>
               </div>
-            );
-          })}
+
+              <div className="tp-card-row">
+                <span>Ders:</span> <b>{r.subject}</b>
+                <span style={{ margin: "0 8px" }}>•</span>
+                <span>Seviye:</span> <b>{r.grade}</b>
+                <span style={{ margin: "0 8px" }}>•</span>
+                <span>Tür:</span>{" "}
+                <b>{r.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</b>
+                {typeof r.paidTL === "number" && (
+                  <>
+                    <span style={{ margin: "0 8px" }}>•</span>
+                    <span>Ödenen:</span> <b>{r.paidTL.toLocaleString("tr-TR")} ₺</b>
+                  </>
+                )}
+                {typeof r.lessonsCount === "number" && (
+                  <>
+                    <span style={{ margin: "0 8px" }}>•</span>
+                    <span>Adet:</span> <b>{r.lessonsCount}</b>
+                  </>
+                )}
+
+                {/* Durum + açıklama */}
+                <div className="tp-status" style={{ marginLeft: 10 }}>
+                  <span
+                    className={
+                      "tp-chip " +
+                      (isPaidLike(r) ? "success" : r.status === "CANCELLED" ? "danger" : "")
+                    }
+                  >
+                    {statusMap[isPaidLike(r) ? "PAID" : r.status] || (isPaidLike(r) ? "PAID" : r.status)}
+                  </span>
+
+                  <span className="tp-info" tabIndex={0} aria-label="Durum açıklaması">
+                    !
+                    <span className="tp-tooltip">
+                      {statusHelp[isPaidLike(r) ? "PAID" : r.status] || "Durum açıklaması bulunamadı."}
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Onay bekleyen randevular */}
+              {(r.appointments || []).length > 0 && (
+                <>
+                  <div className="tp-section-sub" style={{ marginTop: 8 }}>
+                    Onay bekleyen saatler
+                  </div>
+                  <div className="tp-slots-grid">
+                    {r.appointments.map((a) => {
+                      const st = new Date(a.startsAt);
+                      const et = new Date(a.endsAt);
+                      return (
+                        <div key={a.id} className="tp-slot-card">
+                          <div className="tp-slot-time">
+                            {st.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit" })}{" "}
+                            {st.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}{" "}
+                            – {et.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}
+                          </div>
+                          <div className="tp-slot-mode">
+                            {a.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}
+                          </div>
+                          <div className="tp-slot-actions">
+                            <button className="tp-btn" onClick={() => setStatus(a.id, "CONFIRMED")}>
+                              Onayla
+                            </button>
+                            <button className="tp-btn ghost" onClick={() => setStatus(a.id, "CANCELLED")}>
+                              İptal
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+
+              {/* Onaylanmış randevular */}
+              {(r.appointmentsConfirmed || []).length > 0 && (
+                <>
+                  <div className="tp-section-sub" style={{ marginTop: 8 }}>
+                    Onaylanmış saatler
+                  </div>
+                  <div className="tp-slots-grid">
+                    {r.appointmentsConfirmed.map((a) => {
+                      const st = new Date(a.startsAt);
+                      const et = new Date(a.endsAt);
+                      const past = isPast(a.endsAt);
+                      const done = hasDoneTeacher(a.notes);
+
+                      return (
+                        <div key={a.id} className="tp-slot-card slot-confirmed">
+                          <div className="tp-slot-time">
+                            {st.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit" })}{" "}
+                            {st.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}{" "}
+                            – {et.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}
+                          </div>
+                          <div className="tp-slot-mode">Onaylı</div>
+                          {a.studentName && (
+                            <div className="tp-slot-note">
+                              Öğrenci: <b>{a.studentName}</b>
+                            </div>
+                          )}
+
+                          <div className="tp-slot-actions">
+                            {done ? (
+                              <span className="tp-chip success">✓ Tamamlandı</span>
+                            ) : (
+                              <button
+                                className="tp-btn"
+                                disabled={!past}
+                                title={!past ? "Ders saati geçtikten sonra aktif olur" : ""}
+                                onClick={() => past && completeAsTeacher(a.id)}
+                              >
+                                Ders tamamlandı
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>
@@ -1053,12 +1041,12 @@ export default function TeacherPanel() {
                   <textarea
                     placeholder="Kendinden ve tecrübenden kısaca bahset. (örn. 8 yıllık matematik öğretmeniyim, LGS-TYT-AYT hazırlık...)"
                     rows={8}
-                    maxLength={1200}
+                    maxLength={BIO_MAX}
                     value={profile.bio ?? ""}
                     onChange={(e) => onChange("bio", e.target.value)}
                   />
                   <div className="tp-hint" style={{ textAlign: "right" }}>
-                    {(profile.bio || "").length}/1200
+                    {bioLen}/{BIO_MAX}
                   </div>
                 </div>
                 <div className="tp-actions">
@@ -1077,12 +1065,12 @@ export default function TeacherPanel() {
                   <textarea
                     placeholder="Öğrencilerin sizi seçmesi için güçlü yanlarınızı, yöntemlerinizi ve sonuçlarınızı yazın."
                     rows={8}
-                    maxLength={1200}
+                    maxLength={WHY_MAX}
                     value={profile.whyMe ?? ""}
                     onChange={(e) => onChange("whyMe", e.target.value)}
                   />
                   <div className="tp-hint" style={{ textAlign: "right" }}>
-                    {(profile.whyMe || "").length}/1200
+                    {whyLen}/{WHY_MAX}
                   </div>
                 </div>
                 <div className="tp-actions">
