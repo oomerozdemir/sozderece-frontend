@@ -49,6 +49,7 @@ const normalizeOrdersNew = (list = []) =>
         : null,
     package: o.package || o.packageTitle || o.title,
     type: o.type || o.category || null,
+    raw: o,
   }));
 
 const normalizeOrdersLegacy = (list = []) =>
@@ -65,6 +66,7 @@ const normalizeOrdersLegacy = (list = []) =>
         : null,
     package: o.packageTitle || o.packageSlug || o.title || null,
     type: o.type || o.category || null,
+    raw: o,
   }));
 
 export default function StudentDashboard() {
@@ -89,10 +91,10 @@ export default function StudentDashboard() {
 
   const token = useMemo(() => localStorage.getItem("token"), []);
 
-  // 🔗 paid siparişlere bağlı requestId set'i
+  // orders → paid requestId eşleştirmesi
   const [paidByReqId, setPaidByReqId] = useState(() => new Set());
 
-  // Order -> requestId(ler) çıkar
+  // Order içinden requestId’leri topla
   const extractRequestIdsFromOrder = (o) => {
     const ids = new Set();
     const add = (v) => {
@@ -119,6 +121,37 @@ export default function StudentDashboard() {
     return ids;
   };
 
+  // ---- ortak yardımcılar
+  const str = (v) => String(v || "");
+
+  const isPaidLike = (req = {}) => {
+    if (paidByReqId.has(String(req.id))) return true; // siparişten doğrulandı
+    const s = str(req?.order?.status || req?.orderStatus || req?.status).toLowerCase();
+    if (s === "paid") return true;
+    if (typeof req.paidTL === "number" && req.paidTL > 0) return true;
+    if (req?.invoice?.vatAmount > 0 || req?.meta?.tax?.vatAmount > 0) return true;
+    return false;
+  };
+
+  const isActive = (a) => str(a?.status).toUpperCase() !== "CANCELLED";
+  const hasConfirmedActive = (r) => (r.appointmentsConfirmed || []).some(isActive);
+  const hasPendingActive = (r) => (r.appointments || []).some(isActive);
+
+  const isRejected = (r = {}) => {
+    const s = str(r?.status).toUpperCase();
+    const os = str(r?.order?.status || r?.orderStatus).toUpperCase();
+
+    if (["CANCELLED", "REJECTED", "DECLINED"].includes(s)) return true;
+    if (["CANCELLED", "REFUNDED", "FAILED", "VOID", "CHARGEBACK"].includes(os)) return true;
+    if (r.cancelledAt || r.isCancelled) return true;
+
+    const hasAnySlots = (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
+    const anyActive = hasConfirmedActive(r) || hasPendingActive(r);
+    if (hasAnySlots && !anyActive) return true;
+
+    return false;
+  };
+
   // Profil
   useEffect(() => {
     (async () => {
@@ -141,7 +174,7 @@ export default function StudentDashboard() {
     try {
       setReqLoading(true);
       const { data } = await axios.get("/api/v1/student-requests/me", {
-        headers: { Authorization: `Bearer ${token}` }, // 🔧 düzeltildi
+        headers: { Authorization: `Bearer ${token}` },
       });
       const raw = data?.items || data || [];
       setRequests(raw);
@@ -164,10 +197,9 @@ export default function StudentDashboard() {
         const normalized = normalizeOrdersNew(data?.orders || []);
         setOrders(normalized);
 
-        // paid siparişlerden requestId set
         const paidSet = new Set();
         (data?.orders || []).forEach((o) => {
-          const st = String(o?.status || "").toLowerCase();
+          const st = str(o?.status).toLowerCase();
           if (st === "paid") {
             extractRequestIdsFromOrder(o).forEach((id) => paidSet.add(id));
           }
@@ -184,7 +216,7 @@ export default function StudentDashboard() {
 
           const paidSet2 = new Set();
           list.forEach((o) => {
-            const st = String(o?.status || "").toLowerCase();
+            const st = str(o?.status).toLowerCase();
             if (st === "paid") {
               extractRequestIdsFromOrder(o).forEach((id) => paidSet2.add(id));
             }
@@ -225,24 +257,21 @@ export default function StudentDashboard() {
     setShowReview(true);
   };
 
-  // Review submit (tamamla + yorum)
+  // Review submit
   const submitReview = async () => {
     if (!reviewAppt) return;
     try {
       setSubmitting(true);
-      // 1) Tamamlandı işaretle
       await axios.patch(
         `/api/v1/ogrenci/appointments/${reviewAppt.id}/complete`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // 2) Değerlendirme gönder
       await axios.post(
         `/api/v1/ogrenci/appointments/${reviewAppt.id}/review`,
         { rating: Number(rating), comment: comment.trim() },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // 3) UI güncelle
       setRequests((list) =>
         list.map((r) => ({
           ...r,
@@ -253,7 +282,6 @@ export default function StudentDashboard() {
           ),
         }))
       );
-      // 4) Geçmişi tazele
       loadPastAppointments();
       setShowReview(false);
     } catch (e) {
@@ -270,21 +298,10 @@ export default function StudentDashboard() {
     loadPastAppointments();
   }, []); // token sabit varsayımı
 
-  // Ödeme “benzeri” kontrol (orders join + fallback sinyaller)
-  const isPaidLike = (req = {}) => {
-    if (paidByReqId.has(String(req.id))) return true; // orders eşleşti
-    const s = String(req?.order?.status || req?.orderStatus || req?.status || "").toLowerCase();
-    if (s === "paid") return true;
-    if (typeof req.paidTL === "number" && req.paidTL > 0) return true;
-    if (req?.invoice?.vatAmount > 0 || req?.meta?.tax?.vatAmount > 0) return true;
-    return false;
-  };
-
-  // Talepleri kovala
-  const bucketOf = (req) => {
-    if ((req.appointmentsConfirmed || []).length > 0) return "approved";
-    if (isPaidLike(req)) return "approved";
-    if (req.status === "CANCELLED") return "rejected";
+  // Kovalar
+  const bucketOf = (r) => {
+    if (isRejected(r)) return "rejected";
+    if (hasConfirmedActive(r) || isPaidLike(r)) return "approved";
     return "pending";
   };
 
@@ -386,8 +403,9 @@ export default function StudentDashboard() {
               <RequestsGroups
                 groups={groups}
                 loading={reqLoading}
-                openReview={openReview}
+                isRejected={isRejected}
                 isPaidLike={isPaidLike}
+                openReview={openReview}
               />
             ) : tab === "orders" ? (
               <OrdersList loading={ordersLoading} orders={coachingOrders} />
@@ -449,7 +467,7 @@ export default function StudentDashboard() {
 
 /* ----------------- parçalar ----------------- */
 
-function RequestsGroups({ groups, loading, openReview, isPaidLike }) {
+function RequestsGroups({ groups, loading, isRejected, isPaidLike, openReview }) {
   return (
     <div className="sdb-requests">
       <div className="sdb-groups">
@@ -458,7 +476,7 @@ function RequestsGroups({ groups, loading, openReview, isPaidLike }) {
             <div className="sdb-empty">Bekleyen talebiniz yok.</div>
           ) : (
             groups.pending.map((r) => (
-              <RequestCard key={r.id} r={r} openReview={openReview} paidLike={isPaidLike(r)} />
+              <RequestCard key={r.id} r={r} openReview={openReview} rejected={isRejected(r)} paidLike={isPaidLike(r)} />
             ))
           )}
         </Group>
@@ -468,7 +486,7 @@ function RequestsGroups({ groups, loading, openReview, isPaidLike }) {
             <div className="sdb-empty">Onaylanmış talebiniz yok.</div>
           ) : (
             groups.approved.map((r) => (
-              <RequestCard key={r.id} r={r} openReview={openReview} paidLike={isPaidLike(r)} />
+              <RequestCard key={r.id} r={r} openReview={openReview} rejected={isRejected(r)} paidLike={isPaidLike(r)} />
             ))
           )}
         </Group>
@@ -478,7 +496,7 @@ function RequestsGroups({ groups, loading, openReview, isPaidLike }) {
             <div className="sdb-empty">Reddedilmiş talebiniz yok.</div>
           ) : (
             groups.rejected.map((r) => (
-              <RequestCard key={r.id} r={r} openReview={openReview} paidLike={isPaidLike(r)} />
+              <RequestCard key={r.id} r={r} openReview={openReview} rejected={isRejected(r)} paidLike={isPaidLike(r)} />
             ))
           )}
         </Group>
@@ -561,9 +579,11 @@ function Group({ title, color, loading, children }) {
   );
 }
 
-function RequestCard({ r, openReview, paidLike }) {
+function RequestCard({ r, openReview, rejected, paidLike }) {
   const isPast = (dt) => new Date(dt) <= new Date();
   const hasDoneStudent = (notes = "") => /doneStudentAt=/.test(notes);
+
+  const uiKey = rejected ? "CANCELLED" : (paidLike ? "PAID" : (r.status || "SUBMITTED"));
 
   return (
     <div className="sdb-card">
@@ -576,15 +596,15 @@ function RequestCard({ r, openReview, paidLike }) {
           <span
             className={
               "sdb-status-chip " +
-              (paidLike ? "ok" : r.status === "CANCELLED" ? "bad" : "warn")
+              (rejected ? "bad" : paidLike ? "ok" : "warn")
             }
           >
             <i className="dot" aria-hidden="true" />
-            {statusMap[paidLike ? "PAID" : r.status] || (paidLike ? "PAID" : r.status)}
+            {statusMap[uiKey] || uiKey}
           </span>
           <span className="sdb-info" tabIndex={0} aria-label="Durum açıklaması">
             !
-            <span className="sdb-tooltip">{statusHelp[paidLike ? "PAID" : r.status] || ""}</span>
+            <span className="sdb-tooltip">{statusHelp[uiKey] || ""}</span>
           </span>
         </div>
       </div>

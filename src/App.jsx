@@ -146,6 +146,9 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
 
 ******** ozel ders icin ogrenci tarafi ********
 
+talebin durumu duzgun degil hepsi odendi olarak gozukuyor
+reddedilenler ayri degil
+
   -bir chatbot yeri yapabiliriz ogretmen talebi onayladiginda konusabilecekleri ve iletisim saglayacaklari kolay bir yer olur.
   
 *******************************ogrenci tarafi hoca secerken ki sorunlar ==>***********************
