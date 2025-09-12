@@ -59,6 +59,29 @@ const PaymentPage = () => {
     return fromFlags || slugPattern || namePattern;
   }
 
+  // 🔎 KDV'ye tabi özel ders paketleri: Yalnızca Tek Ders, 3 Ders, 6 Ders
+  function isKdvEligibleTutorPackage(it) {
+    const isTP =
+      (it?.source === "TutorPackage" && it?.itemType === "tutoring") ||
+      (it?.meta?.source === "TutorPackage" && it?.meta?.itemType === "tutoring");
+    if (!isTP) return false;
+
+    const slug = (it?.slug || "").toLowerCase();
+    const name = (it?.name || it?.title || "").toLowerCase();
+
+    // Slug eşleşmeleri
+    const slugOk =
+      /^tek-ders$/.test(slug) ||
+      /^3-ders$/.test(slug) ||
+      /^6-ders$/.test(slug) ||
+      /^paket-(3|6)$/.test(slug);
+
+    // İsim eşleşmeleri (Türkçe varyasyonlar)
+    const nameOk = /(tek\s*ders\b)|(3\s*ders\b)|(6\s*ders\b)|(3\s*ders\s*paket)|(6\s*ders\s*paket)/.test(name);
+
+    return slugOk || nameOk;
+  }
+
   // Satır tutarı: unitPrice (kuruş) öncelikli, yoksa price string
   const lineTL = (it) => {
     if (typeof it?.unitPrice === "number") {
@@ -78,6 +101,16 @@ const PaymentPage = () => {
     return { tutoringTotal: t, otherTotal: o, total: t + o };
   }, [items]);
 
+  // ---- KDV'ye tabi özel ders alt toplamı (sadece Tek/3/6 Ders)
+  const eligibleTutoringTotal = useMemo(() => {
+    let e = 0;
+    for (const it of items) {
+      const line = lineTL(it);
+      if (isKdvEligibleTutorPackage(it)) e += line;
+    }
+    return e;
+  }, [items]);
+
   // ---- Kupon indirimi (tamamına oransal uygulanır)
   const discountFactor = useMemo(
     () => (discountRate > 0 ? 1 - discountRate / 100 : 1),
@@ -94,14 +127,20 @@ const PaymentPage = () => {
     [otherTotal, discountFactor]
   );
 
-  // ---- KDV sadece TutorPackage özel dersleri için (ekstra)
-  const KDV_RATE = 0.20;
-  const kdvAmount = useMemo(
-    () => discountedTutoring * KDV_RATE,
-    [discountedTutoring]
+  // 🔽 KDV matrahı sadece Tek/3/6 ders (indirim sonrası)
+  const discountedEligibleTutoring = useMemo(
+    () => eligibleTutoringTotal * discountFactor,
+    [eligibleTutoringTotal, discountFactor]
   );
 
-  // ---- Ödenecek toplam (indirim uygulanmış tutarlar + sadece özel derse KDV)
+  // ---- KDV sadece Tek/3/6 Ders paketleri için
+  const KDV_RATE = 0.20;
+  const kdvAmount = useMemo(
+    () => discountedEligibleTutoring * KDV_RATE,
+    [discountedEligibleTutoring]
+  );
+
+  // ---- Ödenecek toplam (indirim uygulanmış tutarlar + sadece Tek/3/6 derse KDV)
   const payableTotal = useMemo(
     () => discountedTutoring + discountedOther + kdvAmount,
     [discountedTutoring, discountedOther, kdvAmount]
@@ -171,12 +210,14 @@ const PaymentPage = () => {
           packageName: items[0]?.name, // cart[0] yerine normalize edilmiş items
           discountRate,
           couponCode,
+          // Ödenecek toplamı hem TL hem kuruş olarak gönder
           totalPrice: Number(payableTotal.toFixed(2)),
           totalPriceKurus: Math.round(payableTotal * 100),
+          // Fatura/raporlama için KDV kırılımı (sadece Tek/3/6 ders)
           tax : {
-            vatRate: tutoringTotal > 0 ? 20 : 0,
+            vatRate: eligibleTutoringTotal > 0 ? 20 : 0,
             vatAmount: Number(kdvAmount.toFixed(2)),
-            baseTutoring: Number(discountedTutoring.toFixed(2)),
+            baseTutoring: Number(discountedEligibleTutoring.toFixed(2)),
           },
         },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -359,8 +400,8 @@ const PaymentPage = () => {
             </p>
           )}
 
-          {tutoringTotal > 0 && (
-            <p>KDV (%20 — yalnızca TutorPackage): <strong>₺{kdvAmount.toFixed(2)}</strong></p>
+          {eligibleTutoringTotal > 0 && (
+            <p>KDV (%20 — Tek/3/6 Ders paketleri): <strong>₺{kdvAmount.toFixed(2)}</strong></p>
           )}
 
           <hr />
