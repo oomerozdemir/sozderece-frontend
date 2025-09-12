@@ -4,14 +4,16 @@ import axios from "../utils/axios";
 
 const toUiItems = (serverCart) => {
   const items = serverCart?.items || [];
-  return items.map(i => ({
-    slug: i.slug,
-    name: i.title,
-    // unitPrice kuruş → TL string
-    price: `₺${(Number(i.unitPrice || 0) / 100).toFixed(2)}`,
-    quantity: i.quantity || 1,
-    description: i.description || ""
-  }));
+ return items.map(i => ({
+   slug: i.slug,
+   name: i.title,
+   price: `₺${(Number(i.unitPrice || 0) / 100).toFixed(2)}`,
+   quantity: i.quantity || 1,
+   description: i.description || "",
+   itemType: i.itemType || i?.meta?.itemType,
+   source:   i.source   || i?.meta?.source,
+   meta:     i.meta ?? null,
+ }))
 };
 
 

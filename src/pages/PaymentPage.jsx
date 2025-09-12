@@ -35,10 +35,12 @@ const PaymentPage = () => {
 
   // 🔒 Yalnızca TutorPackageSelect'ten gelen özel ders kalemleri (meta dahil)
   function isTutorPackageItem(it) {
-    const topLevel = it?.source === "TutorPackage" && it?.itemType === "tutoring";
-    const inMeta   = it?.meta?.source === "TutorPackage" && it?.meta?.itemType === "tutoring";
-    return topLevel || inMeta;
-  }
+  const slug = (it?.slug || "").toLowerCase();
+  const fromFlags = (it?.source === "TutorPackage" && it?.itemType === "tutoring") ||
+                    (it?.meta?.source === "TutorPackage" && it?.meta?.itemType === "tutoring");
+  const fallbackSlug = ["tek-ders", "paket-3", "paket-6"].includes(slug); // sadece yedek
+  return fromFlags || fallbackSlug;
+}
 
   // Satır tutarı: unitPrice (kuruş) öncelikli, yoksa price string
   const lineTL = (it) => {

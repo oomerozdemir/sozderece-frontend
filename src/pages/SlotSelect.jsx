@@ -217,28 +217,26 @@ export default function SlotSelect() {
           : (teacher?.priceF2F   ?? teacher?.priceOnline ?? 0);
       const baseKurus = Math.round((baseTL || 0) * 100);
 
-      await axios.post(
-        "/api/cart/items",
-        {
-          slug: packageSlug,
-          title: packageTitle,
-          name: packageTitle,
-          unitPrice: Number(unitPrice), // kuruş
-          quantity: 1,             
-          source: "TutorPackage",
-          itemType: "tutoring",
-          meta: {
-            requestId,
-            teacherSlug: slug,
-            mode,
-            lessonsCount: qty,
-            discountRate,
-            basePrice: baseKurus,
-            pickedSlots: picked,        // seçilen saatler
-          },
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+         await axios.post("/api/cart/items", {
+   slug: packageSlug,
+   title: packageTitle,
+   name: packageTitle,
+   unitPrice: Number(unitPrice),
+   quantity: 1,
+  itemType,                 
+   source,                   
+   meta: {
+     requestId,
+     teacherSlug: slug,
+     mode,
+     lessonsCount: qty,
+     discountRate,
+     basePrice: baseKurus,
+     pickedSlots: picked,
+     itemType,               
+     source,
+   },
+ }, { headers: { Authorization: `Bearer ${token}` }});
 
       navigate("/sepet", { replace: true });
     } catch (e) {
