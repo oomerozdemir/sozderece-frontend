@@ -28,6 +28,16 @@ function RequestsPanel() {
     CANCELLED: "İptal: Bu talep iptal edilmiştir.",
   };
 
+    const deriveReqStatus = (r) => {
+  const paid =
+    (typeof r.paidTL === "number" && r.paidTL > 0) ||   // backend paidTL veriyorsa
+    r.paymentStatus === "PAID" ||
+    r.orderStatus === "PAID" ||
+    r.paymentState === "PAID";
+  return paid ? { ...r, status: "PAID" } : r;
+};
+
+
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
@@ -44,7 +54,8 @@ function RequestsPanel() {
       const { data } = await axios.get("/api/v1/ogretmen/me/requests", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setItems(data.items || []);
+      const raw = data.items || [];
+      setItems(raw.map(deriveReqStatus));
     } catch (e) {
       setMsg(e?.response?.data?.message || "Talepler getirilemedi.");
     } finally {

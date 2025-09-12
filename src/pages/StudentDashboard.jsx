@@ -20,6 +20,17 @@ const statusHelp = {
   CANCELLED: "İptal: Bu talep iptal edilmiştir.",
 };
 
+// Ödeme varsa "Sepette" vb. yerine PAID göster
+const deriveRequestStatus = (r) => {
+  if (!r) return r;
+  const paid =
+    (typeof r.paidTL === "number" && r.paidTL > 0) ||   // backend paidTL veriyorsa
+    r.paymentStatus === "PAID" ||
+    r.orderStatus === "PAID" ||
+    r.paymentState === "PAID";
+  return paid ? { ...r, status: "PAID" } : r;
+};
+
 const bucketOf = (req) => {
   if ((req.appointmentsConfirmed || []).length > 0) return "approved";
   switch (req.status) {
@@ -125,7 +136,8 @@ export default function StudentDashboard() {
       const { data } = await axios.get("/api/v1/student-requests/me", {
         headers: { Authorization: { toString: () => `Bearer ${token}` } },
       });
-      setRequests(data?.items || data || []);
+      const raw = data?.items || data || [];
+      setRequests(raw.map(deriveRequestStatus));
     } catch (e) {
       console.error("Talepler alınamadı:", e?.message);
       setRequests([]);
