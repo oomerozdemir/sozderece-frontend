@@ -25,7 +25,7 @@ const PaymentPage = () => {
   });
 
   const [couponCode, setCouponCode] = useState("");
-  const [discountRate, setDiscountRate] = useState(0);
+  the [discountRate, setDiscountRate] = useState(0);
   const [couponMessage, setCouponMessage] = useState("");
   const [errors, setErrors] = useState({});
 
@@ -35,21 +35,17 @@ const PaymentPage = () => {
 
   const qtyOf = (it) => it.quantity || 1;
 
- const TUTOR_PKG_SLUGS = new Set(["tek-ders", "paket-3", "paket-6"]);
+  // 🔒 Yalnızca TutorPackageSelect'ten gelen özel ders kalemleri
+  function isTutorPackageItem(it) {
+    return it?.source === "TutorPackage" && it?.itemType === "tutoring";
+  }
 
-const isTutoringItem = (it) => {
-  const fromTutorPackage = it?.source === "TutorPackage";
-  const slugHit = TUTOR_PKG_SLUGS.has((it?.slug || "").toLowerCase());
-  return fromTutorPackage || slugHit;
-};
-
-  // ---- Ara toplamları ayır (özel ders / diğer)
+  // ---- Ara toplamları ayır (TutorPackage özel ders / diğer)
   const { tutoringTotal, otherTotal, total } = useMemo(() => {
-    let t = 0,
-      o = 0;
+    let t = 0, o = 0;
     for (const it of items) {
       const line = parseTL(it.price) * qtyOf(it);
-      if (isTutoringItem(it)) t += line;
+      if (isTutorPackageItem(it)) t += line;
       else o += line;
     }
     return { tutoringTotal: t, otherTotal: o, total: t + o };
@@ -71,7 +67,7 @@ const isTutoringItem = (it) => {
     [otherTotal, discountFactor]
   );
 
-  // ---- KDV sadece ÖZEL DERS için (ekstra)
+  // ---- KDV sadece TutorPackage özel dersleri için (ekstra)
   const KDV_RATE = 0.20;
   const kdvAmount = useMemo(
     () => discountedTutoring * KDV_RATE,
@@ -150,7 +146,7 @@ const isTutoringItem = (it) => {
           couponCode,
           // 🔽 KDV dahil ödenecek toplam
           totalPrice: payableTotal,
-          // (opsiyonel) fatura kırılımı lazım ise backend'e açabilirsiniz:
+          // (opsiyonel) fatura kırılımı için:
           // tax: { vatRate: tutoringTotal > 0 ? 20 : 0, vatAmount: kdvAmount, baseTutoring: discountedTutoring }
         },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -227,8 +223,6 @@ const isTutoringItem = (it) => {
         </div>
 
         <div className="input-row-half">
-          
-
           <div>
             <input
               name="address"
@@ -338,7 +332,7 @@ const isTutoringItem = (it) => {
           )}
 
           {tutoringTotal > 0 && (
-            <p>KDV (%20 — yalnızca Özel Ders): <strong>₺{kdvAmount.toFixed(2)}</strong></p>
+            <p>KDV (%20 — yalnızca TutorPackage): <strong>₺{kdvAmount.toFixed(2)}</strong></p>
           )}
 
           <hr />
