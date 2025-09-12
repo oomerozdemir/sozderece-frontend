@@ -25,7 +25,7 @@ const PaymentPage = () => {
   });
 
   const [couponCode, setCouponCode] = useState("");
-  const [discountRate, setDiscountRate] = useState(0); // ✅ the → const
+  const [discountRate, setDiscountRate] = useState(0);
   const [couponMessage, setCouponMessage] = useState("");
   const [errors, setErrors] = useState({});
 
@@ -33,18 +33,26 @@ const PaymentPage = () => {
   const parseTL = (val) =>
     parseFloat(String(val || "").replace("₺", "").replace(/[^\d.]/g, "")) || 0;
 
-  const qtyOf = (it) => it.quantity || 1;
-
-  // 🔒 Yalnızca TutorPackageSelect'ten gelen özel ders kalemleri
+  // 🔒 Yalnızca TutorPackageSelect'ten gelen özel ders kalemleri (meta dahil)
   function isTutorPackageItem(it) {
-    return it?.source === "TutorPackage" && it?.itemType === "tutoring";
+    const topLevel = it?.source === "TutorPackage" && it?.itemType === "tutoring";
+    const inMeta   = it?.meta?.source === "TutorPackage" && it?.meta?.itemType === "tutoring";
+    return topLevel || inMeta;
   }
+
+  // Satır tutarı: unitPrice (kuruş) öncelikli, yoksa price string
+  const lineTL = (it) => {
+    if (typeof it?.unitPrice === "number") {
+      return (it.unitPrice / 100) * (it.quantity || 1);
+    }
+    return (parseTL(it?.price) || 0) * (it.quantity || 1);
+  };
 
   // ---- Ara toplamları ayır (TutorPackage özel ders / diğer)
   const { tutoringTotal, otherTotal, total } = useMemo(() => {
     let t = 0, o = 0;
     for (const it of items) {
-      const line = parseTL(it.price) * qtyOf(it);
+      const line = lineTL(it);
       if (isTutorPackageItem(it)) t += line;
       else o += line;
     }
@@ -295,7 +303,7 @@ const PaymentPage = () => {
                 <strong>{item.name}</strong>
                 <p>{item.description}</p>
               </div>
-              <div>₺{(parseTL(item.price) * qtyOf(item)).toFixed(2)}</div>
+              <div>₺{lineTL(item).toFixed(2)}</div>
             </li>
           ))}
         </ul>

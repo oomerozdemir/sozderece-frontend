@@ -224,7 +224,9 @@ export default function SlotSelect() {
           title: packageTitle,
           name: packageTitle,
           unitPrice: Number(unitPrice), // kuruş
-          quantity: 1,                  // paketler tekil
+          quantity: 1,             
+          source: "TutorPackage",
+          itemType: "tutoring",
           meta: {
             requestId,
             teacherSlug: slug,
