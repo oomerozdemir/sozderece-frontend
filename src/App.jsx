@@ -160,15 +160,13 @@ Frontend görünen yüzde
 2-HomePage de hangı özel derslerden hizmet verdiğimiz ve o derslerden birine tıklandıgında
 o derse özel öne çıkan hocalar
 
-5-Randevu olusturma sıstemı ıcın her ogretmenın takvımı olucak ogretmen kendı bos zamanlarını duzenleyebılecek
+5-ogretmen kendı bos zamanlarını duzenleyebılecek
 
 
 
 Her seyi ogrenci,ogretmen gozunden kontrol et eklemeler bittikten sonra
 
 
-tc yi billinginfodan kaldiralim
-billinginfodan aldigimiz bazi bilgiler isim soyisim gibi bunlar eger userda eksikse orayi da doldurabilsin.
 
 
 

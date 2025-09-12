@@ -35,18 +35,13 @@ const PaymentPage = () => {
 
   const qtyOf = (it) => it.quantity || 1;
 
-  // "Özel ders" tespiti: varsa itemType="tutoring" kullan; yoksa slug/name heuristiği
-  const isTutoringItem = (it) => {
-    if (it?.itemType === "tutoring") return true;
-    const slug = (it?.slug || "").toLowerCase();
-    const name = (it?.name || it?.title || "").toLowerCase();
-    return (
-      /^tek-ders$/.test(slug) ||
-      /^paket-\d+$/.test(slug) ||
-      /ozel-ders/.test(slug) ||
-      /özel ders|tutor|ders/.test(name)
-    );
-  };
+ const TUTOR_PKG_SLUGS = new Set(["tek-ders", "paket-3", "paket-6"]);
+
+const isTutoringItem = (it) => {
+  const fromTutorPackage = it?.source === "TutorPackage";
+  const slugHit = TUTOR_PKG_SLUGS.has((it?.slug || "").toLowerCase());
+  return fromTutorPackage || slugHit;
+};
 
   // ---- Ara toplamları ayır (özel ders / diğer)
   const { tutoringTotal, otherTotal, total } = useMemo(() => {

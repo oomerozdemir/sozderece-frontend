@@ -99,6 +99,9 @@ export default function TutorPackageSelect() {
       const totalKurus   = totalTL * 100; // sepette unitPrice kuruş bekleniyor
 
       return {
+        // 🔹 TutorPackage kaynaklı özel ders işareti
+        itemType: "tutoring",
+        source: "TutorPackage",
         slug,
         qty,
         discountRate: Math.round(discount * 100),
@@ -134,6 +137,10 @@ export default function TutorPackageSelect() {
       district,
       locationNote,
       note,
+
+      // 🔹 TutorPackage işaretleri ve fiyat bilgileri
+      itemType: "tutoring",
+      source: "TutorPackage",
       qty: String(selected.qty),
       packageSlug: selected.slug,
       packageTitle: selected.title,
