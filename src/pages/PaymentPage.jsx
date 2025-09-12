@@ -10,7 +10,14 @@ const user = JSON.parse(localStorage.getItem("user"));
 const PaymentPage = () => {
   const { cart } = useCart();
   const navigate = useNavigate();
-  const items = Array.isArray(cart) ? cart : [];
+
+  // 🔧 Hem UI modeli (dizi) hem server modeli (objede items) destekle
+  const items = useMemo(() => {
+    if (!cart) return [];
+    if (Array.isArray(cart)) return cart;             // UI modeli
+    if (Array.isArray(cart.items)) return cart.items; // Server modeli
+    return [];
+  }, [cart]);
 
   const [formData, setFormData] = useState({
     email: user?.email || "",
@@ -33,14 +40,24 @@ const PaymentPage = () => {
   const parseTL = (val) =>
     parseFloat(String(val || "").replace("₺", "").replace(/[^\d.]/g, "")) || 0;
 
-  // 🔒 Yalnızca TutorPackageSelect'ten gelen özel ders kalemleri (meta dahil)
+  // 🔒 TutorPackage tespiti: önce açık bayraklar, sonra esnek slug/isim fallback
   function isTutorPackageItem(it) {
-  const slug = (it?.slug || "").toLowerCase();
-  const fromFlags = (it?.source === "TutorPackage" && it?.itemType === "tutoring") ||
-                    (it?.meta?.source === "TutorPackage" && it?.meta?.itemType === "tutoring");
-  const fallbackSlug = ["tek-ders", "paket-3", "paket-6"].includes(slug); // sadece yedek
-  return fromFlags || fallbackSlug;
-}
+    const fromFlags =
+      (it?.source === "TutorPackage" && it?.itemType === "tutoring") ||
+      (it?.meta?.source === "TutorPackage" && it?.meta?.itemType === "tutoring");
+
+    const slug = (it?.slug || "").toLowerCase();
+    const name = (it?.name || it?.title || "").toLowerCase();
+
+    const slugPattern =
+      /^tek-ders$/.test(slug) ||
+      /^paket-\d+$/.test(slug) ||
+      /ozel-ders/.test(slug);
+
+    const namePattern = /özel ders|tutor|ders/.test(name);
+
+    return fromFlags || slugPattern || namePattern;
+  }
 
   // Satır tutarı: unitPrice (kuruş) öncelikli, yoksa price string
   const lineTL = (it) => {
@@ -151,7 +168,7 @@ const PaymentPage = () => {
         {
           cart,
           billingInfo: formData,
-          packageName: cart[0]?.name,
+          packageName: items[0]?.name, // cart[0] yerine normalize edilmiş items
           discountRate,
           couponCode,
           // 🔽 KDV dahil ödenecek toplam
