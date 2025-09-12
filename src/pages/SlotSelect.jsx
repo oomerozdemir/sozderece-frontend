@@ -25,6 +25,10 @@ export default function SlotSelect() {
   const unitPrice     = Number(qs.get("unitPrice") || 0);       // kuruş
   const discountRate  = Number(qs.get("discountRate") || 0);    // %
 
+  // 🔧 EKLENDİ: TutorPackage bayrakları (URL'den oku, yoksa varsayılan)
+  const itemType = qs.get("itemType") || "tutoring";
+  const source   = qs.get("source")   || "TutorPackage";
+
   const token = localStorage.getItem("token");
   const [teacher, setTeacher] = useState(null);
 
@@ -49,6 +53,8 @@ export default function SlotSelect() {
       const back = new URLSearchParams({
         slug, subject, grade, mode, city, district, locationNote, note,
         qty: String(qty), packageSlug, packageTitle, unitPrice: String(unitPrice), discountRate: String(discountRate),
+        // 🔧 EKLENDİ: bayrakları redirect'e de ekle
+        itemType, source,
       });
       navigate(`/login?next=/saat-sec?${back.toString()}`, { replace: true });
     }
@@ -91,30 +97,31 @@ export default function SlotSelect() {
 
   // Slotları getir (müsait + dolular)
   const fetchSlots = async () => {
-  if (!slug) {
-    alert("Öğretmen slug bulunamadı.");
-    return;
-  }
-  try {
-    const { data } = await axios.get(
-      `/api/v1/ogretmenler/${encodeURIComponent(slug)}/slots`,
-      {
-        params: {
-          from: range.from,      // YYYY-MM-DD
-          to: range.to,          // YYYY-MM-DD
-          mode,                  // "ONLINE" | "FACE_TO_FACE"
-          durationMin: 60
-        },
-      }
-    );
-    setSlots(data?.slots || []);
-    setBusyPending(data?.busy?.pending || []);
-    setBusyConfirmed(data?.busy?.confirmed || []);
-  } catch (e) {
-    console.error("slots error:", e?.response?.data || e.message);
-    alert(e?.response?.data?.message || "Uygun saatler getirilemedi.");
-  }
-};
+    if (!slug) {
+      alert("Öğretmen slug bulunamadı.");
+      return;
+    }
+    try {
+      const { data } = await axios.get(
+        `/api/v1/ogretmenler/${encodeURIComponent(slug)}/slots`,
+        {
+          params: {
+            from: range.from,      // YYYY-MM-DD
+            to: range.to,          // YYYY-MM-DD
+            mode,                  // "ONLINE" | "FACE_TO_FACE"
+            durationMin: 60
+          },
+        }
+      );
+      setSlots(data?.slots || []);
+      setBusyPending(data?.busy?.pending || []);
+      setBusyConfirmed(data?.busy?.confirmed || []);
+    } catch (e) {
+      console.error("slots error:", e?.response?.data || e.message);
+      alert(e?.response?.data?.message || "Uygun saatler getirilemedi.");
+    }
+  };
+
   // Hızlı membership set’leri
   const busyKeys = useMemo(() => {
     const s = new Set();
@@ -159,16 +166,17 @@ export default function SlotSelect() {
 
   // Range gün listesi
   const daysInRange = useMemo(() => {
-  const out = [];
-  const startIso = (range.from < todayISO) ? todayISO : range.from;   
-  const from = new Date(startIso);
-  const to   = new Date(range.to);
-  from.setHours(0,0,0,0); to.setHours(0,0,0,0);
-  for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
-    out.push(new Date(d).toISOString().slice(0,10));
-  }
-  return out;
-}, [range, todayISO]);
+    const out = [];
+    const startIso = (range.from < todayISO) ? todayISO : range.from;
+    const from = new Date(startIso);
+    const to   = new Date(range.to);
+    from.setHours(0,0,0,0); to.setHours(0,0,0,0);
+    for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
+      out.push(new Date(d).toISOString().slice(0,10));
+    }
+    return out;
+  }, [range, todayISO]);
+
   // Gruplar
   const byAvail = useMemo(() => groupByDayISO(slots), [slots]);
   const byPend  = useMemo(() => groupByDayISO(busyPending), [busyPending]);
@@ -217,26 +225,28 @@ export default function SlotSelect() {
           : (teacher?.priceF2F   ?? teacher?.priceOnline ?? 0);
       const baseKurus = Math.round((baseTL || 0) * 100);
 
-         await axios.post("/api/cart/items", {
-   slug: packageSlug,
-   title: packageTitle,
-   name: packageTitle,
-   unitPrice: Number(unitPrice),
-   quantity: 1,
-  itemType,                 
-   source,                   
-   meta: {
-     requestId,
-     teacherSlug: slug,
-     mode,
-     lessonsCount: qty,
-     discountRate,
-     basePrice: baseKurus,
-     pickedSlots: picked,
-     itemType,               
-     source,
-   },
- }, { headers: { Authorization: `Bearer ${token}` }});
+      await axios.post("/api/cart/items", {
+        slug: packageSlug,
+        title: packageTitle,
+        name: packageTitle,
+        unitPrice: Number(unitPrice),
+        quantity: 1,
+        // 🔧 EKLENDİ: TutorPackage bayraklarını üst seviyeye yaz
+        itemType,
+        source,
+        meta: {
+          requestId,
+          teacherSlug: slug,
+          mode,
+          lessonsCount: qty,
+          discountRate,
+          basePrice: baseKurus,
+          pickedSlots: picked,
+          // 🔧 EKLENDİ: meta içine de kopya koy (backend üstte döndürmezse fallback)
+          itemType,
+          source,
+        },
+      }, { headers: { Authorization: `Bearer ${token}` }});
 
       navigate("/sepet", { replace: true });
     } catch (e) {
@@ -255,12 +265,11 @@ export default function SlotSelect() {
       <h1 className="pkc-title">Ders Saatlerini Seç</h1>
 
       <div className="slot-legend">
-  <span className="legend-item"><i className="legend-dot legend-free" /> Müsait</span>
-  <span className="legend-item"><i className="legend-dot legend-busy" /> Onay bekliyor</span>
-  <span className="legend-item"><i className="legend-dot legend-confirmed" /> Dolu</span>
-  <span className="legend-item"><i className="legend-dot legend-picked" /> Seçili</span>
-</div>
-
+        <span className="legend-item"><i className="legend-dot legend-free" /> Müsait</span>
+        <span className="legend-item"><i className="legend-dot legend-busy" /> Onay bekliyor</span>
+        <span className="legend-item"><i className="legend-dot legend-confirmed" /> Dolu</span>
+        <span className="legend-item"><i className="legend-dot legend-picked" /> Seçili</span>
+      </div>
 
       <div className="tp-grid-2">
         <div>
@@ -279,7 +288,6 @@ export default function SlotSelect() {
             value={range.to}
             onChange={(e)=>setRange(r=>({...r, to: e.target.value}))}
             min={todayISO}
-
           />
         </div>
       </div>
