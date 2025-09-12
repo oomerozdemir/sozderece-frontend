@@ -20,6 +20,22 @@ const statusHelp = {
   CANCELLED: "İptal: Bu talep iptal edilmiştir.",
 };
 
+// Ödeme kesinlendi mi? (callback onayı şart)
+// Backend hangi alanı gönderiyorsa ona uyumlu, geniş eşleşme:
+const isPaidConfirmed = (r = {}) => {
+  const s = String(r.status || "").toUpperCase();
+  if (s !== "PAID") return false;
+
+  // Callback doğrulama işaretlerinden herhangi biri:
+  return (
+    r.paymentVerified === true ||
+    r.paymentCallbackOk === true ||
+    !!r.paymentVerifiedAt ||
+    !!r.paymentCallbackAt ||
+    (r.order && (r.order.status === "PAID" || r.order.paymentVerified === true))
+  );
+};
+
 // Ödeme varsa "Sepette" vb. yerine PAID göster
 const deriveRequestStatus = (r) => {
   if (!r) return r;
@@ -31,17 +47,12 @@ const deriveRequestStatus = (r) => {
   return paid ? { ...r, status: "PAID" } : r;
 };
 
-const bucketOf = (req) => {
-  if ((req.appointmentsConfirmed || []).length > 0) return "approved";
-  switch (req.status) {
-    case "PAID":
-      return "approved";
-    case "CANCELLED":
-      return "rejected";
-    default:
-      return "pending";
-  }
-};
+ const bucketOf = (req) => {
+   if ((req.appointmentsConfirmed || []).length > 0) return "approved";
+   if (isPaidConfirmed(req)) return "approved";  
+   if (req.status === "CANCELLED") return "rejected";
+   return "pending";
+ }
 
 const fmtDate = (d) =>
   d ? new Date(d).toLocaleString("tr-TR", { dateStyle: "medium", timeStyle: "short" }) : "";
@@ -533,11 +544,11 @@ function RequestCard({ r, openReview }) {
             }
           >
             <i className="dot" aria-hidden="true" />
-            {statusMap[r.status] || r.status}
+            {statusMap[isPaidConfirmed(r) ? "PAID" : r.status] || (isPaidConfirmed(r) ? "PAID" : r.status)}
           </span>
           <span className="sdb-info" tabIndex={0} aria-label="Durum açıklaması">
             !
-            <span className="sdb-tooltip">{statusHelp[r.status] || ""}</span>
+            <span className="sdb-tooltip">{statusHelp[isPaidConfirmed(r) ? "PAID" : r.status] || ""}</span>
           </span>
         </div>
       </div>

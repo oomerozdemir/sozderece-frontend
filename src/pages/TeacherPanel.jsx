@@ -20,6 +20,19 @@ function RequestsPanel() {
     CANCELLED: "İptal",
   };
 
+  const isPaidConfirmed = (r = {}) => {
+  const s = String(r.status || "").toUpperCase();
+  if (s !== "PAID") return false;
+  return (
+    r.paymentVerified === true ||
+    r.paymentCallbackOk === true ||
+    !!r.paymentVerifiedAt ||
+    !!r.paymentCallbackAt ||
+    (r.order && (r.order.status === "PAID" || r.order.paymentVerified === true))
+  );
+};
+
+
   const statusHelp = {
     PACKAGE_SELECTED:
       "Sepette: Öğrenci ders talebini tamamlamış ve ürünü sepete eklemiştir ancak ödemeyi tamamlamamış. Talebi onaylamadan önce ödemeyi tamamlaması için öğrenciyle iletişime geçebilirsiniz.",
@@ -274,13 +287,13 @@ function RequestsPanel() {
                       (r.status === "PAID" ? "success" : r.status === "CANCELLED" ? "danger" : "")
                     }
                   >
-                    {statusMap[r.status] || r.status}
+                    {statusMap[isPaidConfirmed(r) ? "PAID" : r.status] || (isPaidConfirmed(r) ? "PAID" : r.status)}
                   </span>
 
                   <span className="tp-info" tabIndex={0} aria-label="Durum açıklaması">
                     !
                     <span className="tp-tooltip">
-                      {statusHelp[r.status] || "Durum açıklaması bulunamadı."}
+                      {statusHelp[isPaidConfirmed(r) ? "PAID" : r.status] || "Durum açıklaması bulunamadı."}
                     </span>
                   </span>
                 </div>
