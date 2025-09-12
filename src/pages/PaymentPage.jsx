@@ -171,10 +171,13 @@ const PaymentPage = () => {
           packageName: items[0]?.name, // cart[0] yerine normalize edilmiş items
           discountRate,
           couponCode,
-          // 🔽 KDV dahil ödenecek toplam
-          totalPrice: payableTotal,
-          // (opsiyonel) fatura kırılımı için:
-          // tax: { vatRate: tutoringTotal > 0 ? 20 : 0, vatAmount: kdvAmount, baseTutoring: discountedTutoring }
+          totalPrice: Number(payableTotal.toFixed(2)),
+          totalPriceKurus: Math.round(payableTotal * 100),
+          tax : {
+            vatRate: tutoringTotal > 0 ? 20 : 0,
+            vatAmount: Number(kdvAmount.toFixed(2)),
+            baseTutoring: Number(discountedTutoring.toFixed(2)),
+          },
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
