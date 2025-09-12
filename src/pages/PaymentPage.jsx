@@ -60,26 +60,24 @@ const PaymentPage = () => {
   }
 
   // 🔎 KDV'ye tabi özel ders paketleri: Yalnızca Tek Ders, 3 Ders, 6 Ders
-  function isKdvEligibleTutorPackage(it) {
-    const isTP =
-      (it?.source === "TutorPackage" && it?.itemType === "tutoring") ||
-      (it?.meta?.source === "TutorPackage" && it?.meta?.itemType === "tutoring");
-    if (!isTP) return false;
-
+   function isKdvEligibleTutorPackage(it) {
     const slug = (it?.slug || "").toLowerCase();
     const name = (it?.name || it?.title || "").toLowerCase();
 
-    // Slug eşleşmeleri
-    const slugOk =
+    // TutorPackage bayrakları varsa ekstra güvence
+    const hasTPFlags =
+      (it?.source === "TutorPackage" && it?.itemType === "tutoring") ||
+      (it?.meta?.source === "TutorPackage" && it?.meta?.itemType === "tutoring");
+
+    // Sadece bu üç paket KDV'ye tabi
+    const slugMatch =
       /^tek-ders$/.test(slug) ||
+     /^paket-(3|6)$/.test(slug) ||
       /^3-ders$/.test(slug) ||
-      /^6-ders$/.test(slug) ||
-      /^paket-(3|6)$/.test(slug);
+      /^6-ders$/.test(slug);
 
-    // İsim eşleşmeleri (Türkçe varyasyonlar)
-    const nameOk = /(tek\s*ders\b)|(3\s*ders\b)|(6\s*ders\b)|(3\s*ders\s*paket)|(6\s*ders\s*paket)/.test(name);
-
-    return slugOk || nameOk;
+    const nameMatch = /(tek\s*ders\b)|(3\s*ders\b)|(6\s*ders\b)/.test(name);
+    return slugMatch || (hasTPFlags && nameMatch);
   }
 
   // Satır tutarı: unitPrice (kuruş) öncelikli, yoksa price string
