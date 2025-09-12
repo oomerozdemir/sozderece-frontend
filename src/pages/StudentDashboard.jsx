@@ -23,17 +23,10 @@ const statusHelp = {
 // Ödeme kesinlendi mi? (callback onayı şart)
 // Backend hangi alanı gönderiyorsa ona uyumlu, geniş eşleşme:
 const isPaidConfirmed = (r = {}) => {
-  const s = String(r.status || "").toUpperCase();
-  if (s !== "PAID") return false;
-
-  // Callback doğrulama işaretlerinden herhangi biri:
-  return (
-    r.paymentVerified === true ||
-    r.paymentCallbackOk === true ||
-    !!r.paymentVerifiedAt ||
-    !!r.paymentCallbackAt ||
-    (r.order && (r.order.status === "PAID" || r.order.paymentVerified === true))
-  );
+  const orderStatus = String(
+    r?.order?.status || r?.orderStatus || r?.status || ""
+  ).toLowerCase();
+  return orderStatus === "paid"; // tek yetkili sinyal
 };
 
 // Ödeme varsa "Sepette" vb. yerine PAID göster

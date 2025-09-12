@@ -20,16 +20,11 @@ function RequestsPanel() {
     CANCELLED: "İptal",
   };
 
-  const isPaidConfirmed = (r = {}) => {
-  const s = String(r.status || "").toUpperCase();
-  if (s !== "PAID") return false;
-  return (
-    r.paymentVerified === true ||
-    r.paymentCallbackOk === true ||
-    !!r.paymentVerifiedAt ||
-    !!r.paymentCallbackAt ||
-    (r.order && (r.order.status === "PAID" || r.order.paymentVerified === true))
-  );
+ const isPaidConfirmed = (r = {}) => {
+  const orderStatus = String(
+    r?.order?.status || r?.orderStatus || r?.status || ""
+  ).toLowerCase();
+  return orderStatus === "paid"; // tek yetkili sinyal
 };
 
 
