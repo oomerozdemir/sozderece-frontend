@@ -22,23 +22,12 @@ const statusHelp = {
 
 // Ödeme kesinlendi mi? (callback onayı şart)
 // Backend hangi alanı gönderiyorsa ona uyumlu, geniş eşleşme:
-const isPaidConfirmed = (r = {}) => {
-  const orderStatus = String(
-    r?.order?.status || r?.orderStatus || r?.status || ""
-  ).toLowerCase();
-  return orderStatus === "paid"; // tek yetkili sinyal
-};
-
-// Ödeme varsa "Sepette" vb. yerine PAID göster
-const deriveRequestStatus = (r) => {
-  if (!r) return r;
-  const paid =
-    (typeof r.paidTL === "number" && r.paidTL > 0) ||   // backend paidTL veriyorsa
-    r.paymentStatus === "PAID" ||
-    r.orderStatus === "PAID" ||
-    r.paymentState === "PAID";
-  return paid ? { ...r, status: "PAID" } : r;
-};
+ const isPaidConfirmed = (r = {}) => {
+   const orderStatus = String(
+     r?.order?.status || r?.orderStatus || ""
+   ).toLowerCase();
+   return orderStatus === "paid";
+ };
 
  const bucketOf = (req) => {
    if ((req.appointmentsConfirmed || []).length > 0) return "approved";
@@ -141,7 +130,7 @@ export default function StudentDashboard() {
         headers: { Authorization: { toString: () => `Bearer ${token}` } },
       });
       const raw = data?.items || data || [];
-      setRequests(raw.map(deriveRequestStatus));
+      setRequests(raw);
     } catch (e) {
       console.error("Talepler alınamadı:", e?.message);
       setRequests([]);

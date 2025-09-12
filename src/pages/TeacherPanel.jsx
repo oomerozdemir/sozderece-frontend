@@ -21,11 +21,11 @@ function RequestsPanel() {
   };
 
  const isPaidConfirmed = (r = {}) => {
-  const orderStatus = String(
-    r?.order?.status || r?.orderStatus || r?.status || ""
-  ).toLowerCase();
-  return orderStatus === "paid"; // tek yetkili sinyal
-};
+   const orderStatus = String(
+     r?.order?.status || r?.orderStatus || ""
+   ).toLowerCase();
+   return orderStatus === "paid";
+ };
 
 
   const statusHelp = {
@@ -36,15 +36,7 @@ function RequestsPanel() {
     CANCELLED: "İptal: Bu talep iptal edilmiştir.",
   };
 
-    const deriveReqStatus = (r) => {
-  const paid =
-    (typeof r.paidTL === "number" && r.paidTL > 0) ||   // backend paidTL veriyorsa
-    r.paymentStatus === "PAID" ||
-    r.orderStatus === "PAID" ||
-    r.paymentState === "PAID";
-  return paid ? { ...r, status: "PAID" } : r;
-};
-
+  
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -63,7 +55,7 @@ function RequestsPanel() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const raw = data.items || [];
-      setItems(raw.map(deriveReqStatus));
+      setItems(raw);
     } catch (e) {
       setMsg(e?.response?.data?.message || "Talepler getirilemedi.");
     } finally {
