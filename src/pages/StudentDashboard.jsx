@@ -20,21 +20,27 @@ const statusHelp = {
   CANCELLED: "İptal: Bu talep iptal edilmiştir.",
 };
 
-// Ödeme kesinlendi mi? (callback onayı şart)
-// Backend hangi alanı gönderiyorsa ona uyumlu, geniş eşleşme:
- const isPaidConfirmed = (r = {}) => {
-   const orderStatus = String(
-     r?.order?.status || r?.orderStatus || ""
-   ).toLowerCase();
-   return orderStatus === "paid";
- };
+// ✅ Ödeme kesinlendi mi? (Sadece backend order.status='paid' yetkili sinyal)
+const isPaidConfirmed = (r = {}) => {
+  const s = String(r?.order?.status || r?.orderStatus || "").toLowerCase();
+  return s === "paid";
+};
 
- const bucketOf = (req) => {
-   if ((req.appointmentsConfirmed || []).length > 0) return "approved";
-   if (isPaidConfirmed(req)) return "approved";  
-   if (req.status === "CANCELLED") return "rejected";
-   return "pending";
- }
+// ✅ UI'da güvenli durum (isPaidConfirmed FALSE iken PAID asla gösterme)
+const getSafeStatus = (r = {}) => {
+  if (isPaidConfirmed(r)) return "PAID";
+  const raw = String(r?.status || "").toUpperCase();
+  // Backend bazı akışlarda request.status'ı erken "PAID" yapabiliyor; callback teyidi yoksa göstermeyelim:
+  if (raw === "PAID") return "PACKAGE_SELECTED";
+  return raw || "SUBMITTED";
+};
+
+const bucketOf = (req) => {
+  if ((req.appointmentsConfirmed || []).length > 0) return "approved";
+  if (isPaidConfirmed(req)) return "approved";  // sadece confirmed paid onaya alınır
+  if (req.status === "CANCELLED") return "rejected";
+  return "pending";
+};
 
 const fmtDate = (d) =>
   d ? new Date(d).toLocaleString("tr-TR", { dateStyle: "medium", timeStyle: "short" }) : "";
@@ -130,7 +136,7 @@ export default function StudentDashboard() {
         headers: { Authorization: { toString: () => `Bearer ${token}` } },
       });
       const raw = data?.items || data || [];
-      setRequests(raw);
+      setRequests(raw); // ❗️status olduğu gibi kalsın; PAID'i UI'da güvenli statüye çeviriyoruz
     } catch (e) {
       console.error("Talepler alınamadı:", e?.message);
       setRequests([]);
@@ -206,7 +212,7 @@ export default function StudentDashboard() {
         { rating: Number(rating), comment: comment.trim() },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // 3) UI güncelle: ilgili slotun notuna doneStudentAt ekle
+      // 3) UI güncelle
       setRequests((list) =>
         list.map((r) => ({
           ...r,
@@ -361,7 +367,7 @@ export default function StudentDashboard() {
                     <button
                       key={v}
                       type="button"
-                      className={"star" + (v <= rating ? " active" : "")}
+                      className={"star" + (v <= rating ? "active" : "")}
                       onClick={() => setRating(v)}
                       aria-label={`${v} yıldız`}
                     >★</button>
@@ -511,6 +517,9 @@ function RequestCard({ r, openReview }) {
   const isPast = (dt) => new Date(dt) <= new Date();
   const hasDoneStudent = (notes = "") => /doneStudentAt=/.test(notes);
 
+  // ✅ Tüm görünümler için tek “güvenli durum”
+  const uiStatus = getSafeStatus(r);
+
   return (
     <div className="sdb-card">
       <div className="sdb-card-head">
@@ -522,15 +531,15 @@ function RequestCard({ r, openReview }) {
           <span
             className={
               "sdb-status-chip " +
-              (r.status === "PAID" ? "ok" : r.status === "CANCELLED" ? "bad" : "warn")
+              (uiStatus === "PAID" ? "ok" : uiStatus === "CANCELLED" ? "bad" : "warn")
             }
           >
             <i className="dot" aria-hidden="true" />
-            {statusMap[isPaidConfirmed(r) ? "PAID" : r.status] || (isPaidConfirmed(r) ? "PAID" : r.status)}
+            {statusMap[uiStatus] || uiStatus}
           </span>
           <span className="sdb-info" tabIndex={0} aria-label="Durum açıklaması">
             !
-            <span className="sdb-tooltip">{statusHelp[isPaidConfirmed(r) ? "PAID" : r.status] || ""}</span>
+            <span className="sdb-tooltip">{statusHelp[uiStatus] || ""}</span>
           </span>
         </div>
       </div>
