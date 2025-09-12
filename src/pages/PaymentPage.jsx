@@ -25,7 +25,7 @@ const PaymentPage = () => {
   });
 
   const [couponCode, setCouponCode] = useState("");
-  the [discountRate, setDiscountRate] = useState(0);
+  const [discountRate, setDiscountRate] = useState(0); // ✅ the → const
   const [couponMessage, setCouponMessage] = useState("");
   const [errors, setErrors] = useState({});
 
@@ -325,9 +325,7 @@ const PaymentPage = () => {
           {discountRate > 0 && (
             <p className="text-green-600">
               Kupon İndirimi (%{discountRate}):{" "}
-              <strong>
-                -₺{(total - (discountedTutoring + discountedOther)).toFixed(2)}
-              </strong>
+              <strong>-₺{(total - (discountedTutoring + discountedOther)).toFixed(2)}</strong>
             </p>
           )}
 
