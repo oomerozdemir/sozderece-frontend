@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
 import "../cssFiles/studentPage.css";
+import { RequestBadge } from "../utils/requestBadges";
+
 
 const statusMap = {
   SUBMITTED: "Gönderildi",
@@ -198,13 +200,12 @@ export default function StudentDashboard() {
         setOrders(normalized);
 
         const paidSet = new Set();
-        (data?.orders || []).forEach((o) => {
-          const st = str(o?.status).toLowerCase();
-          if (st === "paid") {
-            extractRequestIdsFromOrder(o).forEach((id) => paidSet.add(id));
-          }
-        });
-        setPaidByReqId(paidSet);
+(data?.orders || []).forEach((o) => {
+  if (String(o?.status).toLowerCase() === "paid") {
+    extractRequestIdsFromOrder(o).forEach((id) => paidSet.add(id));
+  }
+});
+setPaidByReqId(paidSet);
       } catch (e1) {
         try {
           const { data } = await axios.get("api/my-orders", {
@@ -593,20 +594,20 @@ function RequestCard({ r, openReview, rejected, paidLike }) {
         </div>
 
         <div className="sdb-status-wrap">
-          <span
-            className={
-              "sdb-status-chip " +
-              (rejected ? "bad" : paidLike ? "ok" : "warn")
-            }
-          >
-            <i className="dot" aria-hidden="true" />
-            {statusMap[uiKey] || uiKey}
-          </span>
-          <span className="sdb-info" tabIndex={0} aria-label="Durum açıklaması">
-            !
-            <span className="sdb-tooltip">{statusHelp[uiKey] || ""}</span>
-          </span>
-        </div>
+  <span
+    className={
+      "sdb-status-chip " +
+      (rejected ? "bad" : paidLike ? "ok" : "warn")
+    }
+  >
+    <i className="dot" aria-hidden="true" />
+    {statusMap[uiKey] || uiKey}
+  </span>
+  <span className="sdb-info" tabIndex={0} aria-label="Durum açıklaması">
+    !
+    <span className="sdb-tooltip">{statusHelp[uiKey] || ""}</span>
+  </span>
+</div>
       </div>
 
       <div className="sdb-card-row">

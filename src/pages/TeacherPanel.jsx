@@ -8,6 +8,8 @@ import AvailabilityEditor from "../components/teacherComps/AvailabilityEditor";
 import SlotsPreview from "../components/teacherComps/SlotsPreview";
 import TimeOffManager from "../components/teacherComps/TimeOffManager";
 import TeacherLessons from "../components/teacherComps/TeacherLessons";
+import { RequestBadge } from "../utils/requestBadges";
+
 
 /* =======================
    Gelen Talepler Paneli
@@ -288,22 +290,12 @@ function RequestsPanel() {
 
                   {/* Durum + açıklama */}
                   <div className="tp-status" style={{ marginLeft: 10 }}>
-                    <span
-                      className={
-                        "tp-chip " +
-                        (rejected ? "danger" : isPaidLike(r) ? "success" : "")
-                      }
-                    >
-                      {statusMap[uiKey] || uiKey}
-                    </span>
-
-                    <span className="tp-info" tabIndex={0} aria-label="Durum açıklaması">
-                      !
-                      <span className="tp-tooltip">
-                        {statusHelp[uiKey] || "Durum açıklaması bulunamadı."}
-                      </span>
-                    </span>
-                  </div>
+  <RequestBadge req={{ status: uiKey }} />
+  <span className="tp-info" tabIndex={0} aria-label="Durum açıklaması">
+    !
+    <span className="tp-tooltip">{statusHelp[uiKey] || "Durum açıklaması bulunamadı."}</span>
+  </span>
+</div>
                 </div>
 
                 {/* Onay bekleyen randevular */}

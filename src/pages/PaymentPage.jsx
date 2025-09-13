@@ -171,8 +171,7 @@ const PaymentPage = () => {
             vatAmount: Number(kdvAmount.toFixed(2)),
             baseTutoring: Number(discountedEligibleTutoring.toFixed(2)),
           },
-          // 🔴 kritik: request ↔ order eşleşmesi
-          requestId: requestId, // null olabilir; BE tolere ediyor
+          requestId: requestId, 
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
