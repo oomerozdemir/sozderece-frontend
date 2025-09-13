@@ -24,13 +24,9 @@ function RequestsPanel() {
   const str = (v) => String(v || "");
   const isActive = (a) => str(a?.status).toUpperCase() !== "CANCELLED";
 
-  // Ödeme sinyali (öğretmen tarafında sipariş listesi yok → sadece request üstünden)
   const isPaidLike = (r = {}) => {
-    const s = str(r?.order?.status || r?.orderStatus || r?.status).toLowerCase();
-    if (s === "paid") return true;
-    if (typeof r.paidTL === "number" && r.paidTL > 0) return true;
-    if (r?.invoice?.vatAmount > 0 || r?.meta?.tax?.vatAmount > 0) return true;
-    return false;
+    const s = str(r?.order?.status).toLowerCase();
+    return s === "paid";
   };
 
   const isRejected = (r = {}) => {
