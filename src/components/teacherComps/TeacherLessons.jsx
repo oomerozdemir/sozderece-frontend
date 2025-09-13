@@ -5,7 +5,7 @@ import "../../cssFiles/teacher-panel.css";
 
 const SUBJECTS = [
   "Matematik","Fen Bilimleri","Türkçe","Tarih","Coğrafya",
-  "Fizik","Kimya","Biyoloji","İngilizce","Almanca","Geometri","Edebiyat","Bilgisayar"
+  "Fizik","Kimya","Biyoloji","İngilizce","Almanca","Fransızca","İspanyolca"
 ];
 
 export default function TeacherLessons({ profile, onModeChange }) {
