@@ -27,11 +27,7 @@ function RequestsPanel() {
   const isActive = (a) => str(a?.status).toUpperCase() !== "CANCELLED";
 
   // Ödeme sinyali (öğretmen tarafında sipariş listesi yok → sadece request üstünden)
-  const isPaidLike = (r = {}) => {
-    // Öğretmen panelinde de sadece order.status==='paid'
-    const s = str(r?.order?.status).toLowerCase();
-    return s === "paid";
-  };
+ const isPaidLike = (r = {}) => String(r?.status || "").toUpperCase() === "PAID";
 
   const isRejected = (r = {}) => {
     const s = str(r?.status).toUpperCase();

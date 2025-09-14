@@ -127,14 +127,11 @@ export default function StudentDashboard() {
   // ---- ortak yardımcılar
   const str = (v) => String(v || "");
 
-  const isPaidLike = (req = {}) => {
-    if (paidByReqId.has(String(req.id))) return true; // siparişten doğrulandı
-    const s = str(req?.order?.status || req?.orderStatus || req?.status).toLowerCase();
-    if (s === "paid") return true;
-    if (typeof req.paidTL === "number" && req.paidTL > 0) return true;
-    if (req?.invoice?.vatAmount > 0 || req?.meta?.tax?.vatAmount > 0) return true;
-    return false;
-  };
+ const isPaidLike = (r = {}) => {
+  const s = String(r?.status || "").toUpperCase();
+  if (s === "PAID") return true;
+  return paidByReqId.has(String(r?.id || ""));
+};
 
   const isActive = (a) => str(a?.status).toUpperCase() !== "CANCELLED";
   const hasConfirmedActive = (r) => (r.appointmentsConfirmed || []).some(isActive);
