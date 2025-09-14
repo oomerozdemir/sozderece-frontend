@@ -180,11 +180,38 @@ function RequestsPanel() {
   // Kovalar
   const bucketOf = (r) => {
     if (isRejected(r)) return "rejected";
-    const hasConfirmedActive =
+    const hasConfirmedActive =    
       (r.appointmentsConfirmed || []).some((a) => APPT(a) !== "CANCELLED");
-    if (hasConfirmedActive || isPaidLike(r)) return "approved";
-    return "pending"; // SUBMITTED | PACKAGE_SELECTED veya sadece bekleyen aktif slotlar
+    // "Onaylanmış" yalnızca onaylı saat varsa
+    if (hasConfirmedActive) return "approved";    
+    return "pending";
   };
+
+  const rejectRequest = async (reqId) => {
+  try {
+    const headers = { Authorization: `Bearer ${token}` };
+
+    // 1) Varsayılan: öğretmen için özel iptal endpoint'in varsa onu dene
+    try {
+      await axios.post(`/api/v1/ogretmen/requests/${reqId}/cancel`, {}, { headers });
+    } catch (e1) {
+      // 2) Yoksa genel talep güncelleme ile CANCELLED'a çek
+      await axios.patch(`/api/v1/student-requests/${reqId}`, { status: "CANCELLED" }, { headers });
+    }
+
+    // 3) UI'yı yerelde güncelle
+    setItems((list) =>
+      list.map((r) =>
+        r.id === reqId
+          ? { ...r, status: "CANCELLED", appointments: [], appointmentsConfirmed: [] }
+          : r
+      )
+    );
+  } catch (e) {
+    alert(e?.response?.data?.message || "Talep reddedilemedi.");
+  }
+};
+
 
   const groups = useMemo(() => {
     const g = { pending: [], approved: [], rejected: [], all: [] };
@@ -339,6 +366,14 @@ function RequestsPanel() {
                               <button className="tp-btn ghost" onClick={() => setStatus(a.id, "CANCELLED")}>
                                 İptal
                               </button>
+                              <button
+                            className="tp-btn danger"
+                            onClick={() => rejectRequest(r.id)}
+                            title="Tüm talebi reddet"
+                            style={{ marginLeft: 8 }}
+                          >
+                            Talebi Reddet
+                          </button>
                             </div>
                           </div>
                         );

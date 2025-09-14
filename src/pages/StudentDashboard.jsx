@@ -322,10 +322,12 @@ export default function StudentDashboard() {
   }, []); // token sabit varsayımı
 
   // Kovalar (öncelik: rejected > approved > pending)
-  const bucketOf = (r) => {
+ const bucketOf = (r) => {
     if (isRejected(r)) return "rejected";
-    if (hasConfirmedActive(r) || isPaidLike(r)) return "approved";
-    return "pending";
+    // Sadece öğretmen tarafından onaylanmış saat varsa "Onaylanmış"
+    if (hasConfirmedActive(r)) return "approved";   
+     // Ödeme yapılmış olsa bile onay bekliyorsa "Bekleyen"
+   return "pending";
   };
 
   const groups = { pending: [], approved: [], rejected: [] };
