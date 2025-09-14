@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
