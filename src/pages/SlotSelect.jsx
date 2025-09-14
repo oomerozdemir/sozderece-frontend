@@ -217,6 +217,7 @@ export default function SlotSelect() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const requestId = createRes?.id;
+      localStorage.setItem("activeRequestId", requestId);
 
       // 2) Sepete ekle (meta ile birlikte)
       const baseTL =

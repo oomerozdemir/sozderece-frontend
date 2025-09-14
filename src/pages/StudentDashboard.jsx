@@ -129,11 +129,10 @@ export default function StudentDashboard() {
 
   // Öğrenci tarafında 'paid' kararı: yalın ve güvenli
   const isPaidLike = (r = {}) => {
-    const s = STR(r?.status).toUpperCase();
-    if (s === "PAID") return true;
-    // my-orders eşleşmesi (paid sipariş + o siparişin gösterdiği requestId)
-    return paidByReqId.has(STR(r?.id));
-  };
+  const rs = String(r?.status || "").toUpperCase();
+   const os = String(r?.order?.status || r?.orderStatus || "").toUpperCase();
+   return rs === "PAID" || os === "PAID";
+ };
 
   const hasConfirmedActive = (r) =>
     (r.appointmentsConfirmed || []).some((a) => APPT(a) !== "CANCELLED");
