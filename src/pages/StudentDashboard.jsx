@@ -4,7 +4,6 @@ import Navbar from "../components/navbar";
 import "../cssFiles/studentPage.css";
 import { RequestBadge } from "../utils/requestBadges";
 
-
 const statusMap = {
   SUBMITTED: "Gönderildi",
   PACKAGE_SELECTED: "Sepette",
@@ -96,7 +95,7 @@ export default function StudentDashboard() {
   // orders → paid requestId eşleştirmesi
   const [paidByReqId, setPaidByReqId] = useState(() => new Set());
 
-  // Order içinden requestId’leri topla
+  // Order içinden requestId’leri topla (çeşitli olası alanlar)
   const extractRequestIdsFromOrder = (o) => {
     const ids = new Set();
     const add = (v) => {
@@ -105,7 +104,7 @@ export default function StudentDashboard() {
 
     add(o?.requestId);
     add(o?.studentRequestId);
-    add(o?.studentRequest?.id);
+    add(o?.studentRequest?.id); // getMyOrders include ile geliyorsa
     add(o?.meta?.requestId);
     add(o?.metadata?.requestId);
 
@@ -124,34 +123,51 @@ export default function StudentDashboard() {
     return ids;
   };
 
-  // ---- ortak yardımcılar
-  const str = (v) => String(v || "");
+  /* ---------------- Yardımcılar (ONAY/RED/PAID ayrımı) ---------------- */
+  const STR = (v) => String(v ?? "");
+  const APPT = (a) => STR(a?.status).toUpperCase();
 
- const isPaidLike = (r = {}) => {
-  const s = String(r?.status || "").toUpperCase();
-  if (s === "PAID") return true;
-  return paidByReqId.has(String(r?.id || ""));
-};
+  // Öğrenci tarafında 'paid' kararı: yalın ve güvenli
+  const isPaidLike = (r = {}) => {
+    const s = STR(r?.status).toUpperCase();
+    if (s === "PAID") return true;
+    // my-orders eşleşmesi (paid sipariş + o siparişin gösterdiği requestId)
+    return paidByReqId.has(STR(r?.id));
+  };
 
-  const isActive = (a) => str(a?.status).toUpperCase() !== "CANCELLED";
-  const hasConfirmedActive = (r) => (r.appointmentsConfirmed || []).some(isActive);
-  const hasPendingActive = (r) => (r.appointments || []).some(isActive);
+  const hasConfirmedActive = (r) =>
+    (r.appointmentsConfirmed || []).some((a) => APPT(a) !== "CANCELLED");
 
+  const hasPendingActive = (r) =>
+    (r.appointments || []).some((a) => APPT(a) !== "CANCELLED");
+
+  const allSlotsCancelled = (r) => {
+    const slots = [...(r.appointments || []), ...(r.appointmentsConfirmed || [])];
+    return slots.length > 0 && slots.every((a) => APPT(a) === "CANCELLED");
+  };
+
+  // Reddedilmiş kural seti
   const isRejected = (r = {}) => {
-    const s = str(r?.status).toUpperCase();
-    const os = str(r?.order?.status || r?.orderStatus).toUpperCase();
+    const s = STR(r?.status).toUpperCase();
+    const os = STR(r?.order?.status).toUpperCase();
 
-    if (["CANCELLED", "REJECTED", "DECLINED"].includes(s)) return true;
+    if (s === "CANCELLED") return true;
     if (["CANCELLED", "REFUNDED", "FAILED", "VOID", "CHARGEBACK"].includes(os)) return true;
     if (r.cancelledAt || r.isCancelled) return true;
 
-    const hasAnySlots = (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
+    // Tüm slotlar iptal edildiyse
+    if (allSlotsCancelled(r)) return true;
+
+    // “Slot var ama hiçbiri aktif değil” durumu (tamamı iptal/çekilmiş olabilir)
+    const hasAnySlots =
+      (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
     const anyActive = hasConfirmedActive(r) || hasPendingActive(r);
     if (hasAnySlots && !anyActive) return true;
 
     return false;
   };
 
+  /* ---------------- Veri Yüklemeleri ---------------- */
   // Profil
   useEffect(() => {
     (async () => {
@@ -198,24 +214,29 @@ export default function StudentDashboard() {
         setOrders(normalized);
 
         const paidSet = new Set();
-(data?.orders || []).forEach((o) => {
-  if (String(o?.status).toLowerCase() === "paid") {
-    extractRequestIdsFromOrder(o).forEach((id) => paidSet.add(id));
-  }
-});
-setPaidByReqId(paidSet);
+        (data?.orders || []).forEach((o) => {
+          if (String(o?.status).toLowerCase() === "paid") {
+            extractRequestIdsFromOrder(o).forEach((id) => paidSet.add(id));
+          }
+        });
+        setPaidByReqId(paidSet);
       } catch (e1) {
+        // Eski endpoint/yanıt uyumluluğu
         try {
           const { data } = await axios.get("api/my-orders", {
             headers: { Authorization: `Bearer ${token}` },
           });
-          const list = Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : [];
+          const list = Array.isArray(data?.items)
+            ? data.items
+            : Array.isArray(data)
+            ? data
+            : [];
           const legacyNorm = normalizeOrdersLegacy(list);
           setOrders(legacyNorm);
 
           const paidSet2 = new Set();
           list.forEach((o) => {
-            const st = str(o?.status).toLowerCase();
+            const st = STR(o?.status).toLowerCase();
             if (st === "paid") {
               extractRequestIdsFromOrder(o).forEach((id) => paidSet2.add(id));
             }
@@ -297,7 +318,7 @@ setPaidByReqId(paidSet);
     loadPastAppointments();
   }, []); // token sabit varsayımı
 
-  // Kovalar
+  // Kovalar (öncelik: rejected > approved > pending)
   const bucketOf = (r) => {
     if (isRejected(r)) return "rejected";
     if (hasConfirmedActive(r) || isPaidLike(r)) return "approved";
@@ -592,20 +613,13 @@ function RequestCard({ r, openReview, rejected, paidLike }) {
         </div>
 
         <div className="sdb-status-wrap">
-  <span
-    className={
-      "sdb-status-chip " +
-      (rejected ? "bad" : paidLike ? "ok" : "warn")
-    }
-  >
-    <i className="dot" aria-hidden="true" />
-    {statusMap[uiKey] || uiKey}
-  </span>
-  <span className="sdb-info" tabIndex={0} aria-label="Durum açıklaması">
-    !
-    <span className="sdb-tooltip">{statusHelp[uiKey] || ""}</span>
-  </span>
-</div>
+          {/* Eski chip yerine ortak rozet */}
+          <RequestBadge req={{ status: uiKey }} />
+          <span className="sdb-info" tabIndex={0} aria-label="Durum açıklaması">
+            !
+            <span className="sdb-tooltip">{statusHelp[uiKey] || ""}</span>
+          </span>
+        </div>
       </div>
 
       <div className="sdb-card-row">

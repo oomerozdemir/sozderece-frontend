@@ -16,27 +16,43 @@ import { RequestBadge } from "../utils/requestBadges";
 ======================= */
 function RequestsPanel() {
   const statusMap = {
-    SUBMITTED: "Sepette",
-    PACKAGE_SELECTED: "Paket seçildi, sepette",
+    SUBMITTED: "Gönderildi",
+    PACKAGE_SELECTED: "Sepette",
     PAID: "Ödendi",
     CANCELLED: "İptal",
   };
 
   // ---- yardımcılar
   const str = (v) => String(v || "");
-  const isActive = (a) => str(a?.status).toUpperCase() !== "CANCELLED";
+  const STR = (v) => String(v ?? "");
+  const APPT = (a) => STR(a?.status).toUpperCase();
+  const isActive = (a) => APPT(a) !== "CANCELLED";
 
-  // Ödeme sinyali (öğretmen tarafında sipariş listesi yok → sadece request üstünden)
- const isPaidLike = (r = {}) => String(r?.status || "").toUpperCase() === "PAID";
+  // Öğretmen tarafında 'paid' sinyali: yalnızca request.status
+  const isPaidLike = (r = {}) => String(r?.status || "").toUpperCase() === "PAID";
+
+  const allSlotsCancelled = (r) => {
+    const slots = [...(r.appointments || []), ...(r.appointmentsConfirmed || [])];
+    return slots.length > 0 && slots.every((a) => APPT(a) === "CANCELLED");
+  };
 
   const isRejected = (r = {}) => {
     const s = str(r?.status).toUpperCase();
     const os = str(r?.order?.status || r?.orderStatus).toUpperCase();
 
+    // Talebin kendisi iptal/ret
     if (["CANCELLED", "REJECTED", "DECLINED"].includes(s)) return true;
+
+    // Bağlı sipariş iptal/iadeyse
     if (["CANCELLED", "REFUNDED", "FAILED", "VOID", "CHARGEBACK"].includes(os)) return true;
+
+    // Bayraklar
     if (r.cancelledAt || r.isCancelled) return true;
 
+    // Tüm slotlar iptal ise
+    if (allSlotsCancelled(r)) return true;
+
+    // Slot var ama hiçbiri aktif değilse (tamamı iptal edilmiş olabilir)
     const hasAnySlots = (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
     const anyActive =
       (r.appointmentsConfirmed || []).some(isActive) ||
@@ -47,10 +63,12 @@ function RequestsPanel() {
   };
 
   const statusHelp = {
+    SUBMITTED:
+      "Gönderildi: Öğrenci talebi iletildi. Paket ve saatler netleştiğinde onaylayabilirsiniz.",
     PACKAGE_SELECTED:
-      "Sepette: Öğrenci ders talebini tamamlamış ve ürünü sepete eklemiştir ancak ödemeyi tamamlamamış. Talebi onaylamadan önce ödemeyi tamamlaması için öğrenciyle iletişime geçebilirsiniz.",
+      "Sepette: Öğrenci paketi ve saatleri seçti, ancak ödemeyi tamamlamadı.",
     PAID:
-      "Ödendi: Öğrenci talebi oluşturmuş ve ödemeyi tamamlamıştır. Planlanan saat size uygunsa talebi onaylayıp ders platformunu öğrenciyle planlamak üzere iletişime geçebilirsiniz.",
+      "Ödendi: Ödeme tamamlandı. Saatler uygunsa onaylayıp planlamaya geçebilirsiniz.",
     CANCELLED: "İptal: Bu talep iptal edilmiştir.",
   };
 
@@ -163,7 +181,7 @@ function RequestsPanel() {
   const bucketOf = (r) => {
     if (isRejected(r)) return "rejected";
     const hasConfirmedActive =
-      (r.appointmentsConfirmed || []).some((a) => str(a?.status).toUpperCase() !== "CANCELLED");
+      (r.appointmentsConfirmed || []).some((a) => APPT(a) !== "CANCELLED");
     if (hasConfirmedActive || isPaidLike(r)) return "approved";
     return "pending"; // SUBMITTED | PACKAGE_SELECTED veya sadece bekleyen aktif slotlar
   };
@@ -286,12 +304,12 @@ function RequestsPanel() {
 
                   {/* Durum + açıklama */}
                   <div className="tp-status" style={{ marginLeft: 10 }}>
-  <RequestBadge req={{ status: uiKey }} />
-  <span className="tp-info" tabIndex={0} aria-label="Durum açıklaması">
-    !
-    <span className="tp-tooltip">{statusHelp[uiKey] || "Durum açıklaması bulunamadı."}</span>
-  </span>
-</div>
+                    <RequestBadge req={{ status: uiKey }} />
+                    <span className="tp-info" tabIndex={0} aria-label="Durum açıklaması">
+                      !
+                      <span className="tp-tooltip">{statusHelp[uiKey] || "Durum açıklaması bulunamadı."}</span>
+                    </span>
+                  </div>
                 </div>
 
                 {/* Onay bekleyen randevular */}
