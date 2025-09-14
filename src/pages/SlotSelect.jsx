@@ -25,7 +25,7 @@ export default function SlotSelect() {
   const unitPrice     = Number(qs.get("unitPrice") || 0);       // kuruş
   const discountRate  = Number(qs.get("discountRate") || 0);    // %
 
-  // 🔧 EKLENDİ: TutorPackage bayrakları (URL'den oku, yoksa varsayılan)
+  // TutorPackage bayrakları
   const itemType = qs.get("itemType") || "tutoring";
   const source   = qs.get("source")   || "TutorPackage";
 
@@ -53,7 +53,6 @@ export default function SlotSelect() {
       const back = new URLSearchParams({
         slug, subject, grade, mode, city, district, locationNote, note,
         qty: String(qty), packageSlug, packageTitle, unitPrice: String(unitPrice), discountRate: String(discountRate),
-        // 🔧 EKLENDİ: bayrakları redirect'e de ekle
         itemType, source,
       });
       navigate(`/login?next=/saat-sec?${back.toString()}`, { replace: true });
@@ -75,19 +74,16 @@ export default function SlotSelect() {
   }, [slug]);
 
   /* ============================
-     ZAMAN NORMALİZASYONU (KRİTİK)
+     ZAMAN NORMALİZASYONU
      ============================ */
 
-  // Her şeyi dakikaya indirip UTC ISO üretir -> karşılaştırmalar birebir tutar
   const toIsoMinute = (v) => {
     const d = new Date(v);
     d.setSeconds(0, 0);
     return d.toISOString();
   };
-  // slot anahtarı (hızlı membership)
   const keyOf = (s) => `${new Date(s.start).getTime()}|${new Date(s.end).getTime()}`;
 
-  // API farklı alan isimleri döndürebilir → tek tipe çevir
   const normalizeArr = (arr = [], fallbackMode) =>
     arr.map((x) => ({
       start: toIsoMinute(x.start || x.startsAt),
@@ -113,16 +109,15 @@ export default function SlotSelect() {
           },
         }
       );
-      setSlots(data?.slots || []);
-      setBusyPending(data?.busy?.pending || []);
-      setBusyConfirmed(data?.busy?.confirmed || []);
+      setSlots(normalizeArr(data?.slots || [], mode));
+      setBusyPending(normalizeArr(data?.busy?.pending || [], mode));
+      setBusyConfirmed(normalizeArr(data?.busy?.confirmed || [], mode));
     } catch (e) {
       console.error("slots error:", e?.response?.data || e.message);
       alert(e?.response?.data?.message || "Uygun saatler getirilemedi.");
     }
   };
 
-  // Hızlı membership set’leri
   const busyKeys = useMemo(() => {
     const s = new Set();
     for (const x of busyPending)   s.add(keyOf(x));
@@ -135,24 +130,20 @@ export default function SlotSelect() {
     [picked]
   );
 
-  // seçim kuralları
   const isBusy = (s) => busyKeys.has(keyOf(s));
 
   const togglePick = (s) => {
-    if (isBusy(s)) return; // doluysa asla seçilmez
+    if (isBusy(s)) return; // doluysa seçilmez
     const k = keyOf(s);
     setPicked((arr) => {
-      // seçiliyse kaldır
       if (arr.find((x) => keyOf(x) === k)) {
         return arr.filter((x) => keyOf(x) !== k);
       }
-      // kapasite sınırı
       if (arr.length >= qty) return arr;
       return [...arr, s];
     });
   };
 
-  // Günlere gruplama (normalize edilmiş start alanına göre)
   const groupByDayISO = (arr) => {
     const map = {};
     for (const it of arr || []) {
@@ -164,7 +155,6 @@ export default function SlotSelect() {
     return map;
   };
 
-  // Range gün listesi
   const daysInRange = useMemo(() => {
     const out = [];
     const startIso = (range.from < todayISO) ? todayISO : range.from;
@@ -177,12 +167,10 @@ export default function SlotSelect() {
     return out;
   }, [range, todayISO]);
 
-  // Gruplar
   const byAvail = useMemo(() => groupByDayISO(slots), [slots]);
   const byPend  = useMemo(() => groupByDayISO(busyPending), [busyPending]);
   const byConf  = useMemo(() => groupByDayISO(busyConfirmed), [busyConfirmed]);
 
-  // Görüntüleme yardımcıları
   const fmtDay = (iso) =>
     new Date(iso).toLocaleDateString("tr-TR", { year:"numeric", month:"long", day:"numeric", weekday:"long" });
   const fmtTime = (iso) =>
@@ -192,7 +180,6 @@ export default function SlotSelect() {
      KAYDET → TALEP + SEPET
      ============================ */
   const saveCreateAndGoCart = async () => {
-    // Zorunlu alan kontrolleri
     if (!packageSlug || !packageTitle || !Number.isFinite(unitPrice) || unitPrice <= 0) {
       alert("Paket bilgisi eksik. Lütfen paket seçiminden yeniden başlayın.");
       return;
@@ -209,15 +196,28 @@ export default function SlotSelect() {
         {
           teacherSlug: slug,
           subject, grade, mode, city, district, locationNote, note,
-          slots: picked,               // normalize edilmiş {start,end,mode}
+          slots: picked,               // {start,end,mode}
           packageSlug,
           packageTitle,
           unitPrice,                   // kuruş
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      const requestId = createRes?.id;
-      localStorage.setItem("activeRequestId", requestId);
+
+      // 1.a) Dönen id’leri normalize et (geriye uyum: tekil id de olabilir)
+      const ids =
+        Array.isArray(createRes?.requestIds) ? createRes.requestIds :
+        Array.isArray(createRes?.items) ? createRes.items.map(x => x.id).filter(Boolean) :
+        (createRes?.id ? [createRes.id] : []);
+
+      if (!ids.length) {
+        alert("Talep oluşturulamadı (requestIds bulunamadı).");
+        return;
+      }
+
+      // localStorage’a yaz (geriye uyum için ilkini ayrıca kaydet)
+      localStorage.setItem("activeRequestIds", JSON.stringify(ids));
+      localStorage.setItem("activeRequestId", String(ids[0]));
 
       // 2) Sepete ekle (meta ile birlikte)
       const baseTL =
@@ -232,24 +232,30 @@ export default function SlotSelect() {
         name: packageTitle,
         unitPrice: Number(unitPrice),
         quantity: 1,
-        // 🔧 EKLENDİ: TutorPackage bayraklarını üst seviyeye yaz
         itemType,
         source,
         meta: {
-          requestId,
+          // çoklu talep desteği
+          requestIds: ids,
+          // geriye uyum (backend hâlâ tekil okuyorsa)
+          requestId: ids[0],
+
           teacherSlug: slug,
           mode,
           lessonsCount: qty,
           discountRate,
           basePrice: baseKurus,
           pickedSlots: picked,
-          // 🔧 EKLENDİ: meta içine de kopya koy (backend üstte döndürmezse fallback)
           itemType,
           source,
         },
       }, { headers: { Authorization: `Bearer ${token}` }});
 
+      // 3) Sepete git (ya da doğrudan ödeme sayfasına da gönderebilirsin)
       navigate("/sepet", { replace: true });
+      // Alternatif: ödeme sayfasına direkt gitmek istersen:
+      // const qp = new URLSearchParams({ requestIds: ids.join(",") });
+      // navigate(`/odeme?${qp.toString()}`, { replace: true });
     } catch (e) {
       console.error(e);
       alert(e?.response?.data?.message || "Seçimler sepete eklenemedi.");

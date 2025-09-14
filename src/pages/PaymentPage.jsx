@@ -13,15 +13,24 @@ const PaymentPage = () => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
-  // requestId'yi state -> query -> localStorage sırasıyla dener
-  const requestId = useMemo(() => {
-    return (
-      location?.state?.requestId ||
-      searchParams.get("requestId") ||
-      localStorage.getItem("activeRequestId") ||
-      null
-    );
-  }, [location, searchParams]);
+ // çoklu id desteği: state -> query -> localStorage
+ const requestIds = useMemo(() => {
+   // state: requestIds veya tek requestId
+   const s = location?.state;
+   const fromState = Array.isArray(s?.requestIds)
+     ? s.requestIds
+     : (s?.requestId ? [s.requestId] : []);
+   // query: requestIds=comma,separated veya requestId=...
+   const qsMany = (searchParams.get("requestIds") || "")
+     .split(",").map(x => x.trim()).filter(Boolean);
+   const qsOne = searchParams.get("requestId");
+   // localStorage: activeRequestIds veya activeRequestId
+   const lsMany = JSON.parse(localStorage.getItem("activeRequestIds") || "[]");
+   const lsOne  = localStorage.getItem("activeRequestId");
+   // normalize + uniq
+   const all = [...fromState, ...qsMany, ...(qsOne ? [qsOne] : []), ...lsMany, ...(lsOne ? [lsOne] : [])];
+   return Array.from(new Set(all.map(String)));
+ }, [location, searchParams])
 
   // UI/Server cart normalize
   const items = useMemo(() => {
@@ -171,7 +180,7 @@ const PaymentPage = () => {
             vatAmount: Number(kdvAmount.toFixed(2)),
             baseTutoring: Number(discountedEligibleTutoring.toFixed(2)),
           },
-          requestId: requestId, 
+          requestIds: requestIds, 
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -186,6 +195,11 @@ const PaymentPage = () => {
       else alert("Sipariş hazırlığı sırasında bilinmeyen bir hata oluştu.");
     }
   };
+
+   useEffect(() => () => {
+   localStorage.removeItem("activeRequestId");
+   localStorage.removeItem("activeRequestIds");
+   }, []);
 
   return (
     <div className="payment-container">

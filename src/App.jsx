@@ -133,6 +133,8 @@ export default App;
 
 /*
 
+ordersPage de tutorPackage dan gelen paketlerni bitis tarihi olmasin
+ayriyeten bu paketlerde ogrenci paneline yonlendirme yapalim talebinizin durumunu goruntulemek icin diyerekten
 
 
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler

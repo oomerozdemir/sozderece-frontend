@@ -105,6 +105,10 @@ export default function StudentDashboard() {
     add(o?.requestId);
     add(o?.studentRequestId);
     add(o?.studentRequest?.id); // getMyOrders include ile geliyorsa
+
+       if (Array.isArray(o?.studentRequests)) {
+     o.studentRequests.forEach(r => add(r?.id));
+  }
     add(o?.meta?.requestId);
     add(o?.metadata?.requestId);
 
