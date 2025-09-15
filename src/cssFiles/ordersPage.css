@@ -1,58 +1,46 @@
 /* ===========================
-   OrdersPage — Mobile-first CSS
+   OrdersPage — Light (white body)
    =========================== */
 
-/* ---- Renk değişkenleri ---- */
-:root {
-  --bg: #f7f8fb;
-  --text: #1f2430;
+/* Body’i beyaz yap ve okunaklı koyu metin kullan */
+body {
+  background: #ffffff !important;
+  color: #111827;
+}
+
+/* Bu sayfa için renk değişkenleri (yalnızca OrdersPage alanında geçerli) */
+.orders-page {
+  --bg: #ffffff;
+  --text: #111827;
   --muted: #6b7280;
 
   --card-bg: #ffffff;
   --card-border: #e5e7eb;
-  --card-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 6px 12px rgba(0,0,0,0.04);
+  --card-shadow: 0 2px 8px rgba(0,0,0,0.05);
 
   --primary: #0d6efd;
   --primary-700: #0b5ed7;
   --primary-800: #0a58ca;
 
   --success: #16a34a;
-  --warning: #f59e0b;
+  --warning: #d97706;
   --danger:  #dc2626;
   --info:    #0ea5e9;
 
-  --badge-bg: #eef2ff;
+  --badge-bg: #f3f4f6;
   --radius: 12px;
   --gap: 14px;
 }
 
-/* ---- Sayfa temeli ---- */
-
-
-.orders-page {
-  padding: 16px;
-  display: block;            
-}
-
+/* Sayfa sarmalayıcı ve merkez kolon */
+.orders-page { padding: 16px; }
 .orders-center {
   width: 100%;
-  max-width: 780px;         
-  margin-inline: auto;       
+  max-width: 780px;
+  margin-inline: auto;
 }
 
-/* Listeyi tek kolon yap, ortadaki kolonda tut */
-.order-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;          /* grid yerine basit kolon */
-  flex-direction: column; /* tek sütun */
-  gap: var(--gap);
-}
-
-
-
-
+/* Başlık alanı (varsa) */
 .orders-header {
   display: flex;
   align-items: center;
@@ -60,14 +48,20 @@
   gap: var(--gap);
   margin-bottom: 16px;
 }
+.orders-header h1,
+.orders-header h2 { margin: 0; font-size: 20px; }
 
-.orders-header h2,
-.orders-header h1 {
-  font-size: 20px;
+/* Liste: tek sütun, aralıklı */
+.order-list {
+  list-style: none;
+  padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
 }
 
-/* ---- Kart ---- */
+/* Kart */
 .order-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -78,23 +72,21 @@
   flex-direction: column;
   gap: 10px;
 }
-
 .order-card h3 {
   margin: 0 0 6px;
   font-size: 16px;
   line-height: 1.25;
+  color: var(--text);
 }
-
 .order-card p {
   margin: 0;
   color: var(--muted);
   font-size: 14px;
 }
-
-/* Meta satırlarını minik aralıklarla göster */
+/* Metin satırları arası ufak boşluk */
 .order-card p + p { margin-top: 4px; }
 
-/* Kartın alt aksiyon alanı */
+/* Aksiyon alanı (isteğe bağlı) */
 .order-card .actions {
   display: flex;
   flex-wrap: wrap;
@@ -102,12 +94,12 @@
   margin-top: 8px;
 }
 
-/* ---- Rozetler ---- */
+/* Rozetler */
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 8px;
+  padding: 4px 10px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
@@ -116,15 +108,13 @@
   color: #374151;
   border: 1px solid #e5e7eb;
 }
-
-/* Duruma göre renkler */
 .badge-active    { background: rgba(22,163,74,0.08);  color: var(--success); border-color: rgba(22,163,74,0.2); }
-.badge-expired   { background: rgba(55,65,81,0.08);   color: #374151;        border-color: rgba(55,65,81,0.25); }
+.badge-expired   { background: rgba(55,65,81,0.08);   color: #374151;        border-color: rgba(55,65,81,0.2); }
 .badge-failed    { background: rgba(220,38,38,0.08);  color: var(--danger);  border-color: rgba(220,38,38,0.2); }
 .badge-refunded  { background: rgba(14,165,233,0.08); color: var(--info);    border-color: rgba(14,165,233,0.2); }
-.badge-requested { background: rgba(245,158,11,0.1);  color: var(--warning); border-color: rgba(245,158,11,0.25); }
+.badge-requested { background: rgba(217,119,6,0.10);  color: var(--warning); border-color: rgba(217,119,6,0.25); }
 
-/* ---- Butonlar ---- */
+/* Butonlar (refund & genel) */
 .refund-btn,
 .orders-btn {
   display: inline-flex;
@@ -134,14 +124,13 @@
   padding: 8px 12px;
   border-radius: 8px;
   border: none;
-  background: #ffe69c;        /* mevcut refund buton teması */
+  background: #ffe69c;     /* açık sarı (refund teması) */
   color: #5a3e00;
   font-weight: 600;
   cursor: pointer;
-  text-decoration: none;      /* <a> olarak da kullanılabiliyor */
+  text-decoration: none;
   transition: transform .05s ease, filter .2s ease;
 }
-
 .refund-btn:hover,
 .orders-btn:hover { filter: brightness(0.98); }
 .refund-btn:active,
@@ -154,34 +143,21 @@
 .orders-btn--primary:hover  { filter: brightness(0.98); }
 .orders-btn--primary:active { transform: translateY(1px); }
 
-/* ---- Boş durum ---- */
-.orders-empty {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius);
-  box-shadow: var(--card-shadow);
-  padding: 20px;
-  text-align: center;
-  color: var(--muted);
-}
-
-/* ---- Öğrenci paneline yönlendirme bloğu ---- */
+/* Öğrenci paneli yönlendirme bloğu (tek/3/6 ders paketleri) */
 .ordersPage-student-hint {
   margin-top: 12px;
   padding: 12px 14px;
-  background: rgba(13,110,253,0.06);
+  background: #eef5ff;                           /* beyaz temada daha belirgin */
   border: 1px solid rgba(13,110,253,0.25);
   border-left: 4px solid var(--primary);
   border-radius: 8px;
 }
-
 .ordersPage-student-hint p {
   margin: 0 0 8px;
   font-size: 14px;
   color: #0b3c8a;
 }
-
-/* Bu blok içindeki butonu maviye çek */
+/* Bu blok içindeki buton mavi olsun */
 .ordersPage-student-hint .refund-btn {
   display: inline-block;
   margin-top: 6px;
@@ -198,12 +174,30 @@
 .ordersPage-student-hint .refund-btn:active { background-color: var(--primary-800); }
 .ordersPage-student-hint .refund-btn:focus  { outline: 2px solid rgba(13,110,253,0.35); outline-offset: 2px; }
 
-/* Başlık/boş durum da dar kolona uyumlu gözüksün */
-.orders-header { max-width: 780px; margin: 0 auto 16px; }
-.orders-empty  { max-width: 780px; margin: 0 auto; }
+/* Boş durum kutusu (istenirse) */
+.orders-empty {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 20px;
+  text-align: center;
+  color: var(--muted);
+  max-width: 780px;
+  margin: 0 auto;
+}
 
+/* WhatsApp destek linki (isteğe bağlı ufak iyileştirme) */
+.ordersPage-whatsapp-support-btn {
+  margin-top: 8px;
+  display: inline-block;
+  color: #0a7c3a;
+  text-decoration: none;
+  font-weight: 600;
+}
+.ordersPage-whatsapp-support-btn:hover { text-decoration: underline; }
 
-/* ---- Mobil optimizasyonları ---- */
+/* Mobil optimizasyonlar */
 @media (max-width: 480px) {
   .orders-header { flex-direction: column; align-items: flex-start; }
   .order-card { padding: 12px; }
@@ -212,20 +206,12 @@
   .ordersPage-student-hint .refund-btn { width: 100%; text-align: center; }
 }
 
-/* ---- Erişilebilirlik ve tercihler ---- */
+/* Hareket azaltma tercihi */
 @media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
-}
-
-/* Basit dark-mode (isteğe bağlı) */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0c111b;
-    --text: #e5e7eb;
-    --muted: #9ca3af;
-    --card-bg: #111827;
-    --card-border: #1f2937;
-    --badge-bg: #0b1220;
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
-  .ordersPage-student-hint p { color: #cfe0ff; }
 }
