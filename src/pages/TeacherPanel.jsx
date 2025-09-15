@@ -442,7 +442,7 @@ function RequestsPanel() {
                 )}
 
                {/* Talep düzeyinde aksiyon */}
-{tab !== "rejected" && !rejected && (
+{tab === "pending" && !isRejected(r) && (
   <div className="tp-card-actions" style={{ marginTop: 10 }}>
     <button
       className="tp-btn tp-btn--danger"
