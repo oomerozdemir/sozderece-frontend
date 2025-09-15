@@ -233,12 +233,54 @@
 }
 .tp-timeoff-dates { font-weight: 700; color: #0f172a; }
 .tp-timeoff-note { color: #475569; }
+
+/* --- Genel buton tabanı --- */
+.tp-btn {
+  appearance: none;
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .06s ease, filter .2s ease, box-shadow .2s ease;
+  box-shadow: 0 6px 16px rgba(2,6,23,.08);
+  background: #f3f4f6;
+  color: #0f172a;
+}
+.tp-btn:hover { filter: brightness(0.98); }
+.tp-btn:active { transform: translateY(1px); }
+.tp-btn:disabled,
+.tp-btn[aria-disabled="true"] {
+  opacity: .6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
 .tp-btn-outline {
   align-self: start;
   padding: 8px 12px; border-radius: 10px; background: #fff;
   border: 1px solid #e5e7eb; color: #0f172a; font-weight: 700; cursor: pointer;
 }
 .tp-btn-outline:hover { background: #f8fafc; }
+
+
+/* --- Varyantlar --- */
+.tp-btn--approve {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: #fff;
+}
+.tp-btn--approve:hover { filter: saturate(1.05) brightness(0.98); }
+
+.tp-btn--cancel {
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+  color: #1f2937;
+}
+.tp-btn--cancel:hover { filter: saturate(1.05) brightness(0.98); }
+
+.tp-btn--danger {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+  color: #fff;
+}
+.tp-btn--danger:hover { filter: saturate(1.05) brightness(0.98); }
 
 /* Boş durum */
 .tp-empty {
@@ -299,6 +341,13 @@
   margin-top: 4px;
   font-size: .92rem;
   color: #065f46;
+}
+
+/* --- Slot aksiyonları satırı --- */
+.tp-slot-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 
@@ -481,3 +530,9 @@
 .tp-status-text.bad  { background:#fef2f2; color:#991b1b; border-color:#fecaca; }
 .tp-status-text.bad .dot  { background:#ef4444; }
 
+/* Küçük ekranlarda butonlar tam genişlik */
+@media (max-width: 480px) {
+  .tp-slot-actions { flex-direction: column; }
+  .tp-slot-actions .tp-btn { width: 100%; }
+  .tp-card-actions .tp-btn { width: 100%; }
+}

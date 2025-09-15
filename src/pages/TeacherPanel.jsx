@@ -345,47 +345,53 @@ function RequestsPanel() {
 
                 {/* Onay bekleyen randevular */}
                 {(r.appointments || []).length > 0 && (
-                  <>
-                    <div className="tp-section-sub" style={{ marginTop: 8 }}>
-                      Onay bekleyen saatler
-                    </div>
-                    <div className="tp-slots-grid">
-                      {r.appointments.map((a) => {
-                        const st = new Date(a.startsAt);
-                        const et = new Date(a.endsAt);
-                        const statusU = APPT(a);
-                        return (
-                          <div key={a.id} className="tp-slot-card">
-                            <div className="tp-slot-time">
-                              {st.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit" })}{" "}
-                              {st.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}{" "}
-                              – {et.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}
-                            </div>
-                            <div className="tp-slot-mode">
-                              {a.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}
-                            </div>
-                            <div className="tp-slot-actions">
-                              <button
-                                className="tp-btn"
-                                onClick={() => setStatus(a.id, "CONFIRMED")}
-                                disabled={statusU === "CONFIRMED"}
-                              >
-                                Onayla
-                              </button>
-                              <button
-                                className="tp-btn ghost"
-                                onClick={() => setStatus(a.id, "CANCELLED")}
-                                disabled={statusU === "CANCELLED"}
-                              >
-                                Saati İptal Et
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </>
-                )}
+  <>
+    <div className="tp-section-sub" style={{ marginTop: 8 }}>
+      Onay bekleyen saatler
+    </div>
+    <div className="tp-slots-grid">
+      {r.appointments.map((a) => {
+        const st = new Date(a.startsAt);
+        const et = new Date(a.endsAt);
+        const statusU = APPT(a);
+        const disabledAll = rejected || tab === "rejected";
+
+        return (
+          <div key={a.id} className="tp-slot-card">
+            <div className="tp-slot-time">
+              {st.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit" })}{" "}
+              {st.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}{" "}
+              – {et.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}
+            </div>
+            <div className="tp-slot-mode">
+              {a.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}
+            </div>
+            <div className="tp-slot-actions">
+              <button
+                className="tp-btn tp-btn--approve"
+                onClick={() => setStatus(a.id, "CONFIRMED")}
+                disabled={disabledAll || statusU === "CONFIRMED"}
+                aria-disabled={disabledAll || statusU === "CONFIRMED"}
+                title={disabledAll ? "Bu sekmede işlem devre dışı" : "Onayla"}
+              >
+                ✓ Onayla
+              </button>
+              <button
+                className="tp-btn tp-btn--cancel"
+                onClick={() => setStatus(a.id, "CANCELLED")}
+                disabled={disabledAll || statusU === "CANCELLED"}
+                aria-disabled={disabledAll || statusU === "CANCELLED"}
+                title={disabledAll ? "Bu sekmede işlem devre dışı" : "İptal Et"}
+              >
+                ✕ Saati İptal Et
+              </button>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </>
+)}
 
                 {/* Onaylanmış randevular */}
                 {(r.appointmentsConfirmed || []).length > 0 && (
@@ -435,12 +441,18 @@ function RequestsPanel() {
                   </>
                 )}
 
-                {/* Talep düzeyinde aksiyon */}
-                <div className="tp-card-actions" style={{ marginTop: 10 }}>
-                  <button className="tp-btn danger" onClick={() => rejectRequest(r.id)}>
-                    Tüm Talepleri Reddet
-                  </button>
-                </div>
+               {/* Talep düzeyinde aksiyon */}
+{tab !== "rejected" && !rejected && (
+  <div className="tp-card-actions" style={{ marginTop: 10 }}>
+    <button
+      className="tp-btn tp-btn--danger"
+      onClick={() => rejectRequest(r.id)}
+      title="Bu talebe ait tüm saatler iptal edilir"
+    >
+      🚫 Tüm Talepleri Reddet
+    </button>
+  </div>
+)}
               </div>
             );
           })}
