@@ -5,6 +5,7 @@ import "../cssFiles/teacher.css";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";
+import { Helmet } from "react-helmet";
 
 export default function TeacherDetail() {
   const { slug } = useParams();
@@ -56,8 +57,61 @@ export default function TeacherDetail() {
 
   return (
     <>
+
       <TopBar />
       <Navbar />
+
+            <Helmet>
+    <title>{`${t.firstName} ${t.lastName} | Özel Ders Öğretmeni ${t.city ? `| ${t.city}${t.district ? " / " + t.district : ""}` : ""}`}</title>
+    <meta
+      name="description"
+      content={
+        t.bio?.slice(0, 160) ||
+        `${t.firstName} ${t.lastName} ile ${Array.isArray(t.subjects) ? t.subjects.join(", ") : "özel ders"}. Online ve yüz yüze seçenekleri.`
+      }
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={`https://sozderecekocluk.com/ogretmenler/${t.slug}`} />
+
+    <meta property="og:title" content={`${t.firstName} ${t.lastName} | Özel Ders Öğretmeni`} />
+    <meta
+      property="og:description"
+      content={
+        t.bio?.slice(0, 200) ||
+        `${t.firstName} ${t.lastName} ile özel ders. Konular: ${(t.subjects||[]).join(", ") || "çeşitli dersler"}.`
+      }
+    />
+    <meta property="og:type" content="profile" />
+    <meta property="og:url" content={`https://sozderecekocluk.com/ogretmenler/${t.slug}`} />
+    <meta property="og:image" content={t.photoUrl || "https://sozderecekocluk.com/images/og-teacher-fallback.jpg"} />
+
+    <script type="application/ld+json">
+      {JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Person",
+        name: `${t.firstName} ${t.lastName}`,
+        jobTitle: "Private Tutor",
+        description: t.bio || undefined,
+        image: t.photoUrl || undefined,
+        address: t.city ? {
+          "@type": "PostalAddress",
+          addressLocality: t.city,
+          addressRegion: t.district || undefined,
+          addressCountry: "TR"
+        } : undefined,
+        knowsAbout: Array.isArray(t.subjects) && t.subjects.length ? t.subjects : undefined,
+        ...(typeof t.ratingAverage === "number" && typeof t.ratingCount === "number" && t.ratingCount > 0
+          ? {
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: Number(t.ratingAverage).toFixed(1),
+                reviewCount: t.ratingCount
+              }
+            }
+          : {})
+      })}
+    </script>
+  </Helmet>
       <div className="td-page">
         {/* HEADER CARD */}
         <section className="td-header-card">

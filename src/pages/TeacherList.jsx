@@ -6,6 +6,7 @@ import "../cssFiles/teacher.css";
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
+import { Helmet } from "react-helmet";
 
 const SUBJECTS = ["Matematik","Fen Bilimleri","Türkçe","Tarih","Coğrafya","Fizik","Kimya","Biyoloji","İngilizce","Almanca","Geometri","Edebiyat","Bilgisayar"];
 const GRADES   = ["İlkokul","Ortaokul","Lise","Üniversite","Mezun"];
@@ -69,11 +70,52 @@ export default function TeachersList() {
   }, [filters]);
 
   const onChange = (k, v) => setFilters((s)=>({ ...s, [k]: v, page: 1 }));
+  const baseUrl = "https://sozderecekocluk.com/ogretmenler";
+const canonicalWithFilters = (() => {
+  const p = new URLSearchParams();
+  Object.entries(filters).forEach(([k,v]) => { if (v) p.set(k, v); });
+  const qs = p.toString();
+  return qs ? `${baseUrl}?${qs}` : baseUrl;
+})();
+
+const descParts = [];
+if (filters.city) descParts.push(`${filters.city}${filters.district ? " / " + filters.district : ""}`);
+if (filters.subject) descParts.push(filters.subject);
+if (filters.grade) descParts.push(filters.grade);
+if (filters.mode) descParts.push(filters.mode === "ONLINE" ? "Online" : filters.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online + Yüz yüze");
+const listDescription = descParts.length
+  ? `${descParts.join(" • ")} özel ders öğretmenleri listesi.`
+  : "Online ve yüz yüze özel ders öğretmenleri listesi.";
+
 
   return (
     <> 
       <TopBar />
       <Navbar />
+      <Helmet>
+  <title>Özel Ders Öğretmenleri | Sözderece Koçluk</title>
+  <meta name="description" content={listDescription} />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href={canonicalWithFilters} />
+
+  <meta property="og:title" content="Özel Ders Öğretmenleri" />
+  <meta property="og:description" content={listDescription} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalWithFilters} />
+
+  <script type="application/ld+json">
+    {JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      itemListElement: (items || []).slice(0, 24).map((t, idx) => ({
+        "@type": "ListItem",
+        position: idx + 1,
+        url: `https://sozderecekocluk.com/ogretmenler/${t.slug}`,
+        name: `${t.firstName} ${t.lastName}`
+      }))
+    })}
+  </script>
+</Helmet>
       <div className="tl-page">
         {/* Filtre barı */}
         <div className="tl-filters">
