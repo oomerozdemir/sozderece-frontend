@@ -150,21 +150,19 @@ export default function StudentDashboard() {
   };
 
   // Reddedilmiş kural seti
-   const isRejected = (r = {}) => {
-    const s  = STR(r?.status).toUpperCase();
-    const os = STR(r?.order?.status).toUpperCase();
-
-    // Talebin kendi durumu red/iptal ise
-    if (["CANCELLED", "REJECTED", "DECLINED"].includes(s)) return true;
-     if (["CANCELLED", "REFUNDED", "FAILED", "VOID", "CHARGEBACK"].includes(os)) return true;
-     if (r.cancelledAt || r.isCancelled) return true;
-     if (allSlotsCancelled(r)) return true;
-     const hasAnySlots =
-       (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
-     const anyActive = hasConfirmedActive(r) || hasPendingActive(r);
-     if (hasAnySlots && !anyActive) return true;
-     return false;
-   };
+ const isRejected = (r = {}) => {
+   const s  = STR(r?.status).toUpperCase();
+   const os = STR(r?.order?.status).toUpperCase();
+   if (["CANCELLED", "REJECTED", "DECLINED"].includes(s)) return true;
+   if (["CANCELLED","REFUNDED","FAILED","VOID","CHARGEBACK"].includes(os)) return true;
+   if (r.cancelledAt || r.isCancelled) return true;
+   if (allSlotsCancelled(r)) return true;
+   const hasAnySlots =
+     (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
+   const anyActive = hasConfirmedActive(r) || hasPendingActive(r);
+   if (hasAnySlots && !anyActive) return true;
+   return false;
+ };
 
   /* ---------------- Veri Yüklemeleri ---------------- */
   // Profil
@@ -319,12 +317,14 @@ export default function StudentDashboard() {
 
   // Kovalar (öncelik: rejected > approved > pending)
  const bucketOf = (r) => {
-    if (isRejected(r)) return "rejected";
-    // Sadece öğretmen tarafından onaylanmış saat varsa "Onaylanmış"
-    if (hasConfirmedActive(r)) return "approved";   
-     // Ödeme yapılmış olsa bile onay bekliyorsa "Bekleyen"
+   if (isRejected(r)) return "rejected";
+   if (hasConfirmedActive(r)) return "approved";
+   if (hasPendingActive(r)) return "pending";
+  const hadAnySlots =
+     (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
+   if (hadAnySlots) return "rejected";
    return "pending";
-  };
+ };
 
   const groups = { pending: [], approved: [], rejected: [] };
   for (const r of requests) groups[bucketOf(r)].push(r);

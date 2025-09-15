@@ -178,14 +178,16 @@ function RequestsPanel() {
   };
 
   // Kovalar
-  const bucketOf = (r) => {
-    if (isRejected(r)) return "rejected";
-    const hasConfirmedActive =    
-      (r.appointmentsConfirmed || []).some((a) => APPT(a) !== "CANCELLED");
-    // "Onaylanmış" yalnızca onaylı saat varsa
-    if (hasConfirmedActive) return "approved";    
-    return "pending";
-  };
+ const bucketOf = (r) => {
+   if (isRejected(r)) return "rejected";
+   if (hasConfirmedActive(r)) return "approved";
+   if (hasPendingActive(r)) return "pending";
+   // Slot var ama hepsi iptal → reddedilmiş kabul et
+   const hadAnySlots =
+     (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
+   if (hadAnySlots) return "rejected";
+   return "pending";
+ };
 
 const rejectRequest = async (reqId) => {
   const token = localStorage.getItem("token");
@@ -227,6 +229,8 @@ const rejectRequest = async (reqId) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (_) {}
+
+    await load();
 
     setItems(list =>
       list.map(r =>
