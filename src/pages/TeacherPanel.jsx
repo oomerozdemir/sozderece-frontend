@@ -187,30 +187,67 @@ function RequestsPanel() {
     return "pending";
   };
 
-  const rejectRequest = async (reqId) => {
-  try {
-    const headers = { Authorization: `Bearer ${token}` };
+const rejectRequest = async (reqId) => {
+  const token = localStorage.getItem("token");
+  if (!token) return alert("Oturum bulunamadı.");
 
-    // 1) Varsayılan: öğretmen için özel iptal endpoint'in varsa onu dene
-    try {
-      await axios.post(`/api/v1/ogretmen/requests/${reqId}/cancel`, {}, { headers });
-    } catch (e1) {
-      // 2) Yoksa genel talep güncelleme ile CANCELLED'a çek
-      await axios.patch(`/api/v1/student-requests/${reqId}`, { status: "CANCELLED" }, { headers });
+  // UI onayı
+  if (!window.confirm("Bu talebe ait tüm saatler iptal edilecek. Devam edilsin mi?")) {
+    return;
+  }
+
+  try {
+    // Listedeki talebi yakala
+    const req = (items || []).find((r) => r.id === reqId);
+    if (!req) throw new Error("Talep bulunamadı.");
+
+    // Aktif (iptal olmayan) tüm slotları topla
+    const all = [
+      ...(req.appointments || []),
+      ...(req.appointmentsConfirmed || []),
+    ].filter(a => String(a?.status || "").toUpperCase() !== "CANCELLED");
+
+    // Her bir randevuyu CANCELLED yap
+    if (all.length > 0) {
+      await Promise.all(
+        all.map(a =>
+          axios.patch(
+            `/api/v1/ogretmen/appointments/${a.id}/status`,
+            { status: "CANCELLED" },
+            { headers: { Authorization: `Bearer ${token}` } }
+          )
+        )
+      );
     }
 
-    // 3) UI'yı yerelde güncelle
-    setItems((list) =>
-      list.map((r) =>
+    try {
+      await axios.patch(
+        `/api/v1/student-requests/${reqId}`,
+        { status: "CANCELLED" },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (_) {}
+
+    setItems(list =>
+      list.map(r =>
         r.id === reqId
-          ? { ...r, status: "CANCELLED", appointments: [], appointmentsConfirmed: [] }
+          ? {
+              ...r,
+              status: "CANCELLED",
+              appointments: (r.appointments || []).map(a => ({ ...a, status: "CANCELLED" })),
+              appointmentsConfirmed: (r.appointmentsConfirmed || []).map(a => ({ ...a, status: "CANCELLED" })),
+            }
           : r
       )
     );
+
+   
+    window.dispatchEvent(new Event("refresh-slots"));
   } catch (e) {
-    alert(e?.response?.data?.message || "Talep reddedilemedi.");
+    alert(e?.response?.data?.message || e.message || "Talep reddedilemedi.");
   }
 };
+
 
 
   const groups = useMemo(() => {
@@ -364,17 +401,13 @@ function RequestsPanel() {
                                 Onayla
                               </button>
                               <button className="tp-btn ghost" onClick={() => setStatus(a.id, "CANCELLED")}>
-                                İptal
+                                Saati İptal Et
                               </button>
-                              <button
-                            className="tp-btn danger"
-                            onClick={() => rejectRequest(r.id)}
-                            title="Tüm talebi reddet"
-                            style={{ marginLeft: 8 }}
-                          >
-                            Talebi Reddet
-                          </button>
-                            </div>
+                           
+                                  </div>
+                                  <button className="tp-btn danger" onClick={() => rejectRequest(r.id)}>
+                              Tüm Talepleri Reddet
+                            </button>
                           </div>
                         );
                       })}
