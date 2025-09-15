@@ -53,7 +53,7 @@ function RequestsPanel() {
     // Tüm slotlar iptal ise
     if (allSlotsCancelled(r)) return true;
 
-    // Slot var ama hiçbiri aktif değilse (tamamı iptal edilmiş olabilir)
+    // Slot var ama hiçbiri aktif değilse
     const hasAnySlots =
       (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
     const anyActive =
@@ -62,6 +62,13 @@ function RequestsPanel() {
     if (hasAnySlots && !anyActive) return true;
 
     return false;
+  };
+
+  // (Rozet için) paid sinyali
+  const isPaidLike = (r = {}) => {
+    const s = STR(r?.status).toUpperCase();
+    const os = STR(r?.order?.status || r?.orderStatus).toUpperCase();
+    return s === "PAID" || os === "PAID";
   };
 
   const statusHelp = {
@@ -346,6 +353,7 @@ function RequestsPanel() {
                       {r.appointments.map((a) => {
                         const st = new Date(a.startsAt);
                         const et = new Date(a.endsAt);
+                        const statusU = APPT(a);
                         return (
                           <div key={a.id} className="tp-slot-card">
                             <div className="tp-slot-time">
@@ -357,17 +365,21 @@ function RequestsPanel() {
                               {a.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}
                             </div>
                             <div className="tp-slot-actions">
-                              <button className="tp-btn" onClick={() => setStatus(a.id, "CONFIRMED")}>
+                              <button
+                                className="tp-btn"
+                                onClick={() => setStatus(a.id, "CONFIRMED")}
+                                disabled={statusU === "CONFIRMED"}
+                              >
                                 Onayla
                               </button>
-                              <button className="tp-btn ghost" onClick={() => setStatus(a.id, "CANCELLED")}>
+                              <button
+                                className="tp-btn ghost"
+                                onClick={() => setStatus(a.id, "CANCELLED")}
+                                disabled={statusU === "CANCELLED"}
+                              >
                                 Saati İptal Et
                               </button>
-                           
-                                  </div>
-                                  <button className="tp-btn danger" onClick={() => rejectRequest(r.id)}>
-                              Tüm Talepleri Reddet
-                            </button>
+                            </div>
                           </div>
                         );
                       })}
@@ -422,6 +434,13 @@ function RequestsPanel() {
                     </div>
                   </>
                 )}
+
+                {/* Talep düzeyinde aksiyon */}
+                <div className="tp-card-actions" style={{ marginTop: 10 }}>
+                  <button className="tp-btn danger" onClick={() => rejectRequest(r.id)}>
+                    Tüm Talepleri Reddet
+                  </button>
+                </div>
               </div>
             );
           })}
