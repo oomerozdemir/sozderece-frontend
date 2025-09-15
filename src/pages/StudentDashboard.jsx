@@ -150,25 +150,21 @@ export default function StudentDashboard() {
   };
 
   // Reddedilmiş kural seti
-  const isRejected = (r = {}) => {
-    const s = STR(r?.status).toUpperCase();
+   const isRejected = (r = {}) => {
+    const s  = STR(r?.status).toUpperCase();
     const os = STR(r?.order?.status).toUpperCase();
 
-    if (s === "CANCELLED") return true;
-    if (["CANCELLED", "REFUNDED", "FAILED", "VOID", "CHARGEBACK"].includes(os)) return true;
-    if (r.cancelledAt || r.isCancelled) return true;
-
-    // Tüm slotlar iptal edildiyse
-    if (allSlotsCancelled(r)) return true;
-
-    // “Slot var ama hiçbiri aktif değil” durumu (tamamı iptal/çekilmiş olabilir)
-    const hasAnySlots =
-      (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
-    const anyActive = hasConfirmedActive(r) || hasPendingActive(r);
-    if (hasAnySlots && !anyActive) return true;
-
-    return false;
-  };
+    // Talebin kendi durumu red/iptal ise
+    if (["CANCELLED", "REJECTED", "DECLINED"].includes(s)) return true;
+     if (["CANCELLED", "REFUNDED", "FAILED", "VOID", "CHARGEBACK"].includes(os)) return true;
+     if (r.cancelledAt || r.isCancelled) return true;
+     if (allSlotsCancelled(r)) return true;
+     const hasAnySlots =
+       (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
+     const anyActive = hasConfirmedActive(r) || hasPendingActive(r);
+     if (hasAnySlots && !anyActive) return true;
+     return false;
+   };
 
   /* ---------------- Veri Yüklemeleri ---------------- */
   // Profil
