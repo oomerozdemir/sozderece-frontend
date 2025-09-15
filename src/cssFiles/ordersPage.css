@@ -27,10 +27,7 @@
 }
 
 /* ---- Sayfa temeli ---- */
-body {
-  background: var(--bg);
-  color: var(--text);
-}
+
 
 .orders-page {
   padding: 16px;
