@@ -10,7 +10,6 @@ import TimeOffManager from "../components/teacherComps/TimeOffManager";
 import TeacherLessons from "../components/teacherComps/TeacherLessons";
 import { RequestBadge } from "../utils/requestBadges";
 
-
 /* =======================
    Gelen Talepler Paneli
 ======================= */
@@ -22,14 +21,16 @@ function RequestsPanel() {
     CANCELLED: "İptal",
   };
 
-  // ---- yardımcılar
-  const str = (v) => String(v || "");
+  // ---- Yardımcılar ----
   const STR = (v) => String(v ?? "");
   const APPT = (a) => STR(a?.status).toUpperCase();
   const isActive = (a) => APPT(a) !== "CANCELLED";
 
-  // Öğretmen tarafında 'paid' sinyali: yalnızca request.status
-  const isPaidLike = (r = {}) => String(r?.status || "").toUpperCase() === "PAID";
+  const hasPendingActive = (r) =>
+    (r.appointments || []).some((a) => APPT(a) !== "CANCELLED");
+
+  const hasConfirmedActive = (r) =>
+    (r.appointmentsConfirmed || []).some((a) => APPT(a) !== "CANCELLED");
 
   const allSlotsCancelled = (r) => {
     const slots = [...(r.appointments || []), ...(r.appointmentsConfirmed || [])];
@@ -37,8 +38,8 @@ function RequestsPanel() {
   };
 
   const isRejected = (r = {}) => {
-    const s = str(r?.status).toUpperCase();
-    const os = str(r?.order?.status || r?.orderStatus).toUpperCase();
+    const s = STR(r?.status).toUpperCase();
+    const os = STR(r?.order?.status || r?.orderStatus).toUpperCase();
 
     // Talebin kendisi iptal/ret
     if (["CANCELLED", "REJECTED", "DECLINED"].includes(s)) return true;
@@ -53,7 +54,8 @@ function RequestsPanel() {
     if (allSlotsCancelled(r)) return true;
 
     // Slot var ama hiçbiri aktif değilse (tamamı iptal edilmiş olabilir)
-    const hasAnySlots = (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
+    const hasAnySlots =
+      (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
     const anyActive =
       (r.appointmentsConfirmed || []).some(isActive) ||
       (r.appointments || []).some(isActive);
@@ -99,7 +101,8 @@ function RequestsPanel() {
 
   useEffect(() => {
     load();
-  }, []); // eslint-disable-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Öğretmen, randevuyu onay/iptal eder
   const setStatus = async (id, status) => {
@@ -177,36 +180,35 @@ function RequestsPanel() {
     }
   };
 
+  // Tüm talebi reddet (kalıcı)
+  const rejectRequest = async (reqId) => {
+    const token = localStorage.getItem("token");
+    if (!token) return alert("Oturum bulunamadı.");
+    if (!window.confirm("Bu talebe ait tüm saatler iptal edilecek ve talep reddedilecek. Devam edilsin mi?")) return;
+
+    try {
+      await axios.post(
+        `/api/v1/ogretmen/requests/${reqId}/cancel`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      await load(); // sadece server’dan tazele
+    } catch (e) {
+      alert(e?.response?.data?.message || e.message || "Talep reddedilemedi.");
+    }
+  };
+
   // Kovalar
- const bucketOf = (r) => {
-   if (isRejected(r)) return "rejected";
-   if (hasConfirmedActive(r)) return "approved";
-   if (hasPendingActive(r)) return "pending";
-   // Slot var ama hepsi iptal → reddedilmiş kabul et
-   const hadAnySlots =
-     (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
-   if (hadAnySlots) return "rejected";
-   return "pending";
- };
-
-const rejectRequest = async (reqId) => {
-  const token = localStorage.getItem("token");
-  if (!token) return alert("Oturum bulunamadı.");
-  if (!window.confirm("Bu talebe ait tüm saatler iptal edilecek ve talep reddedilecek. Devam edilsin mi?")) return;
-
-  try {
-    await axios.post(
-      `/api/v1/ogretmen/requests/${reqId}/cancel`,
-      {},
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    await load(); // ❗ yalnızca load: kalıcı statüyü server’dan çek
-  } catch (e) {
-    alert(e?.response?.data?.message || e.message || "Talep reddedilemedi.");
-  }
-};
-
-
+  const bucketOf = (r) => {
+    if (isRejected(r)) return "rejected";
+    if (hasConfirmedActive(r)) return "approved";
+    if (hasPendingActive(r)) return "pending";
+    // Slot var ama hepsi iptal → reddedilmiş kabul et
+    const hadAnySlots =
+      (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
+    if (hadAnySlots) return "rejected";
+    return "pending";
+  };
 
   const groups = useMemo(() => {
     const g = { pending: [], approved: [], rejected: [], all: [] };
