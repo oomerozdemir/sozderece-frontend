@@ -118,7 +118,7 @@ const OrdersPage = () => {
                                 🔔 Talebinizin durumunu takip etmek için öğrenci paneline gidin.
                               </p>
                               <a
-                                href="/ogrenci" // rotanıza göre gerekirse /ogrenci-panel
+                                href="/student/dashboard" // rotanıza göre gerekirse /ogrenci-panel
                                 className="refund-btn"
                                 style={{ marginTop: 6, display: "inline-block" }}
                               >
@@ -163,7 +163,7 @@ const OrdersPage = () => {
                           )}
 
                           <a
-                            href={`https://wa.me/905xxxxxxxxx?text=Merhaba, ${order.package} paketiyle ilgili bir sorum var. Sipariş ID: ${order.id}`}
+                            href={`https://wa.me/9055312546701?text=Merhaba, ${order.package} paketiyle ilgili bir sorum var. Sipariş ID: ${order.id}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="ordersPage-whatsapp-support-btn"
