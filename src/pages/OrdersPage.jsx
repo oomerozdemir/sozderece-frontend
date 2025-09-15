@@ -39,11 +39,13 @@ const OrdersPage = () => {
     }
   };
 
-  const getStatusLabel = (status, endDate) => {
+  const getStatusLabel = (status, endDate, isTutorPkg) => {
   if (status === "refunded") return { label: "İade Edildi", className: "badge-refunded" };
   if (status === "refund_requested") return { label: "İade Talep Edildi", className: "badge-requested" };
   if (status === "failed") return { label: "Ödeme Başarısız", className: "badge-failed" };
-  if (new Date(endDate) < new Date()) return { label: "Süresi Dolmuş", className: "badge-expired" };
+   if (!isTutorPkg && endDate && new Date(endDate) < new Date()) {
+     return { label: "Süresi Dolmuş", className: "badge-expired" };
+    }
   return { label: "Aktif", className: "badge-active" };
 };
 
@@ -70,6 +72,13 @@ const OrdersPage = () => {
     }
   };
 
+
+  // Tek/3/6 ders paketini yakala (başlık üzerinden)
+const isTutorLessonPackage = (pkg) => {
+    const name = String(pkg || "").toLowerCase().trim();
+    return /^(tek ders|3\s*ders paketi|6\s*ders paketi)$/.test(name);
+ };
+
   return (
     <>
       <TopBar />
@@ -85,7 +94,8 @@ const OrdersPage = () => {
             ) : (
               <ul className="order-list">
                 {orders.map((order) => {
-                  const { label, className } = getStatusLabel(order.status, order.endDate);
+                  const tutorPkg = isTutorLessonPackage(order.package);
+                  const { label, className } = getStatusLabel(order.status, order.endDate, tutorPkg);
 
                   return (
                     <div className="order-card" key={order.id}>
@@ -93,7 +103,26 @@ const OrdersPage = () => {
                       <p>📄 <strong>Sipariş ID:</strong> {order.id}</p>
                       <p>🗓️ <strong>Satın Alma:</strong> {formatDate(order.createdAt)}</p>
                       <p>📅 <strong>Bitiş Tarihi:</strong> {formatDate(order.endDate)}</p>
+                      {!tutorPkg && (
+                        <p>📅 <strong>Bitiş Tarihi:</strong> {formatDate(order.endDate)}</p>
+                        )}
                       <span className={`badge ${className}`}>{label}</span>
+
+                      {/* Tek/3/6 ders paketleri: Öğrenci paneline yönlendirme */}
+                                           {tutorPkg && (
+                        <div className="ordersPage-student-hint">
+                          <p style={{ marginTop: 8 }}>
+                            🔔 Talebinizin durumunu takip etmek için öğrenci paneline gidin.
+                          </p>
+                          <a
+                            href="/ogrenci"  /* rotanıza göre gerekirse /ogrenci-panel vs. yapın */
+                            className="refund-btn" /* mevcut buton stilini kullandık */
+                            style={{ marginTop: 6, display: "inline-block" }}
+                          >
+                            👩‍🎓 Öğrenci Paneline Git
+                          </a>
+                        </div>
+                      )}
 
                       <details className="billing-accordion">
                         <summary>🧾 Fatura Bilgileri</summary>

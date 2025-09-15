@@ -1,92 +1,233 @@
+/* ===========================
+   OrdersPage — Mobile-first CSS
+   =========================== */
+
+/* ---- Renk değişkenleri ---- */
+:root {
+  --bg: #f7f8fb;
+  --text: #1f2430;
+  --muted: #6b7280;
+
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --card-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 6px 12px rgba(0,0,0,0.04);
+
+  --primary: #0d6efd;
+  --primary-700: #0b5ed7;
+  --primary-800: #0a58ca;
+
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger:  #dc2626;
+  --info:    #0ea5e9;
+
+  --badge-bg: #eef2ff;
+  --radius: 12px;
+  --gap: 14px;
+}
+
+/* ---- Sayfa temeli ---- */
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.orders-page,
+.orders-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.orders-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap);
+  margin-bottom: 16px;
+}
+
+.orders-header h2,
+.orders-header h1 {
+  font-size: 20px;
+  margin: 0;
+}
+
+/* ---- Grid (kart listesi) ---- */
+.orders-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gap);
+}
+
+/*  ≥ 600px → 2 sütun */
+@media (min-width: 600px) {
+  .orders-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/*  ≥ 1024px → 3 sütun */
+@media (min-width: 1024px) {
+  .orders-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ---- Kart ---- */
 .order-card {
-  background: #fff;
-  border: 1px solid #ddd;
-  margin-bottom: 1rem;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  transition: 0.3s ease;
-}
-h3 {
-    justify-content: center;
-    padding-bottom: 15px;
-}
-.order-card:hover {
-  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-}
-.badge {
-  padding: 0.3em 0.6em;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-.badge-active { background-color: #0ead33; color: white; }
-.badge-expired { background-color: #dc3545; color: white; }
-.badge-requested { background-color: #fd7e14; color: white; }
-.badge-refunded { background-color: #f01607; color: white; }
-.badge-failed {background-color: #db0700; color: white;}
-
-
-.billing-accordion summary {
-  cursor: pointer;
-  color: #007bff;
-  margin-top: 10px;
-}
-.billing-info {
-  margin-top: 10px;
-  padding: 10px;
-  background: #f8f9fa;
-  border-radius: 6px;
-  border-left: 4px solid #007bff;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.refund-btn {
-  background-color: #ffc107;
-  color: black;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: background 0.2s ease;
-}
-.refund-btn:hover {
-  background-color: #e0a800;
-}
-.refund-waiting {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background-color: #fff3cd; /* sarımsı uyarı tonu */
-  border: 1px solid #ffeeba;
-  color: #856404;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.coach-info {
-  margin-top: 10px;
-  padding: 10px;
-  background-color: #f1f8e9;
-  border-left: 4px solid #8bc34a;
-  border-radius: 5px;
-}
-.coach-info h4 {
+.order-card h3 {
   margin: 0 0 6px;
-  color: #558b2f;
-}
-.ordersPage-whatsapp-support-btn {
-  display: inline-block;
-  margin-top: 12px;
-  background-color: #025721;
-  color: white;
-  padding: 4px 6px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
+  font-size: 16px;
+  line-height: 1.25;
 }
 
-.ordersPage-whatsapp-support-btn:hover {
-  background-color: #1ebc59;
+.order-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Meta satırlarını minik aralıklarla göster */
+.order-card p + p { margin-top: 4px; }
+
+/* Kartın alt aksiyon alanı */
+.order-card .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* ---- Rozetler ---- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  width: max-content;
+  background: var(--badge-bg);
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+/* Duruma göre renkler */
+.badge-active    { background: rgba(22,163,74,0.08);  color: var(--success); border-color: rgba(22,163,74,0.2); }
+.badge-expired   { background: rgba(55,65,81,0.08);   color: #374151;        border-color: rgba(55,65,81,0.25); }
+.badge-failed    { background: rgba(220,38,38,0.08);  color: var(--danger);  border-color: rgba(220,38,38,0.2); }
+.badge-refunded  { background: rgba(14,165,233,0.08); color: var(--info);    border-color: rgba(14,165,233,0.2); }
+.badge-requested { background: rgba(245,158,11,0.1);  color: var(--warning); border-color: rgba(245,158,11,0.25); }
+
+/* ---- Butonlar ---- */
+.refund-btn,
+.orders-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #ffe69c;        /* mevcut refund buton teması */
+  color: #5a3e00;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;      /* <a> olarak da kullanılabiliyor */
+  transition: transform .05s ease, filter .2s ease;
+}
+
+.refund-btn:hover,
+.orders-btn:hover { filter: brightness(0.98); }
+.refund-btn:active,
+.orders-btn:active { transform: translateY(1px); }
+
+.orders-btn--primary {
+  background: var(--primary);
+  color: #fff;
+}
+.orders-btn--primary:hover  { filter: brightness(0.98); }
+.orders-btn--primary:active { transform: translateY(1px); }
+
+/* ---- Boş durum ---- */
+.orders-empty {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 20px;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* ---- Öğrenci paneline yönlendirme bloğu ---- */
+.ordersPage-student-hint {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: rgba(13,110,253,0.06);
+  border: 1px solid rgba(13,110,253,0.25);
+  border-left: 4px solid var(--primary);
+  border-radius: 8px;
+}
+
+.ordersPage-student-hint p {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #0b3c8a;
+}
+
+/* Bu blok içindeki butonu maviye çek */
+.ordersPage-student-hint .refund-btn {
+  display: inline-block;
+  margin-top: 6px;
+  background-color: var(--primary);
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+.ordersPage-student-hint .refund-btn:hover { background-color: var(--primary-700); }
+.ordersPage-student-hint .refund-btn:active { background-color: var(--primary-800); }
+.ordersPage-student-hint .refund-btn:focus  { outline: 2px solid rgba(13,110,253,0.35); outline-offset: 2px; }
+
+/* ---- Mobil optimizasyonları ---- */
+@media (max-width: 480px) {
+  .orders-header { flex-direction: column; align-items: flex-start; }
+  .order-card { padding: 12px; }
+  .order-card h3 { font-size: 15px; }
+  .order-card p { font-size: 13px; }
+  .ordersPage-student-hint .refund-btn { width: 100%; text-align: center; }
+}
+
+/* ---- Erişilebilirlik ve tercihler ---- */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
+
+/* Basit dark-mode (isteğe bağlı) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0c111b;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --card-bg: #111827;
+    --card-border: #1f2937;
+    --badge-bg: #0b1220;
+  }
+  .ordersPage-student-hint p { color: #cfe0ff; }
 }

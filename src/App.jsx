@@ -148,7 +148,6 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
 
 ******** ozel ders icin ogrenci tarafi ********
 
-talebin durumu duzgun degil hepsi odendi olarak gozukuyor
 reddedilenler ayri degil
 tamamlanmis dersler onaylanmis derslerden silinsin tamamlanmis sekmesini acalim onaylanmisdan silinsin
 
