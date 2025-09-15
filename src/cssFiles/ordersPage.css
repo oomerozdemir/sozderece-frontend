@@ -32,12 +32,29 @@ body {
   color: var(--text);
 }
 
-.orders-page,
-.orders-container {
-  max-width: 1080px;
-  margin: 0 auto;
+.orders-page {
   padding: 16px;
+  display: block;            
 }
+
+.orders-center {
+  width: 100%;
+  max-width: 780px;         
+  margin-inline: auto;       
+}
+
+/* Listeyi tek kolon yap, ortadaki kolonda tut */
+.order-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;          /* grid yerine basit kolon */
+  flex-direction: column; /* tek sütun */
+  gap: var(--gap);
+}
+
+
+
 
 .orders-header {
   display: flex;
@@ -51,27 +68,6 @@ body {
 .orders-header h1 {
   font-size: 20px;
   margin: 0;
-}
-
-/* ---- Grid (kart listesi) ---- */
-.orders-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--gap);
-}
-
-/*  ≥ 600px → 2 sütun */
-@media (min-width: 600px) {
-  .orders-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/*  ≥ 1024px → 3 sütun */
-@media (min-width: 1024px) {
-  .orders-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 /* ---- Kart ---- */
@@ -204,6 +200,11 @@ body {
 .ordersPage-student-hint .refund-btn:hover { background-color: var(--primary-700); }
 .ordersPage-student-hint .refund-btn:active { background-color: var(--primary-800); }
 .ordersPage-student-hint .refund-btn:focus  { outline: 2px solid rgba(13,110,253,0.35); outline-offset: 2px; }
+
+/* Başlık/boş durum da dar kolona uyumlu gözüksün */
+.orders-header { max-width: 780px; margin: 0 auto 16px; }
+.orders-empty  { max-width: 780px; margin: 0 auto; }
+
 
 /* ---- Mobil optimizasyonları ---- */
 @media (max-width: 480px) {
