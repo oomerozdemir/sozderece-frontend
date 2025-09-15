@@ -192,61 +192,15 @@ function RequestsPanel() {
 const rejectRequest = async (reqId) => {
   const token = localStorage.getItem("token");
   if (!token) return alert("Oturum bulunamadı.");
-
-  // UI onayı
-  if (!window.confirm("Bu talebe ait tüm saatler iptal edilecek. Devam edilsin mi?")) {
-    return;
-  }
+  if (!window.confirm("Bu talebe ait tüm saatler iptal edilecek ve talep reddedilecek. Devam edilsin mi?")) return;
 
   try {
-    // Listedeki talebi yakala
-    const req = (items || []).find((r) => r.id === reqId);
-    if (!req) throw new Error("Talep bulunamadı.");
-
-    // Aktif (iptal olmayan) tüm slotları topla
-    const all = [
-      ...(req.appointments || []),
-      ...(req.appointmentsConfirmed || []),
-    ].filter(a => String(a?.status || "").toUpperCase() !== "CANCELLED");
-
-    // Her bir randevuyu CANCELLED yap
-    if (all.length > 0) {
-      await Promise.all(
-        all.map(a =>
-          axios.patch(
-            `/api/v1/ogretmen/appointments/${a.id}/status`,
-            { status: "CANCELLED" },
-            { headers: { Authorization: `Bearer ${token}` } }
-          )
-        )
-      );
-    }
-
-    try {
-      await axios.patch(
-        `/api/v1/student-requests/${reqId}`,
-        { status: "CANCELLED" },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-    } catch (_) {}
-
-    await load();
-
-    setItems(list =>
-      list.map(r =>
-        r.id === reqId
-          ? {
-              ...r,
-              status: "CANCELLED",
-              appointments: (r.appointments || []).map(a => ({ ...a, status: "CANCELLED" })),
-              appointmentsConfirmed: (r.appointmentsConfirmed || []).map(a => ({ ...a, status: "CANCELLED" })),
-            }
-          : r
-      )
+    await axios.post(
+      `/api/v1/ogretmen/requests/${reqId}/cancel`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
     );
-
-   
-    window.dispatchEvent(new Event("refresh-slots"));
+    await load(); // ❗ yalnızca load: kalıcı statüyü server’dan çek
   } catch (e) {
     alert(e?.response?.data?.message || e.message || "Talep reddedilemedi.");
   }
