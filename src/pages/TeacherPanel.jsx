@@ -25,13 +25,7 @@ function RequestsPanel() {
   const STR = (v) => String(v ?? "");
   const APPT = (a) => STR(a?.status).toUpperCase();
   const isActive = (a) => APPT(a) !== "CANCELLED";
-const isPackageStudent = (r = {}) => {
-  if (typeof r.isPackage === "boolean") return r.isPackage;      
-  const fromSlug  = Boolean(r.packageSlug);
-  const fromCount = Number(r.lessonsCount) > 1;
-  const freeUnit  = Number(r.packageUnitPrice) === 0;
-  return fromSlug || fromCount || freeUnit;
-};
+const isPackageStudent = (r = {}) => r.isFreeRight === true;;
 
   const hasPendingActive = (r) =>
     (r.appointments || []).some((a) => APPT(a) !== "CANCELLED");
