@@ -136,6 +136,8 @@ export default App;
 
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   3-ogretmen panelı duzenlemesı
+
+  ogretmen panelınde paket ogrencileri sekmesinde tüm talepler gozukuyor bunu kontrol edelim nerde yanlislik yaptik
       
       gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
   
@@ -144,6 +146,8 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
 
 
 ******** ozel ders icin ogrenci tarafi ********
+
+ogrencipanelinde tamamlandi diye isaretlerken ders talebini her birini ayri olarak degerlendirelim
 
   -bir chatbot yeri yapabiliriz ogretmen talebi onayladiginda konusabilecekleri ve iletisim saglayacaklari kolay bir yer olur.
   
