@@ -55,7 +55,9 @@ export const PACKAGES = {
 
 
     ],
-    note: "Bu pakette size özel bir program hazırlanır ve 2 haftada bir durum analizi yapılır.Günlük takip yoktur."
+    note: "Bu pakette size özel bir program hazırlanır ve 2 haftada bir durum analizi yapılır.Günlük takip yoktur.",
+    freeLessons: 1,
+    freeLessonsPeriod: "monthly",
   },
 
   /* 3) SADECE KOÇLUK (mevcut ana paket) */
@@ -120,7 +122,9 @@ export const PACKAGES = {
       
 
     ],
-    note: "Bu pakette tam kapsamlı koçluk + ücretsiz 3 özel ders hakkı tanınmaktadır."
+    note: "Bu pakette tam kapsamlı koçluk + ücretsiz 3 özel ders hakkı tanınmaktadır.",
+    freeLessons: 2,
+    freeLessonsPeriod: "monthly",
   },
 };
 

@@ -6,6 +6,7 @@ import trLocale from "date-fns/locale/tr";
 import RefundModal from "../components/RefundModal";
 import TopBar from "../components/TopBar";
 import Navbar from "../components/navbar";
+import { useNavigate } from "react-router-dom"; // ✅ eklendi
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
@@ -13,6 +14,12 @@ const OrdersPage = () => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
+  // ✅ Ücretsiz haklar için state
+  const [freeRights, setFreeRights] = useState({ items: [], remaining: 0 });
+
+  const navigate = useNavigate(); // ✅ eklendi
+
+  // Siparişleri çek
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -28,6 +35,21 @@ const OrdersPage = () => {
       }
     };
     fetchOrders();
+  }, []);
+
+  // ✅ Ücretsiz hakları çek
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await axios.get("/api/v1/ogrenci/free-rights", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        setFreeRights(data || { items: [], remaining: 0 });
+      } catch (e) {
+        console.warn("free-rights fetch failed", e);
+        setFreeRights({ items: [], remaining: 0 });
+      }
+    })();
   }, []);
 
   const formatDate = (dateStr) => {
@@ -77,6 +99,12 @@ const OrdersPage = () => {
     }
   };
 
+  // ✅ “Bu paketle ders seç” butonu
+  const goSelectWithPackage = (pkgSlug) => {
+    const qs = new URLSearchParams({ useFreeRight: "1", pkg: pkgSlug });
+    navigate(`/ogretmen-sec?${qs.toString()}`);
+  };
+
   return (
     <>
       <TopBar />
@@ -87,6 +115,46 @@ const OrdersPage = () => {
             <main className="account-main">
               <section className="info-card modern-form">
                 <h2>📦 Siparişlerim</h2>
+
+                {/* ✅ Ücretsiz ders hakları özeti */}
+                <div className="order-free-rights" style={{ marginBottom: 16 }}>
+                  {freeRights.remaining > 0 ? (
+                    <div className="badge badge-active" style={{ display: "inline-block", marginBottom: 8 }}>
+                      🎁 Kalan ücretsiz ders hakkın: <strong>{freeRights.remaining}</strong>
+                    </div>
+                  ) : (
+                    <div className="muted" style={{ marginBottom: 8 }}>
+                      🎁 Şu an ücretsiz ders hakkın bulunmuyor.
+                    </div>
+                  )}
+
+                  {/* Paket bazında liste + CTA */}
+                  {freeRights.items?.length > 0 && (
+                    <ul className="order-list" style={{ marginTop: 8 }}>
+                      {freeRights.items.map((i) => (
+                        <li key={i.packageSlug} className="order-card">
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+                            <div>
+                              <div style={{ fontWeight: 600 }}>{i.packageSlug}</div>
+                              <div className="muted">
+                                Dönem: {i.period} • Toplam: {i.total} • Kullanılan: {i.used} • Kalan: {i.remaining}
+                              </div>
+                            </div>
+                            {i.remaining > 0 && (
+                              <button
+                                onClick={() => goSelectWithPackage(i.packageSlug)}
+                                className="refund-btn"
+                                title="Bu paketle ücretsiz ders saati seç"
+                              >
+                                ➕ Bu paketle ders seç
+                              </button>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
 
                 {loading ? (
                   <p>🔄 Siparişler yükleniyor...</p>
@@ -118,7 +186,7 @@ const OrdersPage = () => {
                                 🔔 Talebinizin durumunu takip etmek için öğrenci paneline gidin.
                               </p>
                               <a
-                                href="/student/dashboard" // rotanıza göre gerekirse /ogrenci-panel
+                                href="/student/dashboard" // rotanıza göre güncelleyin
                                 className="refund-btn"
                                 style={{ marginTop: 6, display: "inline-block" }}
                               >

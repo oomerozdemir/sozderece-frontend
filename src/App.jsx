@@ -145,9 +145,6 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
 
 ******** ozel ders icin ogrenci tarafi ********
 
-reddedilenler ayri degil
-tamamlanmis dersler onaylanmis derslerden silinsin tamamlanmis sekmesini acalim onaylanmisdan silinsin
-
   -bir chatbot yeri yapabiliriz ogretmen talebi onayladiginda konusabilecekleri ve iletisim saglayacaklari kolay bir yer olur.
   
 *******************************ogrenci tarafi hoca secerken ki sorunlar ==>***********************

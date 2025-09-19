@@ -25,6 +25,8 @@ function RequestsPanel() {
   const STR = (v) => String(v ?? "");
   const APPT = (a) => STR(a?.status).toUpperCase();
   const isActive = (a) => APPT(a) !== "CANCELLED";
+  const isPackageStudent = (r = {}) =>
+  Boolean(r.packageSlug || r.packageTitle);
 
   const hasPendingActive = (r) =>
     (r.appointments || []).some((a) => APPT(a) !== "CANCELLED");
@@ -217,24 +219,28 @@ function RequestsPanel() {
     return "pending";
   };
 
-  const groups = useMemo(() => {
-    const g = { pending: [], approved: [], rejected: [], all: [] };
-    for (const r of items) {
-      const b = bucketOf(r);
-      g[b].push(r);
-      g.all.push(r);
-    }
-    return g;
-  }, [items]);
+const groups = useMemo(() => {
+  const g = { pending: [], approved: [], rejected: [], package: [], all: [] };
+  for (const r of items) {
+    if (isPackageStudent(r)) g.package.push(r);
 
-  const counts = {
-    pending: groups.pending.length,
-    approved: groups.approved.length,
-    rejected: groups.rejected.length,
-    all: groups.all.length,
-  };
+    const b = bucketOf(r);
+    g[b].push(r);
+    g.all.push(r);
+  }
+  return g;
+}, [items]);
 
-  const list = groups[tab] || [];
+
+const counts = {
+  pending: groups.pending.length,
+  approved: groups.approved.length,
+  rejected: groups.rejected.length,
+  package: groups.package.length,   
+  all: groups.all.length,
+};
+  const list = tab === "package" ? groups.package : (groups[tab] || []);
+
 
   return (
     <div className="tp-section">
@@ -278,6 +284,16 @@ function RequestsPanel() {
         >
           Reddedilmiş <span className="tp-chip danger">{counts.rejected}</span>
         </button>
+
+          <button
+            type="button"
+            className={`tp-tab ${tab === "package" ? "active" : ""}`}
+            onClick={() => setTab("package")}
+          >
+            Paket Öğrencileri <span className="tp-chip">{counts.package}</span>
+          </button>
+
+
         <button
           type="button"
           className={`tp-tab ${tab === "all" ? "active" : ""}`}
@@ -310,7 +326,9 @@ function RequestsPanel() {
                       {r.student?.phone ? <> • {r.student.phone}</> : null}
                     </div>
                   </div>
-                  <div className="tp-badge">{r.packageTitle || "Paket"}</div>
+                  {isPackageStudent(r) && (
+                    <div className="tp-badge">{r.packageTitle || "Paket"}</div>
+                  )}
                 </div>
 
                 <div className="tp-card-row">

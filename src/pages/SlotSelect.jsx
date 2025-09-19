@@ -7,7 +7,8 @@ import "../cssFiles/slot-select.css";
 
 export default function SlotSelect() {
   const navigate = useNavigate();
-  const qs = new URLSearchParams(useLocation().search);
+  const location = useLocation(); // ✅ sabit referans
+  const qs = new URLSearchParams(location.search);
 
   // İlk iki adımdan gelen tüm veriler
   const slug         = qs.get("slug") || "";
@@ -20,7 +21,7 @@ export default function SlotSelect() {
   const note         = qs.get("note") || "";
   const qty          = Math.max(1, Number(qs.get("qty") || 1));
 
-  const packageSlug   = qs.get("packageSlug") || "";
+  const packageSlug   = qs.get("packageSlug") || qs.get("pkg") || ""; // OrdersPage'den gelebilir
   const packageTitle  = qs.get("packageTitle") || "Özel ders paketi";
   const unitPrice     = Number(qs.get("unitPrice") || 0);       // kuruş
   const discountRate  = Number(qs.get("discountRate") || 0);    // %
@@ -44,6 +45,8 @@ export default function SlotSelect() {
 
   // kullanıcı seçimleri
   const [picked, setPicked] = useState([]); // {start, end, mode?}
+  const params = new URLSearchParams(location.search);
+  const useFreeRight = params.get("useFreeRight") === "1"; // ✅ ücretsiz hak modu
 
   // --- Auth ---
   useEffect(() => {
@@ -177,15 +180,55 @@ export default function SlotSelect() {
     new Date(iso).toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" });
 
   /* ============================
-     KAYDET → TALEP + SEPET
+     KAYDET → (Ücretsiz ise) DOĞRUDAN TALEP | (Normal) TALEP + SEPET
      ============================ */
   const saveCreateAndGoCart = async () => {
-    if (!packageSlug || !packageTitle || !Number.isFinite(unitPrice) || unitPrice <= 0) {
-      alert("Paket bilgisi eksik. Lütfen paket seçiminden yeniden başlayın.");
-      return;
-    }
+    // Ortak doğrulama
     if (picked.length !== qty) {
       alert(`Lütfen ${qty} adet ders saati seçiniz.`);
+      return;
+    }
+
+    // ✅ ÜCRETSİZ HAK MODU: ödeme yok → doğrudan talep
+    if (useFreeRight) {
+      try {
+        const { data: createRes } = await axios.post(
+          "/api/v1/student-requests",
+          {
+            teacherSlug: slug,
+            subject, grade, mode, city, district, locationNote, note,
+            slots: picked,               // {start,end,mode}
+            packageSlug: packageSlug || undefined, // OrdersPage'den gelmiş olabilir
+            packageTitle,                // opsiyonel
+            unitPrice: 0,                // ücretsiz
+            useFreeRight: true,          // 🔑 backende sinyal
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        // istersen id'yi kaydedebilirsin ama direkt talepler sayfasına gidelim
+        localStorage.setItem(
+          "activeRequestIds",
+          JSON.stringify(
+            Array.isArray(createRes?.requestIds)
+              ? createRes.requestIds
+              : createRes?.id ? [createRes.id] : []
+          )
+        );
+
+        // Öğrenci talep listesine yönlendir
+        navigate("/profil/taleplerim", { replace: true });
+        return;
+      } catch (e) {
+        console.error(e);
+        alert(e?.response?.data?.message || "Talep oluşturulamadı. Ücretsiz haklarınızı kontrol edin.");
+        return;
+      }
+    }
+
+    // 💳 NORMAL MOD: sepete/ödeme akışı
+    if (!packageSlug || !packageTitle || !Number.isFinite(unitPrice) || unitPrice <= 0) {
+      alert("Paket bilgisi eksik. Lütfen paket seçiminden yeniden başlayın.");
       return;
     }
 
@@ -251,11 +294,8 @@ export default function SlotSelect() {
         },
       }, { headers: { Authorization: `Bearer ${token}` }});
 
-      // 3) Sepete git (ya da doğrudan ödeme sayfasına da gönderebilirsin)
+      // 3) Sepete git
       navigate("/sepet", { replace: true });
-      // Alternatif: ödeme sayfasına direkt gitmek istersen:
-      // const qp = new URLSearchParams({ requestIds: ids.join(",") });
-      // navigate(`/odeme?${qp.toString()}`, { replace: true });
     } catch (e) {
       console.error(e);
       alert(e?.response?.data?.message || "Seçimler sepete eklenemedi.");
@@ -374,10 +414,13 @@ export default function SlotSelect() {
         <div className="tp-sublabel">Seçili: {picked.length} / {qty}</div>
         <button
           className="pkc-btn"
-          disabled={picked.length !== qty || !packageSlug || !unitPrice}
+          disabled={
+            picked.length !== qty ||
+            (!useFreeRight && (!packageSlug || !unitPrice)) // ✅ freeRight'ta zorlamıyoruz
+          }
           onClick={saveCreateAndGoCart}
         >
-          Sepete devam et
+          {useFreeRight ? "Talebi gönder" : "Sepete devam et"}
         </button>
       </div>
     </div>
