@@ -2,11 +2,6 @@
    OrdersPage — Light (white body)
    =========================== */
 
-/* Body’i beyaz yap ve okunaklı koyu metin kullan */
-body {
-  background: #ffffff !important;
-  color: #111827;
-}
 
 /* Bu sayfa için renk değişkenleri (yalnızca OrdersPage alanında geçerli) */
 .orders-page {

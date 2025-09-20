@@ -102,7 +102,7 @@ const OrdersPage = () => {
   // ✅ “Bu paketle ders seç” butonu
   const goSelectWithPackage = (pkgSlug) => {
     const qs = new URLSearchParams({ useFreeRight: "1", pkg: pkgSlug });
-    navigate(`/ogretmen-sec?${qs.toString()}`);
+    navigate(`/ogretmenler?${qs.toString()}`);
   };
 
   return (
