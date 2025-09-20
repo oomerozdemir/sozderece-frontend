@@ -11,7 +11,7 @@ const PackageDetail = () => {
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const isPaymentDisabled = false;
+  const isPaymentDisabled = true;
 
   // Liste & seçim
   const packageList = useMemo(() => Object.values(PACKAGES), []);

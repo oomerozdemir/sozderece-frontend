@@ -182,6 +182,9 @@ Her seyi ogrenci,ogretmen gozunden kontrol et eklemeler bittikten sonra
     -paketteki özel ders hakkı biten öğrencinin ona özel açılan öğretmen seçme butonu kaybolur ve gizlenir
     -admin panelinden bunları kontrol edebileceğimiz bir yer kurarız.Hali hazırda olan siparişlerim bölümünü güncelleyerek olabilir 
 
+*******************************ılerde sıstem yogunlasmasına karsı yapılabılecekler sorunlari ==>***********************
+ozel ders haklarindan gelen ile sectiginde bunu dikkata almadan secim yaptiriyor
+
 
 
 cerezlerin nasil calistigini ogren tamamiyle
