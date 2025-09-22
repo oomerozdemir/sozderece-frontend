@@ -215,7 +215,7 @@ function TeacherCard({ t }) {
           onClick={(e) => {
             e.preventDefault();
             const join = search && search.length ? `${search}&` : "?";
-            navigate(`/ogretmenler/${t.slug}/talep${join}`);
+            navigate(`/ogretmenler/${t.slug}/talep${join}useFreeRight=1`);
           }}
         >
           Ders talebi oluştur
