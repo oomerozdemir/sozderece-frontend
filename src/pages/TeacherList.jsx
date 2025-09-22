@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState, useLocation } from "react";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "../utils/axios";
 import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
 import "../cssFiles/teacher.css";
