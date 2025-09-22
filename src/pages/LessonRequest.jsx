@@ -13,6 +13,7 @@ export default function LessonRequest() {
   const pkg = params.get("pkg") || "";
 
   const [teacher, setTeacher] = useState(null);
+  const [freeRights, setFreeRights] = useState(null); // { items: [...], remaining: number }
   const [form, setForm] = useState({
     subject: "",
     grade: "",
@@ -26,8 +27,12 @@ export default function LessonRequest() {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await axios.get(`/api/v1/ogretmenler/${slug}`);
-        setTeacher(data.teacher);
+        const [tRes, rRes] = await Promise.allSettled([
+          axios.get(`/api/v1/ogretmenler/${slug}`),
+          axios.get("/api/v1/ogrenci/free-rights"),
+        ]);
+        if (tRes.status === "fulfilled") setTeacher(tRes.value.data.teacher);
+        if (rRes.status === "fulfilled") setFreeRights(rRes.value.data);
       } catch (e) {
         console.error(e);
       }
@@ -43,6 +48,17 @@ export default function LessonRequest() {
     }
   };
 
+  // Öğrencinin ücretsiz hakkı var mı? (paket bazlı varsa onu, yoksa toplam)
+  const hasFreeRight = () => {
+    const rights = freeRights || {};
+    const totalRem = Number(rights.remaining || 0);
+    if (pkg) {
+      const row = (rights.items || []).find((x) => x.packageSlug === pkg);
+      return row ? Number(row.remaining || 0) > 0 : false;
+    }
+    return totalRem > 0;
+  };
+
   const goPackageSelect = () => {
     if (!form.subject || !form.grade) {
       alert("Lütfen ders ve seviye seçiniz.");
@@ -52,7 +68,8 @@ export default function LessonRequest() {
       alert("Yüz yüze ders için il seçiniz.");
       return;
     }
-    // Tüm verileri paket sayfasına taşı
+
+    // Tüm verileri bir sonraki adıma taşı
     const qs = new URLSearchParams({
       slug,
       subject: form.subject,
@@ -63,16 +80,18 @@ export default function LessonRequest() {
       locationNote: form.locationNote || "",
       note: form.note || "",
     });
-      // ✅ Ücretsiz hak akışı: paket adımı atla → direkt slot seç
-   if (useFreeRight) {
-     qs.set("useFreeRight", "1");
-     if (pkg) qs.set("pkg", pkg);
-     qs.set("qty", "1");                 // varsayılan 1 saat
-     navigate(`/saat-sec?${qs.toString()}`, { replace: true });
-     return;
-   }
-   // Normal akış
-   navigate(`/paket-sec?${qs.toString()}`, { replace: true });
+
+    // ✅ Ücretsiz hak paramıyla geldiyse ama HAK YOKSA → normal paket akışına gidilsin
+    if (useFreeRight && hasFreeRight()) {
+      qs.set("useFreeRight", "1");
+      if (pkg) qs.set("pkg", pkg);
+      qs.set("qty", "1"); // varsayılan 1 saat
+      navigate(`/saat-sec?${qs.toString()}`, { replace: true });
+      return;
+    }
+
+    // Normal akış (ya da freeRight var gibi gelmiş ama hakkı yok)
+    navigate(`/paket-sec?${qs.toString()}`, { replace: true });
   };
 
   const districts = TR_DISTRICTS[form.city] || [];
@@ -160,7 +179,6 @@ export default function LessonRequest() {
             />
           </label>
 
-          {/* Talep GÖNDERMEK YOK; sadece paket seçime geç */}
           <button className="lr-btn" onClick={goPackageSelect}>
             Paket seç ve devam et
           </button>

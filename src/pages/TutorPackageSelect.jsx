@@ -33,15 +33,32 @@ export default function TutorPackageSelect() {
     }
   }, [token]); // eslint-disable-line
 
-// ✅ Ücretsiz hakla geldiyse: bu sayfayı atla → SlotSelect
- useEffect(() => {
-   if (!useFreeRight) return;
-   const pass = new URLSearchParams(qs);
-   pass.set("useFreeRight", "1");
-   if (pkg) pass.set("pkg", pkg);
-   if (!pass.get("qty")) pass.set("qty", "1");   // emniyet: qty yoksa 1
-   navigate(`/saat-sec?${pass.toString()}`, { replace: true });
- }, [useFreeRight, pkg]); // eslint-disable-line
+   // ✅ ÜCRETSİZ HAK ile geldiyse: hak VARSA atla, yoksa bu sayfada kalsın
+   useEffect(() => {
+     if (!useFreeRight) return;
+     (async () => {
+       try {
+         const { data } = await axios.get("/api/v1/ogrenci/free-rights");
+         const totalRem = Number(data?.remaining || 0);
+         let ok = totalRem > 0;
+         if (pkg) {
+           const row = (data?.items || []).find((x) => x.packageSlug === pkg);
+           ok = row ? Number(row.remaining || 0) > 0 : false;
+         }
+         if (ok) {
+           const pass = new URLSearchParams(qs);
+           pass.set("useFreeRight", "1");
+           if (pkg) pass.set("pkg", pkg);
+           if (!pass.get("qty")) pass.set("qty", "1");
+           navigate(`/saat-sec?${pass.toString()}`, { replace: true });
+         }
+         // ok değilse hiçbir şey yapma → paket sayfası normal açılır
+       } catch (e) {
+         // free-right sorgusu fail ederse, akışı bozmayalım → paket sayfasında kal
+         console.warn("free-right check failed:", e?.message || e);
+       }
+     })();
+   }, [useFreeRight, pkg]); // eslint-disable-line
 
   // TL/kuruş ölçeğini otomatik algıla (10000 üstünü kuruş say → TL'ye çevir)
   const toTL = (val) => {
