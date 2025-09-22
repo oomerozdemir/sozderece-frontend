@@ -7,6 +7,8 @@ import "../cssFiles/teacher.css";
 export default function TutorPackageSelect() {
   const navigate = useNavigate();
   const qs = new URLSearchParams(useLocation().search);
+  const useFreeRight = qs.get("useFreeRight") === "1";
+  const pkg = qs.get("pkg") || "";
 
   // İlk sayfadan gelen veriler
   const slug         = qs.get("slug") || "";
@@ -31,18 +33,15 @@ export default function TutorPackageSelect() {
     }
   }, [token]); // eslint-disable-line
 
-  // Öğretmeni getir
-  useEffect(() => {
-    if (!slug) return;
-    (async () => {
-      try {
-        const { data } = await axios.get(`/api/v1/ogretmenler/${slug}`);
-        setTeacher(data.teacher);
-      } catch (e) {
-        console.error(e);
-      }
-    })();
-  }, [slug]);
+// ✅ Ücretsiz hakla geldiyse: bu sayfayı atla → SlotSelect
+ useEffect(() => {
+   if (!useFreeRight) return;
+   const pass = new URLSearchParams(qs);
+   pass.set("useFreeRight", "1");
+   if (pkg) pass.set("pkg", pkg);
+   if (!pass.get("qty")) pass.set("qty", "1");   // emniyet: qty yoksa 1
+   navigate(`/saat-sec?${pass.toString()}`, { replace: true });
+ }, [useFreeRight, pkg]); // eslint-disable-line
 
   // TL/kuruş ölçeğini otomatik algıla (10000 üstünü kuruş say → TL'ye çevir)
   const toTL = (val) => {

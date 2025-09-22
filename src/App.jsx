@@ -53,6 +53,8 @@ const TeacherDetail = lazy(() => import("./pages/TeacherDetail.jsx"));
 const LessonRequest = lazy(() => import("./pages/LessonRequest.jsx"));
 const PackageSelect = lazy(() => import("./pages/TutorPackageSelect.jsx"));
 const SlotSelect = lazy(() => import("./pages/SlotSelect.jsx"));
+const RequestSuccess = lazy(() => import("./pages/RequestSuccess.jsx"));
+
 
 function App() {
   const location = useLocation();
@@ -108,6 +110,8 @@ function App() {
             <Route path="/paket-sec" element={<PackageSelect />} />
             {/* Randevu seçim sayfası (paket secimi sonrası) */}
             <Route path="/saat-sec" element={<SlotSelect />} />
+
+            <Route path="/talep-basarili" element={<PrivateRoute><RequestSuccess /></PrivateRoute>} />
 
             {/* Admin */}
             <Route path="/admin/*" element={<RoleRoute allowedRoles={["admin"]}><AdminApp /></RoleRoute>} />

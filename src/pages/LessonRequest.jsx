@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "../utils/axios";
 import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
 import "../cssFiles/teacher.css";
@@ -7,6 +7,10 @@ import "../cssFiles/teacher.css";
 export default function LessonRequest() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const useFreeRight = params.get("useFreeRight") === "1";
+  const pkg = params.get("pkg") || "";
 
   const [teacher, setTeacher] = useState(null);
   const [form, setForm] = useState({
@@ -59,7 +63,16 @@ export default function LessonRequest() {
       locationNote: form.locationNote || "",
       note: form.note || "",
     });
-    navigate(`/paket-sec?${qs.toString()}`, { replace: true });
+      // ✅ Ücretsiz hak akışı: paket adımı atla → direkt slot seç
+   if (useFreeRight) {
+     qs.set("useFreeRight", "1");
+     if (pkg) qs.set("pkg", pkg);
+     qs.set("qty", "1");                 // varsayılan 1 saat
+     navigate(`/saat-sec?${qs.toString()}`, { replace: true });
+     return;
+   }
+   // Normal akış
+   navigate(`/paket-sec?${qs.toString()}`, { replace: true });
   };
 
   const districts = TR_DISTRICTS[form.city] || [];

@@ -180,6 +180,8 @@ const listDescription = descParts.length
 
 function TeacherCard({ t }) {
   const navigate = useNavigate();
+
+  const { search } = useLocation();
   const cover = t.photoUrl || "https://placehold.co/400x240?text=Teacher";
 
   const showOnline = t.mode !== "FACE_TO_FACE" && typeof t.priceOnline === "number" && t.priceOnline > 0;
@@ -212,7 +214,8 @@ function TeacherCard({ t }) {
           className="tl-cta"
           onClick={(e) => {
             e.preventDefault();
-            navigate(`/ogretmenler/${t.slug}/talep`);
+            const join = search && search.length ? `${search}&` : "?";
+            navigate(`/ogretmenler/${t.slug}/talep${join}`);
           }}
         >
           Ders talebi oluştur

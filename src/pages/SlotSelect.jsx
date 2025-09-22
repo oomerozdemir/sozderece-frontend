@@ -189,7 +189,7 @@ export default function SlotSelect() {
       return;
     }
 
-    // ✅ ÜCRETSİZ HAK MODU: ödeme yok → doğrudan talep
+     // ✅ ÜCRETSİZ HAK MODU: ödeme yok → doğrudan talep + başarı sayfası
     if (useFreeRight) {
       try {
         const { data: createRes } = await axios.post(
@@ -206,19 +206,18 @@ export default function SlotSelect() {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        // istersen id'yi kaydedebilirsin ama direkt talepler sayfasına gidelim
-        localStorage.setItem(
-          "activeRequestIds",
-          JSON.stringify(
-            Array.isArray(createRes?.requestIds)
-              ? createRes.requestIds
-              : createRes?.id ? [createRes.id] : []
-          )
-        );
-
-        // Öğrenci talep listesine yönlendir
-        navigate("/profil/taleplerim", { replace: true });
-        return;
+     const requestIds = Array.isArray(createRes?.requestIds)
+       ? createRes.requestIds
+       : (createRes?.id ? [createRes.id] : []);
+     localStorage.setItem("activeRequestIds", JSON.stringify(requestIds));
+     // küçük özet → başarı sayfası
+     localStorage.setItem("lastRequestSummary", JSON.stringify({
+       requestIds,
+       teacherName: teacher ? `${teacher.firstName || ""} ${teacher.lastName || ""}`.trim() : null,
+       slots: picked,
+     }));
+     navigate("/talep-basarili", { replace: true });
+      return;
       } catch (e) {
         console.error(e);
         alert(e?.response?.data?.message || "Talep oluşturulamadı. Ücretsiz haklarınızı kontrol edin.");
