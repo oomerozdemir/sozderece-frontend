@@ -13,6 +13,7 @@ import {
 } from "chart.js";
 import AdminCoachPage from "../pages/AdminCoachPage";
 import AdminTeacherApprovals from "../pages/AdminTeacherApprovels";
+import AdminLessonRequests from "../pages/AdminLessonRequests";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
