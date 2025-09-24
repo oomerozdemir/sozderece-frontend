@@ -1,0 +1,198 @@
+/* ===============================
+   AdminLessonRequests — Styles
+   =============================== */
+
+.admin-lesson-requests {
+  padding: 20px;
+  color: #1f2937; /* gray-800 */
+}
+
+.admin-lesson-requests h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+
+/* --- Toolbar (opsiyonel filtre/arama alanı için) --- */
+.alr-toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.alr-input, .alr-select {
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid #e5e7eb; /* gray-200 */
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+}
+
+.alr-btn {
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid #111827; /* gray-900 */
+  background: #111827;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.alr-btn:disabled { opacity: .6; cursor: not-allowed; }
+.alr-btn--ghost {
+  background: #fff;
+  color: #111827;
+}
+
+/* --- Table container --- */
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border: 1px solid #e5e7eb; /* gray-200 */
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Sticky header for long lists */
+.admin-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f9fafb; /* gray-50 */
+  z-index: 1;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: #374151; /* gray-700 */
+  padding: 12px 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Rows */
+.admin-table tbody td {
+  font-size: 13px;
+  color: #111827;
+  padding: 12px 14px;
+  border-bottom: 1px solid #f3f4f6; /* gray-100 */
+  vertical-align: top;
+  line-height: 1.35;
+}
+
+/* Zebra */
+.admin-table tbody tr:nth-child(odd) td {
+  background: #fcfcfd;
+}
+
+/* Hover */
+.admin-table tbody tr:hover td {
+  background: #f9fafb;
+}
+
+/* Compact helpers */
+.alr-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  color: #4b5563; /* gray-600 */
+}
+
+/* Pills / badges */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  border: 1px solid transparent;
+}
+
+/* Status colors */
+.pill--ok {
+  background: #ecfdf5;            /* green-50 */
+  color: #065f46;                  /* green-800 */
+  border-color: #a7f3d0;           /* green-200 */
+}
+.pill--warn {
+  background: #fff7ed;            /* orange-50 */
+  color: #9a3412;                  /* orange-800 */
+  border-color: #fed7aa;           /* orange-200 */
+}
+.pill--error {
+  background: #fef2f2;            /* red-50 */
+  color: #991b1b;                  /* red-800 */
+  border-color: #fecaca;           /* red-200 */
+}
+.pill--info {
+  background: #eff6ff;            /* blue-50 */
+  color: #1e40af;                  /* blue-800 */
+  border-color: #bfdbfe;           /* blue-200 */
+}
+
+/* Warnings for full row (optional classes)
+   Bileşende koşullu style yerine bu sınıfları da kullanabilirsin. */
+.row-warn-pay-no-confirm td {
+  background: #fff7ed !important;  /* orange-50 */
+}
+.row-warn-conf-no-pay td {
+  background: #fef2f2 !important;  /* red-50 */
+}
+
+/* Small meta text */
+.muted {
+  color: #6b7280; /* gray-500 */
+  font-size: 12px;
+}
+
+/* Table badges for counts */
+.count-badge {
+  display: inline-block;
+  min-width: 24px;
+  padding: 2px 6px;
+  text-align: center;
+  border-radius: 6px;
+  background: #f3f4f6; /* gray-100 */
+  color: #111827;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Empty & loading states */
+.admin-lesson-requests .empty,
+.admin-lesson-requests .loading {
+  padding: 24px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Responsive: stack long columns on small screens */
+@media (max-width: 900px) {
+  .admin-table thead {
+    display: none;
+  }
+  .admin-table, .admin-table tbody, .admin-table tr, .admin-table td {
+    display: block;
+    width: 100%;
+  }
+  .admin-table tr {
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 8px;
+  }
+  .admin-table td {
+    border: none;
+    padding: 10px 14px;
+  }
+  .admin-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 4px;
+  }
+}

@@ -1,7 +1,7 @@
 // src/pages/AdminLessonRequests.jsx
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
-import "../cssFiles/admin.css";
+import "../cssFiles/adminLessonRequest.css";
 
 export default function AdminLessonRequests() {
   const [items, setItems] = useState([]);
