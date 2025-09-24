@@ -39,7 +39,7 @@ export default function RequestSuccess() {
         ) : null}
 
         <div className="reqsucc-actions">
-          <Link to="/profil/taleplerim" className="reqsucc-btn">Taleplerimi Gör</Link>
+          <Link to="/student/dashboard" className="reqsucc-btn">Taleplerimi Gör</Link>
           <Link to="/orders" className="reqsucc-link">Siparişlerim</Link>
         </div>
       </div>

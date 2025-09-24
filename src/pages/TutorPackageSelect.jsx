@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "../utils/axios";
+import { PACKAGE_CATALOG } from "../utils/packageCatalog"; // ⬅️ FE fallback
 
 export default function TutorPackageSelect() {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ export default function TutorPackageSelect() {
 
   const useFreeRight = qs.get("useFreeRight") === "1";
   const pkg = qs.get("pkg") || "";
-  const slug = qs.get("slug") || ""; // varsa öğretmen slug
+  const slug = qs.get("slug") || "";
   const subject = qs.get("subject") || "";
   const grade = qs.get("grade") || "";
   const mode = qs.get("mode") || "ONLINE";
@@ -18,18 +19,17 @@ export default function TutorPackageSelect() {
   const locationNote = qs.get("locationNote") || "";
   const note = qs.get("note") || "";
 
-  // --- Ücretsiz hak kontrol state'leri
-  const [frChecking, setFrChecking] = useState(useFreeRight); // sadece freeRight varsa kontrol yapıyoruz
-  const [frCanSkip, setFrCanSkip] = useState(false);          // hak varsa true
+  // Ücretsiz hak kontrol state'leri
+  const [frChecking, setFrChecking] = useState(useFreeRight);
+  const [frCanSkip, setFrCanSkip] = useState(false);
 
-  // --- Paket listesi state'leri (senin mevcut kodundaki isimlerle değiştir)
+  // Paket listesi state
   const [loading, setLoading] = useState(true);
   const [packages, setPackages] = useState([]);
 
   // 1) ÜCRETSİZ HAK KONTROLÜ
   useEffect(() => {
     if (!useFreeRight) {
-      // ücretsiz akış değil → kontrol yok
       setFrChecking(false);
       return;
     }
@@ -46,12 +46,8 @@ export default function TutorPackageSelect() {
           const row = (data?.items || []).find((x) => x.packageSlug === pkg);
           ok = row ? Number(row.remaining || 0) > 0 : false;
         }
-
-        if (ok) {
-          setFrCanSkip(true);
-        }
+        if (ok) setFrCanSkip(true);
       } catch (e) {
-        // Hata olsa bile sayfa açılsın; sadece skip etmeyiz.
         console.warn("free-right check failed:", e?.message || e);
       } finally {
         if (!cancelled) setFrChecking(false);
@@ -67,26 +63,34 @@ export default function TutorPackageSelect() {
       const pass = new URLSearchParams(qs);
       pass.set("useFreeRight", "1");
       if (pkg) pass.set("pkg", pkg);
-      if (!pass.get("qty")) pass.set("qty", "1"); // emniyet
+      if (!pass.get("qty")) pass.set("qty", "1");
       navigate(`/saat-sec?${pass.toString()}`, { replace: true });
     }
   }, [frChecking, frCanSkip]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // 3) Paketleri getir (skip etmiyorsak)
+  // 3) Paketleri getir (skip etmiyorsak). 404 → FE fallback
   useEffect(() => {
-    if (frChecking || frCanSkip) return; // skip edilecekse paket yüklemeye gerek yok
+    if (frChecking || frCanSkip) return;
 
     let cancelled = false;
     (async () => {
       try {
         setLoading(true);
-        // 🔽 Burayı kendi paket API'na göre uyarlayın
-        const { data } = await axios.get("/api/v1/paketler"); // örnek
+        const { data } = await axios.get("/api/v1/paketler");
         if (cancelled) return;
-        setPackages(Array.isArray(data?.items) ? data.items : (data?.packages || []));
+
+        const items = Array.isArray(data?.items) ? data.items : (data?.packages || []);
+        if (items.length) {
+          // BE şekli: { slug, title, description, price? }
+          setPackages(items);
+        } else {
+          // BE boş döndüyse fallback’e düş
+          setPackages(PACKAGE_CATALOG.map(toUiPkg));
+        }
       } catch (e) {
+        // 404/ ağ hatası → FE fallback
         console.error("packages fetch failed:", e?.message || e);
-        setPackages([]);
+        setPackages(PACKAGE_CATALOG.map(toUiPkg));
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -95,8 +99,20 @@ export default function TutorPackageSelect() {
     return () => { cancelled = true; };
   }, [frChecking, frCanSkip]);
 
+  // FE catalog → UI objesi
+  function toUiPkg(p) {
+    return {
+      slug: p.key,                               // UI "packageSlug"
+      title: p.aliases?.[0] || p.key,            // görünen isim
+      description:
+        p.period === "monthly"
+          ? `Aylık paket – ücretsiz ders hakkı: ${p.freeLessons}`
+          : `Tek seferlik – ücretsiz ders hakkı: ${p.freeLessons}`,
+      price: null,
+    };
+  }
+
   // --- Render ---
-  // 1) Free-right kontrol sürerken basit bir ekran
   if (frChecking) {
     return (
       <div className="pkg-page">
@@ -105,8 +121,6 @@ export default function TutorPackageSelect() {
     );
   }
 
-  // 2) Kontrol bitti ve skip edilecekse, yukarıdaki effect zaten navigate edecektir.
-  // Bu durumda kısa bir "yönlendiriliyor" mesajı gösterebiliriz (opsiyonel).
   if (frCanSkip) {
     return (
       <div className="pkg-page">
@@ -115,7 +129,6 @@ export default function TutorPackageSelect() {
     );
   }
 
-  // 3) Skip edilmeyecek → normal paket sayfası
   return (
     <div className="pkg-page">
       <h1>Paket Seçimi</h1>
@@ -128,7 +141,7 @@ export default function TutorPackageSelect() {
         <ul className="pkg-list">
           {packages.map((p) => (
             <li key={p.slug} className="pkg-card">
-              <div className="pkg-title">{p.title || p.name}</div>
+              <div className="pkg-title">{p.title}</div>
               {p.description ? <div className="pkg-desc">{p.description}</div> : null}
               <div className="pkg-actions">
                 <button
@@ -143,7 +156,7 @@ export default function TutorPackageSelect() {
                       locationNote,
                       note,
                       packageSlug: p.slug,
-                      packageTitle: p.title || p.name || "",
+                      packageTitle: p.title || "",
                     });
                     navigate(`/saat-sec?${pass.toString()}`);
                   }}
