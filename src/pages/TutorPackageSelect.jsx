@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "../utils/axios";
-import { PACKAGE_CATALOG } from "../utils/packageCatalog"; // ⬅️ FE fallback
 
 export default function TutorPackageSelect() {
   const navigate = useNavigate();
@@ -33,13 +32,11 @@ export default function TutorPackageSelect() {
       setFrChecking(false);
       return;
     }
-
     let cancelled = false;
     (async () => {
       try {
         const { data } = await axios.get("/api/v1/ogrenci/free-rights");
         if (cancelled) return;
-
         const totalRem = Number(data?.remaining || 0);
         let ok = totalRem > 0;
         if (pkg) {
@@ -53,7 +50,6 @@ export default function TutorPackageSelect() {
         if (!cancelled) setFrChecking(false);
       }
     })();
-
     return () => { cancelled = true; };
   }, [useFreeRight, pkg]);
 
@@ -68,72 +64,43 @@ export default function TutorPackageSelect() {
     }
   }, [frChecking, frCanSkip]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // 3) Paketleri getir (skip etmiyorsak). 404 → FE fallback
+  // 3) Paketleri getir (skip etmiyorsak) — BE: /api/packages
   useEffect(() => {
     if (frChecking || frCanSkip) return;
-
     let cancelled = false;
     (async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get("/api/v1/paketler");
+        const { data } = await axios.get("/api/packages");
         if (cancelled) return;
-
-        const items = Array.isArray(data?.items) ? data.items : (data?.packages || []);
-        if (items.length) {
-          // BE şekli: { slug, title, description, price? }
-          setPackages(items);
-        } else {
-          // BE boş döndüyse fallback’e düş
-          setPackages(PACKAGE_CATALOG.map(toUiPkg));
-        }
+        const items = Array.isArray(data?.packages) ? data.packages : [];
+        // BE → FE mapping: { id, name, description, price } → { slug, title, description, unitPrice }
+        const mapped = items.map(p => ({
+          slug: (p.name || "").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""), // basit slug
+          title: p.name || "",
+          description: p.description || "",
+          unitPrice: typeof p.price === "number" ? Math.round(p.price * 100) : null, // varsayım: BE 'price' TL; kuruşa çevir
+        }));
+        setPackages(mapped);
       } catch (e) {
-        // 404/ ağ hatası → FE fallback
         console.error("packages fetch failed:", e?.message || e);
-        setPackages(PACKAGE_CATALOG.map(toUiPkg));
+        setPackages([]); // fallback: boş göster
       } finally {
         if (!cancelled) setLoading(false);
       }
     })();
-
     return () => { cancelled = true; };
   }, [frChecking, frCanSkip]);
-
-  // FE catalog → UI objesi
-  function toUiPkg(p) {
-    return {
-      slug: p.key,                               // UI "packageSlug"
-      title: p.aliases?.[0] || p.key,            // görünen isim
-      description:
-        p.period === "monthly"
-          ? `Aylık paket – ücretsiz ders hakkı: ${p.freeLessons}`
-          : `Tek seferlik – ücretsiz ders hakkı: ${p.freeLessons}`,
-      price: null,
-    };
-  }
-
-  // --- Render ---
-  if (frChecking) {
-    return (
-      <div className="pkg-page">
-        <div className="pkg-loading">Ücretsiz hak kontrol ediliyor…</div>
-      </div>
-    );
-  }
-
-  if (frCanSkip) {
-    return (
-      <div className="pkg-page">
-        <div className="pkg-loading">Uygun ücretsiz hakkın bulundu, saat seçimine yönlendiriliyorsun…</div>
-      </div>
-    );
-  }
 
   return (
     <div className="pkg-page">
       <h1>Paket Seçimi</h1>
 
-      {loading ? (
+      {frChecking ? (
+        <div className="pkg-loading">Ücretsiz hak kontrol ediliyor…</div>
+      ) : frCanSkip ? (
+        <div className="pkg-loading">Uygun ücretsiz hakkın bulundu, saat seçimine yönlendiriliyorsun…</div>
+      ) : loading ? (
         <div className="pkg-loading">Yükleniyor…</div>
       ) : packages.length === 0 ? (
         <div className="pkg-empty">Şu an görüntülenecek paket bulunamadı.</div>
@@ -155,8 +122,8 @@ export default function TutorPackageSelect() {
                       district,
                       locationNote,
                       note,
-                      packageSlug: p.slug,
-                      packageTitle: p.title || "",
+                      packageSlug: p.slug || "",       // FE slug
+                      packageTitle: p.title || "",      // görünen isim (BE name)
                     });
                     navigate(`/saat-sec?${pass.toString()}`);
                   }}
