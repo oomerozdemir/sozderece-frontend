@@ -30,6 +30,7 @@ const AdminDashboard = () => {
   );
   const [editingBilling, setEditingBilling] = useState(null);
   const [updatedBillingInfo, setUpdatedBillingInfo] = useState({});
+  const [requestHealth, setRequestHealth] = useState([]);
   const [view, setView] = useState("user");
 
   useEffect(() => {
@@ -37,19 +38,14 @@ const AdminDashboard = () => {
       const token = localStorage.getItem("token");
       try {
         const [userRes, orderRes] = await Promise.all([
-          axios.get("/api/admin/users", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-         
-          
-          axios.get("/api/admin/orders", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          
+          axios.get("/api/admin/users", {headers: { Authorization: `Bearer ${token}` }, }),
+          axios.get("/api/admin/orders", {headers: { Authorization: `Bearer ${token}` },}),
+          axios.get("/api/admin/lesson-requests/health", { headers: { Authorization: `Bearer ${token}` } }),
         ]);
 
         setUsers(userRes.data);
         setOrders(orderRes.data);
+        setRequestHealth(requestRes.data?.items || []);
       } catch (error) {
         console.error("Admin verileri alınamadı:", error);
       }
@@ -323,11 +319,13 @@ const handleSendReminders = async () => {
       <div className="admin-tabs">
         <button onClick={() => setView("coaches")} className={view === "coaches" ? "active-tab" : ""}>👨‍🏫 Koçlar</button>
         <button onClick={() => setView("teacher-approvals")} className={view === "teacher-approvals" ? "active-tab" : ""}>🧑‍🏫 Öğretmen Onayları</button>
+        <button onClick={() => setView("requests")} className={view === "requests" ? "active-tab" : ""}>🧾 Ders Talepleri</button>
       </div>
   
 
 {view === "coaches" && <AdminCoachPage />}
 {view === "teacher-approvals" && <AdminTeacherApprovals />}
+{view === "lesson-requests" && <AdminLessonRequests />}
 
 
 
