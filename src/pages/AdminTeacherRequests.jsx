@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
-import "../cssFiles/admin-lesson-requests.css"; // mevcut tablo css'ini kullan
+import "../cssFiles/adminLessonRequest.css";
+
 
 export default function AdminTeacherRequests() {
   const [rows, setRows] = useState([]);
