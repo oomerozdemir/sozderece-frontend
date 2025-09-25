@@ -14,6 +14,7 @@ import {
 import AdminCoachPage from "../pages/AdminCoachPage";
 import AdminTeacherApprovals from "../pages/AdminTeacherApprovels";
 import AdminLessonRequests from "../pages/AdminLessonRequests";
+import AdminTeacherRequests from "../pages/AdminTeacherRequests";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -318,12 +319,20 @@ const handleSendReminders = async () => {
         <button onClick={() => setView("coaches")} className={view === "coaches" ? "active-tab" : ""}>👨‍🏫 Koçlar</button>
         <button onClick={() => setView("teacher-approvals")} className={view === "teacher-approvals" ? "active-tab" : ""}>🧑‍🏫 Öğretmen Onayları</button>
         <button onClick={() => setView("requests")} className={view === "requests" ? "active-tab" : ""}>🧾 Ders Talepleri</button>
+        <button
+  onClick={() => setView("teacher-requests")}
+  className={view === "teacher-requests" ? "active-tab" : ""}
+>
+  👩‍🏫 Öğretmen Talep Özeti
+</button>
       </div>
   
 
 {view === "coaches" && <AdminCoachPage />}
 {view === "teacher-approvals" && <AdminTeacherApprovals />}
 {view === "lesson-requests" && <AdminLessonRequests />}
+{view === "teacher-requests" && <AdminTeacherRequests />}
+
 
 
 
