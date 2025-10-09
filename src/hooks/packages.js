@@ -1,6 +1,6 @@
 
 export const PACKAGES = {
-  /* 1) ÖZEL DERS – dinamik fiyat (öğretmen belirler) */
+  /* 1) ÖZEL DERS – dinamik fiyat (öğretmen belirler) 
   "ozel-ders-paketi": {
     slug: "ozel-ders-paketi",
     title: "Özel Ders Paketi",
@@ -24,9 +24,9 @@ export const PACKAGES = {
       { title: "Özel dersler ne kadar sürüyor?", content: "Özel derslerimizin süresi 1 saattir." },
     ],
     note: "Öğretmen ücreti öğretmene göre değişir."
-  },
+  },*/
 
-  /* 2) ÖZEL DERS + HAZIR PAKET (ara paket) */
+  /* 2) ÖZEL DERS + HAZIR PAKET (ara paket) 
   "ozel-ders-plus-hazir-2026": {
     slug: "ozel-ders-plus-hazir-2026",
     title: "Özel Ders + Seviyenize Göre Çalışma Programı",
@@ -58,7 +58,7 @@ export const PACKAGES = {
     note: "Bu pakette size özel bir program hazırlanır ve 2 haftada bir durum analizi yapılır.Günlük takip yoktur.",
     freeLessons: 1,
     freeLessonsPeriod: "monthly",
-  },
+  },*/
 
   /* 3) SADECE KOÇLUK (mevcut ana paket) */
   "kocluk-2026": {
@@ -91,7 +91,8 @@ export const PACKAGES = {
     note: "Bu pakette tam kapsamlı koçluk vardır.Özel ders hakkı tanınmamaktadır.Dilerseniz ayrı olarak satın alabilirsiniz."
   },
 
-  /* 4) KOÇLUK + ÖZEL DERS (tam paket) */
+
+  /* 4) KOÇLUK + ÖZEL DERS (tam paket) 
   "kocluk-ozel-ders-2026": {
     slug: "kocluk-ozel-ders-2026",
     title: "YKS/LGS Tam Kapsamlı Koçluk + Özel Ders Paketi",
@@ -125,8 +126,9 @@ export const PACKAGES = {
     note: "Bu pakette tam kapsamlı koçluk + ücretsiz 3 özel ders hakkı tanınmaktadır.",
     freeLessons: 2,
     freeLessonsPeriod: "monthly",
-  },
+  }, */
 };
+
 
 /* Vitrinde gösterim sırası */
 export const PACKAGES_ORDER = [

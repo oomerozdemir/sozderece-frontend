@@ -1,4 +1,3 @@
-// src/components/RequireAuth.jsx
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import axios from "../utils/axios";
@@ -16,7 +15,6 @@ export default function RequireAuth({ children }) {
       try {
         const t = localStorage.getItem("token");
 
-        // 1) Token geçersizse: önce tek seferlik skip bayrağına bak, sonra sessiz giriş dene
         if (!isTokenValid(t)) {
           if (sessionStorage.getItem("skipSilentLoginOnce")) {
             sessionStorage.removeItem("skipSilentLoginOnce");
@@ -49,7 +47,6 @@ export default function RequireAuth({ children }) {
           return; // burada bitiriyoruz
         }
 
-        // 2) Token geçerliyse: (isteğe bağlı) /me ile kullanıcıyı tazele
         try {
           const res = await axios.get("/api/auth/me");
           if (res?.data?.user) {
@@ -58,7 +55,6 @@ export default function RequireAuth({ children }) {
           if (!alive) return;
           setOk(true);
         } catch {
-          // /me 401 dönerse token bozulmuş olabilir → sessiz giriş fallback
           try {
             const r = await axios.get("/api/auth/silent-login");
             if (r?.data?.token) {
@@ -92,11 +88,9 @@ export default function RequireAuth({ children }) {
     };
   }, [location.pathname]);
 
-  // küçük skeleton göstermek istersen buraya bir loader koyabilirsin
   if (!ready) return null;
 
   if (!ok) {
-    // geldiğin yolu saklayarak login'e gönder
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
