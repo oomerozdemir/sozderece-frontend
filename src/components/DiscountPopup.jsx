@@ -1,4 +1,4 @@
-/* import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "../cssFiles/discountPopup.css";
 
 export default function DiscountPopup() {
@@ -34,4 +34,3 @@ export default function DiscountPopup() {
     </div>
   );
 }
-*/

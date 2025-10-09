@@ -69,6 +69,7 @@ export const PACKAGES = {
     title: "YKS/LGS Tam Kapsamlı Koçluk Paketi",
     hidden: false,
     unitPrice: 250000,                       // 2500 TL (kuruş)
+    oldPriceText: "2500₺",
     priceText: "2150₺ / ay",
     subtitle:
       "Sadece koçluk: kişiye özel program, hedef takibi, düzenli görüşmeler ve performans raporları.",

@@ -1,4 +1,3 @@
-// src/components/PricingSection.jsx
 import "../cssFiles/PricingSection.css";
 import {
   FaUserCheck,
@@ -90,66 +89,87 @@ const benefitItems = [
 export default function PricingSection() {
   const navigate = useNavigate();
 
-  return (
-    <div className="pricing-section" id="paketler">
-      <h2 className="pricing-section-title">Hedefine Göre Paketler</h2>
-      <p className="pricing-section-sub">
-        Özel dersten tam kapsamlı YKS/LGS koçluğuna uzanan seçenekler.
-      </p>
+return (
+  <div className="pricing-section" id="paketler">
+    <h2 className="pricing-section-title">Hedefine Göre Paketler</h2>
+    <p className="pricing-section-sub">
+      Özel dersten tam kapsamlı YKS/LGS koçluğuna uzanan seçenekler.
+    </p>
 
-      <div className="pricing-grid">
-         {PACKAGES_ORDER
-    .filter((slug) => PACKAGES[slug] && !PACKAGES[slug].hidden)
-    .map((key) => {
-      const p = PACKAGES[key];
+    {(() => {
+      const visible = PACKAGES_ORDER.filter(
+        (slug) => PACKAGES[slug] && !PACKAGES[slug].hidden
+      );
+      const count = visible.length;
+      const gridClass =
+        count === 1 ? "one" :
+        count === 2 ? "two" :
+        count === 3 ? "three" : "four";
 
-          const icon = iconForType(p.type);
-          const badge = badgeForType(p.type);
+      return (
+        <div className={`pricing-grid ${gridClass}`}>
+          {visible.map((key) => {
+            const p = PACKAGES[key];
+            const icon = iconForType(p.type);
+            const badge = badgeForType(p.type);
 
-          return (
-            <div key={p.slug} className="pricing-card">
-              {badge && <div className="badge">{badge}</div>}
+            return (
+              <div key={p.slug} className="pricing-card">
+                {badge && <div className="badge">{badge}</div>}
 
-              <div className="pricing-head">
-                <div className="package-icon">{icon}</div>
-                <h3 className="pricing-name">{p.title}</h3>
+                <div className="pricing-head">
+                  <div className="package-icon">{icon}</div>
+                  <h3 className="pricing-name">{p.title}</h3>
 
-                {p.priceText && <div className="pricing-price">{p.priceText}</div>}
-                {p.subtitle && <p className="pricing-note">{p.subtitle}</p>}
+                  {p.oldPriceText ? (
+  <div className="pricing-price">
+    <span className="old-price">{p.oldPriceText}</span>
+    <span className="new-price">{p.priceText}</span>
+  </div>
+) : (
+  p.priceText && <div className="pricing-price">{p.priceText}</div>
+)}
+                  {p.subtitle && <p className="pricing-note">{p.subtitle}</p>}
+                </div>
+
+                {Array.isArray(p.features) && (
+                  <ul className="pricing-features">
+                    {p.features.map((f, i) => (
+                      <FeatureItem key={i} label={f.label} included={!!f.included} />
+                    ))}
+                  </ul>
+                )}
+
+                {p.cta?.href && (
+                  <button
+                    className="pricing-cta"
+                    onClick={() => navigate(p.cta.href)}
+                  >
+                    {p.cta.label || "Detayları Gör"}
+                  </button>
+                )}
               </div>
+            );
+          })}
+        </div>
+      );
+    })()}
 
-              {Array.isArray(p.features) && (
-                <ul className="pricing-features">
-                  {p.features.map((f, i) => (
-                    <FeatureItem key={i} label={f.label} included={!!f.included} />
-                  ))}
-                </ul>
-              )}
-
-              {p.cta?.href && (
-                <button className="pricing-cta" onClick={() => navigate(p.cta.href)}>
-                  {p.cta.label || "Detayları Gör"}
-                </button>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      <h3 className="benefit-title">YKS/LGS Koçluk Paketi Size Ne Kazandırır?</h3>
-      <div className="benefit-grid">
-        {benefitItems.map((item, index) => (
-          <div className="benefit-card" key={index}>
-            <div className="benefit-icon">{item.icon}</div>
-            <h4>{item.title}</h4>
-            <ul>
-              {item.points.map((point, idx) => (
-                <li key={idx}>{point}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+    <h3 className="benefit-title">YKS/LGS Koçluk Paketi Size Ne Kazandırır?</h3>
+    <div className="benefit-grid">
+      {benefitItems.map((item, index) => (
+        <div className="benefit-card" key={index}>
+          <div className="benefit-icon">{item.icon}</div>
+          <h4>{item.title}</h4>
+          <ul>
+            {item.points.map((point, idx) => (
+              <li key={idx}>{point}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
-  );
+  </div>
+);
+
 }

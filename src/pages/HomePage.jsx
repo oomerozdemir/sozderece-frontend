@@ -71,7 +71,7 @@ export default function HomePage() {
     >
         <TopBar />
         <Navbar />
-        <DiscountPopup />
+        {false && <DiscountPopup />}
         <HeroSection />
 
         <HomeCoachSlider />
