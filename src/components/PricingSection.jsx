@@ -98,9 +98,10 @@ export default function PricingSection() {
       </p>
 
       <div className="pricing-grid">
-        {PACKAGES_ORDER.map((key) => {
-          const p = PACKAGES[key];
-          if (!p) return null;
+         {PACKAGES_ORDER
+    .filter((slug) => PACKAGES[slug] && !PACKAGES[slug].hidden)
+    .map((key) => {
+      const p = PACKAGES[key];
 
           const icon = iconForType(p.type);
           const badge = badgeForType(p.type);

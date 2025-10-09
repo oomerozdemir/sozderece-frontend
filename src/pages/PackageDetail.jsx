@@ -14,8 +14,8 @@ const PackageDetail = () => {
   const isPaymentDisabled = false;
 
   // Liste & seçim
-  const packageList = useMemo(() => Object.values(PACKAGES), []);
-  const defaultSlug = useMemo(() => Object.keys(PACKAGES)[0], []);
+ const packageList = useMemo(() => Object.values(PACKAGES).filter((p) => !p.hidden),[]);
+ const defaultSlug = useMemo(() => (packageList[0] ? packageList[0].slug : null),[packageList]);
   const [selectedSlug, setSelectedSlug] = useState(defaultSlug);
   const selected = PACKAGES[selectedSlug];
 
@@ -122,7 +122,8 @@ const isFirstPackage = selectedSlug === defaultSlug;
   const handlePrev = () => setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   const handleNext = () => setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
 
-  if (!selected) return <div className="package-not-found">Paket bulunamadı.</div>;
+  if (!selected) return <div className="package-not-found">Şu anda görüntülenecek paket bulunamadı.</div>;
+
 
   // Fiyat guard
   const priceNumberTL = Number.isFinite(selected?.unitPrice) ? (selected.unitPrice / 100).toFixed(2) : null;

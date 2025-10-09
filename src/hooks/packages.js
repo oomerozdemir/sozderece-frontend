@@ -1,9 +1,10 @@
 
 export const PACKAGES = {
-  /* 1) ÖZEL DERS – dinamik fiyat (öğretmen belirler) 
+  /* 1) ÖZEL DERS – dinamik fiyat (öğretmen belirler) */
   "ozel-ders-paketi": {
     slug: "ozel-ders-paketi",
     title: "Özel Ders Paketi",
+    hidden: true,
     unitPrice: null,                         // ← sabit fiyat yok
     priceText: "500₺'den başlayan öğretmen ücretleri",
     subtitle:
@@ -24,12 +25,14 @@ export const PACKAGES = {
       { title: "Özel dersler ne kadar sürüyor?", content: "Özel derslerimizin süresi 1 saattir." },
     ],
     note: "Öğretmen ücreti öğretmene göre değişir."
-  },*/
+  },
 
-  /* 2) ÖZEL DERS + HAZIR PAKET (ara paket) 
+  /* 2) ÖZEL DERS + HAZIR PAKET (ara paket) */
   "ozel-ders-plus-hazir-2026": {
     slug: "ozel-ders-plus-hazir-2026",
     title: "Özel Ders + Seviyenize Göre Çalışma Programı",
+    hidden: true,
+
     unitPrice: 170000,                      
     priceText: "1700₺ / ay",
     subtitle:
@@ -58,12 +61,13 @@ export const PACKAGES = {
     note: "Bu pakette size özel bir program hazırlanır ve 2 haftada bir durum analizi yapılır.Günlük takip yoktur.",
     freeLessons: 1,
     freeLessonsPeriod: "monthly",
-  },*/
+  },
 
   /* 3) SADECE KOÇLUK (mevcut ana paket) */
   "kocluk-2026": {
     slug: "kocluk-2026",
     title: "YKS/LGS Tam Kapsamlı Koçluk Paketi",
+    hidden: false,
     unitPrice: 250000,                       // 2500 TL (kuruş)
     priceText: "2150₺ / ay",
     subtitle:
@@ -92,10 +96,11 @@ export const PACKAGES = {
   },
 
 
-  /* 4) KOÇLUK + ÖZEL DERS (tam paket) 
+  /* 4) KOÇLUK + ÖZEL DERS (tam paket) */
   "kocluk-ozel-ders-2026": {
     slug: "kocluk-ozel-ders-2026",
     title: "YKS/LGS Tam Kapsamlı Koçluk + Özel Ders Paketi",
+    hidden: true,
     unitPrice: 380000,                      
     priceText: "3800₺ / ay",
     subtitle:
@@ -126,7 +131,7 @@ export const PACKAGES = {
     note: "Bu pakette tam kapsamlı koçluk + ücretsiz 3 özel ders hakkı tanınmaktadır.",
     freeLessons: 2,
     freeLessonsPeriod: "monthly",
-  }, */
+  }, 
 };
 
 
