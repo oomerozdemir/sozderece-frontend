@@ -45,17 +45,26 @@ export default function useCart() {
   }, []);
 
 
-  const addToCart = useCallback(
-    async ({ slug, title, unitPrice, quantity = 1, email, name }) => {
-      await axios.post(
-        "/api/cart/items",
-        { slug, title, unitPrice, quantity, ...(email ? { email } : {}), ...(name ? { name } : {}) },
-        { headers: authHeaders() }
-      );
-      await refresh();
-    },
-    [refresh]
-  );
+const addToCart = useCallback(
+  async ({ slug, title, unitPrice, quantity = 1, email, name }) => {
+    await axios.post(
+      "/api/cart/items",
+      { slug, title, unitPrice, quantity, ...(email ? { email } : {}), ...(name ? { name } : {}) },
+      { headers: authHeaders() }
+    );
+    await refresh();
+
+    // ✅ Google Ads - Sepete Ekleme Dönüşümü
+    if (window.gtag) {
+      window.gtag('event', 'conversion', {
+        send_to: 'AW-17399744724/ZH42Cfe1laobENSR7OhA',
+        value: 1.0,
+        currency: 'TRY',
+      });
+    }
+  },
+  [refresh]
+);
 
 
   const increaseQuantity = useCallback(async (slug) => {

@@ -25,35 +25,47 @@ const IletisimPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setSuccessMsg("");
-    setErrorMsg("");
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setSuccessMsg("");
+  setErrorMsg("");
 
-    try {
-      const response = await axios.post("/api/contact/trial", formData);
-      if (response.data.success) {
-          if (window.fbq) {
-    window.fbq('track', 'Lead');
-  }
-        setSuccessMsg("Form başarıyla gönderildi!");
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          userType: "",
-          message: "",
-        });
-      } else {
-        setErrorMsg("Form gönderilirken bir hata oluştu.");
+  try {
+    const response = await axios.post("/api/contact/trial", formData);
+
+    if (response.data.success) {
+      // Facebook Pixel (mevcutta var)
+      if (window.fbq) {
+        window.fbq("track", "Lead");
       }
-    } catch (error) {
-      setErrorMsg("Sunucu hatası: Form gönderilemedi.");
-    } finally {
-      setLoading(false);
+
+      // ✅ Google Ads dönüşüm tetikle (TIKLAMA tipi snippet)
+      if (window.gtag) {
+        window.gtag("event", "conversion", {
+          send_to: "AW-17399744724/16ynCJSfIaobENSR7OhA", // senin "send_to" değerin
+          value: 1.0,
+          currency: "TRY",
+        });
+      }
+
+      setSuccessMsg("Form başarıyla gönderildi!");
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        userType: "",
+        message: "",
+      });
+    } else {
+      setErrorMsg("Form gönderilirken bir hata oluştu.");
     }
-  };
+  } catch (error) {
+    setErrorMsg("Sunucu hatası: Form gönderilemedi.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <>
