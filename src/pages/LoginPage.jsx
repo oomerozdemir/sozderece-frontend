@@ -80,11 +80,24 @@ const LoginPage = () => {
     setLoading(true);
     setError("");
     try {
-      await axios.post("/api/auth/otp/send", { email: email.trim().toLowerCase() });
-      setStep("code");
-      setResendIn(60);
+           const res = await axios.post("/api/auth/otp/send", {
+        email: email.trim().toLowerCase(),
+      });
+
+      // başarılı yanıt
+      if (res?.data?.success) {
+        setStep("code");
+        setResendIn(60);
+      }
     } catch (e) {
-      setError(e?.response?.data?.message || "Kod gönderilemedi.");
+       const st = e?.response?.status;
+      if (st === 429) {
+        const retryAfter = Number(e?.response?.data?.retryAfter ?? 60);
+        setError(e?.response?.data?.message || `Lütfen ${retryAfter} sn bekleyin.`);
+        setResendIn(retryAfter);
+      } else {
+        setError(e?.response?.data?.message || "Kod gönderilemedi.");
+      }
     } finally {
       setLoading(false);
     }
