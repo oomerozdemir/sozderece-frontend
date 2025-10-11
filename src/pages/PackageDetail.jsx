@@ -20,7 +20,8 @@ const PackageDetail = () => {
   const selected = PACKAGES[selectedSlug];
 
   //ilk paket mi?
-const isFirstPackage = selectedSlug === defaultSlug;
+const isSpecialTutoring =
+  selected?.type === "tutoring_only" || selected?.slug === "ozel-ders-paketi"
 
   // Paket değiştiğinde slider ve accordion'ı sıfırla
   useEffect(() => {
@@ -34,7 +35,7 @@ const isFirstPackage = selectedSlug === defaultSlug;
     return;
   }
 
-  if (isFirstPackage) {
+  if (isSpecialTutoring) {
     // Özel Ders paketi (ilk paket): Öğretmenler sayfasına yönlendir
     navigate("/ogretmenler");
     return;
@@ -290,7 +291,7 @@ const isFirstPackage = selectedSlug === defaultSlug;
           </p>
 
          <button className="choose-coach-button" onClick={handleContinue}>
-  {isFirstPackage ? "Öğretmenleri Gör" : "Hemen Süreci Başlat!"}
+  {isSpecialTutoring ? "Öğretmenleri Gör" : "Hemen Süreci Başlat!"}
 </button>
 
           {/* Paket özel SSS: ÜSTTE paket özel + ALTA default + dedupe */}
