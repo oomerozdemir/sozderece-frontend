@@ -78,7 +78,10 @@ const CoachDetailPage = () => {
     ))}
   </div>
 </div>
-
+<p>
+  <a href="/sss">Sıkça Sorulan Sorular</a> sayfasına göz atabilir veya 
+  <a href="/paketler">Koçluk paketlerimizi</a> inceleyebilirsiniz.
+</p>
 <Footer />
     </>
   );

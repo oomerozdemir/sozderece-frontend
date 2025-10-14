@@ -176,6 +176,9 @@ export default function FaqSection() {
         transition={{ duration: 1.2, ease: "easeOut" }}
       />
     </motion.section>
+    <div className="faq-cta">
+  <p>Daha fazla bilgi için <a href="/paketler">paketlerimizi</a> inceleyin veya <a href="/hakkimizda">bizim hakkımızda</a> sayfasını ziyaret edin.</p>
+</div>
     <Footer />
 
     </>

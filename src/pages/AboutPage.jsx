@@ -42,6 +42,10 @@ export default function AboutPage() {
       <Navbar />
       <AboutComp /> 
       <WhatsappButton />
+      <p>
+  <a href="/sss">Sıkça Sorulan Sorular</a> sayfasına göz atabilir veya 
+  <a href="/paketler">Koçluk paketlerimizi</a> inceleyebilirsiniz.
+</p>
     </motion.div>
     </>
   );

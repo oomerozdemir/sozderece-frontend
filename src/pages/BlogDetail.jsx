@@ -42,6 +42,13 @@ const BlogDetail = () => {
         className="blog-detail-content"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
+      <section className="related-posts">
+  <h3>Benzer Yazılar</h3>
+  <ul>
+    <li><a href="/blog/yks-tercihlerin-onemi">YKS Tercihlerin Önemi</a></li>
+    <li><a href="/blog/yks-hazirlik-stratejileri">YKS Hazırlık Stratejileri</a></li>
+  </ul>
+</section>
     </div>
     <Footer />
 

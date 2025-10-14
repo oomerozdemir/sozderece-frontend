@@ -3,7 +3,6 @@ import { FaInstagram, FaLinkedin } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
-
 const Footer = () => {
   return (
     <motion.footer
@@ -16,12 +15,13 @@ const Footer = () => {
       <div className="footer-container">
         {/* Sol Logo ve Sosyal İkonlar */}
         <div className="footer-left">
-          <img src="../images/hero-logo.webp" alt="Logo" className="footer-logo" />
+          {/* public/ altında barınıyor varsayımıyla kök yoldan verelim */}
+          <img src="/images/hero-logo.webp" alt="Sözderece Koçluk" className="footer-logo" />
           <div className="social-icons">
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <FaInstagram />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
               <FaLinkedin />
             </a>
           </div>
@@ -33,7 +33,9 @@ const Footer = () => {
             <h4>Kurumsal</h4>
             <ul>
               <li><Link to="/ucretsiz-on-gorusme">İletişim</Link></li>
-              <li><a href="/hakkimizda">Hakkimizda</a></li>
+              <li><Link to="/hakkimizda">Hakkımızda</Link></li>
+              <li><Link to="/koclar">Ekibimiz</Link></li>
+              <li><Link to="/sss">Sıkça Sorulan Sorular</Link></li>
               <li><Link to="/mesafeli-hizmet-sozlesmesi">Mesafeli Hizmet Sözleşmesi</Link></li>
               <li><Link to="/iade-ve-cayma-politikasi">İade ve Cayma Politikası</Link></li>
               <li><Link to="/gizlilik-politikasi-kvkk">Gizlilik ve KVKK</Link></li>
@@ -43,10 +45,11 @@ const Footer = () => {
           <div>
             <h4>Kategoriler</h4>
             <ul>
-              <li><a href="/paket-detay">YKS 2026</a></li>
-              <li><a href="/paket-detay">LGS 2026</a></li>
-              <li><a href="/blog">Sözderece Blog</a></li>
-
+              {/* Paket listesi sayfanız varsa /paketler; yoksa öne çıkan paket slug'larına bağlayın */}
+              <li><Link to="/paketler">Paketler</Link></li>
+              <li><Link to="/blog">Sözderece Blog</Link></li>
+              {/* örnek hedefler: isterseniz spesifik paket slug'larına linkleyin */}
+              {/* <li><Link to="/paket/ozel-ders-paketi">Özel Ders Paketi</Link></li> */}
             </ul>
           </div>
         </div>
