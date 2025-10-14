@@ -20,9 +20,14 @@ const BlogDetail = () => {
   <meta name="keywords" content={post.tags?.join(", ")} />
   <meta property="og:title" content={post.title} />
   <meta property="og:description" content={post.description} />
-  <meta property="og:image" content={post.image} />
+  <meta property="og:image" content={post.image || "https://sozderecekocluk.com/images/default-blog.webp"} />
+
   <meta property="og:url" content={`https://www.sozderecekocluk.com/blog/${post.slug}`} />
-  <meta name="robots" content="index, follow" />
+  <meta property="og:type" content="article" />
+<meta property="article:published_time" content={post.date} />
+<meta name="robots" content="index, follow" />
+  <link rel="canonical" href={`https://sozderecekocluk.com/blog/${post.slug}`} />
+
 </Helmet>
     <TopBar />
     <Navbar />

@@ -4,6 +4,8 @@ User-agent: *
 Disallow: /gizlilik-politikasi-kvkk
 Disallow: /iade-ve-cayma-politikasi
 Disallow: /mesafeli-hizmet-sozlesmesi
+Disallow: /q
+Disallow: /src/
 Allow: /
 
 Sitemap: https://www.sozderecekocluk.com/sitemap.xml
