@@ -167,6 +167,10 @@ const AboutComp = () => {
             Ücretsiz Görüşme Talep Et
           </Link>
         </div>
+        <p className="about-deeplinks">
+  <a href="/sss">Sıkça Sorulan Sorular</a> sayfasına göz atabilir veya{" "}
+  <a href="/paketler">koçluk paketlerimizi</a> inceleyebilirsiniz.
+</p>
       </section>
 
       <Footer />

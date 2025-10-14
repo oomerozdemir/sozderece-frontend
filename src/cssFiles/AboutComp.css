@@ -37,6 +37,40 @@
 }
 
 
+/* CTA ve footer arasındaki bilgi linkleri  */
+.about-deeplinks {
+  max-width: 900px;
+  margin: 18px auto 40px;    /* CTA'dan sonra nefes + footer'dan önce boşluk */
+  padding: 0 20px;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: center;
+  color: #e5e7eb;            /* açık gri metin */
+}
+
+.about-deeplinks a {
+  color: #ffffff;            /* linkleri beyaz yap */
+  font-weight: 600;
+  text-decoration: none;     /* alt çizgiyi kaldır */
+  border-bottom: 2px solid rgba(255,255,255,0.0); /* hover için alt çizgi efekti */
+  transition: border-color .25s ease, color .25s ease;
+  margin: 0 4px;             /* linkler arasında minik boşluk */
+}
+
+.about-deeplinks a:hover,
+.about-deeplinks a:focus {
+  color: #fbbf24;            /* hover: amber */
+  border-bottom-color: rgba(251,191,36,.9);
+}
+
+@media (max-width: 768px) {
+  .about-deeplinks {
+    margin: 12px auto 28px;
+    font-size: .95rem;
+    padding: 0 14px;
+  }
+}
+
 /* === MISSION & VISION === */
 .mission-vision-values {
   display: grid;
