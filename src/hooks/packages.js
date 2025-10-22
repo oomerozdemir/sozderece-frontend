@@ -68,7 +68,7 @@ export const PACKAGES = {
     slug: "kocluk-2026",
     title: "YKS/LGS Tam Kapsamlı Koçluk Paketi",
     hidden: false,
-    unitPrice: 250000,                       // 2500 TL (kuruş)
+    unitPrice: 215000,                       
     oldPriceText: "2500₺",
     priceText: "2150₺ / ay",
     subtitle:
