@@ -78,7 +78,8 @@ export default function HomePage() {
         <HeroSection />
 
         <HomeCoachSlider />
-        <FeaturedTeachers />
+        {// <FeaturedTeachers />
+}
         <PricingSection />
         <WhyChooseUs />
 
