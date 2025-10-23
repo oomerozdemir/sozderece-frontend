@@ -100,7 +100,6 @@ function pushUrl({ loc, lastmod = todayIso, changefreq, priority = 0.6 }) {
 const staticRoutes = [
   { loc: "/",               priority: 1.0, changefreq: "daily"   },
   { loc: "/hakkimizda",     priority: 0.8, changefreq: "yearly"  },
-  { loc: "/paketler",       priority: 0.9, changefreq: "monthly" },
   { loc: "/ekibimiz",       priority: 0.7, changefreq: "yearly"  },
   { loc: "/paket-detay",    priority: 0.7, changefreq: "monthly" },
   { loc: "/sss",            priority: 0.6, changefreq: "yearly"  },
