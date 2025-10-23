@@ -18,10 +18,10 @@ const Footer = () => {
           {/* public/ altında barınıyor varsayımıyla kök yoldan verelim */}
           <img src="/images/hero-logo.webp" alt="Sözderece Koçluk" className="footer-logo" />
           <div className="social-icons">
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <a href="https://www.instagram.com/sozderece/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <FaInstagram />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <a href="https://www.linkedin.com/company/s%C3%B6zderece-ko%C3%A7luk" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
               <FaLinkedin />
             </a>
           </div>
