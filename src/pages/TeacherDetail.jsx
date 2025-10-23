@@ -55,6 +55,9 @@ export default function TeacherDetail() {
   const subjects = Array.isArray(t.subjects) ? t.subjects : [];
   const grades = Array.isArray(t.grades) ? t.grades : [];
 
+  const whyText =
+    t.whyMe || t.why_me || t.whyme || t.why || "";
+
   return (
     <>
 
@@ -186,15 +189,20 @@ export default function TeacherDetail() {
           </section>
         )}
 
-        {/* NEDEN BEN */}
-        {t.whyMe && (
-          <section className="td-section">
-            <div className="td-card td-whyme">
-              <h2 className="td-section-title">Neden benden ders almalısınız?</h2>
-              <p className="td-paragraph">{t.whyMe}</p>
+         {/* NEDEN BEN */}
+      <section className="td-section">
+        <div className="td-card td-whyme">
+          <h2 className="td-section-title">Neden benden ders almalısınız?</h2>
+
+          {whyText ? (
+            <p className="td-paragraph">{whyText}</p>
+          ) : (
+            <div className="td-empty">
+              Öğretmen bu bölümü henüz doldurmamış.
             </div>
-          </section>
-        )}
+          )}
+        </div>
+      </section>
 
         {/* YORUMLAR */}
         <section className="td-section">

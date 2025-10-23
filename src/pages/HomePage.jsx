@@ -14,6 +14,9 @@ const Footer = lazy(() => import("../components/Footer"));
 const TopBar = lazy(() => import("../components/TopBar"));
 const WhatsappButton = lazy(() => import("../components/WhatsappButton"));
 const HomeCoachSlider = lazy(() => import("../components/HomeCoachSlider"));
+const FeaturedTeachers = lazy(() => import("../components/featuredTeacher"));
+
+
 
 export default function HomePage() {
   const handleSubmit = (e) => {
@@ -75,6 +78,7 @@ export default function HomePage() {
         <HeroSection />
 
         <HomeCoachSlider />
+        <FeaturedTeachers />
         <PricingSection />
         <WhyChooseUs />
 

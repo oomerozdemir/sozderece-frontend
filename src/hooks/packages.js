@@ -4,7 +4,7 @@ export const PACKAGES = {
   "ozel-ders-paketi": {
     slug: "ozel-ders-paketi",
     title: "Özel Ders Paketi",
-    hidden: true,
+    hidden: false,
     unitPrice: null,                         // ← sabit fiyat yok
     priceText: "500₺'den başlayan öğretmen ücretleri",
     subtitle:
@@ -31,7 +31,7 @@ export const PACKAGES = {
   "ozel-ders-plus-hazir-2026": {
     slug: "ozel-ders-plus-hazir-2026",
     title: "Özel Ders + Seviyenize Göre Çalışma Programı",
-    hidden: true,
+    hidden: false,
 
     unitPrice: 170000,                      
     priceText: "1700₺ / ay",
@@ -68,7 +68,7 @@ export const PACKAGES = {
     slug: "kocluk-2026",
     title: "YKS/LGS Tam Kapsamlı Koçluk Paketi",
     hidden: false,
-    unitPrice: 215000,                       
+    unitPrice: 220000,                       
     oldPriceText: "2500₺",
     priceText: "2150₺ / ay",
     subtitle:
@@ -101,7 +101,7 @@ export const PACKAGES = {
   "kocluk-ozel-ders-2026": {
     slug: "kocluk-ozel-ders-2026",
     title: "YKS/LGS Tam Kapsamlı Koçluk + Özel Ders Paketi",
-    hidden: true,
+    hidden: false,
     unitPrice: 380000,                      
     priceText: "3800₺ / ay",
     subtitle:
