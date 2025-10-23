@@ -34,7 +34,7 @@ const Footer = () => {
             <ul>
               <li><Link to="/ucretsiz-on-gorusme">İletişim</Link></li>
               <li><Link to="/hakkimizda">Hakkımızda</Link></li>
-              <li><Link to="/koclar">Ekibimiz</Link></li>
+              <li><Link to="/ekibimiz">Ekibimiz</Link></li>
               <li><Link to="/sss">Sıkça Sorulan Sorular</Link></li>
               <li><Link to="/mesafeli-hizmet-sozlesmesi">Mesafeli Hizmet Sözleşmesi</Link></li>
               <li><Link to="/iade-ve-cayma-politikasi">İade ve Cayma Politikası</Link></li>
