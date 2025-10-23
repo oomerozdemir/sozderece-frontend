@@ -32,9 +32,9 @@ export const PACKAGES = {
     slug: "ozel-ders-plus-hazir-2026",
     title: "Özel Ders + Seviyenize Göre Çalışma Programı",
     hidden: false,
-
-    unitPrice: 170000,                      
-    priceText: "1700₺ / ay",
+    oldPriceText: "1700₺",
+    unitPrice: 150000,                      
+    priceText: "1500₺ / ay",
     subtitle:
       "Koçluk paketine uygun bütçeli ara çözüm: hazır aylık program + 2 haftada bir 40 dk görüşme + 1 ücretsiz özel ders hakkı.",
     type: "hybrid_light",
