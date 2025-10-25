@@ -70,7 +70,7 @@ export const PACKAGES = {
     hidden: false,
     unitPrice: 220000,                       
     oldPriceText: "2500₺",
-    priceText: "2150₺ / ay",
+    priceText: "2200₺ / ay",
     subtitle:
       "Sadece koçluk: kişiye özel program, hedef takibi, düzenli görüşmeler ve performans raporları.",
     type: "coaching_only",
