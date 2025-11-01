@@ -15,7 +15,7 @@ export default function TeacherRegister() {
     mode:"BOTH", priceOnline:"", priceF2F:"", bio:"", whyMe: "",
   });
 
-  const [step] = useState("form"); // form | verify
+  const [step] = useState("form"); 
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -207,34 +207,7 @@ navigate("/ogretmen/panel/profil", { replace: true });
           </form>
         )}
 
-        {step === "verify" && (
-          <div className="tr-form">
-            {!!err && <p className="error-message">{err}</p>}
-            <div className="tr-card">
-              <div className="section-title">E-posta Doğrulama</div>
-              <p>E-posta adresine gönderilen 6 haneli kodu gir.</p>
-              <input
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
-                placeholder="XXXXXX"
-                value={vCode}
-                onChange={(e)=>setVCode(e.target.value)}
-              />
-              <div className="tr-actions" style={{ marginTop: 12 }}>
-                <button type="button" onClick={verify} disabled={loading || vCode.trim().length < 4}>
-                  {loading ? "Doğrulanıyor..." : "Kodu Doğrula"}
-                </button>
-                <button type="button" className="secondary" onClick={resend} disabled={loading || resendIn > 0}>
-                  {resendIn > 0 ? `Tekrar gönder (${resendIn})` : "Kodu tekrar gönder"}
-                </button>
-              </div>
-              <p className="tr-sub" style={{ marginTop: 8 }}>
-                Kod 5 dakika boyunca geçerlidir. Sık denemelerde 60 sn beklemeniz istenir.
-              </p>
-            </div>
-          </div>
-        )}
+      
       </div>
     </>
   );
