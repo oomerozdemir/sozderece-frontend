@@ -15,18 +15,10 @@ export default function TeacherRegister() {
     mode:"BOTH", priceOnline:"", priceF2F:"", bio:"", whyMe: "",
   });
 
-  const [step, setStep] = useState("form"); // form | verify
+  const [step] = useState("form"); // form | verify
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // verify step state
-  const [vCode, setVCode] = useState("");
-  const [resendIn, setResendIn] = useState(0);
-  useEffect(() => {
-    if (resendIn <= 0) return;
-    const t = setTimeout(() => setResendIn((s)=>s-1), 1000);
-    return () => clearTimeout(t);
-  }, [resendIn]);
 
   // İl değişince ilçe’yi sıfırla
   useEffect(() => {
@@ -87,9 +79,7 @@ export default function TeacherRegister() {
       const user  = data?.user;
       if (token) localStorage.setItem("token", token);
       if (user)  localStorage.setItem("user", JSON.stringify(user));
-
-      setStep("verify");
-      setResendIn(60); // ilk gönderim var; yeniden göndermeyi 60sn sonra aç
+navigate("/ogretmen/panel/profil", { replace: true });
     } catch (e) {
       setErr(e?.response?.data?.message || "Kayıt başarısız.");
     } finally {
@@ -97,39 +87,7 @@ export default function TeacherRegister() {
     }
   };
 
-  const resend = async () => {
-    try {
-      setLoading(true);
-      setErr("");
-      await axios.post("/api/v1/ogretmen/auth/email/resend"); // token ile
-      setResendIn(60);
-    } catch (e) {
-      setErr(e?.response?.data?.message || "Kod gönderilemedi.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const verify = async () => {
-    try {
-      setLoading(true);
-      setErr("");
-      const r = await axios.post("/api/v1/ogretmen/auth/email/verify", { code: vCode });
-      // başarılı -> panel
-      const t = localStorage.getItem("token");
-      const role = getRoleFromToken(t) || (r?.data?.user?.role || "").toLowerCase();
-      if (isTokenValid(t) && role === "teacher") {
-        navigate("/ogretmen/panel/profil", { replace: true });
-      } else {
-        navigate("/login", { replace: true });
-      }
-    } catch (e) {
-      setErr(e?.response?.data?.message || "Kod doğrulanamadı.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+ 
   return (
     <>
       <Navbar />
