@@ -537,90 +537,56 @@
   .tp-card-actions .tp-btn { width: 100%; }
 }
 
-/* ===========================
-   ✅ Mobile-first UX iyileştirmeleri
-  
-   =========================== */
+/* ==========================================================
+   🔧 MOBILE HOTFIX SCOPE — Teacher Panel özelinde
+   Bu blok diğer sayfaları etkilemesin diye .tpanel ile sınırlı
+   ========================================================== */
 
-/* 1) Genel konteyner: küçük ekranda nefes payı + güvenli alan */
-@media (max-width: 900px) {
-  .tp-wrap { padding: 16px 12px 28px; }
-}
-@media (max-width: 680px) {
-  .tp-wrap { padding-left: max(12px, env(safe-area-inset-left));
-             padding-right: max(12px, env(safe-area-inset-right)); }
-}
+/* 1) Global çakışmaları izole et (.tp-* sadece panelde geçerli olsun) */
+.tpanel .tp-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 720px) { .tpanel .tp-grid-2 { grid-template-columns: 1fr; } }
 
-/* 2) Sol panelin “sticky” davranışını mobilde kapat (zıplama/örtüşmeyi önler) */
-@media (max-width: 900px) {
-  .tp-side { position: static; top: auto; }
-}
+/* slot-select.css içindeki grid kırılımlarının paneli ezmesini önle */
+.tpanel .tp-slots-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; }
+@media (max-width: 900px){ .tpanel .tp-slots-grid { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 600px){ .tpanel .tp-slots-grid { grid-template-columns: 1fr; } }
 
-/* 3) Kartların iç boşluklarını ve tipografiyi sıkıştır */
-@media (max-width: 680px) {
-  .tp-card { padding: 12px; border-radius: 12px; }
-  .tp-header h1 { font-size: 1.25rem; }
-  .tp-header p  { font-size: .9rem; }
-}
-
-/* 4) Form/grid alanları tek sütuna düşsün */
+/* 2) Availability satırı: 140/110/1fr/180 düzeni mobilde taşıyor → dikeyleştir */
 @media (max-width: 780px) {
-  .tp-grid-2 { grid-template-columns: 1fr; }
-}
-
-/* 5) Sekmeler yatay kaydırılabilir + snap’li olsun */
-@media (max-width: 680px) {
-  .tp-tabs {
-    overflow-x: auto;
-    scrollbar-width: thin;
-    -webkit-overflow-scrolling: touch;
-    gap: 2px;                   /* daha sıkı */
+  .tpanel .tp-availability-row {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    align-items: start;
   }
-  .tp-tab {
-    white-space: nowrap;
-    scroll-snap-align: start;
-    padding: 10px 10px;
-    font-weight: 700;
-  }
-  .tp-tabs::-webkit-scrollbar { height: 6px; }
+  .tpanel .day-badge { justify-self: start; }
+  .tpanel .tp-switch { justify-self: start; }
+  .tpanel .tp-timebox { width: 100%; }
+  .tpanel .tp-mode { width: 100%; }
 }
 
-/* 6) Bilgi satırları (örn. istek kartları) taşmadan, güzelce sarılsın */
-.tp-card-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 10px;
-  align-items: center;
-}
-.tp-card-row > span,
-.tp-card-row > b { line-height: 1.35; }
-
-/* 7) Rozet/etiketlerin ölçülerini mobilde küçült */
-@media (max-width: 680px) {
-  .tp-chip { font-size: 12px; padding: 2px 6px; border-radius: 999px; }
-}
-
-/* 8) Slot grid zaten 4→2→1’e düşüyor; küçük ekranda kart içi okunurluk */
-@media (max-width: 680px) {
-  .tp-slot-time { font-weight: 700; }
-  .tp-slot-mode { font-size: .88rem; }
-}
-
-/* 9) Aksiyon butonları: küçük ekranda tam genişlik (zaten 480px’te dikeydi) */
+/* 3) Actions: küçük ekranda tam genişlik butonlar */
 @media (max-width: 560px) {
-  .tp-actions { justify-content: stretch; }
-  .tp-actions button { flex: 1; }
+  .tpanel .tp-actions { justify-content: stretch; gap: 8px; }
+  .tpanel .tp-actions > * { flex: 1 1 auto; }
 }
 
-/* 10) Avatar: daha küçük ekranda oranlı küçültme (taşmayı önler) */
-@media (max-width: 560px) {
-  .tp-avatar-wrapper,
-  .tp-avatar-img,
-  .tp-avatar-circle { width: 84px; height: 84px; }
+/* 4) Ders Listesi (.tl-*) tablo düzeni mobil: sütunları 2’ye indir, ücret sütununu gizle,
+      işlemleri altta tam satır göster */
+@media (max-width: 720px) {
+  .tl-table .tl-tr { grid-template-columns: 1.5fr 1fr; }
+  /* Başlık satırı */
+  .tl-thead .tl-tr .tl-th:nth-child(3) { display: none; } /* Online Ücret gizle */
+  .tl-thead .tl-tr .tl-th:nth-child(4) { grid-column: 1 / -1; text-align: right; }
+  /* Gövde satırları */
+  .tl-tbody .tl-tr .tl-td:nth-child(3) { display: none; } /* Online Ücret gizle */
+  .tl-tbody .tl-tr .tl-td:nth-child(4) { grid-column: 1 / -1; }
+  .tl-actions { justify-content: flex-end; }
 }
 
-/* 11) “Yenile” butonu dar ekranlarda daha kompakt */
-@media (max-width: 420px) {
-  .tp-refresh { gap: 6px; padding: 8px 10px; }
-  .tp-refresh .label { font-size: 13px; }
+/* 5) Filtre/toolbar alanları sıkışsın */
+@media (max-width: 960px) {
+  .tl-toolbar { flex-wrap: wrap; gap: 10px; }
+  .tl-right { width: 100%; justify-content: space-between; }
+  .tl-btn-primary { height: 42px; }
+  .tl-search input { min-width: 0; width: 100%; }
 }
