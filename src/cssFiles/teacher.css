@@ -669,3 +669,113 @@
     font-size: 1.5rem;
   }
 }
+
+/************************************
+ * TEACHER LIST – Mobile refinements
+ * (yalnızca .tl-* alanlarını etkiler)
+ ************************************/
+
+/* 0) Güvenli alan + nefes payı (sadece liste sayfası) */
+@media (max-width: 960px) {
+  .tl-page {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+}
+
+/* 1) Filtre bar: sticky’yi mobilde kapat, sütunları kademeli düşür */
+@media (max-width: 960px) {
+  .tl-filters {
+    position: static;  /* sticky jump/örtüşme önlenir */
+    top: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 12px;
+  }
+}
+@media (max-width: 560px) {
+  .tl-filters {
+    grid-template-columns: 1fr; /* tek sütun */
+    gap: 10px;
+  }
+  .tl-filters input,
+  .tl-filters select {
+    height: 42px;            /* dokunmatik hedef büyür */
+    padding: 0 12px;
+    font-size: 16px;         /* iOS “zoom”u engeller */
+    border-radius: 10px;
+  }
+}
+
+/* 2) Kart grid: kademeli düşüş (mevcudu güçlendirir) */
+@media (max-width: 960px) {
+  .tl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .tl-grid { grid-template-columns: 1fr; }
+}
+
+/* 3) Kart kompaktlaştırma: görsel ve içerik */
+@media (max-width: 640px) {
+  .tl-card {
+    grid-template-rows: 140px 1fr;  /* biraz daha kısa kapak */
+    border-radius: 12px;
+  }
+  .tl-card img {
+    height: 140px;
+  }
+  .tl-card .tl-meta {
+    padding: 12px;
+    gap: 6px;
+  }
+  .tl-card .tl-name { font-size: 15px; }
+  .tl-card .tl-subj {
+    font-size: 12px;
+    white-space: normal;           /* taşma yok, satır sarar */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* 4) Satır içeriği taşmasın; fiyat/rozet güzel sarılsın */
+.tl-card .tl-row {
+  gap: 8px;
+  flex-wrap: wrap;            /* “Online • Yüz yüze” gibi alanlar taşmaz */
+}
+.tl-badge { white-space: nowrap; }
+
+/* 5) CTA: mobilde tam genişlik + daha büyük dokunma alanı */
+@media (max-width: 640px) {
+  .tl-card .tl-cta {
+    width: 100%;
+    height: 42px;
+    border-radius: 12px;
+    font-weight: 800;
+  }
+}
+
+/* 6) Pager: küçük ekranda yapışkan alt bar gibi davranış */
+@media (max-width: 560px) {
+  .tl-pager {
+    position: sticky;
+    bottom: 8px;
+    padding: 8px;
+    background: rgba(255,255,255,.9);
+    backdrop-filter: saturate(1.2) blur(4px);
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    margin-top: 12px;
+  }
+  .tl-pager button {
+    height: 38px;
+    padding: 0 14px;
+    font-weight: 700;
+  }
+}
+
+/* 7) Hafif tipografi iyileştirmeleri */
+@media (max-width: 420px) {
+  .tl-card .tl-row.small { font-size: 11.5px; }
+  .tl-price { font-weight: 700; }
+}
