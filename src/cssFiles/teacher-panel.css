@@ -614,3 +614,13 @@
 @media (max-width: 900px) {
   .tpanel { outline: 2px dashed magenta !important; }
 }
+@media (max-width: 900px){
+  .tpanel .tp-layout { grid-template-columns: 1fr !important; }
+  .tpanel .tp-side   { position: static !important; top: auto !important; }
+}
+@media (max-width: 720px){
+  .tpanel .tp-grid-2 { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 600px){
+  .tpanel .tp-slots-grid { grid-template-columns: 1fr !important; }
+}
