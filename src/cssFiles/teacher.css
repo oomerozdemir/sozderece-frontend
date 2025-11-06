@@ -750,3 +750,78 @@
 @media (max-width: 640px) {
   .tl-page { padding-bottom: max(110px, env(safe-area-inset-bottom)); }
 }
+
+/* ========== FILTER COLLAPSE – yalnızca .tl-* ========== */
+
+/* Özet çubuğu (summary) */
+.tl-filters-collapsible { border: 0; padding: 0; margin-bottom: 12px; }
+.tl-filters-collapsible > .tl-filterbar {
+  list-style: none;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #eee; border-radius: 12px;
+  cursor: pointer; user-select: none;
+}
+.tl-filterbar::-webkit-details-marker { display: none; } /* Safari/Chrome okunu gizle */
+
+.tl-filterbar-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.tl-filterbar-search {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 10px; border: 1px solid #e5e7eb; border-radius: 10px; background:#fff;
+}
+.tl-filterbar-search input { border: 0; outline: none; min-width: 0; width: 180px; }
+
+/* Chip özetleri (opsiyonel) */
+.tl-filterbar-chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: thin; }
+.tl-filterbar-chips .chip {
+  white-space: nowrap; font-size: 12px; font-weight: 700;
+  padding: 4px 8px; border-radius: 999px;
+  background: #eef2ff; color:#3730a3; border:1px solid #e0e7ff;
+}
+
+/* Toggle butonu */
+.tl-filterbar-toggle {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 36px; padding: 0 12px; border-radius: 10px;
+  border: 1px solid #e5e7eb; background: #111827; color: #fff; font-weight: 700;
+}
+.tl-filterbar-toggle .count-badge {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width: 20px; height: 20px; padding: 0 6px;
+  border-radius: 999px; background:#fff; color:#111827; font-size: 12px; font-weight: 800;
+}
+
+/* Panel (eski .tl-filters grid) */
+.tl-filters {
+  margin-top: 10px;
+  background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 12px;
+}
+
+/* ---------- Responsive davranış ---------- */
+
+/* Masaüstü: panel açık başlasın */
+@media (min-width: 961px) {
+  .tl-filters-collapsible[open] > .tl-filterbar::after { content: ""; }
+}
+
+/* Mobil: kapalı başlasın, özet çubuğu kompakt olsun */
+@media (max-width: 960px) {
+
+
+  /* Sticky davranışı kaldır: yer kaplama ve çakışmayı önler */
+  .tl-filters { position: static; top: auto; z-index: auto; }
+
+  /* Grid 2→1 */
+  .tl-filters { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+}
+@media (max-width: 560px) {
+  .tl-filterbar-search input { width: 120px; font-size: 16px; } /* iOS zoom fix */
+  .tl-filters { grid-template-columns: 1fr; }
+  .tl-filters input, .tl-filters select { height: 44px; border-radius: 10px; }
+}
+
+/* Açık/Kapalı animsi görünüm (isteğe bağlı) */
+.tl-filters-collapsible .tl-filters { overflow: clip; transition: opacity .18s ease; }
+.tl-filters-collapsible:not([open]) .tl-filters { opacity: 0; }

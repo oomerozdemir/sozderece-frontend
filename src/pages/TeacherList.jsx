@@ -25,6 +25,7 @@ export default function TeachersList() {
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
+  const detailsRef = useRef(null);
 
   const [filters, setFilters] = useState({
     city: params.get("city") || "",
@@ -87,6 +88,14 @@ const listDescription = descParts.length
   ? `${descParts.join(" • ")} özel ders öğretmenleri listesi.`
   : "Online ve yüz yüze özel ders öğretmenleri listesi.";
 
+   useEffect(() => {
+    const w = typeof window !== "undefined" ? window.innerWidth : 1024;
+    if (detailsRef.current) {
+      if (w <= 960) detailsRef.current.removeAttribute("open");
+      else detailsRef.current.setAttribute("open", "");
+    }
+  }, []);
+
 
   return (
     <> 
@@ -117,7 +126,28 @@ const listDescription = descParts.length
   </script>
 </Helmet>
       <div className="tl-page">
+        
         {/* Filtre barı */}
+        <details className="tl-filters-collapsible" open>
+  <summary className="tl-filterbar">
+    <div className="tl-filterbar-left">
+      <div className="tl-filterbar-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" fill="none" stroke="currentColor" strokeWidth="2"/></svg>
+        <input placeholder="Öğretmen ara..." />
+      </div>
+
+      {/* aktif filtreleri özetleyen chip’ler (opsiyonel, statik da bırakılabilir) */}
+      <div className="tl-filterbar-chips">
+         <span className="chip">Matematik</span>
+        <span className="chip">Online</span>
+      </div>
+    </div>
+
+    <button type="button" className="tl-filterbar-toggle" aria-label="Filtreleri aç/kapat">
+      Filtreler
+      <span className="count-badge">{/* aktif filtre sayısı */}2</span>
+    </button>
+  </summary>
         <div className="tl-filters">
           <select value={filters.city} onChange={(e)=>onChange("city", e.target.value)}>
             <option value="">İl (hepsi)</option>
@@ -156,6 +186,7 @@ const listDescription = descParts.length
             {SORTS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
         </div>
+        </details>
 
         {/* Kart grid */}
         {loading ? <div className="tl-loading">Yükleniyor…</div> : (

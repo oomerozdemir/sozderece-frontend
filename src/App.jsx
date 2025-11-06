@@ -160,18 +160,6 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   
 
 
-3-özel ders öğretmenleri için de bir sözleşme hazırlamak gerekli
-
-Özel ders sistemi ile eklenicek yenilikler
-Frontend görünen yüzde
-2-HomePage de hangı özel derslerden hizmet verdiğimiz ve o derslerden birine tıklandıgında
-o derse özel öne çıkan hocalar
-
-5-ogretmen kendı bos zamanlarını duzenleyebılecek
-
-
-
-Her seyi ogrenci,ogretmen gozunden kontrol et eklemeler bittikten sonra
 
 
 

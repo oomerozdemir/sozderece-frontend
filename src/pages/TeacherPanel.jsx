@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
-import "../cssFiles/teacher-panel.css";
 import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
 import useTeacherScheduling from "../hooks/useTeacherScheduling";
 import AvailabilityEditor from "../components/teacherComps/AvailabilityEditor";
@@ -9,6 +8,8 @@ import SlotsPreview from "../components/teacherComps/SlotsPreview";
 import TimeOffManager from "../components/teacherComps/TimeOffManager";
 import TeacherLessons from "../components/teacherComps/TeacherLessons";
 import { RequestBadge } from "../utils/requestBadges";
+import "../cssFiles/teacher-panel.css";
+
 
 /* =======================
    Gelen Talepler Paneli
