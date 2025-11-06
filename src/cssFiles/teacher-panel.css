@@ -3,7 +3,7 @@
     radial-gradient(900px 400px at -10% -10%, #eef2ff 0%, transparent 60%),
     radial-gradient(1000px 500px at 110% 0%, #fff7ed 0%, transparent 60%),
     #ffffff;
-  min-height: calc(100vh - 70px);
+  min-height: calc(100dvh - 70px); 
 }
 
 .tp-wrap { max-width: 1100px; margin: 0 auto; padding: 20px 16px 40px; }
@@ -357,6 +357,7 @@
 
 @media (max-width: 900px) {
   .tp-layout { grid-template-columns: 1fr; }
+  .tp-side{ position: static; top: auto; }
 }
 @media (max-width: 900px){ .tp-slots-grid { grid-template-columns: repeat(2,1fr); } }
 @media (max-width: 600px){ .tp-slots-grid { grid-template-columns: 1fr; } }
@@ -529,6 +530,25 @@
 
 .tp-status-text.bad  { background:#fef2f2; color:#991b1b; border-color:#fecaca; }
 .tp-status-text.bad .dot  { background:#ef4444; }
+
+
+/* sadece panel içinde geçerli olsun */
+.tpanel .tl-card{ margin-top:16px; }
+.tpanel .tl-toolbar{ display:flex; align-items:center; justify-content:space-between; margin:10px 0; }
+.tpanel .tl-left{ display:flex; align-items:center; gap:8px; }
+.tpanel .tl-right{ display:flex; align-items:center; gap:10px; }
+.tpanel .tl-search{ display:flex; align-items:center; gap:6px; padding:6px 10px; border:1px solid #e5e7eb; border-radius:10px; background:#fff; }
+.tpanel .tl-search input{ border:none; outline:none; }
+.tpanel .tl-table{ border:1px solid #eef0f4; border-radius:12px; overflow:hidden; background:#fff; }
+.tpanel .tl-tr{ display:grid; grid-template-columns:2fr 120px 160px 150px; align-items:center; }
+.tpanel .tl-th,.tpanel .tl-td{ padding:12px 14px; border-bottom:1px solid #f1f3f6; }
+.tpanel .tl-actions{ display:flex; gap:8px; }
+.tpanel .tl-empty{ padding:14px; text-align:center; color:#8792a2; }
+.tpanel .tl-pager{ display:flex; align-items:center; gap:8px; justify-content:flex-end; margin-top:10px; }
+.tpanel .tl-pager button{ padding:6px 10px; border:1px solid #e5e7eb; border-radius:8px; background:#fff; }
+.tpanel .tl-modal{ position:fixed; inset:0; background:rgba(0,0,0,.25); display:flex; align-items:center; justify-content:center; z-index:60; }
+.tpanel .tl-modal-card{ background:#fff; padding:16px; border-radius:14px; min-width:360px; max-width:520px; width:92%; }
+
 
 /* Küçük ekranlarda butonlar tam genişlik */
 @media (max-width: 480px) {
