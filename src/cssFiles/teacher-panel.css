@@ -536,3 +536,91 @@
   .tp-slot-actions .tp-btn { width: 100%; }
   .tp-card-actions .tp-btn { width: 100%; }
 }
+
+/* ===========================
+   ✅ Mobile-first UX iyileştirmeleri
+   (Masaüstüne dokunmadan)
+   =========================== */
+
+/* 1) Genel konteyner: küçük ekranda nefes payı + güvenli alan */
+@media (max-width: 900px) {
+  .tp-wrap { padding: 16px 12px 28px; }
+}
+@media (max-width: 680px) {
+  .tp-wrap { padding-left: max(12px, env(safe-area-inset-left));
+             padding-right: max(12px, env(safe-area-inset-right)); }
+}
+
+/* 2) Sol panelin “sticky” davranışını mobilde kapat (zıplama/örtüşmeyi önler) */
+@media (max-width: 900px) {
+  .tp-side { position: static; top: auto; }
+}
+
+/* 3) Kartların iç boşluklarını ve tipografiyi sıkıştır */
+@media (max-width: 680px) {
+  .tp-card { padding: 12px; border-radius: 12px; }
+  .tp-header h1 { font-size: 1.25rem; }
+  .tp-header p  { font-size: .9rem; }
+}
+
+/* 4) Form/grid alanları tek sütuna düşsün */
+@media (max-width: 780px) {
+  .tp-grid-2 { grid-template-columns: 1fr; }
+}
+
+/* 5) Sekmeler yatay kaydırılabilir + snap’li olsun */
+@media (max-width: 680px) {
+  .tp-tabs {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+    gap: 2px;                   /* daha sıkı */
+  }
+  .tp-tab {
+    white-space: nowrap;
+    scroll-snap-align: start;
+    padding: 10px 10px;
+    font-weight: 700;
+  }
+  .tp-tabs::-webkit-scrollbar { height: 6px; }
+}
+
+/* 6) Bilgi satırları (örn. istek kartları) taşmadan, güzelce sarılsın */
+.tp-card-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  align-items: center;
+}
+.tp-card-row > span,
+.tp-card-row > b { line-height: 1.35; }
+
+/* 7) Rozet/etiketlerin ölçülerini mobilde küçült */
+@media (max-width: 680px) {
+  .tp-chip { font-size: 12px; padding: 2px 6px; border-radius: 999px; }
+}
+
+/* 8) Slot grid zaten 4→2→1’e düşüyor; küçük ekranda kart içi okunurluk */
+@media (max-width: 680px) {
+  .tp-slot-time { font-weight: 700; }
+  .tp-slot-mode { font-size: .88rem; }
+}
+
+/* 9) Aksiyon butonları: küçük ekranda tam genişlik (zaten 480px’te dikeydi) */
+@media (max-width: 560px) {
+  .tp-actions { justify-content: stretch; }
+  .tp-actions button { flex: 1; }
+}
+
+/* 10) Avatar: daha küçük ekranda oranlı küçültme (taşmayı önler) */
+@media (max-width: 560px) {
+  .tp-avatar-wrapper,
+  .tp-avatar-img,
+  .tp-avatar-circle { width: 84px; height: 84px; }
+}
+
+/* 11) “Yenile” butonu dar ekranlarda daha kompakt */
+@media (max-width: 420px) {
+  .tp-refresh { gap: 6px; padding: 8px 10px; }
+  .tp-refresh .label { font-size: 13px; }
+}
