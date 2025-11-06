@@ -8,7 +8,6 @@
   padding: 0 16px;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color: #222;
-  height: 100vh;
 }
 
 /* Filter bar */
@@ -691,7 +690,7 @@
   }
 }
 @media (max-width: 560px) {
-  .tl-filters { grid-template-columns: 1fr; }
+  .tl-filters { grid-template-columns: 1fr; overflow-anchor: none; }
   .tl-filters input,
   .tl-filters select {
     height: 44px;
@@ -712,7 +711,7 @@
     border-radius: 12px;
   }
   .tl-card img { height: 140px; }
-  .tl-card .tl-meta { padding: 12px; gap: 6px; }
+  .tl-card .tl-meta { padding: 12px; gap: 6px; min-width: 0; }
   .tl-card .tl-name { font-size: 15px; }
 
   /* Konu listesi 2 satırla sınırla, taşmayı gizle */
