@@ -8,8 +8,8 @@ import SlotsPreview from "../components/teacherComps/SlotsPreview";
 import TimeOffManager from "../components/teacherComps/TimeOffManager";
 import TeacherLessons from "../components/teacherComps/TeacherLessons";
 import { RequestBadge } from "../utils/requestBadges";
-import "../cssFiles/teacher-panel.css";
 
+import "../cssFiles/teacher-panel.css";
 
 /* =======================
    Gelen Talepler Paneli
@@ -26,7 +26,7 @@ function RequestsPanel() {
   const STR = (v) => String(v ?? "");
   const APPT = (a) => STR(a?.status).toUpperCase();
   const isActive = (a) => APPT(a) !== "CANCELLED";
-const isPackageStudent = (r = {}) => r.isFreeRight === true;;
+  const isPackageStudent = (r = {}) => r.isFreeRight === true;
 
   const hasPendingActive = (r) =>
     (r.appointments || []).some((a) => APPT(a) !== "CANCELLED");
@@ -43,19 +43,11 @@ const isPackageStudent = (r = {}) => r.isFreeRight === true;;
     const s = STR(r?.status).toUpperCase();
     const os = STR(r?.order?.status || r?.orderStatus).toUpperCase();
 
-    // Talebin kendisi iptal/ret
     if (["CANCELLED", "REJECTED", "DECLINED"].includes(s)) return true;
-
-    // Bağlı sipariş iptal/iadeyse
     if (["CANCELLED", "REFUNDED", "FAILED", "VOID", "CHARGEBACK"].includes(os)) return true;
-
-    // Bayraklar
     if (r.cancelledAt || r.isCancelled) return true;
-
-    // Tüm slotlar iptal ise
     if (allSlotsCancelled(r)) return true;
 
-    // Slot var ama hiçbiri aktif değilse
     const hasAnySlots =
       (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
     const anyActive =
@@ -66,7 +58,6 @@ const isPackageStudent = (r = {}) => r.isFreeRight === true;;
     return false;
   };
 
-  // (Rozet için) paid sinyali
   const isPaidLike = (r = {}) => {
     const s = STR(r?.status).toUpperCase();
     const os = STR(r?.order?.status || r?.orderStatus).toUpperCase();
@@ -86,8 +77,8 @@ const isPackageStudent = (r = {}) => r.isFreeRight === true;;
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
-  const [tab, setTab] = useState("pending"); // 'pending' | 'approved' | 'rejected' | 'all'
-  const token = localStorage.getItem("token");
+  const [tab, setTab] = useState("pending"); // 'pending' | 'approved' | 'rejected' | 'package' | 'all'
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const isPast = (dt) => new Date(dt) <= new Date();
   const hasDoneTeacher = (notes = "") => /doneTeacherAt=/.test(notes);
@@ -113,7 +104,6 @@ const isPackageStudent = (r = {}) => r.isFreeRight === true;;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Öğretmen, randevuyu onay/iptal eder
   const setStatus = async (id, status) => {
     try {
       const { data } = await axios.patch(
@@ -163,7 +153,6 @@ const isPackageStudent = (r = {}) => r.isFreeRight === true;;
     }
   };
 
-  // Öğretmen: “Ders tamamlandı”
   const completeAsTeacher = async (id) => {
     try {
       await axios.patch(
@@ -171,7 +160,6 @@ const isPackageStudent = (r = {}) => r.isFreeRight === true;;
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Lokal olarak flagle
       setItems((list) =>
         list.map((r) => ({
           ...r,
@@ -182,16 +170,14 @@ const isPackageStudent = (r = {}) => r.isFreeRight === true;;
           ),
         }))
       );
-      // Geçmiş dersler sekmesini tazele
       window.dispatchEvent(new Event("refresh-past-lessons"));
     } catch (e) {
       alert(e?.response?.data?.message || "Tamamlandı olarak işaretlenemedi.");
     }
   };
 
-  // Tüm talebi reddet (kalıcı)
   const rejectRequest = async (reqId) => {
-    const token = localStorage.getItem("token");
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (!token) return alert("Oturum bulunamadı.");
     if (!window.confirm("Bu talebe ait tüm saatler iptal edilecek ve talep reddedilecek. Devam edilsin mi?")) return;
 
@@ -201,46 +187,42 @@ const isPackageStudent = (r = {}) => r.isFreeRight === true;;
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      await load(); // sadece server’dan tazele
+      await load();
     } catch (e) {
       alert(e?.response?.data?.message || e.message || "Talep reddedilemedi.");
     }
   };
 
-  // Kovalar
   const bucketOf = (r) => {
     if (isRejected(r)) return "rejected";
     if (hasConfirmedActive(r)) return "approved";
     if (hasPendingActive(r)) return "pending";
-    // Slot var ama hepsi iptal → reddedilmiş kabul et
     const hadAnySlots =
       (r.appointments?.length || 0) + (r.appointmentsConfirmed?.length || 0) > 0;
     if (hadAnySlots) return "rejected";
     return "pending";
   };
 
-const groups = useMemo(() => {
-  const g = { pending: [], approved: [], rejected: [], package: [], all: [] };
-  for (const r of items) {
-    if (isPackageStudent(r)) g.package.push(r);
+  const groups = useMemo(() => {
+    const g = { pending: [], approved: [], rejected: [], package: [], all: [] };
+    for (const r of items) {
+      if (isPackageStudent(r)) g.package.push(r);
+      const b = bucketOf(r);
+      g[b].push(r);
+      g.all.push(r);
+    }
+    return g;
+  }, [items]);
 
-    const b = bucketOf(r);
-    g[b].push(r);
-    g.all.push(r);
-  }
-  return g;
-}, [items]);
+  const counts = {
+    pending: groups.pending.length,
+    approved: groups.approved.length,
+    rejected: groups.rejected.length,
+    package: groups.package.length,
+    all: groups.all.length,
+  };
 
-
-const counts = {
-  pending: groups.pending.length,
-  approved: groups.approved.length,
-  rejected: groups.rejected.length,
-  package: groups.package.length,   
-  all: groups.all.length,
-};
   const list = tab === "package" ? groups.package : (groups[tab] || []);
-
 
   return (
     <div className="tp-section">
@@ -252,6 +234,7 @@ const counts = {
             onClick={load}
             disabled={loading}
             title="Yenile"
+            type="button"
           >
             <svg className="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 5V2L7 7l5 5V9a5 5 0 1 1-5 5H5a7 7 0 1 0 7-9z" fill="currentColor" />
@@ -263,42 +246,19 @@ const counts = {
 
       {/* Sekmeler */}
       <div className="tp-tabs" style={{ marginBottom: 8 }}>
-        <button
-          type="button"
-          className={`tp-tab ${tab === "pending" ? "active" : ""}`}
-          onClick={() => setTab("pending")}
-        >
+        <button type="button" className={`tp-tab ${tab === "pending" ? "active" : ""}`} onClick={() => setTab("pending")}>
           Bekleyen <span className="tp-chip">{counts.pending}</span>
         </button>
-        <button
-          type="button"
-          className={`tp-tab ${tab === "approved" ? "active" : ""}`}
-          onClick={() => setTab("approved")}
-        >
+        <button type="button" className={`tp-tab ${tab === "approved" ? "active" : ""}`} onClick={() => setTab("approved")}>
           Onaylanmış <span className="tp-chip success">{counts.approved}</span>
         </button>
-        <button
-          type="button"
-          className={`tp-tab ${tab === "rejected" ? "active" : ""}`}
-          onClick={() => setTab("rejected")}
-        >
+        <button type="button" className={`tp-tab ${tab === "rejected" ? "active" : ""}`} onClick={() => setTab("rejected")}>
           Reddedilmiş <span className="tp-chip danger">{counts.rejected}</span>
         </button>
-
-          <button
-            type="button"
-            className={`tp-tab ${tab === "package" ? "active" : ""}`}
-            onClick={() => setTab("package")}
-          >
-            Paket Öğrencileri <span className="tp-chip">{counts.package}</span>
-          </button>
-
-
-        <button
-          type="button"
-          className={`tp-tab ${tab === "all" ? "active" : ""}`}
-          onClick={() => setTab("all")}
-        >
+        <button type="button" className={`tp-tab ${tab === "package" ? "active" : ""}`} onClick={() => setTab("package")}>
+          Paket Öğrencileri <span className="tp-chip">{counts.package}</span>
+        </button>
+        <button type="button" className={`tp-tab ${tab === "all" ? "active" : ""}`} onClick={() => setTab("all")}>
           Tümü <span className="tp-chip muted">{counts.all}</span>
         </button>
       </div>
@@ -312,9 +272,7 @@ const counts = {
         <div className="tp-req-list">
           {list.map((r) => {
             const rejected = isRejected(r);
-            const uiKey = rejected
-              ? "CANCELLED"
-              : (isPaidLike(r) ? "PAID" : (r.status || "SUBMITTED"));
+            const uiKey = rejected ? "CANCELLED" : (isPaidLike(r) ? "PAID" : (r.status || "SUBMITTED"));
 
             return (
               <div key={r.id} className="tp-card">
@@ -338,12 +296,14 @@ const counts = {
                   <span style={{ margin: "0 8px" }}>•</span>
                   <span>Tür:</span>{" "}
                   <b>{r.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}</b>
+
                   {typeof r.paidTL === "number" && (
                     <>
                       <span style={{ margin: "0 8px" }}>•</span>
                       <span>Ödenen:</span> <b>{r.paidTL.toLocaleString("tr-TR")} ₺</b>
                     </>
                   )}
+
                   {typeof r.lessonsCount === "number" && (
                     <>
                       <span style={{ margin: "0 8px" }}>•</span>
@@ -356,60 +316,64 @@ const counts = {
                     <RequestBadge req={{ status: uiKey }} />
                     <span className="tp-info" tabIndex={0} aria-label="Durum açıklaması">
                       !
-                      <span className="tp-tooltip">{statusHelp[uiKey] || "Durum açıklaması bulunamadı."}</span>
+                      <span className="tp-tooltip">
+                        {statusHelp[uiKey] || "Durum açıklaması bulunamadı."}
+                      </span>
                     </span>
                   </div>
                 </div>
 
                 {/* Onay bekleyen randevular */}
                 {(r.appointments || []).length > 0 && (
-  <>
-    <div className="tp-section-sub" style={{ marginTop: 8 }}>
-      Onay bekleyen saatler
-    </div>
-    <div className="tp-slots-grid">
-      {r.appointments.map((a) => {
-        const st = new Date(a.startsAt);
-        const et = new Date(a.endsAt);
-        const statusU = APPT(a);
-        const disabledAll = rejected || tab === "rejected";
+                  <>
+                    <div className="tp-section-sub" style={{ marginTop: 8 }}>
+                      Onay bekleyen saatler
+                    </div>
+                    <div className="tp-slots-grid">
+                      {r.appointments.map((a) => {
+                        const st = new Date(a.startsAt);
+                        const et = new Date(a.endsAt);
+                        const statusU = APPT(a);
+                        const disabledAll = rejected || tab === "rejected";
 
-        return (
-          <div key={a.id} className="tp-slot-card">
-            <div className="tp-slot-time">
-              {st.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit" })}{" "}
-              {st.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}{" "}
-              – {et.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}
-            </div>
-            <div className="tp-slot-mode">
-              {a.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}
-            </div>
-            <div className="tp-slot-actions">
-              <button
-                className="tp-btn tp-btn--approve"
-                onClick={() => setStatus(a.id, "CONFIRMED")}
-                disabled={disabledAll || statusU === "CONFIRMED"}
-                aria-disabled={disabledAll || statusU === "CONFIRMED"}
-                title={disabledAll ? "Bu sekmede işlem devre dışı" : "Onayla"}
-              >
-                ✓ Onayla
-              </button>
-              <button
-                className="tp-btn tp-btn--cancel"
-                onClick={() => setStatus(a.id, "CANCELLED")}
-                disabled={disabledAll || statusU === "CANCELLED"}
-                aria-disabled={disabledAll || statusU === "CANCELLED"}
-                title={disabledAll ? "Bu sekmede işlem devre dışı" : "İptal Et"}
-              >
-                ✕ Saati İptal Et
-              </button>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  </>
-)}
+                        return (
+                          <div key={a.id} className="tp-slot-card">
+                            <div className="tp-slot-time">
+                              {st.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit" })}{" "}
+                              {st.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}{" "}
+                              – {et.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}
+                            </div>
+                            <div className="tp-slot-mode">
+                              {a.mode === "FACE_TO_FACE" ? "Yüz yüze" : "Online"}
+                            </div>
+                            <div className="tp-slot-actions">
+                              <button
+                                className="tp-btn tp-btn--approve"
+                                onClick={() => setStatus(a.id, "CONFIRMED")}
+                                disabled={disabledAll || statusU === "CONFIRMED"}
+                                aria-disabled={disabledAll || statusU === "CONFIRMED"}
+                                title={disabledAll ? "Bu sekmede işlem devre dışı" : "Onayla"}
+                                type="button"
+                              >
+                                ✓ Onayla
+                              </button>
+                              <button
+                                className="tp-btn tp-btn--cancel"
+                                onClick={() => setStatus(a.id, "CANCELLED")}
+                                disabled={disabledAll || statusU === "CANCELLED"}
+                                aria-disabled={disabledAll || statusU === "CANCELLED"}
+                                title={disabledAll ? "Bu sekmede işlem devre dışı" : "İptal Et"}
+                                type="button"
+                              >
+                                ✕ Saati İptal Et
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
 
                 {/* Onaylanmış randevular */}
                 {(r.appointmentsConfirmed || []).length > 0 && (
@@ -447,6 +411,7 @@ const counts = {
                                   disabled={!past}
                                   title={!past ? "Ders saati geçtikten sonra aktif olur" : ""}
                                   onClick={() => past && completeAsTeacher(a.id)}
+                                  type="button"
                                 >
                                   Ders tamamlandı
                                 </button>
@@ -459,18 +424,19 @@ const counts = {
                   </>
                 )}
 
-               {/* Talep düzeyinde aksiyon */}
-{tab === "pending" && !isRejected(r) && (
-  <div className="tp-card-actions" style={{ marginTop: 10 }}>
-    <button
-      className="tp-btn tp-btn--danger"
-      onClick={() => rejectRequest(r.id)}
-      title="Bu talebe ait tüm saatler iptal edilir"
-    >
-      🚫 Tüm Talepleri Reddet
-    </button>
-  </div>
-)}
+                {/* Talep düzeyinde aksiyon */}
+                {tab === "pending" && !isRejected(r) && (
+                  <div className="tp-card-actions" style={{ marginTop: 10 }}>
+                    <button
+                      className="tp-btn tp-btn--danger"
+                      onClick={() => rejectRequest(r.id)}
+                      title="Bu talebe ait tüm saatler iptal edilir"
+                      type="button"
+                    >
+                      🚫 Tüm Talepleri Reddet
+                    </button>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -515,14 +481,14 @@ export default function TeacherPanel() {
       setPastLoading(true);
       const { data } = await axios.get("/api/v1/ogretmen/me/appointments/past");
       setPastLessons(data?.items || []);
-    } catch (e) {
+    } catch {
       setPastLessons([]);
     } finally {
       setPastLoading(false);
     }
   };
 
-  // RANDEVU ONAY/İPTAL SONRASI TAKVİMİ YENİLE
+  // Randevu onay/iptal sonrası takvimi yenile
   useEffect(() => {
     const onChanged = () => {
       fetchSlots();
@@ -777,7 +743,7 @@ export default function TeacherPanel() {
                     title="Profil fotoğrafını değiştir"
                     aria-label="Profil fotoğrafını değiştir"
                   >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                       <path
                         d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"
                         stroke="currentColor"
@@ -1021,22 +987,12 @@ export default function TeacherPanel() {
                         onClick={loadPastAppointments}
                         disabled={pastLoading}
                         title="Yenile"
+                        type="button"
                       >
-                        <svg
-                          className="icon"
-                          width="18"
-                          height="18"
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                        >
-                          <path
-                            d="M12 5V2L7 7l5 5V9a5 5 0 1 1-5 5H5a7 7 0 1 0 7-9z"
-                            fill="currentColor"
-                          />
+                        <svg className="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M12 5V2L7 7l5 5V9a5 5 0 1 1-5 5H5a7 7 0 1 0 7-9z" fill="currentColor" />
                         </svg>
-                        <span className="label">
-                          {pastLoading ? "Yükleniyor…" : "Yenile"}
-                        </span>
+                        <span className="label">{pastLoading ? "Yükleniyor…" : "Yenile"}</span>
                       </button>
                     </div>
                   </div>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { Link, useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "../utils/axios";
 import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
@@ -128,7 +128,7 @@ const listDescription = descParts.length
       <div className="tl-page">
         
         {/* Filtre barı */}
-        <details className="tl-filters-collapsible" open>
+        <details ref={detailsRef} className="tl-filters-collapsible" open>
   <summary className="tl-filterbar">
     <div className="tl-filterbar-left">
       <div className="tl-filterbar-search">
