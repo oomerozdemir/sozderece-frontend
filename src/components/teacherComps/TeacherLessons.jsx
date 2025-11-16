@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import axios from "../../utils/axios";
 import { FiEdit2, FiTrash2, FiPlus, FiSearch } from "react-icons/fi";
 import "../../cssFiles/teacher-panel.css";
@@ -35,7 +35,7 @@ export default function TeacherLessons({ profile, onModeChange }) {
   const [total, setTotal] = useState(0);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
-  const fetchList = async (opts={}) => {
+ const fetchList = useCallback(async (opts={}) => {
     const params = {
       q, page, pageSize,
       ...opts,
@@ -45,9 +45,9 @@ export default function TeacherLessons({ profile, onModeChange }) {
     setTotal(data.total || 0);
     setPage(data.page || 1);
     setPageSize(data.pageSize || 10);
-  };
+ }, [q, page, pageSize]);
 
-  useEffect(() => { fetchList(); }, [page, pageSize]); // q değişince butondan ara yapacağız
+  useEffect(() => { fetchList(); }, [fetchList]);
 
   // Yeni / düzenle formu
   const [editing, setEditing] = useState(null); // null=new, {..}=edit
@@ -94,13 +94,6 @@ export default function TeacherLessons({ profile, onModeChange }) {
     await fetchList();
   };
 
-  const headerMode = useMemo(() => {
-    if (onlineOn && f2fOn) return "BOTH";
-    if (onlineOn) return "ONLINE";
-    if (f2fOn) return "FACE_TO_FACE";
-    return "ONLINE";
-  }, [onlineOn, f2fOn]);
-
   return (
     <div className="tl-card">
       {/* Toggle alanı */}
@@ -121,6 +114,7 @@ export default function TeacherLessons({ profile, onModeChange }) {
           </label>
         </div>
 
+     
         <div className={`tl-toggle ${f2fOn ? "on" : "off"}`}>
           <div className="tl-toggle-head">Yüz Yüze Ders Vermiyorum Olarak Seçtiniz</div>
           <label className="switch">

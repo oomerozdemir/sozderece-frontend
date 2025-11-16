@@ -3,7 +3,7 @@ import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import "../cssFiles/payment.css";
-import { isValidEmail, isValidName, isValidPhone, isValidPostalCode, isValidAddress } from "../utils/validation";
+import { isValidEmail, isValidName, isValidPhone, isValidPostalCode, isValidAddress, isValidTcNo } from "../utils/validation";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
@@ -50,6 +50,7 @@ const PaymentPage = () => {
     postalCode: "",
     phone: "",
     allowEmails: false,
+    tcNo: "",
   });
 
   const [couponCode, setCouponCode] = useState("");
@@ -155,6 +156,11 @@ const PaymentPage = () => {
     if (!isValidName(formData.surname)) newErrors.surname = "Soyad sadece harf içermelidir.";
     if (!isValidPhone(formData.phone)) newErrors.phone = "Telefon numarası 05XXXXXXXXX formatında olmalı.";
     if (!isValidAddress(formData.address)) newErrors.address = "Lütfen geçerli bir adres girin.";
+    if (!formData.tcNo || !formData.tcNo.trim()) {
+  newErrors.tcNo = "TC Kimlik numarası faturalandırma için zorunludur.";
+} else if (!isValidTcNo(formData.tcNo.trim())) {
+  newErrors.tcNo = "TC Kimlik numarası geçersiz.";
+}
     if (!formData.city.trim()) newErrors.city = "Şehir boş bırakılamaz.";
     if (!formData.district.trim()) newErrors.district = "İlçe boş bırakılamaz.";
     if (formData.postalCode && !isValidPostalCode(formData.postalCode)) newErrors.postalCode = "5 haneli posta kodu girin.";
@@ -258,6 +264,17 @@ const PaymentPage = () => {
             <input name="phone" value={formData.phone} placeholder="Telefon" onChange={handleInputChange} className={errors.phone ? "error-input" : ""} required />
             {errors.phone && <span className="error-text">{errors.phone}</span>}
           </div>
+            <div>
+    <input
+      name="tcNo"
+      value={formData.tcNo}
+      placeholder="TC Kimlik No"
+      onChange={handleInputChange}
+      className={errors.tcNo ? "error-input" : ""}
+      required
+    />
+    {errors.tcNo && <span className="error-text">{errors.tcNo}</span>}
+  </div>
         </div>
 
         <button type="submit" className="pay-button">Güvenli Ödemeye Geç</button>

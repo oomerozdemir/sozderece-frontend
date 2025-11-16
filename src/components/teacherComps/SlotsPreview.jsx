@@ -1,5 +1,4 @@
-// src/components/teacherComps/SlotsPreview.jsx
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 
 /**
  * @param {Array} slots      - müsait slotlar [{start,end,mode}]
@@ -18,13 +17,6 @@ export default function SlotsPreview({ range, setRange, slots, confirmed = [], f
       day: "numeric",
       weekday: "long",
     });
-
-  const studentLabel = (stu) => {
-    if (!stu) return "Onaylandı";
-    if (stu.name) return stu.name;
-    if (stu.email) return stu.email;
-    return "Onaylandı";
-  };
 
   const toDayISO = (d) => {
     const dt = new Date(d);
@@ -45,24 +37,24 @@ export default function SlotsPreview({ range, setRange, slots, confirmed = [], f
     return days;
   };
 
-  const groupByDay = (list, keyGetter) => {
+  const groupByDay = useCallback((list, keyGetter) => {
     const map = {};
     for (const it of list || []) {
       const keyISO = toDayISO(keyGetter(it));
       (map[keyISO] ||= []).push(it);
     }
     return map;
-  };
+ }, [toDayISO]);
 
   // ---- groups ----
-  const byDayAvailable = useMemo(
-    () => groupByDay(slots, (s) => s.start),
-    [slots]
-  );
+ const byDayAvailable = useMemo(
+  () => groupByDay(slots, (s) => s.start),
+ [slots, groupByDay]
+);
 
   const byDayConfirmed = useMemo(
     () => groupByDay(confirmed, (c) => c.startsAt),
-    [confirmed]
+    [confirmed, groupByDay]
   );
 
   const dayList = useMemo(() => daysInRange(range), [range]);

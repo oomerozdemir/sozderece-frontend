@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import "../cssFiles/navbar.css";
 import { FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
 import { motion } from "framer-motion";
@@ -17,29 +17,29 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const calcMissing = (u) => {
-    if (!u) return 0;
-    let m = 0;
-    if (!u.phone) m++;
-    if (!u.grade) m++;
-    if (["9", "10", "11", "12", "Mezun"].includes(u.grade) && !u.track) m++;
-    return m;
-  };
+  const calcMissing = useCallback((u) => {
+   if (!u) return 0;
+   let m = 0;
+   if (!u.phone) m++;
+   if (!u.grade) m++;
+   if (["9", "10", "11", "12", "Mezun"].includes(u.grade) && !u.track) m++;
+   return m;
+ }, []);
 
-  const syncUser = () => {
-    const userStr = localStorage.getItem("user");
-    let parsed = null;
-    if (userStr) { try { parsed = JSON.parse(userStr); } catch (_) {} }
-    setUsername(parsed ? parsed.name : null);
-    setUserRole(parsed ? String(parsed.role || "").toLowerCase() : null);
+   const syncUser = useCallback(() => {
+   const userStr = localStorage.getItem("user");
+   let parsed = null;
+   if (userStr) { try { parsed = JSON.parse(userStr); } catch (_) {} }
+   setUsername(parsed ? parsed.name : null);
+   setUserRole(parsed ? String(parsed.role || "").toLowerCase() : null);
 
-    let missing = Number(localStorage.getItem("profileMissing"));
-    if (!Number.isFinite(missing)) {
-      missing = calcMissing(parsed);
-      localStorage.setItem("profileMissing", String(missing));
-    }
-    setProfileMissing(missing);
-  };
+   let missing = Number(localStorage.getItem("profileMissing"));
+   if (!Number.isFinite(missing)) {
+     missing = calcMissing(parsed);
+     localStorage.setItem("profileMissing", String(missing));
+   }
+   setProfileMissing(missing);
+ }, [calcMissing]);
 
   useEffect(() => {
     syncUser();
