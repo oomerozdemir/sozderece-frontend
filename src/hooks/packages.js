@@ -68,9 +68,9 @@ export const PACKAGES = {
     slug: "kocluk-2026",
     title: "YKS/LGS Tam Kapsamlı Koçluk Paketi",
     hidden: false,
-    unitPrice: 230000,                       
-    oldPriceText: "2500₺",
-    priceText: "2300₺ / ay",
+    unitPrice: 250000,                       
+    // oldPriceText: "2500₺",
+    priceText: "2500₺ / ay",
     subtitle:
       "Sadece koçluk: kişiye özel program, hedef takibi, düzenli görüşmeler ve performans raporları.",
     type: "coaching_only",
