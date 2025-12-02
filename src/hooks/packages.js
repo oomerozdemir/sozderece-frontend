@@ -133,7 +133,7 @@ export const PACKAGES = {
 /* Vitrinde gösterim sırası */
 export const PACKAGES_ORDER = [
   "ozel-ders-paketi",
-  "ozel-ders-plus-hazir-2026",
+  "tek-ders-kocluk-2026",
   "kocluk-2026",
   "kocluk-ozel-ders-2026",
 ];
