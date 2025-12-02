@@ -36,7 +36,7 @@ export const PACKAGES = {
     unitPrice: 150000,                      
     priceText: "1500₺ / ay",
     subtitle:
-      "Tam kapsamlı koçluktan tek farkı gelişmek istediğiniz tek bir derse uzman koçlunuzla hazırlanın!",
+      "Tam kapsamlı koçluktan tek farkı gelişmek istediğiniz tek bir derse uzman koçunuzla hazırlanın!",
     type: "hybrid_light",
     cta: { label: "Paketi seç", href: "/pre-auth?slug=tek-ders-kocluk-2026" },
     features: [
