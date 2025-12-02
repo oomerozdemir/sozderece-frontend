@@ -28,23 +28,23 @@ export const PACKAGES = {
   },
 
   /* 2) ÖZEL DERS + HAZIR PAKET (ara paket) */
-  "ozel-ders-plus-hazir-2026": {
-    slug: "ozel-ders-plus-hazir-2026",
-    title: "Özel Ders + Seviyenize Göre Çalışma Programı",
+  "tek-ders-kocluk-2026": {
+    slug: "tek-ders-kocluk-2026",
+    title: "Tek Derse Özel Koçluk",
     hidden: false,
-    oldPriceText: "1700₺",
+    // oldPriceText: "1700₺",
     unitPrice: 150000,                      
     priceText: "1500₺ / ay",
     subtitle:
-      "Koçluk paketine uygun bütçeli ara çözüm: hazır aylık program + 2 haftada bir 40 dk görüşme + 1 ücretsiz özel ders hakkı.",
+      "Tam kapsamlı koçluktan tek farkı gelişmek istediğiniz tek bir derse uzman koçlunuzla hazırlanın!",
     type: "hybrid_light",
-    cta: { label: "Paketi seç", href: "/pre-auth?slug=ozel-ders-plus-hazir-2026" },
+    cta: { label: "Paketi seç", href: "/pre-auth?slug=tek-ders-kocluk-2026" },
     features: [
-      { label: "Seçtiğiniz Öğretmenden Ücretsiz 1 Özel Ders Hakkı", included: true },
-      { label: "Sana özel 2 haftalık koçluk programı(2.hafta durum analizi sonrası yenilenir)", included: true },
-      { label: "2 Haftada Bir Koçunla Görüşme Ve Durum Analizi", included: true },
-      { label: "Özel Ders Paket İçeriği", included: true },
-      { label: "Kişiye Özel Tam Koçluk", included: false },
+      { label: "Kişiye Özel Seçtiği Dersten Koçluk Programı", included: true },
+      { label: "7/24 WhatsApp Desteği", included: true },
+      { label: "Günlük Takip Ve Durum Analizi ", included: true },
+      { label: "Haftada Bir Koçunla Görüşme Ve Durum Analizi", included: true },
+      { label: "Özel Ders Paket İçeriği", included: false },
     ],
     images: [
       "/images/ozeldersimage1.webp",
@@ -52,15 +52,9 @@ export const PACKAGES = {
     ],
     faq: [
       { title: "Programım nasıl hazırlanır?", content: "İlk görüşmede hedefine ve seviyene göre koçlarımız tarafından hazırlanır." },
-      { title: "İstediğim öğretmenden özel ders alabilir miyim?", content: "Evet istediğiniz öğretmenden ders alabilirsiniz." },
-      { title: "Koç ile görüşmemde neler konuşuluyor?", content: "Size verilen programa ne kadar uyduğunuz,gelişim gösterip göstermediğiniz ve kalan 2 haftada neler yapılabilir bunlar konuşuluyor." },
-      { title: "WhatsApp üzerinden hiç soru sorma hakkım olmayacak mı?", content: "Aklınıza takılan her soruyu whatsapp üzerinden sizinle iletişime geçecek olan koçunuza sorabileceksiniz." },
-
-
+      { title: "İstediğim koçtan koçluk alabilir miyim?", content: "Evet kendi koçunuzu seçebilirsiniz." },
     ],
-    note: "Bu pakette size özel bir program hazırlanır ve 2 haftada bir durum analizi yapılır.Günlük takip yoktur.",
-    freeLessons: 1,
-    freeLessonsPeriod: "monthly",
+    note: "Sadece tek bir derse özel koçluk.Seçtiğiniz dersten size özel tam kapsamlı koçluk imkanı",
   },
 
   /* 3) SADECE KOÇLUK (mevcut ana paket) */
