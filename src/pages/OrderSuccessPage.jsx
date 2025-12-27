@@ -10,25 +10,45 @@ const OrderSuccessPage = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const userName = user?.name || "Değerli öğrencimiz";
 
-useEffect(() => {
-  try {
-    clearCart(); 
-    console.log("🧹 Sepet temizlendi.");
-  } catch (err) {
-    console.error("❌ clearCart hatası:");
-  }
+  useEffect(() => {
+    try {
+      clearCart(); 
+      console.log("🧹 Sepet temizlendi.");
+    } catch (err) {
+      console.error("❌ clearCart hatası:", err);
+    }
 
-  if (window.self !== window.top) {
-    console.log("📤 Iframe içinde, ana sayfaya mesaj gönderiliyor...");
-    window.parent.postMessage("PAYMENT_SUCCESS", "*");
-  } else {
-    const timer = setTimeout(() => {
-      console.log("➡️ Navigating to /");
-      navigate("/");
-    }, 10000);
-    return () => clearTimeout(timer);
-  }
-}, []);
+    if (window.fbq) {
+      
+      window.fbq('track', 'Lead', {
+        value: 2500.00,       
+        currency: 'TRY',      
+        content_name: 'Kocluk Basvuru/Siparis Tamamlandi', 
+        content_type: 'product'
+      });
+      
+      console.log("✅ Meta Pixel 'Lead' olayı gönderildi.");
+    }
+
+    if (window.gtag) {
+      window.gtag("event", "conversion", {
+        send_to: "AW-17399744724/16ynCJSfIaobENSR7OhA",
+        value: 2500.0,       
+        currency: "TRY",
+        transaction_id: Date.now() 
+      });
+    }
+
+    if (window.self !== window.top) {
+      window.parent.postMessage("PAYMENT_SUCCESS", "*");
+    } else {
+      const timer = setTimeout(() => {
+        console.log("➡️ Navigating to /");
+        navigate("/");
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, []); 
 
   return (
     <div className="order-success-container">
@@ -43,12 +63,12 @@ useEffect(() => {
         </p>
 
         <div className="order-success-button-group">
-        <button type="button" onClick={() => navigate("/")} className="order-success-btn">
-  🏠 Ana Sayfa
-</button>
-<button type="button" onClick={() => navigate("/orders")} className="order-success-btn secondary">
-  📦 Siparişlerim
-</button>
+          <button type="button" onClick={() => navigate("/")} className="order-success-btn">
+            🏠 Ana Sayfa
+          </button>
+          <button type="button" onClick={() => navigate("/orders")} className="order-success-btn secondary">
+            📦 Siparişlerim
+          </button>
         </div>
       </div>
     </div>

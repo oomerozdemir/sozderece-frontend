@@ -25,7 +25,7 @@ const IletisimPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
- const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
   setLoading(true);
   setSuccessMsg("");
@@ -35,16 +35,18 @@ const IletisimPage = () => {
     const response = await axios.post("/api/contact/trial", formData);
 
     if (response.data.success) {
-      // Facebook Pixel (mevcutta var)
       if (window.fbq) {
-        window.fbq("track", "Lead");
+        window.fbq("track", "Lead", {
+          value: 250.00,      
+          currency: 'TRY',
+          content_name: 'Ucretsiz On Gorusme Formu' 
+        });
       }
 
-      // ✅ Google Ads dönüşüm tetikle (TIKLAMA tipi snippet)
       if (window.gtag) {
         window.gtag("event", "conversion", {
-          send_to: "AW-17399744724/16ynCJSfIaobENSR7OhA", // senin "send_to" değerin
-          value: 1.0,
+          send_to: "AW-17399744724/16ynCJSfIaobENSR7OhA",
+          value: 250.0,      
           currency: "TRY",
         });
       }
@@ -66,7 +68,6 @@ const IletisimPage = () => {
     setLoading(false);
   }
 };
-
   return (
     <>
 <Helmet>
