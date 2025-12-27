@@ -20,14 +20,14 @@ const OrderSuccessPage = () => {
 
     if (window.fbq) {
       
-      window.fbq('track', 'Lead', {
+      window.fbq('track', 'Purchase', {
         value: 2500.00,       
         currency: 'TRY',      
         content_name: 'Kocluk Basvuru/Siparis Tamamlandi', 
         content_type: 'product'
       });
       
-      console.log("✅ Meta Pixel 'Lead' olayı gönderildi.");
+      console.log("✅ Meta Pixel 'Purchase' (Satış) olayı gönderildi.");
     }
 
     if (window.gtag) {
