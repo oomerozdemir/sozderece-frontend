@@ -145,8 +145,8 @@ export default function PricingSection() {
   return (
     <div className="pricing-section" id="paketler">
       <div className="pricing-header">
-        <h2 className="section-title">Hedefine Uygun Planı Seç</h2>
-        <p className="section-subtitle">
+        <h2 className="pricing-section-title">Hedefine Uygun Planı Seç</h2>
+        <p className="pricing-section-subtitle">
           İster sadece özel ders, ister tam kapsamlı koçluk. Başarıya giden yolda sana en uygun paketi belirle.
         </p>
       </div>

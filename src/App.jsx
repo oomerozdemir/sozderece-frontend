@@ -139,6 +139,8 @@ export default App;
 
 sözderece logo değiş
  
+herosectiondaki resimleri duzelt
+
 
 
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler

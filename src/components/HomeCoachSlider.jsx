@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
-import "../cssFiles/HomeCoachSlider.css"; // CSS'yi unutma
-import Slider from "react-slick"; // react-slick kullanılabilir
+import "../cssFiles/HomeCoachSlider.css"; 
+import Slider from "react-slick"; 
 
 const HomeCoachSlider = () => {
   const [coaches, setCoaches] = useState([]);

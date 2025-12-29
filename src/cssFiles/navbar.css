@@ -2,8 +2,8 @@
 .navbar {
   width: 100%;
   height: 80px;
-  background-color: #ffffff; /* Beyaz Zemin */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Çok hafif gölge */
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -35,7 +35,7 @@
 
 .nav-link {
   text-decoration: none;
-  color: #0f2a4a; /* Lacivert */
+  color: #0f2a4a;
   font-weight: 600;
   font-size: 1.05rem;
   position: relative;
@@ -43,22 +43,7 @@
 }
 
 .nav-link:hover {
-  color: #f39c12; /* Hover olunca hafif turuncu olabilir veya açık mavi */
-}
-
-/* Hover alt çizgi efekti (Opsiyonel) */
-.nav-link::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 2px;
-  bottom: -4px;
-  left: 0;
-  background-color: #f39c12;
-  transition: width 0.3s;
-}
-.nav-link:hover::after {
-  width: 100%;
+  color: #f39c12;
 }
 
 /* SAĞ: Butonlar ve İkonlar */
@@ -68,13 +53,14 @@
   gap: 20px;
 }
 
-/* Sepet İkonu */
+/* Sepet İkonu (Masaüstü) */
 .cart-icon-btn {
   color: #0f2a4a;
   font-size: 1.2rem;
   position: relative;
   display: flex;
   align-items: center;
+  text-decoration: none;
 }
 
 .cart-badge {
@@ -92,7 +78,7 @@
   align-items: center;
 }
 
-/* Giriş Yap Linki (Buton değil, text) */
+/* Giriş Yap Linki */
 .login-link {
   text-decoration: none;
   color: #0f2a4a;
@@ -105,22 +91,9 @@
   opacity: 0.7;
 }
 
-/* Kullanıcı Dropdown */
-.user-btn {
-  background: none;
-  border: none;
-  color: #0f2a4a;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 1rem;
-}
-
-/* ANA CTA BUTONU (Koçluk Al) */
+/* CTA BUTONU */
 .cta-button {
-  background-color: #100481; /* Turuncu sadece burada! */
+  background-color: #100481;
   color: #fff;
   padding: 10px 24px;
   border-radius: 5px;
@@ -128,28 +101,15 @@
   font-weight: 700;
   font-size: 1rem;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(243, 156, 18, 0.2);
+  box-shadow: 0 4px 6px rgba(16, 4, 129, 0.2);
 }
 
 .cta-button:hover {
-  background-color: #d35400; /* Daha koyu turuncu */
+  background-color: #d35400;
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(243, 156, 18, 0.3);
 }
 
-/* Mobile Responsive */
-.mobile-menu-icon {
-  display: none;
-  color: #0f2a4a;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-.mobile-menu-overlay {
-    display: none;
-}
-
-/* --- USER DROPDOWN --- */
+/* --- USER DROPDOWN (Masaüstü) --- */
 .user-dropdown-wrapper {
   position: relative;
   height: 100%;
@@ -160,7 +120,7 @@
 .user-btn {
   background: none;
   border: none;
-  color: var(--primary-color, #0f2a4a);
+  color: #0f2a4a;
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -177,10 +137,9 @@
   text-overflow: ellipsis;
 }
 
-/* Dropdown Kutusu */
 .dropdown-menu {
   position: absolute;
-  top: 100%; /* Butonun hemen altı */
+  top: 100%;
   right: 0;
   background-color: #fff;
   width: 200px;
@@ -192,11 +151,6 @@
   flex-direction: column;
   z-index: 1001;
   animation: fadeIn 0.2s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 .dropdown-item {
@@ -217,25 +171,92 @@
 
 .dropdown-item:hover {
   background-color: #f8f9fa;
-  color: var(--action-color, #f39c12);
+  color: #f39c12;
 }
 
 .logout-btn {
-  color: #e74c3c; /* Kırmızımsı */
+  color: #e74c3c;
   border-top: 1px solid #eee;
   margin-top: 5px;
 }
-.logout-btn:hover {
-  background-color: #fff5f5;
-  color: #c0392b;
+
+/* --- MOBİL MENÜ --- */
+.mobile-menu-icon {
+  display: none;
+  color: #0f2a4a;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 1002;
 }
 
-/* --- MOBİL MENÜ EKLEMELERİ --- */
+/* Varsayılan olarak gizli (yandan kayarak veya direkt açılarak gelebilir) */
+.mobile-menu-overlay {
+  display: block; /* Flex yerine block yaptık, ama transform ile gizleyeceğiz */
+  position: fixed;
+  top: 80px; /* Navbar yüksekliği kadar aşağıdan başla */
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 80px);
+  background-color: #fff;
+  z-index: 999;
+  
+  /* Animasyon için hazırlık */
+  transform: translateX(100%); /* Sağa ötele (Gizle) */
+  transition: transform 0.3s ease-in-out;
+  border-top: 1px solid #eee;
+  overflow-y: auto;
+}
+
+/* JS ile "open" classı eklenince görünür olacak */
+.mobile-menu-overlay.open {
+  transform: translateX(0); /* Yerine gelsin */
+}
+
+.mobile-links {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.mobile-links a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 0;
+  font-size: 1.1rem;
+  color: #0f2a4a;
+  text-decoration: none;
+  border-bottom: 1px solid #f0f0f0;
+  text-align: center;
+}
+
+.mobile-cart-link {
+  font-weight: 700;
+  color: #e67e22 !important; /* Turuncu vurgu */
+}
+
+.mobile-user-info {
+  text-align: center;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 10px;
+  padding-top: 10px;
+}
+
+.mobile-cta {
+  background-color: #100481;
+  color: white !important;
+  border-radius: 8px;
+  margin-top: 15px;
+  border: none !important;
+}
+
 .mobile-logout {
   background: none;
   border: none;
   color: #e74c3c;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   padding: 15px 0;
   cursor: pointer;
   border-bottom: 1px solid #f0f0f0;
@@ -247,42 +268,16 @@
   gap: 10px;
 }
 
+/* RESPONSIVE AYARLAR */
 @media (max-width: 960px) {
-  .navbar-center {
-    display: none;
+  /* Masaüstü elementlerini gizle */
+  .navbar-center, 
+  .desktop-only {
+    display: none !important;
   }
   
-  .login-link, .cta-button, .user-dropdown {
-    display: none; /* Mobilde bunları hamburger menüye alacağız veya sadece CTA kalabilir */
-  }
-  
-  /* Mobilde sadece Logo - Sepet - Hamburger kalsın */
+  /* Mobili göster */
   .mobile-menu-icon {
     display: block;
-    margin-left: 15px;
-  }
-
-  /* Mobil Menü İçeriği */
-  .mobile-menu-overlay {
-    display: flex;
-    position: fixed;
-    top: 80px;
-    left: 0;
-    width: 100%;
-    height: calc(100vh - 80px);
-    background-color: #fff;
-    flex-direction: column;
-    padding: 20px;
-    border-top: 1px solid #eee;
-  }
-
-  .mobile-links a {
-    display: block;
-    padding: 15px 0;
-    font-size: 1.2rem;
-    color: #0f2a4a;
-    text-decoration: none;
-    border-bottom: 1px solid #f0f0f0;
-    text-align: center;
   }
 }

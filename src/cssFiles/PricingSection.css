@@ -11,14 +11,14 @@
   margin: 0 auto 50px auto;
 }
 
-.section-title {
+.pricing-section-title {
   font-size: 2.2rem;
   font-weight: 800;
   color: var(--primary-color, #0f2a4a);
   margin-bottom: 15px;
 }
 
-.section-subtitle {
+.pricing-section-subtitle {
   font-size: 1.1rem;
   color: #666;
   line-height: 1.6;
@@ -258,6 +258,6 @@
 }
 
 @media (max-width: 768px) {
-  .section-title { font-size: 1.8rem; }
+  .pricing-section-title { font-size: 1.8rem; }
   .packages-container { padding: 0 10px; }
 }
