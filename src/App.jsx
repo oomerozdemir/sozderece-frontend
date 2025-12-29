@@ -70,7 +70,7 @@ function App() {
             <Route path="/mesafeli-hizmet-sozlesmesi" element={<MesafeliSozlesme />} />
             <Route path="/iade-ve-cayma-politikasi" element={<IadeVeCaymaPolitikasi />} />
             <Route path="/gizlilik-politikasi-kvkk" element={<GizlilikPolitikasiKvkk />} />
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/giris-yap" element={<LoginPage />} />
             <Route path="/pre-auth" element={<PreCartAuth />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
