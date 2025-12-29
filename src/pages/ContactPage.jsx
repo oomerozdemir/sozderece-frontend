@@ -162,7 +162,7 @@ const IletisimPage = () => {
                     <a href="tel:+905312546701" className="action-btn call-btn">
                       <FaPhoneAlt /> Hemen Ara
                     </a>
-                    <button onClick={() => navigate("/ogretmenler")} className="action-btn browse-btn">
+                    <button onClick={() => navigate("/ekibimiz")} className="action-btn browse-btn">
                       Koçları İncele <FaArrowRight />
                     </button>
                  </div>
