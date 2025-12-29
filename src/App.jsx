@@ -90,7 +90,7 @@ function App() {
             {/* Korunan sayfalar */}
             <Route path="/coach/dashboard" element={<RoleRoute allowedRoles={["coach"]}><CoachDashboard /></RoleRoute>} />
             <Route path="/student/dashboard" element={<RoleRoute allowedRoles={["student"]}><StudentDashboard /></RoleRoute>} />
-            <Route path="/account" element={<PrivateRoute><AccountPage /></PrivateRoute>} />
+            <Route path="/hesabim" element={<PrivateRoute><AccountPage /></PrivateRoute>} />
             <Route path="/orders" element={<PrivateRoute><OrdersPage /></PrivateRoute>} />
             <Route path="/payment" element={<PrivateRoute><PaymentPage /></PrivateRoute>} />
             <Route path="/order-success" element={<PrivateRoute><OrderSuccessPage /></PrivateRoute>} />
