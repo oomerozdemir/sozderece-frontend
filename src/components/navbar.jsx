@@ -125,7 +125,7 @@ export default function Navbar() {
             </div>
           ) : (
             // Giriş Yapmamışsa
-            <Link to="/login" className="login-link">
+            <Link to="/giris-yap" className="login-link">
               Giriş Yap
             </Link>
           )}
@@ -167,7 +167,7 @@ export default function Navbar() {
                  </button>
                </>
              ) : (
-                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>Giriş Yap</Link>
+                <Link to="/giris-yap" onClick={() => setIsMobileMenuOpen(false)}>Giriş Yap</Link>
              )}
           </div>
         </div>
