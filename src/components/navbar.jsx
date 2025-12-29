@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../cssFiles/navbar.css";
 // useCart hook'unun export şekline göre import edin (default veya named)
-import { useCart } from "../hooks/useCart"; 
+import useCart from "../hooks/useCart";
 import { 
   FaShoppingCart, 
   FaUser, 
