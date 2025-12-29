@@ -1,19 +1,27 @@
 import { useState, useEffect } from "react";
 import axios from "../utils/axios";
+// Paket listesini almak için import ediyoruz
+import { PACKAGES } from "../hooks/packages"; 
 
 const AdminCouponPage = () => {
   // Temel Bilgiler
   const [code, setCode] = useState("");
   const [maxUsage, setMaxUsage] = useState("");
   
-  // YENİ: Kupon Ayarları
-  const [type, setType] = useState("RATE"); // "RATE" (Yüzde) veya "FIXED" (Sabit)
-  const [discountRate, setDiscountRate] = useState(""); // Örn: 10 (%)
-  const [discountAmount, setDiscountAmount] = useState(""); // Örn: 200 (TL)
-  const [isFirstOrder, setIsFirstOrder] = useState(false); // Sadece ilk sipariş mi?
+  // Kupon Ayarları
+  const [type, setType] = useState("RATE");
+  const [discountRate, setDiscountRate] = useState("");
+  const [discountAmount, setDiscountAmount] = useState("");
+  const [isFirstOrder, setIsFirstOrder] = useState(false);
+  
+  // YENİ: Seçilen Paketler State'i
+  const [selectedPackages, setSelectedPackages] = useState([]); 
 
   const [message, setMessage] = useState("");
   const [coupons, setCoupons] = useState([]);
+
+  // Paket Listesini Array formatına çeviriyoruz (Checkbox için)
+  const packageList = Object.values(PACKAGES);
 
   const fetchCoupons = async () => {
     try {
@@ -27,22 +35,32 @@ const AdminCouponPage = () => {
     }
   };
 
+  // Checkbox değiştiğinde çalışır
+  const handlePackageChange = (slug) => {
+    if (selectedPackages.includes(slug)) {
+      // Zaten varsa çıkar
+      setSelectedPackages(selectedPackages.filter(p => p !== slug));
+    } else {
+      // Yoksa ekle
+      setSelectedPackages([...selectedPackages, slug]);
+    }
+  };
+
   const handleCreateCoupon = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
       
-      // Backend'e gönderilecek veri paketi
       const payload = {
         code,
         maxUsage,
         type, 
         isFirstOrder,
-        // Eğer tip RATE ise oranı gönder, FIXED ise tutarı gönder
         discountRate: type === "RATE" ? parseInt(discountRate) : null,
-        // Sabit tutarı kuruşa çevirip gönderiyoruz (Backend kuruş bekliyorsa)
-        // Eğer backend TL bekliyorsa * 100 işlemini kaldırın.
-        discountAmount: type === "FIXED" ? parseFloat(discountAmount) * 100 : null 
+        discountAmount: type === "FIXED" ? parseFloat(discountAmount) : null, // Backend'de *100 yapıyorsan burayı düz bırak
+        
+        // YENİ: Seçilen paketleri gönderiyoruz
+        validPackages: selectedPackages 
       };
 
       await axios.post("/api/coupon/create", payload, {
@@ -58,8 +76,9 @@ const AdminCouponPage = () => {
       setMaxUsage("");
       setIsFirstOrder(false);
       setType("RATE");
+      setSelectedPackages([]); // Seçimi sıfırla
       
-      fetchCoupons(); // Listeyi yenile
+      fetchCoupons();
     } catch (err) {
       setMessage(err.response?.data?.error || "❌ Bir hata oluştu.");
     }
@@ -67,7 +86,6 @@ const AdminCouponPage = () => {
 
   const handleDeleteCoupon = async (id) => {
     if(!window.confirm("Bu kuponu silmek istediğine emin misin?")) return;
-
     try {
       const token = localStorage.getItem("token");
       await axios.delete(`/api/coupon/${id}`, {
@@ -84,26 +102,24 @@ const AdminCouponPage = () => {
   }, []);
 
   return (
-    <div className="p-4 max-w-2xl mx-auto bg-white shadow rounded-lg mt-10">
+    <div className="p-4 max-w-3xl mx-auto bg-white shadow rounded-lg mt-10">
       <h2 className="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">🎟️ Kupon Yönetimi</h2>
       
-      {/* --- OLUŞTURMA FORMU --- */}
       <form onSubmit={handleCreateCoupon} className="space-y-5 mb-8">
         
-        {/* Kupon Kodu */}
+        {/* ... (Kod, Tipe, Tutar inputları aynı kalacak) ... */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Kupon Kodu</label>
           <input
             type="text"
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
-            placeholder="Örn: SOZDERECE200"
+            placeholder="Örn: OZELDERS100"
             className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none uppercase"
             required
           />
         </div>
 
-        {/* İndirim Tipi Seçimi */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">İndirim Tipi</label>
@@ -116,8 +132,6 @@ const AdminCouponPage = () => {
               <option value="FIXED">Sabit Tutar (TL)</option>
             </select>
           </div>
-
-          {/* Dinamik Input: Tipe göre değişir */}
           <div>
              <label className="block text-sm font-medium text-gray-700 mb-1">
                {type === "RATE" ? "İndirim Oranı (%)" : "İndirim Tutarı (TL)"}
@@ -144,9 +158,8 @@ const AdminCouponPage = () => {
           </div>
         </div>
 
-        {/* Kullanım Limiti */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Maksimum Kullanım Adedi</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Maksimum Kullanım</label>
           <input
             type="number"
             value={maxUsage}
@@ -157,7 +170,30 @@ const AdminCouponPage = () => {
           />
         </div>
 
-        {/* Checkbox: İlk Sipariş */}
+        {/* --- YENİ: PAKET SEÇİMİ (Checkboxlar) --- */}
+        <div className="border p-3 rounded bg-gray-50">
+          <label className="block text-sm font-bold text-gray-700 mb-2">
+            Hangi Paketlerde Geçerli Olsun?
+          </label>
+          <p className="text-xs text-gray-500 mb-2">* Hiçbirini seçmezseniz tüm paketlerde geçerli olur.</p>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {packageList.map((pkg) => (
+              <label key={pkg.slug} className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  value={pkg.slug}
+                  checked={selectedPackages.includes(pkg.slug)}
+                  onChange={() => handlePackageChange(pkg.slug)}
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                />
+                <span className="text-sm text-gray-700">{pkg.title}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* İlk Sipariş Checkbox */}
         <div className="flex items-center gap-2 p-3 bg-blue-50 rounded border border-blue-100">
           <input
             type="checkbox"
@@ -185,43 +221,20 @@ const AdminCouponPage = () => {
         )}
       </form>
 
-      {/* --- KUPON LİSTESİ --- */}
-      <h3 className="text-lg font-semibold mb-3 border-t pt-4">📋 Aktif Kuponlar</h3>
+      {/* Liste */}
       <div className="space-y-3">
-        {coupons.length === 0 && <p className="text-gray-500">Henüz kupon oluşturulmamış.</p>}
-        
         {coupons.map((coupon) => (
-          <div
-            key={coupon.id}
-            className="flex flex-col sm:flex-row sm:items-center justify-between border p-3 rounded bg-gray-50 hover:bg-white transition"
-          >
+          <div key={coupon.id} className="border p-3 rounded bg-gray-50 flex justify-between items-center">
             <div>
-              <div className="flex items-center gap-2">
-                <strong className="text-lg text-blue-900">{coupon.code}</strong>
-                {/* İlk Sipariş Etiketi */}
-                {coupon.isFirstOrder && (
-                  <span className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full font-bold">
-                    YENİ MÜŞTERİ
-                  </span>
-                )}
-              </div>
-              
-              <div className="text-sm text-gray-600 mt-1">
-                {coupon.type === "FIXED" 
-                  ? `👉 ${(coupon.discountAmount / 100).toFixed(2)} TL İndirim`
-                  : `👉 %${coupon.discountRate} İndirim`
+              <strong className="text-lg text-blue-900">{coupon.code}</strong>
+              <div className="text-sm text-gray-600">
+                {coupon.validPackages && coupon.validPackages.length > 0 
+                  ? <span className="text-orange-600 font-bold">⚠️ Sadece {coupon.validPackages.length} pakette geçerli</span>
+                  : <span className="text-green-600 font-bold">✅ Tüm paketlerde geçerli</span>
                 }
-                <span className="mx-2 text-gray-300">|</span>
-                Kullanım: <strong>{coupon.usedCount}</strong> / {coupon.usageLimit}
               </div>
             </div>
-
-            <button
-              onClick={() => handleDeleteCoupon(coupon.id)}
-              className="mt-2 sm:mt-0 bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200 text-sm font-semibold"
-            >
-              Sil
-            </button>
+            <button onClick={() => handleDeleteCoupon(coupon.id)} className="text-red-500 text-sm font-bold">Sil</button>
           </div>
         ))}
       </div>

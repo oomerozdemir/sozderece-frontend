@@ -12,17 +12,17 @@ import {
   FaTimes,
   FaCalendarCheck,
   FaChartLine,
-  FaClipboardList,
   FaUsers,
-  FaSmile,
-  FaStar
+  FaArrowLeft,  
+  FaArrowRight 
 } from "react-icons/fa";
 
 // Swiper (Slider)
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
+import "swiper/css/navigation";
 
 // Veri
 import { PACKAGES, PACKAGES_ORDER } from "../hooks/packages.js";
@@ -58,30 +58,6 @@ const badgeForType = (type) => {
   }
 };
 
-// Avantajlar Listesi
-const benefitItems = [
-  {
-    title: "Koçluk Görüşmeleri",
-    icon: <FaChalkboardTeacher />,
-    points: ["Birebir takip sistemi", "Planlama & geri bildirim", "Motivasyon desteği"],
-  },
-  {
-    title: "Kişiye Özel Planlama",
-    icon: <FaCalendarCheck />,
-    points: ["Haftalık/derslik program", "Analizlere göre güncelleme"],
-  },
-  {
-    title: "Deneme Analizi",
-    icon: <FaChartLine />,
-    points: ["Net-zaman takibi", "Gelişim grafikleri", "Net artışı stratejisi"],
-  },
-  {
-    title: "Veliyle Etkileşim",
-    icon: <FaUsers />,
-    points: ["Düzenli geri bildirim", "Veli–koç iletişim ağı"],
-  },
-];
-
 export default function PricingSection() {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
@@ -99,11 +75,11 @@ export default function PricingSection() {
     (slug) => PACKAGES[slug] && !PACKAGES[slug].hidden
   ).map((key) => PACKAGES[key]);
 
-  // Kart Oluşturma Fonksiyonu (Tekrarı önlemek için)
+  // Kart Oluşturma Fonksiyonu
   const renderCard = (p) => {
     const icon = iconForType(p.type);
     const badge = badgeForType(p.type);
-    const isPopular = p.type === "coaching_only"; // Örnek vurgulama
+    const isPopular = p.type === "coaching_only"; 
 
     return (
       <div className={`pricing-card ${isPopular ? "popular-card" : ""}`}>
@@ -155,20 +131,31 @@ export default function PricingSection() {
       <div className="packages-container">
         {isMobile ? (
           // MOBİL İÇİN SWIPER (SLIDER)
-          <Swiper
-            modules={[Pagination]}
-            pagination={{ clickable: true, dynamicBullets: true }}
-            spaceBetween={20}
-            slidesPerView={1.15} // Yanlardan biraz gözüksün
-            centeredSlides={true}
-            className="pricing-swiper"
-          >
-            {visiblePackages.map((p) => (
-              <SwiperSlide key={p.slug}>
-                {renderCard(p)}
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          <div className="swiper-container-wrapper">
+            <Swiper
+              modules={[Pagination, Navigation]}
+              pagination={{ clickable: true, dynamicBullets: true }}
+              navigation={{
+                nextEl: '.swiper-button-next-custom',
+                prevEl: '.swiper-button-prev-custom',
+              }}
+              spaceBetween={20}
+              slidesPerView={1} 
+              centeredSlides={true}
+              initialSlide={2} // <--- ÖNEMLİ: 2500 TL'lik paket (3. sıra, index 2) varsayılan açılır
+              className="pricing-swiper"
+            >
+              {visiblePackages.map((p) => (
+                <SwiperSlide key={p.slug}>
+                  {renderCard(p)}
+                </SwiperSlide>
+              ))}
+            </Swiper>
+
+            {/* Özel Ok Butonları */}
+            <div className="swiper-button-prev-custom"><FaArrowLeft /></div>
+            <div className="swiper-button-next-custom"><FaArrowRight /></div>
+          </div>
         ) : (
           // MASAÜSTÜ İÇİN GRID
           <div className={`pricing-grid col-${visiblePackages.length}`}>
@@ -180,8 +167,6 @@ export default function PricingSection() {
           </div>
         )}
       </div>
-
-  
     </div>
   );
 }
