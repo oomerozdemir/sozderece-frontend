@@ -1,4 +1,8 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../cssFiles/PricingSection.css";
+
+// İkonlar
 import {
   FaUserCheck,
   FaChalkboardTeacher,
@@ -11,9 +15,20 @@ import {
   FaClipboardList,
   FaUsers,
   FaSmile,
+  FaStar
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { PACKAGES, PACKAGES_ORDER } from "../hooks/packages.js"; 
+
+// Swiper (Slider)
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+
+// Veri
+import { PACKAGES, PACKAGES_ORDER } from "../hooks/packages.js";
+
+// --- YARDIMCI BİLEŞENLER ---
+
 function FeatureItem({ label, included }) {
   return (
     <li className={`feat ${included ? "on" : "off"}`}>
@@ -25,34 +40,25 @@ function FeatureItem({ label, included }) {
 
 const iconForType = (type) => {
   switch (type) {
-    case "tutoring_only":
-      return <FaBookOpen />;
-    case "hybrid_light":
-      return <FaChalkboardTeacher />;
-    case "coaching_only":
-      return <FaUserCheck />;
-    case "coaching_plus_tutoring":
-      return <FaHeadset />;
-    default:
-      return <FaUserCheck />;
+    case "tutoring_only": return <FaBookOpen />;
+    case "hybrid_light": return <FaChalkboardTeacher />;
+    case "coaching_only": return <FaUserCheck />;
+    case "coaching_plus_tutoring": return <FaHeadset />;
+    default: return <FaUserCheck />;
   }
 };
 
 const badgeForType = (type) => {
   switch (type) {
-    case "tutoring_only":
-      return "Özel Ders";
-    case "hybrid_light":
-      return "Ara Paket";
-    case "coaching_only":
-      return "Koçluk";
-    case "coaching_plus_tutoring":
-      return "En Kapsamlı";
-    default:
-      return "";
+    case "tutoring_only": return "Esnek Plan";
+    case "hybrid_light": return "Popüler";
+    case "coaching_only": return "Tam Kapsam";
+    case "coaching_plus_tutoring": return "VIP Paket";
+    default: return "";
   }
 };
 
+// Avantajlar Listesi
 const benefitItems = [
   {
     title: "Koçluk Görüşmeleri",
@@ -62,114 +68,120 @@ const benefitItems = [
   {
     title: "Kişiye Özel Planlama",
     icon: <FaCalendarCheck />,
-    points: ["Haftalık/derslik program", "Deneme sonuçlarına göre güncelleme"],
+    points: ["Haftalık/derslik program", "Analizlere göre güncelleme"],
   },
   {
     title: "Deneme Analizi",
     icon: <FaChartLine />,
-    points: ["Net-zaman takibi", "Gelişim çizelgesi", "Net artışı"],
-  },
-  {
-    title: "Soru & Kaynak Takibi",
-    icon: <FaClipboardList />,
-    points: ["Yayın takibi", "Eksik konu yönlendirmesi"],
+    points: ["Net-zaman takibi", "Gelişim grafikleri", "Net artışı stratejisi"],
   },
   {
     title: "Veliyle Etkileşim",
     icon: <FaUsers />,
-    points: ["Aylık geri bildirim", "Veli–koç iletişimi"],
-  },
-  {
-    title: "Psikolojik Destek",
-    icon: <FaSmile />,
-    points: ["Stres yönetimi", "Sınav taktikleri"],
+    points: ["Düzenli geri bildirim", "Veli–koç iletişim ağı"],
   },
 ];
 
 export default function PricingSection() {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(false);
 
-return (
-  <div className="pricing-section" id="paketler">
-    <h2 className="pricing-section-title">Hedefine Göre Paketler</h2>
-    <p className="pricing-section-sub">
-      Özel dersten tam kapsamlı YKS/LGS koçluğuna uzanan seçenekler.
-    </p>
+  // Ekran boyutunu dinle
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-    {(() => {
-      const visible = PACKAGES_ORDER.filter(
-        (slug) => PACKAGES[slug] && !PACKAGES[slug].hidden
-      );
-      const count = visible.length;
-      const gridClass =
-        count === 1 ? "one" :
-        count === 2 ? "two" :
-        count === 3 ? "three" : "four";
+  // Görüntülenecek paketleri filtrele
+  const visiblePackages = PACKAGES_ORDER.filter(
+    (slug) => PACKAGES[slug] && !PACKAGES[slug].hidden
+  ).map((key) => PACKAGES[key]);
 
-      return (
-        <div className={`pricing-grid ${gridClass}`}>
-          {visible.map((key) => {
-            const p = PACKAGES[key];
-            const icon = iconForType(p.type);
-            const badge = badgeForType(p.type);
+  // Kart Oluşturma Fonksiyonu (Tekrarı önlemek için)
+  const renderCard = (p) => {
+    const icon = iconForType(p.type);
+    const badge = badgeForType(p.type);
+    const isPopular = p.type === "coaching_only"; // Örnek vurgulama
 
-            return (
-              <div key={p.slug} className="pricing-card">
-                {badge && <div className="badge">{badge}</div>}
+    return (
+      <div className={`pricing-card ${isPopular ? "popular-card" : ""}`}>
+        {badge && <div className="badge">{badge}</div>}
 
-                <div className="pricing-head">
-                  <div className="package-icon">{icon}</div>
-                  <h3 className="pricing-name">{p.title}</h3>
-
-                  {p.oldPriceText ? (
-  <div className="pricing-price">
-    <span className="old-price">{p.oldPriceText}</span>
-    <span className="new-price">{p.priceText}</span>
-  </div>
-) : (
-  p.priceText && <div className="pricing-price">{p.priceText}</div>
-)}
-                  {p.subtitle && <p className="pricing-note">{p.subtitle}</p>}
-                </div>
-
-                {Array.isArray(p.features) && (
-                  <ul className="pricing-features">
-                    {p.features.map((f, i) => (
-                      <FeatureItem key={i} label={f.label} included={!!f.included} />
-                    ))}
-                  </ul>
-                )}
-
-                {p.cta?.href && (
-                  <button
-                    className="pricing-cta"
-                    onClick={() => navigate(p.cta.href)}
-                  >
-                    {p.cta.label || "Detayları Gör"}
-                  </button>
-                )}
-              </div>
-            );
-          })}
+        <div className="pricing-head">
+          <div className="icon-wrapper">{icon}</div>
+          <h3 className="pricing-name">{p.title}</h3>
+          
+          <div className="price-area">
+            {p.oldPriceText && <span className="old-price">{p.oldPriceText}</span>}
+            <span className="new-price">{p.priceText}</span>
+          </div>
+          
+          {p.subtitle && <p className="pricing-desc">{p.subtitle}</p>}
         </div>
-      );
-    })()}
 
-    <h3 className="benefit-title">YKS/LGS Koçluk Paketi Size Ne Kazandırır?</h3>
-    <div className="benefit-grid">
-      {benefitItems.map((item, index) => (
-        <div className="benefit-card" key={index}>
-          <div className="benefit-icon">{item.icon}</div>
-          <h4>{item.title}</h4>
-          <ul>
-            {item.points.map((point, idx) => (
-              <li key={idx}>{point}</li>
+        <div className="divider"></div>
+
+        {Array.isArray(p.features) && (
+          <ul className="pricing-features">
+            {p.features.map((f, i) => (
+              <FeatureItem key={i} label={f.label} included={!!f.included} />
             ))}
           </ul>
-        </div>
-      ))}
-    </div>
-  </div>
-);
+        )}
 
+        <div className="card-footer">
+          {p.cta?.href && (
+            <button className="pricing-cta" onClick={() => navigate(p.cta.href)}>
+              {p.cta.label || "Detayları İncele"}
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="pricing-section" id="paketler">
+      <div className="pricing-header">
+        <h2 className="section-title">Hedefine Uygun Planı Seç</h2>
+        <p className="section-subtitle">
+          İster sadece özel ders, ister tam kapsamlı koçluk. Başarıya giden yolda sana en uygun paketi belirle.
+        </p>
+      </div>
+
+      {/* --- PAKETLER ALANI --- */}
+      <div className="packages-container">
+        {isMobile ? (
+          // MOBİL İÇİN SWIPER (SLIDER)
+          <Swiper
+            modules={[Pagination]}
+            pagination={{ clickable: true, dynamicBullets: true }}
+            spaceBetween={20}
+            slidesPerView={1.15} // Yanlardan biraz gözüksün
+            centeredSlides={true}
+            className="pricing-swiper"
+          >
+            {visiblePackages.map((p) => (
+              <SwiperSlide key={p.slug}>
+                {renderCard(p)}
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          // MASAÜSTÜ İÇİN GRID
+          <div className={`pricing-grid col-${visiblePackages.length}`}>
+            {visiblePackages.map((p) => (
+              <div key={p.slug} className="grid-item">
+                {renderCard(p)}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+  
+    </div>
+  );
 }

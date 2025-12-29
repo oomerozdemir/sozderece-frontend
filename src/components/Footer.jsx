@@ -47,6 +47,7 @@ const Footer = () => {
             <ul>
               {/* Paket listesi sayfanız varsa /paketler; yoksa öne çıkan paket slug'larına bağlayın */}
               <li><Link to="/paket-detay">Paketler</Link></li>
+              <li><Link to="/ogretmenler">Özel Ders</Link></li>
               <li><Link to="/blog">Sözderece Blog</Link></li>
               {/* örnek hedefler: isterseniz spesifik paket slug'larına linkleyin */}
               {/* <li><Link to="/paket/ozel-ders-paketi">Özel Ders Paketi</Link></li> */}

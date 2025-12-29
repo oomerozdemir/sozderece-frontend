@@ -137,7 +137,9 @@ export default App;
 
 /*
 
-ogretmen sayfası benden neden ders almalısınız kısmı gozukmuyor onu duzelt.
+sözderece logo değiş
+ 
+
 
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   3-ogretmen panelı duzenlemesı

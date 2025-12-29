@@ -26,9 +26,9 @@ export default function DiscountPopup() {
     <div className="popup-overlay">
       <div className="popup-content">
         <button className="close-btn" onClick={handleClose}>×</button>
-        <h3>🎉 İlk Siparişe Özel!</h3>
+       <h3>🎉 İlk Siparişe Özel Fırsat!</h3>
         <p>
-          <strong>sozderece100</strong> kodunu kullanarak <strong>100₺'lik indirimden</strong> yararlan!
+          <strong>Sozderece200</strong> kodunu kullanarak <strong>200₺'lik indirimden</strong> hemen yararlan!
         </p>
       </div>
     </div>

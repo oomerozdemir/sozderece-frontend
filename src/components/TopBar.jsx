@@ -1,54 +1,59 @@
-import "../cssFiles/index.css";
+import "../cssFiles/index.css"; 
+// Eğer ayrı bir CSS dosyası kullanmıyorsanız index.css içinde stilleri tanımlayacağız.
 import {
   FaEnvelope,
   FaPhone,
   FaInstagram,
   FaTiktok,
   FaYoutube,
+  FaWhatsapp
 } from "react-icons/fa";
 
 function TopBar() {
   return (
     <div className="top-bar" role="banner">
-      <div className="container">
+      <div className="container top-bar-container">
+        
+        {/* SOL: İletişim Bilgileri */}
         <div className="top-bar-left">
-          <span className="tb-item tb-email">
+          <a href="mailto:iletisim@sozderecekocluk.com" className="tb-item">
             <FaEnvelope className="icon" />
-            <a href="mailto:iletisim@sozderecekocluk.com">
-              iletisim@sozderecekocluk.com
-            </a>
-          </span>
-          <span className="tb-item tb-phone">
+            <span>iletisim@sozderecekocluk.com</span>
+          </a>
+          <a href="tel:+905312546701" className="tb-item">
             <FaPhone className="icon" />
-            <a href="tel:+905312546701">+90 531 254 67 01</a>
-          </span>
+            <span>+90 531 254 67 01</span>
+          </a>
         </div>
 
+        {/* SAĞ: Sosyal Medya */}
         <div className="top-bar-right">
-          <a
-            href="https://www.instagram.com/sozderece/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Instagram"
-          >
-            <FaInstagram />
-          </a>
-          <a
-            href="https://www.tiktok.com/@sozderece.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="TikTok"
-          >
-            <FaTiktok />
-          </a>
-          <a
-            href="https://www.youtube.com/@sozderecekoclukk"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="YouTube"
-          >
-            <FaYoutube />
-          </a>
+          <div className="social-icons">
+            <a
+              href="https://www.instagram.com/sozderece/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+            >
+              <FaInstagram />
+            </a>
+            <a
+              href="https://www.tiktok.com/@sozderece.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok"
+            >
+              <FaTiktok />
+            </a>
+            <a
+              href="https://www.youtube.com/@sozderecekoclukk"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+            >
+              <FaYoutube />
+            </a>
+          </div>
         </div>
       </div>
     </div>

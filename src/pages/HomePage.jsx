@@ -15,6 +15,8 @@ const TopBar = lazy(() => import("../components/TopBar"));
 const WhatsappButton = lazy(() => import("../components/WhatsappButton"));
 const HomeCoachSlider = lazy(() => import("../components/HomeCoachSlider"));
 const FeaturedTeachers = lazy(() => import("../components/featuredTeacher"));
+const Testimonials = lazy(() => import("../components/Testimonials"));
+
 
 
 
@@ -43,7 +45,7 @@ export default function HomePage() {
   return (
     <>
 <Helmet>
-  <title>Ana Sayfa | Sözderece Koçluk</title>
+  <title>YKS ve LGS Sınavına Yönelik Birebir Koçluk Hizmeti | Sözderece Koçluk</title>
   <meta
     name="description"
     content="LGS ve YKS öğrencilerine özel birebir online koçluk sistemi. Disiplinli çalışma, motivasyon, program takibi ve veli bilgilendirmesi ile başarıya ulaşın."
@@ -74,13 +76,14 @@ export default function HomePage() {
     >
         <TopBar />
         <Navbar />
-        {false && <DiscountPopup />}
+        {<DiscountPopup />}
         <HeroSection />
+        <PricingSection />
 
+        <Testimonials />
         <HomeCoachSlider />
         {// <FeaturedTeachers />
 }
-        <PricingSection />
         <WhyChooseUs />
 
         {/* === İLETİŞİM === */}

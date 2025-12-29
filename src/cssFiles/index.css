@@ -1,3 +1,13 @@
+:root{
+  --brand-a:#ff9203;
+  --brand-b:#100481;
+  --text:#1f2937;
+  --muted:#4b5563;
+  --card:#fff;
+  --bg:#f9fafb;
+  --ring: rgba(16,4,129,.18);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -16,74 +26,86 @@ body {
 
 
 /* Top bar css */
+/* --- TOP BAR STİLLERİ --- */
 .top-bar {
-  background: linear-gradient(180deg, #da6b21, #b89f9f);
-  color: #fff;
-  font-size: 0.95rem;
-  padding: 6px 0;
-  border-bottom: 1px solid rgba(0,0,0,.06); /* hero'dan ayrım */
+  background-color: var(--brand-b, #100481); /* Koyu Lacivert */
+  color: #ffffff;
+  font-size: 0.85rem;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.top-bar .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+.top-bar-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-height: 40px;
-  gap: 12px;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
+/* Sol Taraf (İletişim) */
 .top-bar-left {
   display: flex;
-  align-items: center;
   gap: 20px;
-  flex-wrap: wrap;
-  line-height: 1.2;
 }
+
 .tb-item {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 8px;
-}
-.top-bar a {
-  color: #fff;
+  color: #e0e0e0; /* Tam beyaz değil, göz yormayan açık gri */
   text-decoration: none;
-}
-.top-bar a:hover {
-  text-decoration: underline;
+  transition: color 0.3s ease;
 }
 
-/* icons */
-.icon { font-size: 1rem; opacity: .95; }
+.tb-item:hover {
+  color: var(--action-color, #f39c12); /* Hover olunca Turuncu */
+}
 
-/* right socials */
+.tb-item .icon {
+  font-size: 0.9rem;
+  color: var(--action-color, #ffffff); /* İkonlar her zaman Turuncu */
+}
+
+/* Sağ Taraf (Sosyal Medya) */
 .top-bar-right {
   display: flex;
   align-items: center;
-  gap: 14px;
-}
-.top-bar-right a {
-  font-size: 1.2rem;
-  display: inline-flex;
-  transition: transform .15s ease, opacity .15s ease;
-}
-.top-bar-right a:hover {
-  transform: translateY(-1px);
-  opacity: .9;
+  gap: 15px;
 }
 
-/* Mobile tweaks */
+.follow-text {
+  font-weight: 500;
+  color: #bbb;
+  font-size: 0.8rem;
+  display: block;
+}
+
+.social-icons {
+  display: flex;
+  gap: 12px;
+}
+
+.social-icons a {
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.social-icons a:hover {
+  color: var(--action-color, #f39c12);
+  transform: translateY(-2px); /* Hafif yukarı zıplama efekti */
+}
+
+/* --- Responsive (Mobil) --- */
 @media (max-width: 768px) {
-  .top-bar { font-size: 0.9rem; padding: 5px 0; }
-  .top-bar .container { padding: 0 14px; gap: 10px; }
-  .top-bar-left { gap: 12px; }
-  .tb-email { display: none; }          /* e-postayı gizle */
-  .icon { font-size: .95rem; }
-  .top-bar-right a { font-size: 1.15rem; }
+  .top-bar {
+    display: none;
+  }
 }
-
 
 
 /* === CONTACT CTA === */

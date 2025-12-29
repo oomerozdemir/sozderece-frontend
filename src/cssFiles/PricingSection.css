@@ -1,113 +1,126 @@
+/* --- GENEL AYARLAR --- */
 .pricing-section {
-  background: #fff;
-  padding: 5rem 1rem;
-  text-align: center;
-}
-
-.pricing-section-title {
-  font-size: 2rem;
-  color: #0f172a;
-  margin-bottom: .5rem;
-  font-weight: 700;
-}
-
-.pricing-section-sub {
-  color: #475569;
-  margin-bottom: 2rem;
-}
-
-/* === Grid of cards === */
-.pricing-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(240px, 1fr));
-  gap: 20px;
-  max-width: 1100px;
-  margin: 0 auto 2.5rem;
-  padding: 0 16px;
-}
-.pricing-grid.one {
-  grid-template-columns: minmax(320px, 560px);
-  justify-content: center;
-}
-.pricing-grid.one .pricing-card {
-  max-width: 560px;
-  margin: 0 auto;
-}
-
-/* 2 paket: ortala, iki sütun */
-.pricing-grid.two {
-  grid-template-columns: repeat(2, minmax(280px, 1fr));
-  max-width: 860px;
-  justify-content: center;
-}
-
-/* 3 paket: üç sütun (masaüstünde) */
-.pricing-grid.three {
-  grid-template-columns: repeat(3, minmax(240px, 1fr));
-}
-
-
-
-@media (max-width: 1024px) { .pricing-grid { grid-template-columns: repeat(2, minmax(240px, 1fr)); } }
-@media (max-width: 640px)  { .pricing-grid { grid-template-columns: 1fr; } }
-
-.pricing-card {
+  background-color: #f8f9fa; /* Hafif gri zemin, kartlar beyaz */
+  padding: 60px 20px;
   position: relative;
+}
+
+.pricing-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 50px auto;
+}
+
+.section-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--primary-color, #0f2a4a);
+  margin-bottom: 15px;
+}
+
+.section-subtitle {
+  font-size: 1.1rem;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* --- KART YAPISI --- */
+.pricing-card {
   background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 20px;
-  text-align: left;
-  box-shadow: 0 8px 28px rgba(16,24,40,.06);
-  transition: box-shadow .2s ease, transform .05s ease;
+  border-radius: 20px;
+  padding: 30px 25px;
+  position: relative;
   display: flex;
   flex-direction: column;
-}
-.pricing-card:hover {
-  box-shadow: 0 12px 40px rgba(16,24,40,.10);
-  transform: translateY(-1px);
+  height: 100%; /* Kartların boyunu eşitle */
+  border: 1px solid #eaeaea;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  overflow: hidden;
 }
 
+/* Hover Efekti (Sadece Masaüstü) */
+@media (min-width: 1024px) {
+  .pricing-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(15, 42, 74, 0.15);
+    border-color: var(--action-color, #f39c12);
+  }
+}
+
+/* Popüler Kart Vurgusu (Opsiyonel) */
+.popular-card {
+  border: 2px solid var(--primary-color, #0f2a4a);
+  background: #fff;
+}
+.popular-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 6px;
+  background: var(--primary-color, #0f2a4a);
+}
+
+/* Badge (Etiket) */
 .badge {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background-color: #f59e0b;
+  top: 20px;
+  right: 20px;
+  background-color: var(--action-color, #f39c12);
   color: #fff;
-  padding: 4px 10px;
+  padding: 6px 12px;
   font-size: 0.75rem;
-  border-radius: 9999px;
-  font-weight: 600;
-  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  border-radius: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 2;
 }
 
-.package-icon {
-  display: inline-flex;
+/* İkon ve Başlık */
+.pricing-head {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.icon-wrapper {
+  width: 60px;
+  height: 60px;
+  background-color: #f0f4f8; /* Çok açık mavi */
+  color: var(--primary-color, #0f2a4a);
+  border-radius: 50%;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  font-size: 1.1rem;
-  border-radius: 50%;
-  background-color: #fef3c7;
-  color: #f59e0b;
-  margin-right: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  font-size: 1.5rem;
+  margin: 0 auto 15px auto;
+  transition: all 0.3s;
 }
 
-.pricing-head { margin-bottom: 10px; }
+.pricing-card:hover .icon-wrapper {
+  background-color: var(--primary-color, #0f2a4a);
+  color: #fff;
+}
+
 .pricing-name {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: #0f172a;
-  margin: 10px 0 4px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 15px;
+  min-height: 50px; /* Başlıklar 2 satır olsa bile hizalı dursun */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.pricing-price {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #f59e0b;
-  margin-bottom: 6px;
+
+/* Fiyat Alanı */
+.price-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 15px;
 }
+
 .old-price {
   text-decoration: line-through;
   color: #999;
@@ -115,135 +128,136 @@
 }
 
 .new-price {
-  color: #df620f;
-  font-size: 1.5rem;
-  font-weight: 700;
+  color: var(--primary-color, #0f2a4a);
+  font-size: 1.6rem;
+  font-weight: 800;
 }
 
-
-.pricing-note {
-  font-size: .95rem;
-  color: #475569;
-  margin: 0 0 10px;
-  min-height: 38px;
+.pricing-desc {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 0;
+  min-height: 60px;
 }
 
-/* Features list */
+.divider {
+  height: 1px;
+  background: #eee;
+  margin: 20px 0;
+  width: 100%;
+}
+
+/* Özellik Listesi */
 .pricing-features {
   list-style: none;
-  margin: 0 0 14px;
   padding: 0;
+  margin: 0 0 30px 0;
+  flex-grow: 1; /* Butonu en alta itmek için */
 }
-.pricing-features .feat {
+
+.feat {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: .95rem;
-  color: #1e293b;
-  margin: 6px 0;
-}
-.pricing-features .feat .tick {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  font-size: .8rem;
-  line-height: 1;
-}
-.pricing-features .feat.on .tick {
-  background: #ecfdf5;
-  color: #10b981;
-  border: 1px solid #a7f3d0;
-}
-.pricing-features .feat.off { color: #9ca3af; }
-.pricing-features .feat.off .tick {
-  background: #f3f4f6;
-  color: #9ca3af;
-  border: 1px solid #e5e7eb;
-}
-
-/* CTA */
-.pricing-cta {
-  display: inline-block;
-  text-align: center;
-  background: #f59e0b;
-  color: #fff;
-  padding: .7rem 0.1rem;
-  border-radius: 9999px;
-  font-weight: 800;
-  text-decoration: none;
-  margin-top: auto;
-  transition: background .2s ease, transform .05s ease;
-}
-.pricing-cta:hover { background: #011546; color: #fff; transform: translateY(-1px); }
-
-/* Benefits (alttaki grid) */
-.benefit-title {
-  text-align: center;
-  font-size: 1.8rem;
-  color: #0f172a;
-  margin-bottom: 2rem;
-  font-weight: 600;
-  display: flex;
-  justify-content: center;
-}
-
-.benefit-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 24px;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 16px;
-}
-
-.benefit-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04);
-  transition: transform .2s ease, box-shadow .2s ease;
-  text-align: center;
-}
-.benefit-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-}
-
-.benefit-icon {
-  font-size: 2rem;
-  color: #f59e0b;
-  margin-bottom: 10px;
-}
-.benefit-card h4 {
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #1e293b;
-  margin-bottom: 10px;
-}
-.benefit-card ul {
-  list-style-type: disc;
-  padding-left: 20px;
-  color: #475569;
+  align-items: flex-start;
+  gap: 10px;
   font-size: 0.95rem;
-  line-height: 1.5;
-  text-align: left;
+  color: #444;
+  margin-bottom: 12px;
+  line-height: 1.4;
 }
 
-/* === Responsive tweaks === */
+.feat .tick {
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+
+.feat.on .tick {
+  color: #27ae60; /* Yeşil Tik */
+}
+
+.feat.off {
+  color: #bbb;
+  text-decoration: line-through;
+}
+.feat.off .tick {
+  color: #ccc;
+}
+
+/* CTA Buton */
+.card-footer {
+  margin-top: auto;
+}
+
+.pricing-cta {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background-color: var(--action-color, #f39c12);
+  color: #fff;
+  padding: 14px 0;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.pricing-cta:hover {
+  background-color: #d35400;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+}
+
+/* --- GRID YAPISI (DESKTOP) --- */
+.pricing-grid {
+  display: grid;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pricing-grid.col-1 { grid-template-columns: minmax(300px, 500px); justify-content: center; }
+.pricing-grid.col-2 { grid-template-columns: repeat(2, 1fr); max-width: 800px; }
+.pricing-grid.col-3 { grid-template-columns: repeat(3, 1fr); }
+.pricing-grid.col-4 { grid-template-columns: repeat(4, 1fr); }
+
+
+/* --- SWIPER YAPISI (MOBİL) --- */
+.pricing-swiper {
+  padding-bottom: 50px !important; /* Pagination için boşluk */
+  padding-top: 10px !important; /* Gölge kesilmesin */
+}
+
+.swiper-slide {
+  height: auto; /* Kartların hepsi en uzuna göre esnesin */
+  display: flex; 
+}
+.swiper-slide .pricing-card {
+  width: 100%;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: var(--action-color, #f39c12) !important;
+}
+
+
+
+
+/* --- RESPONSIVE DÜZELTMELER --- */
+@media (max-width: 1024px) {
+  .pricing-grid.col-4, .pricing-grid.col-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
-  .pricing-section { padding: 2.25rem .8rem; }
-  .pricing-section-title { font-size: 1.35rem; margin-bottom: .75rem; }
-  .package-icon { width: 40px; height: 40px; font-size: 1rem; }
-  .pricing-name { font-size: 1.05rem; }
-  .pricing-price { font-size: 1.15rem; }
-  .pricing-note { font-size: .9rem; min-height: auto; }
-  .benefit-title { font-size: 1.35rem; margin-bottom: 1.25rem; }
-}
-
-@media (max-width: 380px) {
-  .pricing-cta { width: 100%; padding: .6rem .9rem; }
+  .section-title { font-size: 1.8rem; }
+  .packages-container { padding: 0 10px; }
 }

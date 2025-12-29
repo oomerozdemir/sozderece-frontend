@@ -1,132 +1,350 @@
-.iletisim-page {
-  min-height: 70vh;
-  display: flex;
-  align-items: center; 
-  justify-content: space-between;
-  gap: 40px;
-  max-width: 1100px;
+/* --- SAYFA GENELİ --- */
+.contact-page-wrapper {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.contact-container {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 40px;
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-  flex: 1;
+  padding: 0 20px;
 }
 
-
-.info-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center; 
-  text-align: center;
-  gap: 20px;
+.text-orange {
+  color: var(--action-color, #f39c12);
 }
 
-.info-panel img {
-  max-width: 100%;
-  height: auto;
-  margin-top: 20px;
+/* --- HERO SECTION (LACİVERT ALAN) --- */
+.contact-hero-section {
+  background-color: var(--primary-color, #100481); /* Sizin lacivert kodunuz */
+  padding: 60px 0 100px 0;
+  position: relative;
+  overflow: hidden;
 }
 
-.trial-form {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+/* Split Layout: Yan Yana Düzen */
+.split-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 60px;
+  align-items: center;
 }
 
-.trial-form input,
-.trial-form textarea,
-.trial-form select {
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  transition: 0.2s ease-in-out;
-  font-size: 1rem;
-
+/* SOL: Metinler */
+.contact-text-content {
+  color: #fff;
 }
 
-.trial-form input:focus,
-.trial-form textarea:focus,
-.trial-form select:focus {
-  border-color: #f97316;
-  box-shadow: 0 0 5px rgba(249, 115, 22, 0.4);
-  outline: none;
+.highlight-badge {
+  background: rgba(243, 156, 18, 0.2);
+  color: #f39c12;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: inline-block;
+  margin-bottom: 20px;
+  border: 1px solid rgba(243, 156, 18, 0.4);
 }
 
-.trial-form button {
-  padding: 12px;
-  background-color: #f97316;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.2s;
+.contact-title {
+  font-size: 2.8rem;
+  line-height: 1.2;
+  font-weight: 800;
+  margin-bottom: 20px;
 }
 
-.trial-form button:hover {
-  background-color: #ea580c;
+.contact-desc {
+  font-size: 1.1rem;
+  color: #d1d5db;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  max-width: 90%;
 }
 
-.success-alert {
-  background-color: #e6ffed;
-  color: #0f5132;
-  padding: 10px;
-  border-left: 5px solid #198754;
-  border-radius: 5px;
-}
-
-.error-alert {
-  background-color: #ffe6e6;
-  color: #842029;
-  padding: 10px;
-  border-left: 5px solid #dc3545;
-  border-radius: 5px;
-}
-
-.icon-info {
+/* Fayda Listesi */
+.benefit-list {
   list-style: none;
-  margin-top: 20px;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  font-size: 1rem;
-  color: #333;
+  margin-bottom: 40px;
 }
 
-.icon-info li {
+.benefit-list li {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+
+.b-icon {
+  background: rgba(255,255,255,0.1);
+  color: #f39c12;
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.benefit-list strong {
+  display: block;
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+}
+
+.benefit-list span {
+  font-size: 0.95rem;
+  color: #9ca3af;
+}
+
+/* Buton Grubu */
+.contact-actions-row {
+  margin-top: 30px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.small-label {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  margin-bottom: 10px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 15px;
+}
+
+.action-btn {
   display: flex;
   align-items: center;
   gap: 10px;
-  justify-content: center;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s;
+  cursor: pointer;
+  border: none;
+  font-size: 1rem;
 }
 
-.icon-info .icon {
-  font-size: 1.2rem;
+.call-btn {
+  background: transparent;
+  border: 2px solid #fff;
+  color: #fff;
+}
+.call-btn:hover {
+  background: #fff;
+  color: var(--primary-color, #0f2a4a);
 }
 
-.cta-block {
-  color: white;
-  border-radius: 16px;
-  padding: 40px 24px;
+.browse-btn {
+  background: rgba(255,255,255,0.1);
+  color: #f39c12;
+}
+.browse-btn:hover {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+
+/* SAĞ: Form Kartı */
+.contact-form-card {
+  background: #fff;
+  padding: 35px;
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+}
+
+.form-header {
   text-align: center;
-  margin-top: 60px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  margin-bottom: 25px;
 }
 
-/* Mobil görünüm */
-@media (max-width: 768px) {
-  .iletisim-page {
+.form-header h3 {
+  color: var(--primary-color, #0f2a4a);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.form-header p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border 0.3s;
+  background: #fdfdfd;
+}
+
+.form-group input:focus,
+.form-group select:focus, 
+.form-group textarea:focus {
+  border-color: #f39c12;
+  outline: none;
+  background: #fff;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(to right, #f39c12, #d35400);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 10px;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(243, 156, 18, 0.3);
+}
+
+.submit-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Alert Mesajları */
+.form-alert {
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 15px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-alert.success {
+  background-color: #d1e7dd;
+  color: #0f5132;
+  border: 1px solid #badbcc;
+}
+
+.form-alert.error {
+  background-color: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+}
+
+.privacy-note {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 15px;
+}
+
+
+/* --- SÜREÇ BÖLÜMÜ --- */
+.process-section {
+  padding: 80px 0;
+  background: #fff;
+}
+
+.section-head {
+  text-align: center;
+  font-size: 2rem;
+  color: var(--primary-color, #0f2a4a);
+  margin-bottom: 50px;
+}
+
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.process-step {
+  text-align: center;
+  padding: 20px;
+  position: relative;
+}
+
+.step-number {
+  width: 50px;
+  height: 50px;
+  background: #eef2ff;
+  color: var(--primary-color, #0f2a4a);
+  border-radius: 50%;
+  font-size: 1.5rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px auto;
+  border: 2px solid var(--primary-color, #0f2a4a);
+  position: relative;
+  z-index: 1;
+}
+
+.process-step h4 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.process-step p {
+  color: #666;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 960px) {
+  .split-layout {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .contact-text-content {
+    text-align: center;
+  }
+  
+  .benefit-list li {
+    justify-content: center; 
+    text-align: left;
+  }
+  
+  .btn-group {
+    justify-content: center;
     flex-direction: column;
-    gap: 20px;
+  }
+  
+  .process-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
   }
 
-  .info-panel {
-    margin-top: 100px;
-    text-align: center;
-    align-items: center;
+  .contact-title {
+    font-size: 2rem;
   }
 }
