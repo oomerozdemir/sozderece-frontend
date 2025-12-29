@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../cssFiles/navbar.css";
-// useCart hook'unun export şekline göre import edin (default veya named)
-import useCart from "../hooks/useCart";
+// useCart hook'unu parantezsiz (default import) olarak çağırdık
+import useCart from "../hooks/useCart"; 
 import { 
   FaShoppingCart, 
   FaUser, 
@@ -21,12 +21,12 @@ export default function Navbar() {
   const [authState, setAuthState] = useState({
     isLoggedIn: false,
     name: "",
-    role: "" // 'admin', 'teacher', 'student'
+    role: "" // Varsayılan olarak boş bırakıyoruz
   });
 
   const navigate = useNavigate();
   
-  // useCart hook'undan veriyi güvenli çekelim
+  // Sepet verisini güvenli çekelim
   const { cart } = useCart() || { cart: [] };
   const cartItemCount = cart ? cart.length : 0;
 
@@ -34,13 +34,15 @@ export default function Navbar() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const storedName = localStorage.getItem("userName");
-    const storedRole = localStorage.getItem("userRole"); // Backend'den gelen rol
+    const storedRole = localStorage.getItem("userRole"); 
 
     if (token) {
       setAuthState({
         isLoggedIn: true,
         name: storedName || "Kullanıcı",
-        role: storedRole || "student"
+        // ÖNEMLİ DÜZELTME: || "student" kısmını kaldırdık. 
+        // Eğer rol yoksa boş kalsın ki yanlış panele gitmesin.
+        role: storedRole ? storedRole.toLowerCase() : "" 
       });
     } else {
       setAuthState({ isLoggedIn: false, name: "", role: "" });
@@ -49,19 +51,22 @@ export default function Navbar() {
 
   // Rol bazlı panel yolu belirleme
   const getDashboardPath = () => {
-    switch (authState.role) {
-      case "admin": return "/admin";
-      case "teacher": return "/teacher-panel";
-      case "student": return "/ogrenci-paneli"; // Veya '/student-dashboard'
-      default: return "/hesabim";
-    }
+    // Rolü küçük harfe çevirip kontrol ediyoruz (admin, Admin, ADMIN fark etmez)
+    const role = authState.role; 
+
+    if (role === "admin") return "/admin";
+    if (role === "teacher" || role === "ogretmen") return "/ogretmen/panel/profil";
+    if (role === "student" || role === "ogrenci") return "/student/dashboard";
+    
+    // Rol tanımsızsa veya farklıysa varsayılan hesap sayfasına git
+    return "/hesabim";
   };
 
   const handleLogout = () => {
     localStorage.clear(); // Tüm verileri temizle
     setAuthState({ isLoggedIn: false, name: "", role: "" });
     navigate("/");
-    window.location.reload(); // State'lerin tam sıfırlanması için
+    window.location.reload(); 
   };
 
   const centerLinks = [
@@ -111,6 +116,7 @@ export default function Navbar() {
               {/* Dropdown Menü */}
               {dropdownOpen && (
                 <div className="dropdown-menu">
+                  {/* Dinamik Panel Linki */}
                   <Link to={getDashboardPath()} className="dropdown-item">
                     <FaTachometerAlt /> Panelim
                   </Link>
@@ -124,13 +130,11 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            // Giriş Yapmamışsa
             <Link to="/giris-yap" className="login-link">
               Giriş Yap
             </Link>
           )}
 
-          {/* CTA BUTONU (Sadece çıkış yapmışsa veya öğrenciyse gösterilebilir, şimdilik sabit) */}
           <Link to="/paket-detay" className="cta-button">
             Koçluk Al
           </Link>
