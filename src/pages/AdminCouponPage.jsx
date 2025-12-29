@@ -57,7 +57,7 @@ const AdminCouponPage = () => {
         type, 
         isFirstOrder,
         discountRate: type === "RATE" ? parseInt(discountRate) : null,
-        discountAmount: type === "FIXED" ? parseFloat(discountAmount) : null, // Backend'de *100 yapıyorsan burayı düz bırak
+       discountAmount: type === "FIXED" ? parseFloat(discountAmount) * 100 : null,
         
         // YENİ: Seçilen paketleri gönderiyoruz
         validPackages: selectedPackages 

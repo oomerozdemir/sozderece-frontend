@@ -141,7 +141,11 @@ sözderece logo değiş
  
 herosectiondaki resimleri duzelt
 
+navbarda ogrenci ise ogrenci paneli adminse admin paneli yonlendirmesi olmali
 
+epostalar neden junk a dusuyor
+
+sepet tutarini arttiramasinlar mantiksiz aydan aya oduyolar cunku
 
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   3-ogretmen panelı duzenlemesı
