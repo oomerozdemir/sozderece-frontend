@@ -114,7 +114,7 @@ export default function Navbar() {
                   <Link to={getDashboardPath()} className="dropdown-item">
                     <FaTachometerAlt /> Panelim
                   </Link>
-                  <Link to="/hesabim" className="dropdown-item">
+                  <Link to="/account" className="dropdown-item">
                     <FaCog /> Hesabım
                   </Link>
                   <button onClick={handleLogout} className="dropdown-item logout-btn">
@@ -125,7 +125,7 @@ export default function Navbar() {
             </div>
           ) : (
             // Giriş Yapmamışsa
-            <Link to="/giris-yap" className="login-link">
+            <Link to="/login" className="login-link">
               Giriş Yap
             </Link>
           )}
