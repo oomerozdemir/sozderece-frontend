@@ -53,15 +53,18 @@ const LoginPage = () => {
     try {
       const res = await axios.get("/api/auth/silent-login");
       if (res?.data?.token && res?.data?.user) {
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-        const role = (res.data.user?.role || "student").toLowerCase();
+       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userRole", res.data.user.role); 
+      localStorage.setItem("userName", res.data.user.name);
+        const role = res.data.user.role;
         if (role === "admin") navigate("/admin", { replace: true });
         else if (role === "coach") navigate("/coach/dashboard", { replace: true });
         else navigate("/student/dashboard", { replace: true });
       } else {
         setError("Tek tıkla giriş başarısız.");
+        window.location.reload();
       }
+
     } catch (e) {
       setError(e?.response?.data?.message || "Tek tıkla giriş başarısız.");
     } finally {
