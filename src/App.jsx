@@ -147,6 +147,8 @@ epostalar neden junk a dusuyor
 
 sepet tutarini arttiramasinlar mantiksiz aydan aya oduyolar cunku
 
+paymentPage cartpage buralarda degisebilir tasarim olarak
+
 Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
   3-ogretmen panelı duzenlemesı
 
