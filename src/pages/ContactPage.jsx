@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react"; // useRef eklendi
 import axios from "../utils/axios";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";
@@ -30,7 +30,7 @@ const IletisimPage = () => {
 
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
+    // email: "",
     phone: "",
     userType: "",
     message: "",
@@ -51,7 +51,12 @@ const IletisimPage = () => {
     setErrorMsg("");
 
     try {
-      const response = await axios.post("/api/contact/trial", formData);
+        const dataToSend = {
+        ...formData,
+        email: "mobil-basvuru@sozderece.com" // Veya "bos@yok.com"
+      };
+
+      const response = await axios.post("/api/contact/trial", dataToSend);
 
       if (response.data.success) {
         if (window.fbq) {
@@ -71,7 +76,7 @@ const IletisimPage = () => {
         setSuccessMsg("Form başarıyla gönderildi! En kısa sürede size döneceğiz.");
         setFormData({
           name: "",
-          email: "",
+          //email: "",
           phone: "",
           userType: "",
           message: "",
@@ -179,10 +184,11 @@ const IletisimPage = () => {
                   <input type="text" name="name" placeholder="Adınız Soyadınız" value={formData.name} onChange={handleChange} required />
                 </div>
 
-                <div className="form-group">
+               {/*  <div className="form-group">
                   <label>E-Posta</label>
                   <input type="email" name="email" placeholder="ornek@email.com" value={formData.email} onChange={handleChange} required />
                 </div>
+                */}
 
                 <div className="form-group">
                   <label>Telefon</label>
