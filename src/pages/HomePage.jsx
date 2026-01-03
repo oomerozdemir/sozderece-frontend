@@ -1,133 +1,102 @@
-import React, { lazy } from "react";
+import React, { Suspense, lazy } from "react"; // Suspense eklendi
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom"; // Link eklendi
 import "../cssFiles/index.css";
-import { Helmet } from "react-helmet";
 import DiscountPopup from "../components/DiscountPopup";
+import Seo from "../components/Seo";
 
+// --- KRİTİK DEĞİŞİKLİK 1: İlk görünen bileşenleri NORMAL import yapıyoruz (Hız için) ---
+import HeroSection from "../components/HeroSection";
+import Navbar from "../components/navbar";
+import TopBar from "../components/TopBar";
 
-// Lazy-load bileşenler
-const HeroSection = lazy(() => import("../components/HeroSection"));
+// --- Alt kısımları Lazy Load yapabiliriz (Performans için) ---
 const PricingSection = lazy(() => import("../components/PricingSection"));
-const Navbar = lazy(() => import("../components/navbar"));
 const WhyChooseUs = lazy(() => import("../components/WhyChooseUs"));
 const Footer = lazy(() => import("../components/Footer"));
-const TopBar = lazy(() => import("../components/TopBar"));
 const WhatsappButton = lazy(() => import("../components/WhatsappButton"));
 const HomeCoachSlider = lazy(() => import("../components/HomeCoachSlider"));
-const FeaturedTeachers = lazy(() => import("../components/featuredTeacher"));
 const Testimonials = lazy(() => import("../components/Testimonials"));
+// const FeaturedTeachers = lazy(() => import("../components/featuredTeacher"));
 
-
-
+// Yükleniyor animasyonu (Lazy bileşenler yüklenene kadar görünür)
+const LoadingSpinner = () => <div style={{ padding: 50, textAlign: "center" }}>Yükleniyor...</div>;
 
 export default function HomePage() {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const data = new FormData(form);
-
-    fetch("https://formspree.io/f/your_form_id", {
-      method: "POST",
-      body: data,
-      headers: {
-        Accept: "application/json",
-      },
-    })
-      .then(() => {
-        alert("Mesajınız gönderildi!");
-        form.reset();
-      })
-      .catch(() => {
-        alert("Gönderilirken bir hata oluştu.");
-      });
-  };
-
   return (
     <>
-<Helmet>
-  <title>YKS ve LGS Sınavına Yönelik Birebir Koçluk Hizmeti | Sözderece Koçluk</title>
-  <meta
-    name="description"
-    content="LGS ve YKS öğrencilerine özel birebir online koçluk sistemi. Disiplinli çalışma, motivasyon, program takibi ve veli bilgilendirmesi ile başarıya ulaşın."
-  />
-  <meta
-    name="keywords"
-    content="yks koçluk, lgs koçluk, online yks koçu, deneme analizi, koçluk sistemi nedir, net artışı, sözderece koçluk, eğitim koçluğu"
-  />
-  <meta property="og:title" content="Sözderece Koçluk | LGS & YKS Online Koçluk" />
-  <meta
-    property="og:description"
-    content="LGS ve YKS'ye hazırlanan öğrencilere birebir koçluk desteği. Hemen koçluk sistemimizi inceleyin ve sürecinizi başlatın!"
-  />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://sozderecekocluk.com/" />
-  <meta property="og:image" content="https://sozderecekocluk.com/images/hero-logo.webp" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://sozderecekocluk.com/" />
-</Helmet>
+      {/* KRİTİK DEĞİŞİKLİK 2: SEO Bilgilerini Tek Bileşene Topladık.
+        Manuel Helmet etiketlerini sildik.
+      */}
+      <Seo 
+        title="YKS & LGS Online Öğrenci Koçluğu" 
+        description="Türkiye'nin en kapsamlı online koçluk platformu. Derece öğrencisi koçlar ile YKS ve LGS'ye disiplinli hazırlanın."
+        canonical="/"
+      />
 
-
-    <motion.div
-      className="page"
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -50 }}
-      transition={{ duration: 0.5 }}
-    >
+      <motion.div
+        className="page"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -50 }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* İlk görünenler direkt render edilir */}
         <TopBar />
         <Navbar />
-        {<DiscountPopup />}
+        <DiscountPopup />
         <HeroSection />
-        <PricingSection />
 
-        <Testimonials />
-        <HomeCoachSlider />
-        {// <FeaturedTeachers />
-}
-        <WhyChooseUs />
+        {/* Lazy bileşenler Suspense içine alınmalı */}
+        <Suspense fallback={<LoadingSpinner />}>
+          <PricingSection />
+          <Testimonials />
+          <HomeCoachSlider />
+          <WhyChooseUs />
+        </Suspense>
 
-        {/* === İLETİŞİM === */}
-        <section className="contact-section">
-          <h2 className="section-title">Bize Ulaşın</h2>
-          <p className="section-description">
-            Sorularınız, önerileriniz veya kayıt için bize ulaşabilirsiniz.
+        {/* === İLETİŞİM BÖLÜMÜ === 
+            Form yerine doğrudan ana başvuru sayfasına yönlendirme (Call to Action)
+            daha yüksek dönüşüm sağlar. 
+        */}
+        <section className="contact-section" style={{textAlign: 'center', padding: '60px 20px'}}>
+          <h2 className="section-title">Hemen Başlayalım mı?</h2>
+          <p className="section-description" style={{marginBottom: '30px'}}>
+            Aklındaki soruları gidermek ve sisteme dahil olmak için bize ulaş.
           </p>
 
-          <div className="contact-grid">
-            {/* Sol */}
-            <div className="contact-info">
-              <p>
-                <strong>Telefon:</strong> +90 531 254 6701
-              </p>
-              <p>
-                <strong>E-posta:</strong> iletisim@sozderecekocluk.com
-              </p>
-              <p>
-                <strong>Adres:</strong> İstanbul, Türkiye
-              </p>
-              <a
+          <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+             {/* WhatsApp Butonu */}
+             <a
                 href="https://wa.me/905312546701"
                 target="_blank"
                 rel="noreferrer"
                 className="whatsapp-button"
+                style={{ display: 'inline-block', textDecoration: 'none'}}
               >
-                WhatsApp ile İletişime Geç
+                WhatsApp Hattı
               </a>
-            </div>
-
-            {/* Sağ (Form) */}
-            <form className="contact-form" onSubmit={handleSubmit}>
-              <input type="text" name="name" placeholder="Adınız Soyadınız" required />
-              <input type="email" name="email" placeholder="E-posta Adresiniz" required />
-              <textarea name="message" placeholder="Mesajınız..." rows="5" required></textarea>
-              <button type="submit">Gönder</button>
-            </form>
+              
+              {/* Form Sayfasına Yönlendirme */}
+              <Link to="/ucretsiz-on-gorusme" className="submit-btn" style={{
+                  display: 'inline-block', 
+                  textDecoration: 'none', 
+                  backgroundColor: '#0f2a4a', 
+                  color: 'white', 
+                  padding: '12px 24px', 
+                  borderRadius: '8px',
+                  fontWeight: 'bold'
+              }}>
+                Ücretsiz Görüşme
+              </Link>
           </div>
         </section>
 
-        <Footer />
-        <WhatsappButton />
-    </motion.div>
+        <Suspense fallback={null}>
+          <Footer />
+          <WhatsappButton />
+        </Suspense>
+      </motion.div>
     </>
   );
 }

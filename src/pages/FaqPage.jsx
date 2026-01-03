@@ -7,40 +7,44 @@ import { Helmet } from "react-helmet";
 import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
 import Navbar from "../components/navbar";
+import Seo from "../components/Seo";
 
 const faqs = [
   {
-    question: "Sözderece Koçluk hizmeti kimler için uygundur?",
-    answer: "Sözderece Koçluk sistemi, LGS ve YKS (TYT–AYT) sürecinde hedeflerine disiplinli ve motive şekilde ulaşmak isteyen tüm öğrenciler için uygundur. Hem sürece yeni başlayanlar hem de düzen oturtmakta zorlanan öğrenciler bu sistemden fayda görebilir.",
+    question: "Sözderece Koçluk kimler için uygundur?",
+    answer: "Hem düzenli çalışmayı oturtamayanlar hem de derece hedefleyenler için uygundur. YKS (TYT-AYT) ve LGS sürecinde; ne yapacağını bilemeyen, motivasyon kaybı yaşayan veya profesyonel bir yol haritasına ihtiyaç duyan her öğrenci sistemimizden maksimum verim alır.",
   },
   {
-    question: "Sözderece YKS/LGS paketini aldıktan sonra süreç nasıl işler?",
-    answer:   "Paketi satın aldıktan birkaç saat içinde destek ekibimiz sizinle iletişime geçer.Ardından koçunuzla tanışma ve genel durum değerlendirmesi yapılır. Veli görüşmesiyle birlikte süreç resmen başlatılır.",
+    question: "Ödeme seçenekleri neler? Taksit imkanı var mı?",
+    answer: "Evet, tüm kredi kartlarına 12 taksite varan vade farksız/düşük farkla taksit imkanı sunuyoruz. Ödemeleriniz PayTR altyapısı ile 256-bit SSL güvencesiyle korunmaktadır. Ayrıca Havale/EFT seçeneğimiz de mevcuttur.",
   },
   {
-    question: "Sözderece ile görüşmeler nasıl gerçekleşiyor?",
-    answer: "Tüm birebir görüşmelerimiz Zoom veya Google Meet üzerinden online olarak gerçekleşir.Görüşme sırasında öğrenci ve koç birlikte haftalık program hazırlar, hedefler belirlenir, motivasyon desteği sağlanır.",
-  },
-   {
-    question: "Sözderece koçumu değiştirebilir miyim?",
-    answer: "Evet, koç değişikliği yapabilirsiniz.İlk 5 gün içinde koşulsuz olarak, ya da ilk ayın sonunda ihtiyaç duyulursa koçunuz değiştirilebilir.",
+    question: "Sisteme kayıt olduktan sonra süreç nasıl işliyor?",
+    answer: "Kayıt sonrası en geç 2 saat içinde eğitim danışmanımız sizi arar. Akademik durumunuz analiz edilir ve size en uygun derece koçu atanır. Aynı gün koçunuzla tanışır, ilk haftalık programınızı yapar ve çalışmaya başlarsınız.",
   },
   {
-    question: "Veli bilgilendirmesi yapılıyor mu?",
-    answer: "Evet. Her 15 günde bir velilerle birebir görüşmeler yapılır.Bu görüşmelerde öğrencinin gelişimi, motivasyonu ve ihtiyaçları detaylı olarak paylaşılır. Böylece koç–öğrenci–veli arasında şeffaf ve güvenli bir iletişim kurulur.",
-  },
-
-  {
-    question:  "Programlar hazır mı veriliyor, kişiye özel mi hazırlanıyor?",
-    answer: "Tüm programlar öğrenciyle birlikte, bireysel ihtiyaçlara göre sıfırdan hazırlanır.Hiçbir plan hazır ya da otomatik değildir.",
+    question: "Dershaneden veya özel dersten farkınız nedir?",
+    answer: "Dershane size sadece ders anlatır, biz ise 'nasıl çalışmanız gerektiğini' öğretiriz. Özel ders haftada 1-2 saattir, biz ise 7/24 yanınızdayız. Koçunuz sadece bir öğretmen değil, bu yollardan başarıyla geçmiş bir yol arkadaşıdır.",
   },
   {
-    question: "Motivasyon desteği nasıl sağlanıyor?",
-    answer:   "Koçlar öğrencilerle sadece ders değil, duygu bazlı iletişim de kurar.Motivasyon eksikliğinde yönlendirici olur, öğrenciyi “başarabilirim” inancına geri getirir.",
+    question: "Memnun kalmazsam koçumu değiştirebilir miyim?",
+    answer: "Kesinlikle. Enerjinizin uyuşması bizim için çok önemli. İlk 5 gün içinde koşulsuz olarak, veya ilerleyen süreçte talep etmeniz durumunda koç değişikliği hakkınız her zaman saklıdır.",
   },
   {
-    question: "Koşulsuz iptal/iade hakkı nedir?",
-    answer:   "Satın aldığınız paketten memnun kalmazsanız, ilk 5 gün içinde koşulsuz cayma ve iade hakkınızı kullanabilirsiniz.Bu süreçte herhangi bir gerekçe bildirmeniz gerekmez.",
+    question: "Netlerim ne zaman artmaya başlar?",
+    answer: "Öğrenciden öğrenciye değişmekle birlikte, sistemimize tam uyum sağlayan öğrencilerimizde ortalama 3-4 hafta içinde gözle görülür bir çalışma disiplini ve deneme netlerinde artış gözlemliyoruz.",
+  },
+  {
+    question: "Veli bilgilendirmesi yapıyor musunuz?",
+    answer: "Evet, velilerimiz sürecin en önemli parçasıdır. Her 15 günde bir veli-koç görüşmesi yapılır. Öğrencinin gelişimi, eksikleri ve motivasyon durumu hakkında veliye detaylı rapor sunulur.",
+  },
+  {
+    question: "Programlar kişiye özel mi hazırlanıyor?",
+    answer: "Evet, 'kopyala-yapıştır' programlar kullanmıyoruz. Öğrencinin okul saatleri, seviyesi, hedefi ve yaşam tarzına göre her hafta sıfırdan, tamamen o kişiye özel bir program hazırlanır.",
+  },
+  {
+    question: "İptal ve iade hakkım var mı?",
+    answer: "Evet, güveniniz bizim için paradan daha değerli. Paketi satın aldıktan sonraki ilk 5 gün içinde hiçbir gerekçe göstermeksizin %100 ücret iadesi talep edebilirsiniz.",
   },
 ];
 
@@ -69,7 +73,6 @@ const itemVariants = {
   }
 };
 
-
 export default function FaqSection() {
   const [activeIndex, setActiveIndex] = useState(null);
 
@@ -78,109 +81,91 @@ export default function FaqSection() {
   };
 
   return (
-    
     <>
-<Helmet>
-  <title>SSS | Sıkça Sorulan Sorular | Sözderece Koçluk</title>
-  <meta
-    name="description"
-    content="Sözderece Koçluk sistemi, koç değişikliği, veli bilgilendirmesi, program özelleştirmesi ve daha fazlası hakkında sıkça sorulan soruları bu sayfada yanıtlıyoruz."
-  />
-  <meta
-    name="keywords"
-    content="öğrenci koçluğu nedir, veli bilgilendirmesi, online koçluk sistemi, koç değişikliği, sık sorulan sorular koçluk, sözderece, online eğitim koçluğu"
-  />
-  <meta property="og:title" content="Sıkça Sorulan Sorular - SSS | Sözderece Koçluk" />
-  <meta
-    property="og:description"
-    content="Sözderece Koçluk hakkında en çok merak edilen soruları ve detaylı cevaplarını bu sayfada bulabilirsiniz. Öğrenci ve veli odaklı eğitim sistemi hakkında bilgi alın."
-  />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://sozderecekocluk.com/sss" />
-  <meta property="og:image" content="https://sozderecekocluk.com/images/hero-logo.webp" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://sozderecekocluk.com/sss" />
-
-  <script type="application/ld+json">
-    {JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": faqs.map((item) => ({
-        "@type": "Question",
-        "name": item.question,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": item.answer,
-        },
-      })),
-    })}
-  </script>
-</Helmet>
-
- <TopBar />
- <Navbar />
-    <motion.section
-  className="faq-section"
-  variants={containerVariants}
-  initial="hidden"
-  whileInView="visible"
-  viewport={{ once: true, amount: 0.3 }}
->
-  
-      <h2 className="faq-title">Sıkça Sorulan Sorular</h2>
-      <p className="faq-intro-text">
-  <strong>Sözderece Koçluk</strong> hakkında merak ettiklerinizi bu <strong>sıkça sorulan sorular</strong> bölümünde derledik.
-  <strong> Öğrenci koçluğu nedir</strong>, <strong>koç değişikliği nasıl yapılır</strong> veya <strong>veli bilgilendirmesi nasıl gerçekleşir</strong> gibi sorularınızın cevabını burada bulabilirsiniz.
-  Tüm <strong>online eğitim koçluğu</strong> süreci hakkında detaylı bilgi almak için bizimle iletişime geçebilirsiniz.
-</p>
-      <div className="faq-list">
-        {faqs.map((item, index) => (
-          <motion.div
-          key={index}
-          className={`faq-item ${activeIndex === index ? "active" : ""}`}
-          onClick={() => toggleFAQ(index)}
-          variants={itemVariants}
-        >
-            <motion.div
-              className="faq-question"
-              onClick={() => toggleFAQ(index)}
-              whileTap={{ scale: 0.98 }}
-            >
-              <span>  {item.question}</span>
-              <motion.div
-              animate={{ rotate: activeIndex === index ? 180 : 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              {activeIndex === index ? (
-                <FaChevronUp className="icon" />
-              ) : (
-                <FaChevronDown className="icon" />
-              )}
-            </motion.div>
-            
-            </motion.div>
-            <div className="faq-answer">
-              <p>{item.answer}</p>
-            </div>
-            
-          </motion.div>
-          
-        ))}
-      </div>
-      <motion.img
-        src={coachImage}
-        alt="Koç"
-        className="faq-coach"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.2, ease: "easeOut" }}
+      {/* 1. SEO BİLEŞENİ */}
+      <Seo 
+        title="Sıkça Sorulan Sorular (SSS)" 
+        description="Ödeme seçenekleri, iade garantisi, koçluk süreci ve başarı garantisi hakkında merak ettiğiniz tüm soruları yanıtladık."
+        canonical="/sss"
       />
-    </motion.section>
-    <div className="faq-cta">
-  <p>Daha fazla bilgi için <a href="/paket-detay">paketlerimizi</a> inceleyin veya <a href="/hakkimizda">bizim hakkımızda</a> sayfasını ziyaret edin.</p>
-</div>
-    <Footer />
 
+      {/* 2. SCHEMA (Google'da Soru-Cevap Çıkması İçin) */}
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faqs.map((item) => ({
+              "@type": "Question",
+              "name": item.question,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": item.answer,
+              },
+            })),
+          })}
+        </script>
+      </Helmet>
+
+      <TopBar />
+      <Navbar />
+      
+      <motion.section
+        className="faq-section"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+      >
+        <h2 className="faq-title">Aklınızdaki Soruları Giderelim</h2>
+        
+        <div className="faq-list">
+          {faqs.map((item, index) => (
+            <motion.div
+              key={index}
+              className={`faq-item ${activeIndex === index ? "active" : ""}`}
+              onClick={() => toggleFAQ(index)}
+              variants={itemVariants}
+            >
+              <motion.div
+                className="faq-question"
+                onClick={() => toggleFAQ(index)}
+                whileTap={{ scale: 0.98 }}
+              >
+                <span>{item.question}</span>
+                <motion.div
+                  animate={{ rotate: activeIndex === index ? 180 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {activeIndex === index ? (
+                    <FaChevronUp className="icon" />
+                  ) : (
+                    <FaChevronDown className="icon" />
+                  )}
+                </motion.div>
+              </motion.div>
+              <div className="faq-answer">
+                <p>{item.answer}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+        
+        <motion.img
+          src={coachImage}
+          alt="Sözderece Koçluk Destek"
+          className="faq-coach"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+        />
+      </motion.section>
+
+      <div className="faq-cta">
+        <p>Hala sorularınız mı var? <a href="/ucretsiz-on-gorusme">Ücretsiz Ön Görüşme</a> formunu doldurun, sizi arayalım.</p>
+      </div>
+      
+      <Footer />
     </>
   );
 }

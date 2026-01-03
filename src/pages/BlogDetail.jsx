@@ -3,7 +3,7 @@ import { blogPosts } from "../components/posts";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";
-import { Helmet } from "react-helmet";
+import Seo from "../components/Seo";
 
 const BlogDetail = () => {
   const { slug } = useParams();
@@ -14,21 +14,11 @@ const BlogDetail = () => {
   return (
     <>
 
-    <Helmet>
-  <title>{post.title} | Sözderecek Koçluk Blog</title>
-  <meta name="description" content={post.description} />
-  <meta name="keywords" content={post.tags?.join(", ")} />
-  <meta property="og:title" content={post.title} />
-  <meta property="og:description" content={post.description} />
-  <meta property="og:image" content={post.image || "https://sozderecekocluk.com/images/default-blog.webp"} />
-
-  <meta property="og:url" content={`https://www.sozderecekocluk.com/blog/${post.slug}`} />
-  <meta property="og:type" content="article" />
-<meta property="article:published_time" content={post.date} />
-<meta name="robots" content="index, follow" />
-  <link rel="canonical" href={`https://sozderecekocluk.com/blog/${post.slug}`} />
-
-</Helmet>
+   <Seo 
+        title={post.title} // Örn: "YKS Son 3 Ay Çalışma Taktikleri"
+        description={post.summary || post.content.substring(0, 150)} // İçeriğin ilk 150 harfi
+        canonical={`/blog/${post.slug}`}
+      />
     <TopBar />
     <Navbar />
 

@@ -136,6 +136,12 @@ export default App;
 
 
 /*
+[ ] react-helmet ile tüm sayfalara özel Title/Description ekle.
+
+[ ] Paketlerin için "Product" Schema yapısını kur.
+
+[ ] Blog içeriklerini soru-cevap odaklı (Long-tail keywords) stratejiyle üret.
+
 
 sözderece logo değiş
  
@@ -149,24 +155,10 @@ sepet tutarini arttiramasinlar mantiksiz aydan aya oduyolar cunku
 
 paymentPage cartpage buralarda degisebilir tasarim olarak
 
-Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
-  3-ogretmen panelı duzenlemesı
-
- 
-      
-      gerisine ozeldersalanına ogretmen olarak giriş yap ve bak neler eklenebılır
-  
-  9-ogretmen kayıt olurken fıyat belırlerken ona onerı yapalım size benzer öğretmenler şu aralıkta(min-max) fiyat belirledi diye
-  
 
 
-******** ozel ders icin ogrenci tarafi ********
 
 
-  -bir chatbot yeri yapabiliriz ogretmen talebi onayladiginda konusabilecekleri ve iletisim saglayacaklari kolay bir yer olur.
-  
-*******************************ogrenci tarafi hoca secerken ki sorunlar ==>***********************
-  
   
 
 
@@ -175,22 +167,6 @@ Ogretmen tarafından bakarken degısmesı ve eklenmesı gerekenler
 
 
 
-*******************************ılerde sıstem yogunlasmasına karsı yapılabılecekler ==>***********************
-1-ozel ders haklı paketı alan ogrencının hakkını kullanıp kullanmaması ve ucret odemeden talep gonderebılme durumu
-  -Bu durumda yapılabilecekler sırasıyla;
-    -Ozel ders haklı paketı alan ogrencıye pakkette belirtilen sayıda özel ders hakkı tanımlanır
-    -sadece paketle baglantılı olacak şekilde öğretmen ve ardından randevu seçme aşaması sonrası öğretmene direkt talep gider.
-    -öğretmene giden talep paket aracılığıyla gelen öğrencileri gösteren ayrı bir sekmede gösterilir
-    -öğrencinin her sectiği saatten pakete baglı olarak ogrenciye tanımlanan saat secme hakkı eksiltilir
-    -paketteki özel ders hakkı biten öğrencinin ona özel açılan öğretmen seçme butonu kaybolur ve gizlenir
-    -admin panelinden bunları kontrol edebileceğimiz bir yer kurarız.Hali hazırda olan siparişlerim bölümünü güncelleyerek olabilir 
-
-*******************************ılerde sıstem yogunlasmasına karsı yapılabılecekler sorunlari ==>***********************
-ozel ders haklarindan gelen ile sectiginde bunu dikkata almadan secim yaptiriyor
-
-
-
-cerezlerin nasil calistigini ogren tamamiyle
 
 
 googlesearch console da dızıne eklenen sayfaların hata raporlarını ıncele ve duzelt

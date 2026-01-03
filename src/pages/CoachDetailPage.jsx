@@ -5,7 +5,7 @@ import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
 import { Helmet } from "react-helmet";
-
+import Seo from "../components/Seo"; // SEO bileşenimizi ekledik
 
 const CoachDetailPage = () => {
   const [coaches, setCoaches] = useState([]);
@@ -26,63 +26,81 @@ const CoachDetailPage = () => {
     fetchCoaches();
   }, []);
 
-  if (loading) return <p>Koçlar yükleniyor...</p>;
+  // --- GOOGLE İÇİN LİSTE ŞEMASI ---
+  // Koçlar yüklendiğinde Google'a bu kişilerin listesini sunuyoruz.
+  const coachSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Sözderece Koçluk Ekibi",
+    "description": "YKS ve LGS derecesi yapmış profesyonel eğitim koçları listesi.",
+    "itemListElement": coaches.map((coach, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "item": {
+        "@type": "Person",
+        "name": coach.name,
+        "description": coach.description || "Derece Öğrencisi Koç",
+        "image": coach.image,
+        "jobTitle": "Eğitim Koçu"
+      }
+    }))
+  };
+
+  if (loading) return <div style={{padding: '50px', textAlign: 'center'}}>Koçlar yükleniyor...</div>;
 
   return (
     <>
-<Helmet>
-  <title>Ekibimiz | Sözderece Koçluk</title>
-  <meta
-    name="description"
-    content="Sözderece Koçluk ekibinde yer alan uzman koçlarımızı yakından tanıyın. YKS ve LGS alanında derece yapmış eğitim koçlarımızla başarıya bir adım daha yaklaşın."
-  />
-  <meta
-    name="keywords"
-    content="yks koçları, lgs koçları, sözderece koçları, eğitim koçu, öğrenci koçu, sınav koçluğu, koçluk ekibi, yks mentor, lgs rehberlik"
-  />
-  <meta property="og:title" content="Ekibimiz | Sözderece Koçluk" />
-  <meta
-    property="og:description"
-    content="Sözderece Koçluk ekibinde yer alan alanında uzman koçlarımızı bu sayfadan inceleyin. Her biri öğrencilerin motivasyon ve başarısına odaklıdır."
-  />
-  <meta property="og:url" content="https://sozderecekocluk.com/koclar" />
-  <meta property="og:image" content="https://sozderecekocluk.com/hero-logo.webp" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://sozderecekocluk.com/koclar" />
-</Helmet>
+      {/* 1. STANDART SEO AYARLARI */}
+      <Seo 
+        title="Ekibimiz - Derece Yapan Koçlar" 
+        description="Sözderece Koçluk ekibiyle tanışın. Tıp, Mühendislik ve Hukuk kazanan derece öğrencisi koçlarımızla başarıya ulaşın."
+        canonical="/ekibimiz"
+      />
 
+      {/* 2. DİNAMİK SCHEMA (Koç Listesi) */}
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(coachSchema)}
+        </script>
+      </Helmet>
 
-  <TopBar />
-<Navbar />
+      <TopBar />
+      <Navbar />
 
-<div className="coach-detail-page">
-  <h2 className="coach-detail-title">Ekibimiz</h2>
+      <div className="coach-detail-page">
+        {/* SEO İÇİN KRİTİK: Ana başlık h1 yapıldı (Eskiden h2 idi) */}
+        <h1 className="coach-detail-title">Koçluk Ekibimiz</h1>
+        <p style={{textAlign: 'center', maxWidth: '800px', margin: '0 auto 40px auto', color: '#666'}}>
+          Sınav sürecini başarıyla tamamlamış, tecrübeli ve dinamik kadromuzla tanışın.
+        </p>
 
-  <p className="coach-detail-description">
-    Sözderece Koçluk ekibi, <strong>YKS koçları</strong> ve <strong>LGS koçları</strong> olarak sınav sürecinde öğrencilerin her adımında yanında olmaktadır.
-    <strong> Eğitim koçu</strong> desteği sayesinde öğrencilerimiz motivasyonlarını yüksek tutarken, sınav stratejilerini koçlarıyla birlikte geliştirir.
-    <strong> Sınav koçluğu</strong> hizmetimizle disiplinli ve verimli bir hazırlık süreci sunuyoruz. Her bir <strong>öğrenci koçu</strong>, kendi alanında
-    uzmanlaşmış ve <strong>YKS</strong> ile <strong>LGS</strong> sınavlarında derece yapmış mentorlerden oluşur.
-    <strong> Koçluk ekibimizi</strong> aşağıdan inceleyebilir ve size en uygun koçla birebir rehberlik sürecinizi başlatabilirsiniz.
-  </p>
+        <div className="coach-detail-list">
+          {coaches.map((coach) => (
+            <div key={coach.id} className="coach-detail-card">
+              <img 
+                src={coach.image} 
+                alt={`${coach.name} - Sözderece Koçluk`} // Alt etiketi zenginleştirildi
+                className="coach-detail-image" 
+                loading="lazy" // Performans için lazy load eklendi
+              />
+              <h3 className="coach-detail-name">{coach.name}</h3>
+              <p className="coach-detail-subject">{coach.subject}</p>
+              <p className="coach-detail-description">{coach.description}</p>
+            </div>
+          ))}
+        </div>
 
-
-  <div className="coach-detail-list">
-    {coaches.map((coach) => (
-      <div key={coach.id} className="coach-detail-card">
-        <img src={coach.image} alt={coach.name} className="coach-detail-image" />
-        <h3 className="coach-detail-name">{coach.name}</h3>
-        <p className="coach-detail-subject">{coach.subject}</p>
-        <p className="coach-detail-description">{coach.description}</p>
+        {/* İç Linkleme (SEO için faydalı) */}
+        <div style={{textAlign: 'center', marginTop: '50px', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '10px'}}>
+            <p style={{marginBottom: '10px'}}>Hala aklında sorular mı var?</p>
+            <p>
+            <a href="/sss" style={{color: '#0f2a4a', fontWeight: 'bold', textDecoration: 'underline'}}>Sıkça Sorulan Sorular</a> sayfasına göz atabilir veya 
+            hemen <a href="/paketler" style={{color: '#f39c12', fontWeight: 'bold'}}>Koçluk Paketlerini</a> inceleyebilirsin.
+            </p>
+        </div>
       </div>
-    ))}
-  </div>
-</div>
-<p>
-  <a href="/sss">Sıkça Sorulan Sorular</a> sayfasına göz atabilir veya 
-  <a href="/paketler">Koçluk paketlerimizi</a> inceleyebilirsiniz.
-</p>
-<Footer />
+
+      <Footer />
     </>
   );
 };

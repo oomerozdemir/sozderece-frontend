@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Helmet } from "react-helmet";
+// Helmet'i kaldırdık, yerine Seo bileşenini çağırıyoruz
+import Seo from "../components/Seo"; 
+import { Helmet } from "react-helmet"; // Sadece JSON-LD schema için lazım olabilir ama Seo içinden de geçebiliriz. Şimdilik burada kalsın.
+
 import { 
   FaCheckCircle, 
   FaTimesCircle, 
@@ -23,25 +26,17 @@ const PackageDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // URL'den gelen slug'ı yakala
   const querySlug = new URLSearchParams(location.search).get("slug");
-  
   const packageList = useMemo(() => Object.values(PACKAGES).filter((p) => !p.hidden), []);
-
-  // DEĞİŞİKLİK BURADA: Varsayılan olarak her zaman "kocluk-2026" (Tam Kapsamlı Paket) seçilsin.
-  // Eğer bu ID değişirse burayı güncellemeniz gerekir.
   const defaultSlug = "kocluk-2026";
 
-  // Eğer URL'de slug varsa onu kullan, yoksa belirlediğimiz varsayılanı kullan
   const [selectedSlug, setSelectedSlug] = useState(querySlug || defaultSlug);
   const [activeIndex, setActiveIndex] = useState(null);
 
-  // URL değişirse (örn: kullanıcı geri giderse) state'i güncelle
   useEffect(() => {
     if (querySlug && PACKAGES[querySlug]) {
       setSelectedSlug(querySlug);
     } else if (!querySlug) {
-      // Slug yoksa varsayılanı set et
       setSelectedSlug(defaultSlug);
     }
   }, [querySlug, defaultSlug]);
@@ -74,11 +69,49 @@ const PackageDetail = () => {
   ];
   const faqList = [...(selected.faq || []), ...defaultFaq];
 
+  // --- GOOGLE İÇİN ÜRÜN ŞEMASI (RICH SNIPPETS) ---
+  // Fiyat metninden sadece sayıyı çekmeye çalışıyoruz (örn: "2500 TL" -> 2500)
+  const numericPrice = selected.priceText 
+    ? selected.priceText.replace(/[^0-9]/g, '') 
+    : "0";
+
+  const productSchema = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": selected.title,
+    "image": "https://sozderecekocluk.com/images/paketlerImage1.webp", // Varsayılan görsel
+    "description": selected.subtitle,
+    "brand": {
+      "@type": "Brand",
+      "name": "Sözderece Koçluk"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": `https://sozderecekocluk.com/paket-detay?slug=${selected.slug}`,
+      "priceCurrency": "TRY",
+      "price": numericPrice,
+      "availability": "https://schema.org/InStock",
+      "seller": {
+        "@type": "Organization",
+        "name": "Sözderece"
+      }
+    }
+  };
+
   return (
     <>
+      {/* 1. SEO BİLEŞENİ (Başlık ve Meta Açıklaması için) */}
+      <Seo 
+        title={selected.title} 
+        description={selected.subtitle}
+        canonical={`/paket-detay?slug=${selected.slug}`}
+      />
+
+      {/* 2. SCHEMA.ORG (Fiyatların Google'da çıkması için) */}
       <Helmet>
-        <title>{selected.title} | Sözderece Koçluk</title>
-        <meta name="description" content={selected.subtitle} />
+        <script type="application/ld+json">
+          {JSON.stringify(productSchema)}
+        </script>
       </Helmet>
 
       <TopBar />
@@ -87,7 +120,6 @@ const PackageDetail = () => {
       <div className="pd-wrapper">
         <div className="pd-container">
           
-          {/* --- TEK KOLON: BİLGİLER --- */}
           <div className="pd-info">
             <div className="pd-header-center">
                 <span className="pd-badge">
@@ -97,27 +129,23 @@ const PackageDetail = () => {
                 <p className="pd-subtitle">{selected.subtitle}</p>
             </div>
 
-            {/* Fiyat Alanı */}
             <div className="pd-price-box">
               <span className="pd-price">{selected.priceText}</span>
               <p className="pd-vat">Tüm vergiler dahildir.</p>
             </div>
 
-            {/* İndirim Uyarısı */}
             {!isSpecialTutoring && (
               <div className="pd-discount-box">
                 🎁 <strong>Sozderece200</strong> kodu ile sepette anında <strong>200₺ indirim</strong> kazan!
               </div>
             )}
 
-            {/* Paket Seçimi Dropdown */}
             <div className="pd-select-group">
               <label>Paket Seçenekleri:</label>
               <select 
                 value={selectedSlug} 
                 onChange={(e) => {
                   setSelectedSlug(e.target.value);
-                  // URL'i güncelle ama sayfayı yenileme (client-side routing)
                   navigate(`?slug=${e.target.value}`, { replace: true });
                 }}
               >
@@ -127,7 +155,6 @@ const PackageDetail = () => {
               </select>
             </div>
 
-            {/* Özellikler Listesi */}
             <ul className="pd-features">
               {features.map((f, i) => (
                 <li key={i} className={f.included ? "inc" : "exc"}>
@@ -137,19 +164,16 @@ const PackageDetail = () => {
               ))}
             </ul>
 
-            {/* Güven Rozetleri */}
             <div className="pd-trust">
               <div className="trust-item"><FaShieldAlt /> %100 Güvenli Ödeme</div>
               <div className="trust-item"><FaHeadset /> 7/24 Destek</div>
               <div className="trust-item"><FaCreditCard /> Taksit İmkanı</div>
             </div>
 
-            {/* CTA Butonu */}
             <button className="pd-cta-btn" onClick={handleContinue}>
               {isSpecialTutoring ? "Öğretmenleri İncele" : "Hemen Başla (Güvenli Ödeme)"}
             </button>
 
-            {/* Ödeme Logoları */}
             <div className="pd-payment-logos">
                 <img src="/images/kare-logo-mastercard.webp" alt="Mastercard" />
                 <img src="/images/kare-logo-visa.webp" alt="Visa" />
@@ -157,7 +181,6 @@ const PackageDetail = () => {
                 <img src="/images/kare-logo-paytr.webp" alt="PayTR" />
             </div>
             
-            {/* SSS Accordion */}
             <div className="pd-faq">
               <h3>Sıkça Sorulan Sorular</h3>
               {faqList.map((item, idx) => (
@@ -178,7 +201,6 @@ const PackageDetail = () => {
       </div>
 
       <Testimonials />
-      
       <Footer />
     </>
   );

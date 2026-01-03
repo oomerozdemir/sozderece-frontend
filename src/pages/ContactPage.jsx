@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";
 import Navbar from "../components/navbar";
+import Seo from "../components/Seo";
 
 // Yeni Tasarım için İkonlar ve CSS
 import "../cssFiles/contactPage.css";
@@ -93,11 +94,11 @@ const IletisimPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Ücretsiz Ön Görüşme | Sözderece Koçluk</title>
-        <meta name="description" content="Koçluk sistemimiz hakkında ücretsiz ön görüşme formunu doldurun." />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-      </Helmet>
+     <Seo 
+        title="Ücretsiz Ön Görüşme & İletişim" 
+        description="LGS ve YKS koçluğu için bizimle iletişime geçin. Ücretsiz analiz formunu doldurun, eğitim danışmanımız sizi arasın."
+        canonical="/ucretsiz-on-gorusme"
+      />
 
       <TopBar />
       <Navbar />
