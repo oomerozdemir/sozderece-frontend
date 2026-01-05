@@ -60,8 +60,8 @@ export default function HomePage() {
             daha yüksek dönüşüm sağlar. 
         */}
         <section className="contact-section" style={{textAlign: 'center', padding: '60px 20px'}}>
-          <h2 className="section-title">Hemen Başlayalım mı?</h2>
-          <p className="section-description" style={{marginBottom: '30px'}}>
+          <h2 className="home-section-title">Hemen Başlayalım mı?</h2>
+          <p className="home-section-description" style={{marginBottom: '30px'}}>
             Aklındaki soruları gidermek ve sisteme dahil olmak için bize ulaş.
           </p>
 

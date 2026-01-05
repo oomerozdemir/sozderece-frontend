@@ -12,13 +12,13 @@ const DYNAMIC_TEXTS = [
 
 // Kayan şeritteki resimler
 const MARQUEE_IMAGES = [
-  "/images/paketlerImage1.webp",
-  "/images/ozeldersimage1.webp",
-  "/images/paketlerImage2.webp",
-  "/images/ozeldersimage2.webp",
-  "/images/paketlerImage3.webp",
-  "/images/paketlerImage4.webp", 
-  "/images/paketlerImage5.webp",
+  "/images/geridonus.png",
+  "/images/memnuniyet1.png",
+  "/images/memnuniyet2.png",
+  "/images/memnuniyet3.png",
+  "/images/ogrencilerinCalismalari.jpg",
+  "/images/ornekProgram.png", 
+  "/images/ornekProgram2.png",
 ];
 
 export default function HeroSection() {
@@ -97,6 +97,10 @@ export default function HeroSection() {
         </div>
       </div>
 
+
+      <div style={{ textAlign: 'center', marginBottom: '10px', color: '#666', fontSize: '0.9rem' }}>
+  <small>👇 Örnek çalışmaları detaylı incelemek için görsellere tıklayınız 👇</small>
+</div>
       {/* --- ALT KISIM: SONSUZ KAYAN ŞERİT (MARQUEE) --- */}
       <div className="marquee-wrapper">
         <div className="marquee-track">
@@ -111,7 +115,7 @@ export default function HeroSection() {
                 onClick={() => setSelectedIndex(originalIndex)} 
               >
                 <img src={src} alt={`Referans ${i}`} loading="lazy" />
-                <div className="zoom-hint">🔍 Büyüt</div>
+                <div className="zoom-hint">🔍 İncele</div>
               </div>
             );
           })}

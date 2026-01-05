@@ -2,13 +2,13 @@
 .hero-section-modern {
   position: relative;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  padding-top: 40px; /* Navbar payı */
-  padding-bottom: 40px;
-  min-height: 85vh; /* Yüksekliği biraz azalttık */
+  padding-top: 20px; /* 40px'den 20px'e düştü */
+  padding-bottom: 0px;
+  min-height: auto;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Değişiklik: Öğeleri merkeze topla (space-between yerine) */
-  gap: 40px; /* Değişiklik: İki blok arasında sabit 40px boşluk */
+  justify-content: center;
+  gap: 15px; /* Bloklar arası boşluk 40px'den 15px'e düştü */
   overflow: hidden;
 }
 .hero-container {
@@ -32,21 +32,21 @@
   font-size: 2rem;
   font-weight: 600;
   color: var(--primary-color, #100481);
-  margin-bottom: 20px;
+  margin-bottom: 5px; /* Başlık altı boşluk 20px'den 5px'e düştü */
   letter-spacing: 1px;
   text-transform: uppercase;
 }
 
 .dynamic-text-wrapper {
-  height: 80px; 
+  height: 60px; /* Yükseklik 80px'den 60px'e düştü */
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Alt boşluk 20px'den 10px'e düştü */
 }
 
 .dynamic-title {
-  font-size: 3.5rem;
+  font-size: 2.5rem;
   font-weight: 800;
   background: -webkit-linear-gradient(45deg, #100481, #ff9203);
   -webkit-background-clip: text;
@@ -59,8 +59,8 @@
   font-size: 1.1rem;
   color: #666;
   max-width: 600px;
-  margin: 0 auto 40px auto;
-  line-height: 1.6;
+  margin: 0 auto 25px auto; /* Butonlarla olan mesafe 40px'den 25px'e düştü */
+  line-height: 1.5;
 }
 
 /* --- BUTONLAR --- */
@@ -112,12 +112,12 @@
 .marquee-wrapper {
   width: 100%;
   background-color: #fff;
-  padding: 30px 0;
+  padding: 15px 0;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
   overflow: hidden;
   position: relative;
-  margin-top: 50px;
+  margin-top: 20px; /* Üst boşluk 50px'den 20px'e düştü (Ciddi daralma) */
 }
 
 .marquee-track {
@@ -139,7 +139,7 @@
   overflow: hidden;
   box-shadow: 0 8px 20px rgba(0,0,0,0.1); /* Gölge biraz güçlendirildi */
   flex-shrink: 0;
-  cursor: pointer;
+  cursor: zoom-in;
   position: relative;
   transition: transform 0.3s ease;
 }
@@ -151,26 +151,32 @@
 .marquee-item img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover;       /* Alanı doldurmaya devam et */
+  object-position: top;    /* ÖNEMLİ: Resmi her zaman üstten hizala */
 }
 
 /* "Büyüt" yazısı ipucu */
 .zoom-hint {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  font-size: 0.8rem;
-  padding: 5px;
-  text-align: center;
-  opacity: 0;
-  transition: opacity 0.3s;
+  bottom: 10px;
+  right: 10px; /* Sağ alt köşeye sabitledik */
+  background: rgba(255, 255, 255, 0.9); /* Beyaz ve belirgin zemin */
+  color: #100481; /* Marka rengi lacivert */
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  opacity: 1; /* ÖNEMLİ: Her zaman görünür yaptık (0 yerine 1) */
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: transform 0.3s ease;
+  pointer-events: none; /* Tıklamayı engellememesi için */
+  z-index: 5;
 }
-
 .marquee-item:hover .zoom-hint {
-  opacity: 1;
+  transform: scale(1.1);
 }
 
 @keyframes scroll {
@@ -325,5 +331,32 @@
   
   .image-modal-content img {
     max-height: 70vh; /* Mobilde dikey taşmayı önle */
+  }
+}
+
+@media (max-width: 1100px) {
+  
+  /* Dinamik başlığı bu aralıkta küçültelim ki tek satıra sığsın veya taşmasın */
+  .dynamic-title {
+    font-size: 2.2rem; /* 3.5rem yerine daha makul bir boyut */
+    line-height: 1.2;
+  }
+
+  /* Kapsayıcının yüksekliğini otomatiğe alalım, taşmayı önler */
+  .dynamic-text-wrapper {
+    height: auto;       /* Sabit 60px/80px yerine içeriğe göre uzasın */
+    min-height: 70px;   /* Animasyon zıplamalarını önlemek için minimum yükseklik */
+    margin-bottom: 15px;
+  }
+
+  /* Statik başlığı ("Sözderece Koçluk İle") biraz dengeleyelim */
+  .static-title {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+  }
+  
+  /* Genel boşlukları bu aralıkta biraz daha açabiliriz */
+  .hero-container {
+    padding: 0 30px; /* Kenar boşluklarını artırarak metni sıkıştırmayalım */
   }
 }
