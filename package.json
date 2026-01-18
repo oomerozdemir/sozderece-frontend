@@ -37,7 +37,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "generate-sitemap": "node generate-sitemap.js",
-    "build": "npm run generate-sitemap && react-scripts build"
+    "build": "react-scripts build && node generate-sitemap.js"
   },
   "eslintConfig": {
     "extends": [

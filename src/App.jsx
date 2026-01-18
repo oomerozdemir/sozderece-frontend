@@ -145,12 +145,6 @@ export default App;
 
 sözderece logo değiş
  
-herosectiondaki resimleri duzelt
-
-navbarda ogrenci ise ogrenci paneli adminse admin paneli yonlendirmesi olmali
-
-epostalar neden junk a dusuyor
-
 sepet tutarini arttiramasinlar mantiksiz aydan aya oduyolar cunku
 
 paymentPage cartpage buralarda degisebilir tasarim olarak
