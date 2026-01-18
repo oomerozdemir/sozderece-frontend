@@ -11,8 +11,8 @@ const CartPage = () => {
     cart,
     loading,
     error,
-    increaseQuantity,
-    decreaseQuantity,
+    // increaseQuantity, // KALDIRILDI: Miktar artırma fonksiyonuna gerek yok
+    // decreaseQuantity, // KALDIRILDI: Miktar azaltma fonksiyonuna gerek yok
     removeFromCart,
   } = useCart();
 
@@ -21,8 +21,8 @@ const CartPage = () => {
 
   const items = useMemo(() => {
     if (!cart) return [];
-    if (Array.isArray(cart)) return cart;            // UI modeli
-    if (Array.isArray(cart.items)) return cart.items; // Server modeli
+    if (Array.isArray(cart)) return cart;
+    if (Array.isArray(cart.items)) return cart.items;
     return [];
   }, [cart]);
 
@@ -41,28 +41,25 @@ const CartPage = () => {
 
   const getSlug = (it) => it.slug || it.id || getTitle(it);
 
-
   // EKLE —— özel dersi tespit et
-const isTutoringItem = (it) => {
-  if (it?.itemType === "tutoring") return true; // varsa en sağlam sinyal
-  const slug = (it?.slug || "").toLowerCase();
-  const name = (it?.name || it?.title || "").toLowerCase();
-  return (
-    /^tek-ders$/.test(slug) ||     // tek ders
-    /^paket-\d+$/.test(slug) ||    // paket-3, paket-6 vb.
-    /ozel-ders/.test(slug) ||      // ozel-ders, ozel-ders-paketi
-    /özel ders|tutor|ders/.test(name) // isim bazlı emare
-  );
-};
+  const isTutoringItem = (it) => {
+    if (it?.itemType === "tutoring") return true;
+    const slug = (it?.slug || "").toLowerCase();
+    const name = (it?.name || it?.title || "").toLowerCase();
+    return (
+      /^tek-ders$/.test(slug) ||
+      /^paket-\d+$/.test(slug) ||
+      /ozel-ders/.test(slug) ||
+      /özel ders|tutor|ders/.test(name)
+    );
+  };
 
   const hasTutoring = items.some(isTutoringItem);
-
-
 
   const total = useMemo(() => {
     return items.reduce((sum, it) => {
       const unit = getUnitPriceTL(it);
-      const qty = it.quantity || 1;
+      const qty = 1; // Miktar her zaman 1 olarak hesaplansın (UI tarafında)
       return sum + unit * qty;
     }, 0);
   }, [items]);
@@ -83,13 +80,10 @@ const isTutoringItem = (it) => {
     window.location.href = "/#paketler";
   };
 
-  const canDecrease = typeof decreaseQuantity === "function";
+  // const canDecrease = typeof decreaseQuantity === "function"; // KALDIRILDI
   const canRemove = typeof removeFromCart === "function";
 
-  const onDecrease = (slug) => {
-    if (canDecrease) return decreaseQuantity(slug);
-    alert("Adet azaltma yakında aktif olacak.");
-  };
+  // onDecrease fonksiyonu KALDIRILDI
 
   const onRemove = (slug) => {
     if (canRemove) return removeFromCart(slug);
@@ -124,7 +118,7 @@ const isTutoringItem = (it) => {
                 const slug = getSlug(item);
                 const title = getTitle(item);
                 const unitTL = getUnitPriceTL(item);
-                const qty = item.quantity || 1;
+                const qty = 1; // Sabit 1 adet gösteriyoruz
                 const totalItemTL = (unitTL * qty).toFixed(2);
 
                 return (
@@ -138,14 +132,13 @@ const isTutoringItem = (it) => {
                       </div>
                     </div>
 
-                    <div className="cart-item-quantity">
-                      <button onClick={() => onDecrease(slug)}>-</button>
-                      <span>{qty}</span>
-                      <button onClick={() => increaseQuantity(slug)}>+</button>
+                    {/* Miktar Kısmı Değiştirildi: Butonlar kaldırıldı, sabit metin eklendi */}
+                    <div className="cart-item-quantity" style={{ justifyContent: 'center', cursor: 'default' }}>
+                      <span style={{ fontSize: '0.9rem', color: '#555' }}>1 Adet</span>
                     </div>
 
                     <div className="cart-item-pricing">
-                      <div className="unit-price">₺{unitTL.toFixed(2)} / adet</div>
+                      <div className="unit-price">₺{unitTL.toFixed(2)}</div>
                       <div className="total-price">
                         <strong>₺{totalItemTL}</strong>
                       </div>
@@ -164,11 +157,11 @@ const isTutoringItem = (it) => {
               <p className="cart-total">
                 <strong>Toplam:</strong> ₺{total.toFixed(2)}
               </p>
-             {hasTutoring && (
-  <p className="cart-note">
-    Özel ders seçimleri için <strong>KDV</strong> ödeme adımında hesaplanır ve eklenir.
-  </p>
-)}
+              {hasTutoring && (
+                <p className="cart-note">
+                  Özel ders seçimleri için <strong>KDV</strong> ödeme adımında hesaplanır ve eklenir.
+                </p>
+              )}
 
               <div className="cart-check">
                 <input
