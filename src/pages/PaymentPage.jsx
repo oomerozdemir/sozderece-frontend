@@ -51,7 +51,6 @@ const PaymentPage = () => {
 
   // --- GÜNCELLENEN STATE YAPISI ---
   const [couponCode, setCouponCode] = useState("");
-  // discountRate yerine couponData kullanıyoruz, çünkü artık tip ve tutar da var
   const [couponData, setCouponData] = useState(null); 
   const [couponMessage, setCouponMessage] = useState("");
   const [errors, setErrors] = useState({});
@@ -81,10 +80,14 @@ const PaymentPage = () => {
     return slugMatch || (hasTPFlags && nameMatch);
   }
 
-  // Helper: Satır fiyatını hesapla (KORUNDU ve YENİ MANTIKTA KULLANILDI)
+  // --- FİYAT HESAPLAMA DÜZELTİLDİ ---
   const lineTL = (it) => {
-    if (typeof it?.unitPrice === "number") return (it.unitPrice / 100) * (it.quantity || 1);
-    return (parseTL(it?.price) || 0) * (it.quantity || 1);
+    // ÖNEMLİ: Miktarı her zaman 1 olarak kabul et
+    // Backend'de 4 tane bile olsa, ödemede 1 tanesini alırız.
+    const qty = 1; 
+
+    if (typeof it?.unitPrice === "number") return (it.unitPrice / 100) * qty;
+    return (parseTL(it?.price) || 0) * qty;
   };
 
   // Sepet Toplamları (KORUNDU)
@@ -107,31 +110,27 @@ const PaymentPage = () => {
     return e;
   }, [items]);
 
-  // --- YENİ: GELİŞMİŞ İNDİRİM HESAPLAMA ---
+  // --- İNDİRİM HESAPLAMA ---
   const calculatedDiscountValue = useMemo(() => {
     if (!couponData) return 0;
 
     let discountVal = 0;
     const { type, discountRate, discountAmount, validPackages } = couponData;
 
-    // Helper: Bu ürün için kupon geçerli mi?
     const isEligible = (item) => {
-      // Eğer kuponda paket kısıtlaması varsa ve ürün bu listede yoksa -> geçersiz
       if (validPackages && validPackages.length > 0) {
         return validPackages.includes(item.slug);
       }
-      return true; // Kısıtlama yoksa hepsi geçerli
+      return true;
     };
 
     if (type === "RATE") {
-      // 1. Yüzdelik İndirim
       items.forEach(item => {
         if (isEligible(item)) {
           discountVal += lineTL(item) * (discountRate / 100);
         }
       });
     } else if (type === "FIXED") {
-      // 2. Sabit Tutar İndirimi
       const eligibleItemsTotal = items.reduce((acc, item) => {
         return isEligible(item) ? acc + lineTL(item) : acc;
       }, 0);
@@ -167,7 +166,6 @@ const PaymentPage = () => {
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  // --- KUPON UYGULAMA  ---
   const handleApplyCoupon = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -183,7 +181,6 @@ const PaymentPage = () => {
 
       const data = res.data;
 
-      // 1. Paket Kısıtlaması Kontrolü 
       if (data.validPackages && data.validPackages.length > 0) {
         const hasValidItem = items.some(item => data.validPackages.includes(item.slug));
         
@@ -194,12 +191,11 @@ const PaymentPage = () => {
         }
       }
 
-      // 2. Kupon Verisini Kaydet
       setCouponData({
         code: data.code,
-        type: data.type || "RATE", // RATE veya FIXED
+        type: data.type || "RATE",
         discountRate: data.discountRate || 0,
-        discountAmount: data.discountAmount || 0, // Kuruş
+        discountAmount: data.discountAmount || 0,
         validPackages: data.validPackages || []
       });
 
@@ -248,9 +244,8 @@ const PaymentPage = () => {
           billingInfo: formData,
           packageName: items[0]?.name,
           
-          // Güncellenen kupon verileri
           couponCode: couponData ? couponCode : "",
-          discountAmount: calculatedDiscountValue, // İndirim tutarı
+          discountAmount: calculatedDiscountValue,
           
           totalPrice: Number(payable.toFixed(2)),
           totalPriceKurus: Math.round(payable * 100),
@@ -386,7 +381,6 @@ const PaymentPage = () => {
           <p>Ara Toplam (Özel Ders): <strong>₺{tutoringTotal.toFixed(2)}</strong></p>
           <p>Ara Toplam (Diğer): <strong>₺{otherTotal.toFixed(2)}</strong></p>
           
-          {/* GÜNCELLENEN İNDİRİM GÖSTERİMİ */}
           {calculatedDiscountValue > 0 && (
             <p className="text-green-600">
               Kupon İndirimi ({couponData?.code}): 

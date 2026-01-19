@@ -44,27 +44,37 @@ export default function useCart() {
     }
   }, []);
 
+  // --- DÜZELTME: Aynı ürünü tekrar eklemeyi engelle ---
+  const addToCart = useCallback(
+    async ({ slug, title, unitPrice, quantity = 1, email, name }) => {
+      
+      // 1. KONTROL: Eğer cart yüklendiyse ve ürün zaten varsa uyarı ver.
+      if (cart && Array.isArray(cart)) {
+        const exists = cart.some((item) => item.slug === slug);
+        if (exists) {
+          alert("Bu paket zaten sepetinizde mevcut.");
+          return; // Backend isteği atma, fonksiyonu bitir.
+        }
+      }
 
-const addToCart = useCallback(
-  async ({ slug, title, unitPrice, quantity = 1, email, name }) => {
-    await axios.post(
-      "/api/cart/items",
-      { slug, title, unitPrice, quantity, ...(email ? { email } : {}), ...(name ? { name } : {}) },
-      { headers: authHeaders() }
-    );
-    await refresh();
+      await axios.post(
+        "/api/cart/items",
+        { slug, title, unitPrice, quantity, ...(email ? { email } : {}), ...(name ? { name } : {}) },
+        { headers: authHeaders() }
+      );
+      await refresh();
 
-    // ✅ Google Ads - Sepete Ekleme Dönüşümü
-    if (window.gtag) {
-      window.gtag('event', 'conversion', {
-        send_to: 'AW-17399744724/ZH42Cfe1laobENSR7OhA',
-        value: 1.0,
-        currency: 'TRY',
-      });
-    }
-  },
-  [refresh]
-);
+      // ✅ Google Ads - Sepete Ekleme Dönüşümü
+      if (window.gtag) {
+        window.gtag('event', 'conversion', {
+          send_to: 'AW-17399744724/ZH42Cfe1laobENSR7OhA',
+          value: 1.0,
+          currency: 'TRY',
+        });
+      }
+    },
+    [refresh, cart] // cart bağımlılığı eklendi ki güncel listeyi bilsin
+  );
 
 
   const increaseQuantity = useCallback(async (slug) => {
