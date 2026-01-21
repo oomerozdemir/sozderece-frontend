@@ -140,7 +140,7 @@ const IletisimPage = () => {
                   </li>
                   <li>
                     <div className="b-icon"><FaClipboardList /></div>
-                    <div><strong>Sistem Tanıtımı</strong><span>Derece yaptıran sistemi öğren.</span></div>
+                    <div><strong>Sistem Tanıtımı</strong><span>Sana özel hazırlanan sistemin detaylarını öğren.</span></div>
                   </li>
                   <li>
                     <div className="b-icon"><FaPhoneAlt /></div>
