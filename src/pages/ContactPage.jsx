@@ -17,14 +17,13 @@ import {
   FaArrowDown,
   FaCheckCircle,
   FaExclamationCircle,
-  FaCalendarAlt // Takvim ikonu eklendi
+  FaCalendarAlt 
 } from "react-icons/fa";
 
 const IletisimPage = () => {
   const navigate = useNavigate();
   const formRef = useRef(null); 
 
-  // Bugünün tarihini al (Geçmiş tarih seçilmesin diye)
   const today = new Date().toISOString().split("T")[0];
 
   const scrollToForm = () => {
@@ -36,7 +35,7 @@ const IletisimPage = () => {
     email: "", 
     phone: "",
     userType: "",
-    meetingDate: "", // YENİ: Tarih alanı
+    meetingDate: "", 
     meetingTime: "", 
     message: "",
   });
@@ -45,10 +44,27 @@ const IletisimPage = () => {
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
+  // --- GÜNCELLEME: 20 Dakikalık Aralıklar ---
   const timeSlots = [
-    "09:00 - 10:00", "10:00 - 11:00", "11:00 - 12:00", "12:00 - 13:00",
-    "13:00 - 14:00", "14:00 - 15:00", "15:00 - 16:00", "16:00 - 17:00",
-    "17:00 - 18:00", "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00"
+    // Sabah
+    "09:00 - 09:20", "09:20 - 09:40", "09:40 - 10:00",
+    "10:00 - 10:20", "10:20 - 10:40", "10:40 - 11:00",
+    "11:00 - 11:20", "11:20 - 11:40", "11:40 - 12:00",
+    
+    // Öğle
+    "12:00 - 12:20", "12:20 - 12:40", "12:40 - 13:00",
+    "13:00 - 13:20", "13:20 - 13:40", "13:40 - 14:00",
+    "14:00 - 14:20", "14:20 - 14:40", "14:40 - 15:00",
+    
+    // Öğleden Sonra
+    "15:00 - 15:20", "15:20 - 15:40", "15:40 - 16:00",
+    "16:00 - 16:20", "16:20 - 16:40", "16:40 - 17:00",
+    "17:00 - 17:20", "17:20 - 17:40", "17:40 - 18:00",
+    
+    // Akşam
+    "18:00 - 18:20", "18:20 - 18:40", "18:40 - 19:00",
+    "19:00 - 19:20", "19:20 - 19:40", "19:40 - 20:00",
+    "20:00 - 20:20", "20:20 - 20:40", "20:40 - 21:00"
   ];
 
   const handleInputChange = (e) => {
@@ -106,7 +122,7 @@ const IletisimPage = () => {
               
               {/* SOL TARAF */}
               <div className="contact-text-content">
-                <span className="highlight-badge">🚀 YKS/LGS 2026 Hazırlık</span>
+                <span className="highlight-badge">🚀 YKS 2026 Hazırlık</span>
                 <h1 className="contact-title">Hedeflerine Ulaşmak İçin<br /><span className="text-orange">İlk Adımı At</span></h1>
                 <p className="contact-desc">
                   YKS sürecinde yalnız değilsin. Formu doldur, derece öğrencisi koçlarımız 
@@ -135,7 +151,7 @@ const IletisimPage = () => {
                 <div className="contact-actions-row desktop-only-actions">
                   <p className="small-label">Veya bize ulaşın:</p>
                   <div className="btn-group">
-                    <a href="tel:05312546701" className="action-btn call-btn"><FaPhoneAlt /> 0 531 254 67 015</a>
+                    <a href="tel:05555555555" className="action-btn call-btn"><FaPhoneAlt /> 0555 555 55 55</a>
                     <button onClick={() => navigate('/paket-detay')} className="action-btn browse-btn">Paketleri İncele</button>
                   </div>
                 </div>
@@ -189,14 +205,14 @@ const IletisimPage = () => {
                     <label>Durumunuz</label>
                     <select name="userType" value={formData.userType} onChange={handleInputChange} required>
                       <option value="">Seçiniz...</option>
-                      <option value="Yks">Yks Öğrencisi</option>
-                      <option value="Mezun">Mezun Yks Öğrencisi</option>
-                      <option value="Lgs">Lgs Öğrencisi</option>
-                      <option value="Veli">Veli</option>
+                      <option value="12. Sınıf">12. Sınıf Öğrencisi</option>
+                      <option value="Mezun">Mezun Öğrenci</option>
+                      <option value="11. Sınıf">11. Sınıf Öğrencisi</option>
+                      <option value="Veli">Öğrenci Velisi</option>
                     </select>
                   </div>
 
-                  {/* YENİ: TARİH VE SAAT YAN YANA */}
+                  {/* TARİH VE SAAT SEÇİMİ */}
                   <div className="form-row">
                     <div className="form-group half">
                       <label>Tarih Seçiniz</label>
@@ -211,7 +227,7 @@ const IletisimPage = () => {
                       />
                     </div>
                     <div className="form-group half">
-                      <label>Saat Seçiniz</label>
+                      <label>Saat Seçiniz (20 Dk)</label>
                       <select name="meetingTime" value={formData.meetingTime} onChange={handleInputChange} required>
                         <option value="">Seçiniz...</option>
                         {timeSlots.map((slot, i) => <option key={i} value={slot}>{slot}</option>)}
@@ -226,6 +242,7 @@ const IletisimPage = () => {
                       rows="3" 
                       value={formData.message} 
                       onChange={handleInputChange} 
+                      placeholder="Hangi bölümü istiyorsun?"
                     ></textarea>
                   </div>
 
