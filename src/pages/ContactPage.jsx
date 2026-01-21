@@ -106,7 +106,7 @@ const IletisimPage = () => {
               
               {/* SOL TARAF */}
               <div className="contact-text-content">
-                <span className="highlight-badge">🚀 YKS 2026 Hazırlık</span>
+                <span className="highlight-badge">🚀 YKS/LGS 2026 Hazırlık</span>
                 <h1 className="contact-title">Hedeflerine Ulaşmak İçin<br /><span className="text-orange">İlk Adımı At</span></h1>
                 <p className="contact-desc">
                   YKS sürecinde yalnız değilsin. Formu doldur, derece öğrencisi koçlarımız 
