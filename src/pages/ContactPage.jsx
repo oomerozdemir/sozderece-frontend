@@ -151,7 +151,7 @@ const IletisimPage = () => {
                 <div className="contact-actions-row desktop-only-actions">
                   <p className="small-label">Veya bize ulaşın:</p>
                   <div className="btn-group">
-                    <a href="tel:05555555555" className="action-btn call-btn"><FaPhoneAlt /> 0555 555 55 55</a>
+                    <a href="tel:05312546701" className="action-btn call-btn"><FaPhoneAlt /> 0 531 254 67 01</a>
                     <button onClick={() => navigate('/paket-detay')} className="action-btn browse-btn">Paketleri İncele</button>
                   </div>
                 </div>
@@ -227,7 +227,7 @@ const IletisimPage = () => {
                       />
                     </div>
                     <div className="form-group half">
-                      <label>Saat Seçiniz (20 Dk)</label>
+                      <label>Müsait olduğunuz Saat Aralığı</label>
                       <select name="meetingTime" value={formData.meetingTime} onChange={handleInputChange} required>
                         <option value="">Seçiniz...</option>
                         {timeSlots.map((slot, i) => <option key={i} value={slot}>{slot}</option>)}
@@ -242,7 +242,6 @@ const IletisimPage = () => {
                       rows="3" 
                       value={formData.message} 
                       onChange={handleInputChange} 
-                      placeholder="Hangi bölümü istiyorsun?"
                     ></textarea>
                   </div>
 
