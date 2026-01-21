@@ -1,354 +1,334 @@
-/* --- SAYFA GENELİ --- */
+/* --- GENEL AYARLAR --- */
 .contact-page-wrapper {
+  font-family: 'Inter', sans-serif;
+  color: #333;
   background-color: #f8f9fa;
-  min-height: 100vh;
-  /* Sticky butonu altta yer kaplasın diye mobilde padding bırakıyoruz */
-  padding-bottom: 0; 
+  padding-bottom: 4rem;
 }
 
 .contact-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 1.5rem;
 }
 
-.text-orange {
-  color: var(--action-color, #f39c12);
+/* --- HEADER BÖLÜMÜ --- */
+.contact-header {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
+  color: white;
+  text-align: center;
+  padding: 4rem 1rem 6rem; /* Alt tarafta boşluk bıraktık ki form yukarı kaysın */
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+  margin-bottom: -3rem; /* Formun header'ın içine girmesi için */
 }
 
-/* --- HERO SECTION --- */
-.contact-hero-section {
-  background-color: var(--primary-color, #100481);
-  padding: 50px 0 80px 0; /* Masaüstü padding biraz azaltıldı */
-  position: relative;
-}
-
-.split-layout {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 60px;
-  align-items: flex-start; /* Center yerine start yaptık, form yukarı hizalansın */
-}
-
-/* SOL: Metinler */
-.contact-text-content {
-  color: #fff;
-}
-
-.highlight-badge {
-  background: rgba(243, 156, 18, 0.2);
-  color: #f39c12;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 0.85rem;
+.header-content h1 {
+  font-size: 2.5rem;
   font-weight: 700;
-  display: inline-block;
-  margin-bottom: 15px;
-  border: 1px solid rgba(243, 156, 18, 0.4);
-}
-
-.contact-title {
-  font-size: 2.8rem;
+  margin-bottom: 1rem;
   line-height: 1.2;
-  font-weight: 800;
-  margin-bottom: 20px;
 }
 
-.contact-desc {
+.header-content span {
+  color: #f1c40f; /* Altın sarısı vurgu */
+}
+
+.header-content p {
   font-size: 1.1rem;
-  color: #d1d5db;
-  line-height: 1.6;
-  margin-bottom: 30px;
-  max-width: 95%;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto 2rem;
 }
 
-/* MOBİL BUTONLAR (Varsayılan gizli) */
-.mobile-inline-cta, .mobile-sticky-cta {
-  display: none;
-}
-
-/* Fayda Listesi */
-.benefit-list {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 30px;
-}
-
-.benefit-list li {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 15px;
+.cta-button {
+  background-color: #f1c40f;
+  color: #1a1a1a;
+  border: none;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  display: inline-flex;
   align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.b-icon {
-  background: rgba(255,255,255,0.1);
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(241, 196, 15, 0.4);
+}
+
+/* --- ANA IZGARA (GRID) --- */
+.contact-main-section {
+  position: relative;
+  z-index: 10;
+}
+
+.grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* SOL TARAF: BİLGİ KARTLARI */
+.info-side {
+  padding-top: 2rem;
+}
+
+.info-side h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+}
+
+.info-item {
+  display: flex;
+  gap: 1rem;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  border: 1px solid #eee;
+  transition: transform 0.2s;
+}
+
+.info-item:hover {
+  transform: translateX(5px);
+  border-color: #f1c40f;
+}
+
+.icon-box {
+  width: 50px;
+  height: 50px;
+  background-color: #fff9db; /* Açık sarı arka plan */
   color: #f39c12;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   flex-shrink: 0;
 }
 
-.benefit-list strong {
-  display: block;
-  font-size: 1rem;
-  margin-bottom: 2px;
+.info-item h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+  color: #333;
 }
 
-.benefit-list span {
+.info-item p {
   font-size: 0.9rem;
-  color: #9ca3af;
-}
-
-/* Masaüstü Buton Grubu */
-.contact-actions-row {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-.small-label {
-  font-size: 0.9rem;
-  color: #9ca3af;
-  margin-bottom: 10px;
-}
-
-.btn-group {
-  display: flex;
-  gap: 15px;
-}
-
-.action-btn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s;
-  cursor: pointer;
-  border: none;
-  font-size: 1rem;
-}
-
-.call-btn {
-  background: transparent;
-  border: 2px solid #fff;
-  color: #fff;
-}
-.call-btn:hover { background: #fff; color: #100481; }
-
-.browse-btn {
-  background: rgba(255,255,255,0.1);
-  color: #f39c12;
-}
-.browse-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
-
-
-/* SAĞ: Form Kartı */
-.contact-form-card {
-  background: #fff;
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
-}
-
-.form-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.form-header h3 {
-  color: #0f2a4a;
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin-bottom: 5px;
-}
-
-.form-header p {
   color: #666;
-  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.4;
 }
 
-.form-group {
-  margin-bottom: 12px;
+/* SAĞ TARAF: FORM KARTI */
+.form-side {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.08);
 }
 
-.form-group label {
-  display: block;
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: #444;
-  margin-bottom: 5px;
+.form-side h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
 }
 
-.form-group input, 
-.form-group select, 
-.form-group textarea {
+.form-subtext {
+  color: #7f8c8d;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+/* INPUT GRUPLARI */
+.input-group {
+  position: relative;
+  margin-bottom: 1.2rem;
+}
+
+.input-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #95a5a6;
+  pointer-events: none;
+}
+
+/* Textarea için ikon ayarı */
+.input-group textarea + .input-icon,
+.input-group:has(textarea) .input-icon { 
+  top: 20px;
+  transform: none;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
+  padding: 12px 15px 12px 45px; /* İkon boşluğu */
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
-  font-size: 1rem; /* Mobilde zoom yapmaması için en az 16px olmalı */
-  background: #fdfdfd;
+  font-size: 0.95rem;
+  background-color: #fdfdfd;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+  border-color: #3498db;
+  outline: none;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
 .submit-btn {
   width: 100%;
-  padding: 14px;
-  background: linear-gradient(to right, #f39c12, #d35400);
-  color: #fff;
+  background-color: #2c3e50;
+  color: white;
+  padding: 1rem;
   border: none;
   border-radius: 8px;
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  margin-top: 10px;
-  box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
-}
-
-/* Alert Mesajları */
-.form-alert {
-  padding: 10px;
-  border-radius: 6px;
-  margin-top: 10px;
-  font-size: 0.85rem;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background 0.3s;
 }
-.form-alert.success { background-color: #d1e7dd; color: #0f5132; }
-.form-alert.error { background-color: #f8d7da; color: #842029; }
-.privacy-note { text-align: center; font-size: 0.75rem; color: #bbb; margin-top: 10px; }
 
+.submit-btn:hover {
+  background-color: #1a252f;
+}
+
+.submit-btn:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.privacy-note {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #bdc3c7;
+  margin-top: 1rem;
+}
+
+/* MESAJ ALERTLERİ */
+.form-alert {
+  margin-top: 1rem;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-alert.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.form-alert.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
 
 /* --- SÜREÇ BÖLÜMÜ --- */
-.process-section { padding: 60px 0; background: #fff; }
-.section-head { text-align: center; font-size: 1.8rem; color: #0f2a4a; margin-bottom: 40px; }
-.process-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.process-step { text-align: center; padding: 10px; }
-.step-number {
-  width: 45px; height: 45px; background: #eef2ff; color: #0f2a4a;
-  border-radius: 50%; font-size: 1.3rem; font-weight: 800;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 15px auto; border: 2px solid #0f2a4a;
+.process-section {
+  margin-top: 5rem;
+  text-align: center;
 }
 
+.section-head {
+  font-size: 2rem;
+  margin-bottom: 3rem;
+  color: #2c3e50;
+}
 
-/* --- RESPONSIVE / MOBILE OPTIMIZATIONS --- */
-@media (max-width: 960px) {
-  .contact-page-wrapper {
-    padding-bottom: 70px; /* Sticky buton için yer aç */
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.process-step {
+  background: white;
+  padding: 2rem 1.5rem;
+  border-radius: 12px;
+  position: relative;
+  border-top: 4px solid transparent;
+  transition: all 0.3s;
+}
+
+.process-step:hover {
+  border-top-color: #3498db;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  background-color: #e8f4f8;
+  color: #3498db;
+  font-weight: 800;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.2rem;
+}
+
+.process-step h4 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.process-step p {
+  font-size: 0.95rem;
+  color: #7f8c8d;
+}
+
+/* --- MOBİL UYUMLULUK (RESPONSIVE) --- */
+@media (max-width: 900px) {
+  .grid-layout {
+    grid-template-columns: 1fr; /* Mobilde alt alta */
   }
 
-  .contact-hero-section {
-    padding-top: 20px; /* Üst boşluğu azalttık */
-    padding-bottom: 40px;
-  }
-
-  .split-layout {
-    grid-template-columns: 1fr;
-    gap: 30px;
+  .info-side {
+    order: 2; /* Mobilde info aşağı insin */
   }
   
-  .contact-text-content {
-    text-align: center;
-  }
-  
-  .contact-title {
-    font-size: 1.8rem; /* Başlığı küçülttük */
-    margin-bottom: 10px;
-  }
-
-  .contact-desc {
-    font-size: 1rem;
-    margin-bottom: 15px;
-    line-height: 1.4;
-  }
-
-  /* Masaüstü butonlarını gizle, mobilde formun altında yer kaplamasın */
-  .desktop-only-actions {
-    display: none;
-  }
-
-  /* MOBİL İÇİN ÖZEL "HEMEN BAŞVUR" BUTONU (Metnin altında) */
-  .mobile-inline-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255,255,255,0.15);
-    color: #f39c12;
-    border: 1px solid rgba(243, 156, 18, 0.5);
-    padding: 10px 20px;
-    border-radius: 50px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    cursor: pointer;
-    font-size: 0.95rem;
-  }
-
-  /* MOBİL STICKY BOTTOM BAR */
-  .mobile-sticky-cta {
-    display: block;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: #fff;
-    padding: 12px 20px;
-    box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
-    z-index: 999;
-    border-top: 1px solid #eee;
-  }
-
-  .sticky-btn {
-    width: 100%;
-    background: #f39c12;
-    color: #fff;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3);
-  }
-
-  /* Form Kartı Mobilde Daha Sade */
-  .contact-form-card {
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  }
-
-  /* İkon listesi mobilde daha kompakt */
-  .benefit-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .benefit-list li {
-    background: rgba(255,255,255,0.05);
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin: 0;
-    width: 100%; /* Telefondan telefona değişir, alt alta daha temiz */
-    justify-content: flex-start;
+  .form-side {
+    order: 1; /* Form yukarı çıksın */
+    margin-top: -4rem; /* Header'ın içine daha çok girsin */
   }
 
   .process-grid {
-    grid-template-columns: 1fr;
-    gap: 30px;
+    grid-template-columns: 1fr; /* Süreç kartları alt alta */
+  }
+  
+  .contact-header {
+    clip-path: none; /* Mobilde düz bitiş daha iyi durabilir */
+    padding-bottom: 3rem;
+    margin-bottom: 0;
+  }
+  
+  .form-side {
+    margin-top: -1rem;
+    padding: 1.5rem;
   }
 }
