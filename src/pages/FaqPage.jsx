@@ -2,6 +2,7 @@ import { useState } from "react";
 import "../cssFiles/FaqSection.css";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom"; // Ahrefs uyarısı: <a> yerine <Link> kullanmalıyız
 import coachImage from "../assets/manager.svg";
 import { Helmet } from "react-helmet";
 import TopBar from "../components/TopBar";
@@ -82,14 +83,14 @@ export default function FaqSection() {
 
   return (
     <>
-      {/* 1. SEO BİLEŞENİ */}
+      {/* 1. SEO BİLEŞENİ - Canonical düzeltildi */}
       <Seo 
         title="Sıkça Sorulan Sorular (SSS)" 
         description="Ödeme seçenekleri, iade garantisi, koçluk süreci ve başarı garantisi hakkında merak ettiğiniz tüm soruları yanıtladık."
         canonical="/sss"
       />
 
-      {/* 2. SCHEMA (Google'da Soru-Cevap Çıkması İçin) */}
+      {/* 2. SCHEMA - Google'da Soru-Cevap Çıkması İçin */}
       <Helmet>
         <script type="application/ld+json">
           {JSON.stringify({
@@ -117,7 +118,7 @@ export default function FaqSection() {
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
       >
-        <h2 className="faq-title">Aklınızdaki Soruları Giderelim</h2>
+        <h1 className="faq-title">Aklınızdaki Soruları Giderelim</h1> {/* h2 -> h1 (Sayfada 1 tane h1 olmalı) */}
         
         <div className="faq-list">
           {faqs.map((item, index) => (
@@ -131,6 +132,8 @@ export default function FaqSection() {
                 className="faq-question"
                 onClick={() => toggleFAQ(index)}
                 whileTap={{ scale: 0.98 }}
+                role="button" // Erişilebilirlik
+                tabIndex={0}
               >
                 <span>{item.question}</span>
                 <motion.div
@@ -151,10 +154,14 @@ export default function FaqSection() {
           ))}
         </div>
         
+        {/* Ahrefs Düzeltmesi: Görsele alt metin ve lazy loading eklendi */}
         <motion.img
           src={coachImage}
-          alt="Sözderece Koçluk Destek"
+          alt="Sözderece Koçluk Destek Ekibi" 
           className="faq-coach"
+          width="400" // CLS (Layout Shift) önlemek için yaklaşık boyutlar
+          height="300"
+          loading="lazy"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
@@ -162,7 +169,9 @@ export default function FaqSection() {
       </motion.section>
 
       <div className="faq-cta">
-        <p>Hala sorularınız mı var? <a href="/ucretsiz-on-gorusme">Ücretsiz Ön Görüşme</a> formunu doldurun, sizi arayalım.</p>
+        {/* Ahrefs Düzeltmesi: Internal linkler için <a> yerine <Link> kullanmalıyız. 
+            Ayrıca /ucretsiz-on-gorusme sayfası yoksa var olan sayfaya yönlendirmeliyiz. */}
+        <p>Hala sorularınız mı var? <Link to="/ucretsiz-on-gorusme">Ücretsiz Ön Görüşme</Link> formunu doldurun, sizi arayalım.</p>
       </div>
       
       <Footer />

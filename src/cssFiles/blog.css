@@ -157,11 +157,16 @@
 }
 
 .blog-detail-img {
-  width: 100%;
-  height: auto;
-  margin-bottom: 30px;
+  display: block; 
+  max-width: 100%; 
+  width: auto; 
+  max-height: 500px; 
+  object-fit: contain; 
+  margin: 0 auto 30px auto; 
   border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
 }
+
 
 .blog-detail-content h2 {
   font-size: 1.6rem;
@@ -230,6 +235,10 @@
 
 .related-posts a:hover {
   border-bottom: 2px solid #fbbf24;
+}
+
+.related-posts img {
+  width: 400px;
 }
 
 /* Load more button */

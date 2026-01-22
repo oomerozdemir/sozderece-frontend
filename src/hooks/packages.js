@@ -66,7 +66,7 @@ export const PACKAGES = {
     // oldPriceText: "2500₺",
     priceText: "2500₺ / ay",
     subtitle:
-      "Sadece koçluk: kişiye özel program, hedef takibi, düzenli görüşmeler ve performans raporları.",
+      "Kişiye özel program, hedef takibi, düzenli görüşmeler ve performans raporları.",
     type: "coaching_only",
     cta: { label: "Paketi seç", href: "/pre-auth?slug=kocluk-2026" },
     features: [

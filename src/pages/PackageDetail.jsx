@@ -13,7 +13,6 @@ import {
   FaChevronUp 
 } from "react-icons/fa";
 
-// Bileşenler ve Veri
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
@@ -21,7 +20,7 @@ import { PACKAGES } from "../hooks/packages";
 import Testimonials from "../components/Testimonials";
 import "../cssFiles/packageDetail.css";
 
-// Fiyat geçerlilik tarihi (1 yıl sonrası)
+// Fiyat geçerlilik tarihi (Dinamik - 1 yıl sonrası)
 const getPriceValidUntil = () => {
   const date = new Date();
   date.setFullYear(date.getFullYear() + 1);
@@ -32,6 +31,7 @@ const PackageDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
+  // URL'den slug'ı al veya varsayılanı kullan
   const querySlug = new URLSearchParams(location.search).get("slug");
   const packageList = useMemo(() => Object.values(PACKAGES).filter((p) => !p.hidden), []);
   const defaultSlug = "kocluk-2026";
@@ -43,13 +43,18 @@ const PackageDetail = () => {
     if (querySlug && PACKAGES[querySlug]) {
       setSelectedSlug(querySlug);
     } else if (!querySlug) {
+      // Eğer slug yoksa URL'i varsayılan slug ile güncelle (Redirect yerine replace)
+      // Bu, SEO için duplicate content oluşumunu engeller.
+      const newUrl = `${location.pathname}?slug=${defaultSlug}`;
+      window.history.replaceState(null, "", newUrl);
       setSelectedSlug(defaultSlug);
     }
-  }, [querySlug, defaultSlug]);
+  }, [querySlug, defaultSlug, location.pathname]);
 
   const selected = PACKAGES[selectedSlug] || PACKAGES[defaultSlug];
 
-  if (!selected) return <div className="loading-screen">Yükleniyor...</div>;
+  // Yükleniyor durumu (SEO için boş sayfa dönmemesi adına önemli)
+  if (!selected) return null; 
 
   const isSpecialTutoring = selected.type === "tutoring_only" || selected.slug === "ozel-ders-paketi";
 
@@ -75,18 +80,26 @@ const PackageDetail = () => {
   ];
   const faqList = [...(selected.faq || []), ...defaultFaq];
 
-  // --- GOOGLE İÇİN GELİŞMİŞ ÜRÜN ŞEMASI (RICH SNIPPETS FIX) ---
+  // --- SEO VE SCHEMA DÜZELTMELERİ ---
+  
+  // 1. Fiyat Temizliği (Currency sembollerinden arındırılmış saf sayı)
   const numericPrice = selected.priceText 
-    ? selected.priceText.replace(/[^0-9]/g, '') 
+    ? selected.priceText.replace(/[^0-9.]/g, '') // Nokta (.) ondalık için kalmalı
     : "0";
+
+  // 2. Mutlak URL (Canonical) Oluşturma
+  // 'window.location.origin' kullanarak domain adını dinamik alıyoruz.
+  // Ahrefs 'relative url' sevmez, tam yol ister.
+  const siteUrl = "https://sozderecekocluk.com"; 
+  const canonicalUrl = `${siteUrl}/paket-detay?slug=${selected.slug}`;
 
   const productSchema = {
     "@context": "https://schema.org/",
     "@type": "Product",
     "name": selected.title,
     "image": [
-        "https://sozderecekocluk.com/images/hero-logo.webp",
-        "https://sozderecekocluk.com/images/paketlerImage1.webp"
+        `${siteUrl}/images/hero-logo.webp`,
+        `${siteUrl}/images/paketlerImage1.webp`
     ],
     "description": selected.subtitle || "Sözderece Koçluk YKS hazırlık paketi.",
     "brand": {
@@ -94,8 +107,6 @@ const PackageDetail = () => {
       "name": "Sözderece Koçluk"
     },
     "sku": selected.slug,
-    
-    // EKLENEN 1: Puanlama (AggregateRating)
     "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": "5.0",
@@ -103,8 +114,6 @@ const PackageDetail = () => {
         "bestRating": "5",
         "worstRating": "1"
     },
-
-    // EKLENEN 2: Yorum (Review)
     "review": {
         "@type": "Review",
         "reviewRating": {
@@ -118,10 +127,9 @@ const PackageDetail = () => {
         },
         "reviewBody": "Sistemli çalışma ile netlerim arttı, kesinlikle tavsiye ederim."
     },
-
     "offers": {
       "@type": "Offer",
-      "url": window.location.href,
+      "url": canonicalUrl, // Canonical URL ile eşleşmeli
       "priceCurrency": "TRY",
       "price": numericPrice,
       "availability": "https://schema.org/InStock",
@@ -129,21 +137,15 @@ const PackageDetail = () => {
         "@type": "Organization",
         "name": "Sözderece"
       },
-      
-      // EKLENEN 3: Fiyat Geçerliliği
       "priceValidUntil": getPriceValidUntil(),
-
-      // EKLENEN 4: İade Politikası
       "hasMerchantReturnPolicy": {
         "@type": "MerchantReturnPolicy",
         "applicableCountry": "TR",
         "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-        "merchantReturnDays": "14",
+        "merchantReturnDays": "5", // Politikayla uyumlu hale getirildi (5 gün)
         "returnMethod": "https://schema.org/ReturnByMail",
         "returnFees": "https://schema.org/FreeReturn"
       },
-
-      // EKLENEN 5: Kargo Detayları (Hizmet olduğu için ücretsiz/anında)
       "shippingDetails": {
         "@type": "OfferShippingDetails",
         "shippingRate": {
@@ -160,7 +162,7 @@ const PackageDetail = () => {
             "handlingTime": {
                 "@type": "QuantitativeValue",
                 "minValue": "0",
-                "maxValue": "1",
+                "maxValue": "0", // Dijital ürün olduğu için anında teslim
                 "unitCode": "d"
             },
             "transitTime": {
@@ -176,13 +178,13 @@ const PackageDetail = () => {
 
   return (
     <>
+    
       <Seo 
         title={selected.title} 
         description={selected.subtitle}
-        canonical={`/paket-detay?slug=${selected.slug}`}
+        canonical={`/paket-detay?slug=${selected.slug}`} // Seo.jsx bunu domain ile birleştirecek
       />
 
-      {/* Schema.org JSON-LD */}
       <Helmet>
         <script type="application/ld+json">
           {JSON.stringify(productSchema)}
@@ -221,6 +223,7 @@ const PackageDetail = () => {
                 value={selectedSlug} 
                 onChange={(e) => {
                   setSelectedSlug(e.target.value);
+                  // useNavigate yerine URL parametresini güncellemek daha sağlıklıdır
                   navigate(`?slug=${e.target.value}`, { replace: true });
                 }}
               >
@@ -250,10 +253,10 @@ const PackageDetail = () => {
             </button>
 
             <div className="pd-payment-logos">
-                <img src="/images/kare-logo-mastercard.webp" alt="Mastercard" />
-                <img src="/images/kare-logo-visa.webp" alt="Visa" />
-                <img src="/images/kare-logo-troy.webp" alt="Troy" />
-                <img src="/images/kare-logo-paytr.webp" alt="PayTR" />
+                <img src="/images/kare-logo-mastercard.webp" alt="Mastercard" width="40" height="25" loading="lazy" />
+                <img src="/images/kare-logo-visa.webp" alt="Visa" width="40" height="25" loading="lazy" />
+                <img src="/images/kare-logo-troy.webp" alt="Troy" width="40" height="25" loading="lazy" />
+                <img src="/images/kare-logo-paytr.webp" alt="PayTR" width="40" height="25" loading="lazy" />
             </div>
             
             <div className="pd-faq">

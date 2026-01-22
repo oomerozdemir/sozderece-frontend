@@ -4,8 +4,8 @@ import { blogPosts } from "../components/posts";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";
+import Seo from "../components/Seo"; // Seo bileşenini import ettik
 import { FiRefreshCw } from "react-icons/fi";
-import { Helmet } from "react-helmet";
 
 import "../cssFiles/blog.css";
 
@@ -25,58 +25,63 @@ const BlogList = () => {
   return (
     <>
 
-<Helmet>
-  <title>YKS ve LGS Blog İçerikleri | Sözderecek Koçluk</title>
-  <meta name="description" content="YKS ve LGS öğrencileri için rehberlik, sınav stratejileri, tercih dönemleri hakkında güncel ve bilgilendirici blog yazıları." />
-  <meta name="keywords" content="YKS blog, LGS blog, tercih rehberi, sınav koçluğu, eğitim danışmanlığı" />
-  <meta property="og:title" content="YKS ve LGS Blog İçerikleri | Sözderecek Koçluk" />
-  <meta property="og:description" content="YKS ve LGS sürecinde ihtiyacınız olan tüm bilgi ve ipuçları blog yazılarımızda." />
-  <meta property="og:url" content="https://www.sozderecekocluk.com/blog" />
-  <meta name="robots" content="index, follow" />
-</Helmet>
+      <Seo 
+        title="YKS ve LGS Blog İçerikleri" 
+        description="YKS ve LGS öğrencileri için rehberlik, sınav stratejileri, tercih dönemleri hakkında güncel ve bilgilendirici blog yazıları."
+        canonical="/blog"
+      />
 
       <TopBar />
       <Navbar />
 
-      <div className="blog-page">
+      <div className="blog-container">
         <header className="blog-header">
-          <h1>Sözderece Koçluk Blog </h1>
-          <p>YKS ve LGS yolculuğunda ihtiyacınız olan tüm içerikler burada.</p>
-          <input
-            type="text"
-            placeholder="Blog içinde ara..."
-            className="search-input"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <h1>Sözderece Blog</h1>
+          <p>YKS ve LGS sürecinde ihtiyacın olan tüm rehberlik yazıları burada.</p>
+          
+          <div className="search-box">
+            <input
+              type="text"
+              placeholder="İçeriklerde ara..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </header>
 
-        <main className="blog-main">
+        <div className="blog-main">
           <section className="blog-cards">
-  {filteredPosts.slice(0, visibleCount).map((post) => (
-    <div
-      key={post.id}
-      className="blog-card"
-      style={{ backgroundImage: `url(${post.image})` }}
-      onClick={() => navigate(`/blog/${post.slug}`)}
-    >
-      <div className="card-content">
-        <span className="category">{post.category}</span>
-        <h3>{post.title}</h3>
-        <p>{post.description}</p>
-        <span className="date">{post.date}</span>
-      </div>
-    </div>
-  ))}
+            {filteredPosts.slice(0, visibleCount).map((post) => (
+              <div
+                key={post.id}
+                className="blog-card"
+                // SEO için inline style yerine class veya optimize edilmiş görsel kullanılabilir ama şimdilik bırakıyoruz
+                style={{ backgroundImage: `url(${post.image})` }} 
+                onClick={() => navigate(`/blog/${post.slug}`)}
+              >
+                <div className="card-content">
+                  <span className="category">{post.category}</span>
+                  <h3>{post.title}</h3>
+                  <p>{post.description}</p>
+                  <span className="date">{post.date}</span>
+                </div>
+              </div>
+            ))}
 
             {visibleCount < filteredPosts.length && (
-  <div className="load-more-wrapper">
-    <button className="load-more-button" onClick={handleLoadMore}>
-      <span className="icon"><FiRefreshCw /></span> Daha Fazla Yükle
-    </button>
-  </div>
-)}
-
+              <div className="load-more-wrapper">
+                <button className="load-more-button" onClick={handleLoadMore}>
+                  <span className="icon"><FiRefreshCw /></span> Daha Fazla Yükle
+                </button>
+              </div>
+            )}
+            
+            {/* Arama sonucu boşsa kullanıcıya bilgi verelim */}
+            {filteredPosts.length === 0 && (
+               <div style={{padding: 20, textAlign: 'center', width: '100%'}}>
+                 Aradığınız kriterlere uygun yazı bulunamadı.
+               </div>
+            )}
           </section>
 
           <aside className="blog-sidebar">
@@ -87,7 +92,7 @@ const BlogList = () => {
                 className="sidebar-post"
                 onClick={() => navigate(`/blog/${post.slug}`)}
               >
-                <img src={post.image} alt="" />
+                <img src={post.image} alt={post.title} loading="lazy" /> {/* Lazy loading eklendi */}
                 <div>
                   <span className="sidebar-date">{post.date}</span>
                   <p>{post.title}</p>
@@ -95,9 +100,9 @@ const BlogList = () => {
               </div>
             ))}
           </aside>
-        </main>
+        </div>
       </div>
-
+      
       <Footer />
     </>
   );
