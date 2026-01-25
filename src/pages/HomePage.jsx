@@ -1,23 +1,23 @@
 import React, { Suspense, lazy } from "react";
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import "../cssFiles/index.css"; 
 
 import DiscountPopup from "../components/DiscountPopup";
 import Seo from "../components/Seo";
 
-// --- İLK GÖRÜNENLER (Hızlı Yükleme İçin Normal Import) ---
+// --- STATİK IMPORTLAR (SEO için kritik olanlar) ---
 import HeroSection from "../components/HeroSection";
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
+import Footer from "../components/Footer"; // Footer artık hemen yükleniyor (Dış link hatası çözümü)
 
-// --- LAZY LOAD (Performans İçin) ---
+// --- LAZY LOAD ---
 const PricingSection = lazy(() => import("../components/PricingSection"));
 const WhyChooseUs = lazy(() => import("../components/WhyChooseUs"));
-const Footer = lazy(() => import("../components/Footer"));
 const WhatsappButton = lazy(() => import("../components/WhatsappButton"));
 const HomeCoachSlider = lazy(() => import("../components/HomeCoachSlider"));
 const Testimonials = lazy(() => import("../components/Testimonials"));
+const FaqSection = lazy(() => import("../components/FaqSection")); // FAQ Bölümü (Kelime sayısı çözümü)
 
 const LoadingSpinner = () => (
   <div style={{ padding: "100px 0", textAlign: "center", width: "100%" }}>
@@ -30,76 +30,63 @@ const LoadingSpinner = () => (
 export default function HomePage() {
   return (
     <>
-    
+      {/* SEO Ayarları */}
       <Seo 
         title="YKS & LGS Online Öğrenci Koçluğu" 
-        description="Türkiye'nin en kapsamlı online koçluk platformu. Derece öğrencisi koçlar ile YKS ve LGS'ye disiplinli hazırlanın."
+        description="Sözderece Koçluk ile YKS ve LGS sınavlarına hazırlanın. Kişiye özel ders programı, deneme analizi ve öğrenci koçluğu sistemimizle başarıyı yakalayın."
         canonical="/"
       />
 
-      <motion.div
-        className="page"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        {/* İlk Render (Critical Rendering Path) */}
-        <TopBar />
-        <Navbar />
-        <DiscountPopup />
-        <HeroSection />
+      <DiscountPopup />
+      <TopBar />
+      <Navbar />
+      
+      {/* Hero Section */}
+      <HeroSection />
 
-        {/* Lazy Components (Suspense Wrapper) */}
-        <Suspense fallback={<LoadingSpinner />}>
-          
+      {/* İçerik Bileşenleri */}
+      <Suspense fallback={<LoadingSpinner />}>
+        <WhyChooseUs />
+        <HomeCoachSlider />
+        <PricingSection />
+        <Testimonials />
         
+        {/* Low Word Count hatasını çözmek için S.S.S. bölümünü ekledik */}
+        <FaqSection />
+      </Suspense>
 
-          {/* 2. Güven İnşası: Neden Biz? */}
-          <WhyChooseUs />
+      {/* İLETİŞİM / CTA BÖLÜMÜ */}
+      <section className="home-cta-section">
+        <div className="container">
+          <h2 className="home-section-title">Hemen Başlayalım mı?</h2>
+          <p className="home-section-description">
+            Aklındaki soruları gidermek ve sisteme dahil olmak için bize ulaş.
+          </p>
 
-          {/* 3. Sosyal Kanıt: Koçlarımızı Görsünler */}
-          <HomeCoachSlider />
-
-          {/* 4. Karar Aşaması: Fiyatlar */}
-          <PricingSection />
-
-          {/* 5. Son İkna: Öğrenci Yorumları */}
-          <Testimonials />
-
-          {/* === İLETİŞİM / CTA BÖLÜMÜ === 
-              Inline style'lar temizlendi, class yapısına çevrildi.
-          */}
-          <section className="home-cta-section">
-            <div className="container">
-              <h2 className="home-section-title">Hemen Başlayalım mı?</h2>
-              <p className="home-section-description">
-                Aklındaki soruları gidermek ve sisteme dahil olmak için bize ulaş.
-              </p>
-
-              <div className="cta-buttons-wrapper">
-                {/* WhatsApp Butonu */}
-                <a
-                  href="https://wa.me/905312546701"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="whatsapp-button-static"
-                >
-                  <i className="fa-brands fa-whatsapp"></i> WhatsApp Hattı
-                </a>
-                
+          <div className="cta-buttons-wrapper">
+            <a
+              href="https://wa.me/905312546701"
+              target="_blank"
+              rel="noreferrer"
+              className="whatsapp-button-static"
+            >
+              <i className="fa-brands fa-whatsapp"></i> WhatsApp Hattı
+            </a>
             
-                <Link to="/ucretsiz-on-gorusme" className="cta-submit-btn">
-                  Ücretsiz Görüşme Talep Et
-                </Link>
-              </div>
-            </div>
-          </section>
+            <Link to="/ucretsiz-on-gorusme" className="cta-submit-btn">
+              Ücretsiz Görüşme Talep Et
+            </Link>
+          </div>
+        </div>
+      </section>
 
-          <Footer />
-          <WhatsappButton />
-        </Suspense>
-      </motion.div>
+      {/* Footer */}
+      <Footer />
+      
+      {/* Yüzen Whatsapp Butonu */}
+      <Suspense fallback={null}>
+        <WhatsappButton />
+      </Suspense>
     </>
   );
 }

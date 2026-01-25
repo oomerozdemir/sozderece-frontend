@@ -3,29 +3,28 @@ import "../cssFiles/heroSection.css";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaChevronRight, FaChevronLeft, FaTimes } from "react-icons/fa";
 
-// Değişen metinler listesi
+// Değişen metinler
 const DYNAMIC_TEXTS = [
   "Kişiye Özel Detaylı Programlar ve Günlük Takip",
   "Ücretsiz Ön Görüşme Fırsatı",
   "3 Günlük Ücretsiz Deneme Hakkı",
 ];
 
-// Kayan şeritteki resimler
-const MARQUEE_IMAGES = [
-  "/images/geridonus.png",
-  "/images/memnuniyet1.png",
-  "/images/memnuniyet2.png",
-  "/images/memnuniyet3.png",
-  "/images/ogrencilerinCalismalari.jpg",
-  "/images/ornekProgram.png", 
-  "/images/ornekProgram2.png",
+// SEO İÇİN GÜNCELLEME: Resim yolları ve açıklamaları
+const MARQUEE_ITEMS = [
+  { src: "/images/geridonus.png", alt: "Sözderece Koçluk Öğrenci Geri Dönüşleri" },
+  { src: "/images/memnuniyet1.png", alt: "YKS ve LGS Koçluk Veli Memnuniyeti" },
+  { src: "/images/memnuniyet2.png", alt: "Online Koçluk Başarı Mesajları" },
+  { src: "/images/memnuniyet3.png", alt: "Öğrenci Koçluğu Tavsiyeleri" },
+  { src: "/images/ogrencilerinCalismalari.jpg", alt: "YKS Derece Öğrencilerinin Çalışma Masası" },
+  { src: "/images/ornekProgram.png", alt: "Kişiye Özel YKS Ders Çalışma Programı Örneği" },
+  { src: "/images/ornekProgram2.png", alt: "Haftalık LGS Ders Programı Taslağı" },
 ];
 
 export default function HeroSection() {
   const [index, setIndex] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState(null); // Açık olan resmin index'i (null ise kapalı)
+  const [selectedIndex, setSelectedIndex] = useState(null);
 
-  // Metinleri 3.5 saniyede bir değiştir
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % DYNAMIC_TEXTS.length);
@@ -33,20 +32,18 @@ export default function HeroSection() {
     return () => clearInterval(timer);
   }, []);
 
-  // Modal fonksiyonları
   const closeModal = () => setSelectedIndex(null);
 
   const showNext = useCallback((e) => {
     if(e) e.stopPropagation();
-    setSelectedIndex((prev) => (prev + 1) % MARQUEE_IMAGES.length);
+    setSelectedIndex((prev) => (prev + 1) % MARQUEE_ITEMS.length);
   }, []);
 
   const showPrev = useCallback((e) => {
     if(e) e.stopPropagation();
-    setSelectedIndex((prev) => (prev - 1 + MARQUEE_IMAGES.length) % MARQUEE_IMAGES.length);
+    setSelectedIndex((prev) => (prev - 1 + MARQUEE_ITEMS.length) % MARQUEE_ITEMS.length);
   }, []);
 
-  // Klavye kontrolü (Sağ/Sol ok tuşları)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (selectedIndex === null) return;
@@ -61,9 +58,8 @@ export default function HeroSection() {
   return (
     <section className="hero-section-modern">
       <div className="hero-container">
-        
-        {/* --- ÜST KISIM: METİN & BUTONLAR --- */}
         <div className="hero-text-area">
+          {/* SEO İÇİN KRİTİK: H1 Etiketi */}
           <h1 className="static-title">Sözderece Koçluk İle</h1>
           
           <div className="dynamic-text-wrapper">
@@ -97,24 +93,23 @@ export default function HeroSection() {
         </div>
       </div>
 
-
       <div style={{ textAlign: 'center', marginBottom: '10px', color: '#666', fontSize: '0.9rem' }}>
-  <small>👇 Örnek çalışmaları detaylı incelemek için görsellere tıklayınız 👇</small>
-</div>
+        <small>👇 Örnek çalışmaları detaylı incelemek için görsellere tıklayınız 👇</small>
+      </div>
+
       {/* --- ALT KISIM: SONSUZ KAYAN ŞERİT (MARQUEE) --- */}
       <div className="marquee-wrapper">
         <div className="marquee-track">
-          {/* Resim setini 2 kez render ediyoruz (Sonsuz döngü için) */}
-          {[...MARQUEE_IMAGES, ...MARQUEE_IMAGES].map((src, i) => {
-             // Orijinal index'i bulmak için mod alıyoruz
-             const originalIndex = i % MARQUEE_IMAGES.length;
+          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => {
+             const originalIndex = i % MARQUEE_ITEMS.length;
              return (
               <div 
                 key={i} 
                 className="marquee-item" 
                 onClick={() => setSelectedIndex(originalIndex)} 
               >
-                <img src={src} alt={`Referans ${i}`} loading="lazy" />
+                {/* SEO: Alt etiketleri eklendi */}
+                <img src={item.src} alt={item.alt} loading="lazy" />
                 <div className="zoom-hint">🔍 İncele</div>
               </div>
             );
@@ -122,7 +117,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* --- SLIDER MODAL (LIGHTBOX) --- */}
+      {/* --- SLIDER MODAL --- */}
       <AnimatePresence>
         {selectedIndex !== null && (
           <motion.div 
@@ -132,42 +127,28 @@ export default function HeroSection() {
             exit={{ opacity: 0 }}
             onClick={closeModal}
           >
-            {/* Sol Ok */}
-            <button className="modal-nav-btn prev-btn" onClick={showPrev}>
-              <FaChevronLeft />
-            </button>
-
+            <button className="modal-nav-btn prev-btn" onClick={showPrev}><FaChevronLeft /></button>
+            
             <motion.div 
               className="image-modal-content slider-content"
-              onClick={(e) => e.stopPropagation()} // İçeriğe tıklayınca kapanmasın
+              onClick={(e) => e.stopPropagation()}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
             >
-              <button className="modal-close-btn" onClick={closeModal}>
-                <FaTimes />
-              </button>
-              
+              <button className="modal-close-btn" onClick={closeModal}><FaTimes /></button>
               <motion.img 
-                key={selectedIndex} // Key değişince animasyon tetiklenir
-                src={MARQUEE_IMAGES[selectedIndex]} 
-                alt="Büyütülmüş Görsel" 
+                key={selectedIndex}
+                src={MARQUEE_ITEMS[selectedIndex].src} 
+                alt={MARQUEE_ITEMS[selectedIndex].alt}
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3 }}
               />
-
-              {/* Mobil için alt sayaç */}
-              <div className="modal-counter">
-                {selectedIndex + 1} / {MARQUEE_IMAGES.length}
-              </div>
+              <div className="modal-counter">{selectedIndex + 1} / {MARQUEE_ITEMS.length}</div>
             </motion.div>
 
-            {/* Sağ Ok */}
-            <button className="modal-nav-btn next-btn" onClick={showNext}>
-              <FaChevronRight />
-            </button>
+            <button className="modal-nav-btn next-btn" onClick={showNext}><FaChevronRight /></button>
           </motion.div>
         )}
       </AnimatePresence>
