@@ -9,15 +9,14 @@ import Seo from "../components/Seo";
 import HeroSection from "../components/HeroSection";
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
-import Footer from "../components/Footer"; // Footer artık hemen yükleniyor (Dış link hatası çözümü)
-
+import Footer from "../components/Footer"; 
 // --- LAZY LOAD ---
 const PricingSection = lazy(() => import("../components/PricingSection"));
 const WhyChooseUs = lazy(() => import("../components/WhyChooseUs"));
 const WhatsappButton = lazy(() => import("../components/WhatsappButton"));
 const HomeCoachSlider = lazy(() => import("../components/HomeCoachSlider"));
 const Testimonials = lazy(() => import("../components/Testimonials"));
-const FaqSection = lazy(() => import("../components/FaqSection")); // FAQ Bölümü (Kelime sayısı çözümü)
+const FaqSection = lazy(() => import("../components/FaqSection")); 
 
 const LoadingSpinner = () => (
   <div style={{ padding: "100px 0", textAlign: "center", width: "100%" }}>
@@ -37,7 +36,7 @@ export default function HomePage() {
         canonical="/"
       />
 
-      <DiscountPopup />
+      <DiscountPopup /> 
       <TopBar />
       <Navbar />
       
@@ -46,10 +45,11 @@ export default function HomePage() {
 
       {/* İçerik Bileşenleri */}
       <Suspense fallback={<LoadingSpinner />}>
-        <WhyChooseUs />
-        <HomeCoachSlider />
         <PricingSection />
+        <HomeCoachSlider />
+
         <Testimonials />
+        <WhyChooseUs />
         
         {/* Low Word Count hatasını çözmek için S.S.S. bölümünü ekledik */}
         <FaqSection />
