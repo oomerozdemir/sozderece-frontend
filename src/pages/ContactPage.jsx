@@ -122,10 +122,10 @@ const IletisimPage = () => {
               
               {/* SOL TARAF */}
               <div className="contact-text-content">
-                <span className="highlight-badge">🚀 YKS 2026 Hazırlık</span>
+                <span className="highlight-badge">🚀 YKS/LGS 2026 Hazırlık</span>
                 <h1 className="contact-title">Hedeflerine Ulaşmak İçin<br /><span className="text-orange">İlk Adımı At</span></h1>
                 <p className="contact-desc">
-                  YKS sürecinde yalnız değilsin. Formu doldur, derece öğrencisi koçlarımız 
+                  YKS/LGS sınav sürecinde yalnız değilsin. Formu doldur, derece öğrencisi koçlarımız 
                   seni arayıp seviyene uygun yol haritasını anlatsın.
                 </p>
 
@@ -140,7 +140,7 @@ const IletisimPage = () => {
                   </li>
                   <li>
                     <div className="b-icon"><FaClipboardList /></div>
-                    <div><strong>Sistem Tanıtımı</strong><span>Sana özel hazırlanan sistemin detaylarını öğren.</span></div>
+                    <div><strong>Koçluk Sistemi Tanıtımı</strong><span>Sana özel hazırlanan sistemin detaylarını öğren.</span></div>
                   </li>
                   <li>
                     <div className="b-icon"><FaPhoneAlt /></div>
@@ -205,10 +205,12 @@ const IletisimPage = () => {
                     <label>Durumunuz</label>
                     <select name="userType" value={formData.userType} onChange={handleInputChange} required>
                       <option value="">Seçiniz...</option>
-                      <option value="12. Sınıf">12. Sınıf Öğrencisi</option>
                       <option value="Mezun">Mezun Öğrenci</option>
+                      <option value="12. Sınıf">12. Sınıf Öğrencisi</option>
                       <option value="11. Sınıf">11. Sınıf Öğrencisi</option>
-                      <option value="Veli">Öğrenci Velisi</option>
+                      <option value="8. Sınıf">8. Sınıf Öğrencisi</option>
+                      <option value="7. Sınıf">7. Sınıf Öğrencisi</option>
+                      <option value="Veli">Veli</option>
                     </select>
                   </div>
 

@@ -5,7 +5,7 @@ import { FaChevronRight, FaChevronLeft, FaTimes } from "react-icons/fa";
 
 // Değişen metinler
 const DYNAMIC_TEXTS = [
-  "Kişiye Özel Detaylı Programlar ve Günlük Takip",
+  "Sana Özel Detaylı Programlar ve Günlük Takip",
   "Ücretsiz Ön Görüşme Fırsatı",
   "3 Günlük Ücretsiz Deneme Hakkı",
 ];
@@ -17,7 +17,7 @@ const MARQUEE_ITEMS = [
   { src: "/images/memnuniyet2.png", alt: "Online Koçluk Başarı Mesajları" },
   { src: "/images/memnuniyet3.png", alt: "Öğrenci Koçluğu Tavsiyeleri" },
   { src: "/images/ogrencilerinCalismalari.jpg", alt: "YKS Derece Öğrencilerinin Çalışma Masası" },
-  { src: "/images/ornekProgram.png", alt: "Kişiye Özel YKS Ders Çalışma Programı Örneği" },
+  { src: "/images/ornekProgram.png", alt: "Sana Özel YKS Ders Çalışma Programı Örneği" },
   { src: "/images/ornekProgram2.png", alt: "Haftalık LGS Ders Programı Taslağı" },
 ];
 
@@ -78,8 +78,8 @@ export default function HeroSection() {
           </div>
 
           <p className="hero-description">
-            Sınav sürecinde kaybolma! Derece öğrencisi koçlarımızla tanış, 
-            seviye analizi ve sana özel programla netlerini zirveye taşı.
+            YKS ve LGS sürecinde kaybolma! Derece öğrencisi koçlarımızla tanış, 
+            seviye analizi ve sana özel programlarla netlerini zirveye taşı.
           </p>
 
           <div className="hero-actions">
@@ -110,7 +110,6 @@ export default function HeroSection() {
               >
                 {/* SEO: Alt etiketleri eklendi */}
                 <img src={item.src} alt={item.alt} loading="lazy" />
-                <div className="zoom-hint">🔍 İncele</div>
               </div>
             );
           })}

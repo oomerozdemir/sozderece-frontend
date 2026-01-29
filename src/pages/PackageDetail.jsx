@@ -75,8 +75,8 @@ const PackageDetail = () => {
   );
 
   const defaultFaq = [
-    { title: "Ödeme güvenli mi?", content: "Evet, tüm ödemeler 256-bit SSL ve 3D Secure ile korunmaktadır." },
-    { title: "İade politikanız nedir?", content: "Paket başladıktan sonraki ilk 5 gün koşulsuz iade hakkınız vardır." }
+    { title: "Ödeme güvenli mi?", content: "Evet, tüm ödemeler Paytr altyapısı ile korunmaktadır." },
+    { title: "İade politikanız nedir?", content: "Koçluk programınız size verildikten sonraki ilk 5 gün içerisinde koşulsuz iade hakkınız vardır." }
   ];
   const faqList = [...(selected.faq || []), ...defaultFaq];
 
@@ -211,11 +211,12 @@ const PackageDetail = () => {
               <p className="pd-vat">Tüm vergiler dahildir.</p>
             </div>
 
-            {!isSpecialTutoring && (
-              <div className="pd-discount-box">
-                🎁 <strong>Sozderece200</strong> kodu ile sepette anında <strong>200₺ indirim</strong> kazan!
-              </div>
+            {/* {!isSpecialTutoring && (
+            //  <div className="pd-discount-box">
+              //  🎁 <strong>Sozderece200</strong> kodu ile sepette anında <strong>200₺ indirim</strong> kazan!
+              // </div>
             )}
+*/}
 
             <div className="pd-select-group">
               <label>Paket Seçenekleri:</label>

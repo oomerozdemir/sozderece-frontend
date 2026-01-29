@@ -24,7 +24,7 @@ const faqs = [
   },
   {
     question: "Veli bilgilendirmesi yapılıyor mu?",
-    answer: "Evet. Her 15 günde bir velilerle birebir görüşmeler yapılır.Bu görüşmelerde öğrencinin gelişimi, motivasyonu ve ihtiyaçları detaylı olarak paylaşılır. Böylece koç–öğrenci–veli arasında şeffaf ve güvenli bir iletişim kurulur.",
+    answer: "Evet. Velilerimizin istediği her an velilerimize durum bilgilendirmesi hakkında görüşmeler yapılır.Bu görüşmelerde öğrencinin gelişimi, motivasyonu ve ihtiyaçları detaylı olarak paylaşılır. Böylece koç–öğrenci–veli arasında şeffaf ve güvenli bir iletişim kurulur.",
   },
 
   {

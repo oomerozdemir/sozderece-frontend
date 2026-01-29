@@ -27,7 +27,7 @@ const testimonials = [
     name: "Ahmet Y.",
     status: "LGS Öğrencisi",
     badge: "Matematik: 3 Yanlış ➔ 20 Doğru",
-    text: "LGS sürecinde stres yönetimini yapamıyordum. Deneme anında elim ayağım titriyordu. Koçumla yaptığımız taktiksel çalışmalar sayesinde artık sınavı ben yönetiyorum.",
+    text: "LGS sürecinde stres yönetimini yapamıyordum. Deneme anında elim ayağım titriyordu. Koçumla yaptığımız taktiksel çalışmalar sayesinde artık sınavlarda daha rahat soruları çözüyorum.",
   },
   {
     id: 4,

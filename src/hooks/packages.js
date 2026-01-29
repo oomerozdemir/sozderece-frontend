@@ -30,13 +30,13 @@ export const PACKAGES = {
   /* 2) ÖZEL DERS + HAZIR PAKET (ara paket) */
   "tek-ders-kocluk-2026": {
     slug: "tek-ders-kocluk-2026",
-    title: "Tek Derse Özel Koçluk",
+    title: "YKS/LGS Tek Derse Özel Koçluk",
     hidden: false,
     // oldPriceText: "1700₺",
     unitPrice: 150000,                      
     priceText: "1500₺ / ay",
     subtitle:
-      "Tam kapsamlı koçluktan tek farkı gelişmek istediğiniz tek bir derse uzman koçunuzla hazırlanın!",
+      "Tam kapsamlı koçluktan tek farkı gelişmek istediğiniz tek bir derse koçunuzla hazırlanın!",
     type: "hybrid_light",
     cta: { label: "Paketi seç", href: "/pre-auth?slug=tek-ders-kocluk-2026" },
     features: [
@@ -66,7 +66,7 @@ export const PACKAGES = {
     // oldPriceText: "2500₺",
     priceText: "2500₺ / ay",
     subtitle:
-      "Kişiye özel program, hedef takibi, düzenli görüşmeler ve performans raporları.",
+      "Sana özel program, hedef takibi, düzenli görüşmeler ve performans raporları.",
     type: "coaching_only",
     cta: { label: "Paketi seç", href: "/pre-auth?slug=kocluk-2026" },
     features: [

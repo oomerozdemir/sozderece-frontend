@@ -32,7 +32,7 @@ export default function HomePage() {
       {/* SEO Ayarları */}
       <Seo 
         title="YKS & LGS Online Öğrenci Koçluğu" 
-        description="Sözderece Koçluk ile YKS ve LGS sınavlarına hazırlanın. Kişiye özel ders programı, deneme analizi ve öğrenci koçluğu sistemimizle başarıyı yakalayın."
+        description="Sözderece Koçluk ile YKS ve LGS sınavlarına hazırlanın. Sana özel ders programı, deneme analizi ve birebir online görüşme sistemimizle başarıyı yakalayın."
         canonical="/"
       />
 
