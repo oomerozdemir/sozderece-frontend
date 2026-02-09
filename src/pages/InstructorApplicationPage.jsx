@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import axios from "axios";
+import axios from "../utils/axios";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
 import "../cssFiles/instructorApplication.css";
@@ -144,16 +144,9 @@ const InstructorApplicationPage = () => {
         submitData.append("cv", cvFile);
       }
 
-      // API call
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/v1/applications/apply`,
-        submitData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post("/applications/apply", formData, {
+  headers: { "Content-Type": "multipart/form-data" },
+});
 
       if (response.data.success) {
         // Reset form
@@ -199,9 +192,9 @@ const InstructorApplicationPage = () => {
         <div className="application-container">
           {/* Header */}
           <div className="application-header">
-            <h1>🎓 Öğretmen Başvuru Formu</h1>
+            <h1>🎓 Öğrenci Koçu Başvuru Formu</h1>
             <p>
-              SözDerece ailesine katılmak için başvuru formunu doldurun.
+              Sözderece ailesine katılmak için başvuru formunu doldurun.
               <br />
               Başvurunuzu değerlendirip en kısa sürede size dönüş yapacağız.
             </p>
@@ -383,7 +376,7 @@ const InstructorApplicationPage = () => {
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    placeholder="Kendinizden bahsedin, neden SözDerece'de öğretmen olmak istiyorsunuz?"
+                    placeholder="Kendinizden bahsedin, neden bizle çalışmak istiyorsunuz?"
                     rows="5"
                   />
                 </div>
