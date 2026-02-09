@@ -144,8 +144,8 @@ const InstructorApplicationPage = () => {
         submitData.append("cv", cvFile);
       }
 
-      const response = await axios.post("/applications/apply", formData, {
-  headers: { "Content-Type": "multipart/form-data" },
+   const response = await axios.post("/api/v1/applications/apply", formData, { 
+    headers: { "Content-Type": "multipart/form-data" },
 });
 
       if (response.data.success) {
