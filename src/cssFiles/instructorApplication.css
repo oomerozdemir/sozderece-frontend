@@ -1,0 +1,479 @@
+/* ========================================
+   Instructor Application Page Styles
+   Matching SözDerece theme: Navy (#100481) + Orange (#FF6B35)
+   ======================================== */
+
+.instructor-application-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 40px 20px;
+}
+
+.application-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(16, 4, 129, 0.08);
+  overflow: hidden;
+}
+
+/* Header Section */
+.application-header {
+  background: linear-gradient(135deg, #100481 0%, #FF6B35 100%);
+  padding: 40px 30px;
+  text-align: center;
+  color: white;
+}
+
+.application-header h1 {
+  font-size: 32px;
+  margin: 0 0 12px;
+  font-weight: 700;
+}
+
+.application-header p {
+  font-size: 16px;
+  margin: 0;
+  opacity: 0.95;
+  line-height: 1.6;
+}
+
+/* Form Section */
+.application-form-wrapper {
+  padding: 40px 30px;
+}
+
+.application-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Form Sections */
+.form-section {
+  padding: 24px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.form-section h2 {
+  font-size: 20px;
+  color: #100481;
+  margin: 0 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #FF6B35;
+  font-weight: 600;
+}
+
+/* Form Groups */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.form-group label .required {
+  color: #ef4444;
+  margin-left: 4px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Input Styles */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #100481;
+  box-shadow: 0 0 0 3px rgba(16, 4, 129, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+/* Radio Group */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  padding: 14px 18px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.radio-option:hover {
+  border-color: #100481;
+  background: #f8fafc;
+}
+
+.radio-option input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  cursor: pointer;
+  accent-color: #100481;
+}
+
+.radio-option label {
+  margin: 0;
+  cursor: pointer;
+  font-weight: 500;
+  color: #475569;
+  flex: 1;
+}
+
+.radio-option input[type="radio"]:checked + label {
+  color: #100481;
+  font-weight: 600;
+}
+
+/* File Upload */
+.file-upload-wrapper {
+  position: relative;
+}
+
+.file-upload-area {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 32px 24px;
+  text-align: center;
+  background: white;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.file-upload-area:hover {
+  border-color: #100481;
+  background: #f8fafc;
+}
+
+.file-upload-area.has-file {
+  border-color: #10b981;
+  background: #ecfdf5;
+}
+
+.file-upload-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  color: #94a3b8;
+}
+
+.file-upload-area.has-file .file-upload-icon {
+  color: #10b981;
+}
+
+.file-upload-text {
+  font-size: 15px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.file-upload-area.has-file .file-upload-text {
+  color: #059669;
+  font-weight: 600;
+}
+
+.file-upload-hint {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.file-upload-input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+
+.remove-file-btn {
+  margin-top: 12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.remove-file-btn:hover {
+  background: #dc2626;
+}
+
+/* Conditional Fields */
+.conditional-fields {
+  animation: slideDown 0.3s ease;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed #cbd5e1;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Submit Button */
+.submit-section {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #100481 0%, #FF6B35 100%);
+  color: white;
+  border: none;
+  padding: 16px 48px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(16, 4, 129, 0.2);
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 4, 129, 0.3);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Error Message */
+.error-message {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Success Modal */
+.success-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.success-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  animation: modalPop 0.3s ease;
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.success-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.success-modal h2 {
+  font-size: 24px;
+  color: #100481;
+  margin: 0 0 12px;
+}
+
+.success-modal p {
+  font-size: 16px;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.close-modal-btn {
+  background: #100481;
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.close-modal-btn:hover {
+  background: #0a0351;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+  .instructor-application-page {
+    padding: 20px 16px;
+  }
+
+  .application-header {
+    padding: 30px 20px;
+  }
+
+  .application-header h1 {
+    font-size: 24px;
+  }
+
+  .application-header p {
+    font-size: 14px;
+  }
+
+  .application-form-wrapper {
+    padding: 24px 20px;
+  }
+
+  .form-section {
+    padding: 20px;
+  }
+
+  .form-section h2 {
+    font-size: 18px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .radio-option {
+    padding: 12px 14px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 14px 24px;
+  }
+
+  .success-modal {
+    padding: 30px 20px;
+  }
+
+  .success-modal h2 {
+    font-size: 20px;
+  }
+
+  .success-modal p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .application-header h1 {
+    font-size: 20px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 14px;
+    padding: 10px 14px;
+  }
+
+  .file-upload-area {
+    padding: 24px 16px;
+  }
+
+  .file-upload-icon {
+    font-size: 36px;
+  }
+}

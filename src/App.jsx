@@ -40,6 +40,8 @@ const BlogDetail = lazy(() => import("./pages/BlogDetail"));
 const NotFound = lazy(() => import("./pages/notFound.jsx"));
 const PreCartAuth = lazy(() => import("./pages/preAuth.jsx"));
 const FaqPage = lazy(() => import("./pages/FaqPage.jsx"));
+const InstructorApplicationPage = lazy(() => import("./pages/InstructorApplicationPage.jsx"));
+
 
 // ÖĞRETMEN: yeni sayfalar/guard
 const RequireTeacher = lazy(() => import("./components/RequireTeacher.jsx"));
@@ -82,6 +84,8 @@ function App() {
             <Route path="/ekibimiz" element={<CoachDetail />} />
             <Route path="/ucretsiz-on-gorusme" element={<ContactPage />} />
             <Route path="/payment-fail" element={<PaymentFailPage />} />
+            <Route path="/basvuru" element={<InstructorApplicationPage />} />
+
 
             {/* ÖĞRETMEN: public auth sayfaları */}
             <Route path="/ogretmen/giris" element={<TeacherLogin />} />
@@ -136,20 +140,15 @@ export default App;
 
 
 /*
-[ ] react-helmet ile tüm sayfalara özel Title/Description ekle.
-
-[ ] Paketlerin için "Product" Schema yapısını kur.
-
-[ ] Blog içeriklerini soru-cevap odaklı (Long-tail keywords) stratejiyle üret.
-
-
-sözderece logo değiş
- 
-sepet tutarini arttiramasinlar mantiksiz aydan aya oduyolar cunku
-
 paymentPage cartpage buralarda degisebilir tasarim olarak
 
+geminidaki anahtar kelimeleri kullanarak seo arttırımını yap
 
+screamer frog kullanabilirsin ahfres duzgun çalışmıyor gibi
+
+sipariş 2 adet olarak gidiyor paytr ye bu sorunu araştır
+
+sınava kadar olan paket fikri eklenecek
 
 
 
