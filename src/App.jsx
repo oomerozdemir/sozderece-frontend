@@ -142,28 +142,16 @@ export default App;
 /*
 paymentPage cartpage buralarda degisebilir tasarim olarak
 
-geminidaki anahtar kelimeleri kullanarak seo arttırımını yap
+
+seo aramalarında nasıl daha iyi konumlanabiliriz
 
 screamer frog kullanabilirsin ahfres duzgun çalışmıyor gibi
 
-sipariş 2 adet olarak gidiyor paytr ye bu sorunu araştır
 
 sınava kadar olan paket fikri eklenecek
 
 
-
-  
-
-
-
-
-
-
-
-
-
 googlesearch console da dızıne eklenen sayfaların hata raporlarını ıncele ve duzelt
-
 
 
 *****Seviye tespit araci olusturabiliriz sitede*****

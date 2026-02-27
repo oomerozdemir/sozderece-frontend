@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useCart from "../hooks/useCart";
 import "../cssFiles/orderSuccess.css";
+import "../cssFiles/stepIndicator.css";
+import StepIndicator from "../components/StepIndicator";
 
 const OrderSuccessPage = () => {
   const navigate = useNavigate();
@@ -51,6 +53,8 @@ const OrderSuccessPage = () => {
   }, []); 
 
   return (
+    <>
+      <StepIndicator currentStep={3} />
     <div className="order-success-container">
       <div className="order-success-card">
         <h2>🎉 Siparişiniz başarıyla tamamlandı!</h2>
@@ -72,6 +76,7 @@ const OrderSuccessPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

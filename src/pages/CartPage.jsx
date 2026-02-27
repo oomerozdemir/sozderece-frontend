@@ -1,10 +1,12 @@
 import { useState, useMemo } from "react";
 import useCart from "../hooks/useCart";
 import "../cssFiles/cart.css";
+import "../cssFiles/stepIndicator.css";
 import { CgTrash } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
+import StepIndicator from "../components/StepIndicator";
 
 const CartPage = () => {
   const {
@@ -96,6 +98,7 @@ const CartPage = () => {
       <Navbar />
 
       <div className="cart-page">
+        <StepIndicator currentStep={1} />
         <h2 className="cart-title">Sepet</h2>
 
         {loading && <div className="empty-message">Sepet yükleniyor…</div>}

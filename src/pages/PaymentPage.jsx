@@ -3,7 +3,9 @@ import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import "../cssFiles/payment.css";
+import "../cssFiles/stepIndicator.css";
 import { isValidEmail, isValidName, isValidPhone, isValidPostalCode, isValidAddress, isValidTcNo } from "../utils/validation";
+import StepIndicator from "../components/StepIndicator";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
@@ -276,6 +278,8 @@ const PaymentPage = () => {
    }, []);
 
   return (
+    <>
+      <StepIndicator currentStep={2} />
     <div className="payment-container">
       <form className="payment-form" onSubmit={handleSubmit}>
         <div className="payment-form-header">
@@ -407,6 +411,7 @@ const PaymentPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
