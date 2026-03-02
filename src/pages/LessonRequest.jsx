@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "../utils/axios";
 import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
-import "../cssFiles/teacher.css";
 
 export default function LessonRequest() {
   const { slug } = useParams();

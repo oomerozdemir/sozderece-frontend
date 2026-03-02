@@ -2,8 +2,6 @@ import { useState, useMemo, useEffect } from "react";
 import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import "../cssFiles/payment.css";
-import "../cssFiles/stepIndicator.css";
 import { isValidEmail, isValidName, isValidPhone, isValidPostalCode, isValidAddress, isValidTcNo } from "../utils/validation";
 import StepIndicator from "../components/StepIndicator";
 
@@ -53,7 +51,7 @@ const PaymentPage = () => {
 
   // --- GÜNCELLENEN STATE YAPISI ---
   const [couponCode, setCouponCode] = useState("");
-  const [couponData, setCouponData] = useState(null); 
+  const [couponData, setCouponData] = useState(null);
   const [couponMessage, setCouponMessage] = useState("");
   const [errors, setErrors] = useState({});
 
@@ -85,8 +83,7 @@ const PaymentPage = () => {
   // --- FİYAT HESAPLAMA DÜZELTİLDİ ---
   const lineTL = (it) => {
     // ÖNEMLİ: Miktarı her zaman 1 olarak kabul et
-    // Backend'de 4 tane bile olsa, ödemede 1 tanesini alırız.
-    const qty = 1; 
+    const qty = 1;
 
     if (typeof it?.unitPrice === "number") return (it.unitPrice / 100) * qty;
     return (parseTL(it?.price) || 0) * qty;
@@ -149,10 +146,10 @@ const PaymentPage = () => {
 
     const discountRatio = total > 0 ? (subTotalAfterDiscount / total) : 1;
     const kdvBase = eligibleTutoringTotal * discountRatio;
-    
+
     const KDV_RATE = 0.20;
     const kdvAmount = kdvBase * KDV_RATE;
-    
+
     const payable = subTotalAfterDiscount + kdvAmount;
 
     return {
@@ -185,7 +182,7 @@ const PaymentPage = () => {
 
       if (data.validPackages && data.validPackages.length > 0) {
         const hasValidItem = items.some(item => data.validPackages.includes(item.slug));
-        
+
         if (!hasValidItem) {
           setCouponMessage("❌ Bu kupon sepetinizdeki ürünler için geçerli değildir.");
           setCouponData(null);
@@ -245,18 +242,18 @@ const PaymentPage = () => {
           cart,
           billingInfo: formData,
           packageName: items[0]?.name,
-          
+
           couponCode: couponData ? couponCode : "",
           discountAmount: calculatedDiscountValue,
-          
+
           totalPrice: Number(payable.toFixed(2)),
           totalPriceKurus: Math.round(payable * 100),
           tax: {
             vatRate: eligibleTutoringTotal > 0 ? 20 : 0,
             vatAmount: Number(finalCalculations.kdvAmount.toFixed(2)),
-            baseTutoring: Number(eligibleTutoringTotal.toFixed(2)), 
+            baseTutoring: Number(eligibleTutoringTotal.toFixed(2)),
           },
-          requestIds: requestIds, 
+          requestIds: requestIds,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -277,14 +274,17 @@ const PaymentPage = () => {
    localStorage.removeItem("activeRequestIds");
    }, []);
 
+  const inputBase = "py-[18px] px-3 h-14 border border-[#ccc] rounded-[20px] text-base bg-white w-full box-border focus:outline-none focus:border-[#f35900] focus:shadow-[0_0_0_3px_rgba(0,112,243,0.1)] placeholder:text-[#aaa]";
+  const errCls = "border border-red-500 bg-[#fff0f0]";
+
   return (
     <>
       <StepIndicator currentStep={2} />
-    <div className="payment-container">
-      <form className="payment-form" onSubmit={handleSubmit}>
-        <div className="payment-form-header">
-          <h2>İletişim</h2>
-          {user ? <span className="login-link">{user.name}</span> : <a href="/login">Oturum aç</a>}
+    <div className="flex justify-between gap-10 p-10 max-w-[1200px] mx-auto max-[768px]:flex-col-reverse max-[768px]:p-5 max-[768px]:gap-6">
+      <form className="flex-[2] flex flex-col gap-4 bg-[#f9f9f9] p-6 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.06)] relative" onSubmit={handleSubmit}>
+        <div className="flex justify-between items-center mb-4 max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-2">
+          <h2 className="m-0 text-[#f35900]">İletişim</h2>
+          {user ? <span className="text-[0.9rem] text-black cursor-pointer transition-colors hover:text-[#dd500f]">{user.name}</span> : <a href="/login">Oturum aç</a>}
         </div>
 
         <input
@@ -293,73 +293,73 @@ const PaymentPage = () => {
           value={formData.email}
           placeholder="E-posta"
           onChange={handleInputChange}
-          className={errors.email ? "error-input" : ""}
+          className={`${inputBase}${errors.email ? ` ${errCls}` : ""}`}
           required
         />
-        {errors.email && <span className="error-text">{errors.email}</span>}
+        {errors.email && <span className="text-red-500 text-[0.85rem] mt-0.5 block">{errors.email}</span>}
 
         <label>
           <input type="checkbox" checked={formData.allowEmails} name="allowEmails" onChange={handleInputChange} />
           Bana e-posta gönderilmesine izin veriyorum.
         </label>
 
-        <h3>Fatura Adresi</h3>
-        <div className="input-row">
-          <div>
-            <input name="name" value={formData.name} placeholder="Ad" onChange={handleInputChange} className={errors.name ? "error-input" : ""} required />
-            {errors.name && <span className="error-text">{errors.name}</span>}
+        <h3 className="flex text-[#f35900] font-normal m-0">Fatura Adresi</h3>
+        <div className="flex flex-wrap gap-4">
+          <div className="flex-[1_1_48%] min-w-[140px]">
+            <input name="name" value={formData.name} placeholder="Ad" onChange={handleInputChange} className={`${inputBase}${errors.name ? ` ${errCls}` : ""}`} required />
+            {errors.name && <span className="text-red-500 text-[0.85rem] mt-0.5 block">{errors.name}</span>}
           </div>
-          <div>
-            <input name="surname" value={formData.surname} placeholder="Soyad" onChange={handleInputChange} className={errors.surname ? "error-input" : ""} required />
-            {errors.surname && <span className="error-text">{errors.surname}</span>}
+          <div className="flex-[1_1_48%] min-w-[140px]">
+            <input name="surname" value={formData.surname} placeholder="Soyad" onChange={handleInputChange} className={`${inputBase}${errors.surname ? ` ${errCls}` : ""}`} required />
+            {errors.surname && <span className="text-red-500 text-[0.85rem] mt-0.5 block">{errors.surname}</span>}
           </div>
         </div>
 
-        <div className="input-row-half">
-          <div>
-            <input name="address" value={formData.address} placeholder="Adres" onChange={handleInputChange} className={errors.address ? "error-input" : ""} required />
-            {errors.address && <span className="error-text">{errors.address}</span>}
+        <div className="flex flex-wrap gap-4">
+          <div className="flex-[1_1_100%] min-w-[140px]">
+            <input name="address" value={formData.address} placeholder="Adres" onChange={handleInputChange} className={`${inputBase}${errors.address ? ` ${errCls}` : ""}`} required />
+            {errors.address && <span className="text-red-500 text-[0.85rem] mt-0.5 block">{errors.address}</span>}
           </div>
-          <div>
-            <input name="district" value={formData.district} placeholder="İlçe" onChange={handleInputChange} className={errors.district ? "error-input" : ""} required />
-            {errors.district && <span className="error-text">{errors.district}</span>}
+          <div className="flex-[1_1_100%] min-w-[140px]">
+            <input name="district" value={formData.district} placeholder="İlçe" onChange={handleInputChange} className={`${inputBase}${errors.district ? ` ${errCls}` : ""}`} required />
+            {errors.district && <span className="text-red-500 text-[0.85rem] mt-0.5 block">{errors.district}</span>}
           </div>
-          <div>
-            <input name="postalCode" value={formData.postalCode} placeholder="Posta Kodu" onChange={handleInputChange} className={errors.postalCode ? "error-input" : ""} />
-            {errors.postalCode && <span className="error-text">{errors.postalCode}</span>}
+          <div className="flex-[1_1_100%] min-w-[140px]">
+            <input name="postalCode" value={formData.postalCode} placeholder="Posta Kodu" onChange={handleInputChange} className={`${inputBase}${errors.postalCode ? ` ${errCls}` : ""}`} />
+            {errors.postalCode && <span className="text-red-500 text-[0.85rem] mt-0.5 block">{errors.postalCode}</span>}
           </div>
-          <div>
-            <input name="city" value={formData.city} placeholder="Şehir - İl" onChange={handleInputChange} className={errors.city ? "error-input" : ""} required />
-            {errors.city && <span className="error-text">{errors.city}</span>}
+          <div className="flex-[1_1_100%] min-w-[140px]">
+            <input name="city" value={formData.city} placeholder="Şehir - İl" onChange={handleInputChange} className={`${inputBase}${errors.city ? ` ${errCls}` : ""}`} required />
+            {errors.city && <span className="text-red-500 text-[0.85rem] mt-0.5 block">{errors.city}</span>}
           </div>
-          <div>
-            <input name="phone" value={formData.phone} placeholder="Telefon" onChange={handleInputChange} className={errors.phone ? "error-input" : ""} required />
-            {errors.phone && <span className="error-text">{errors.phone}</span>}
+          <div className="flex-[1_1_100%] min-w-[140px]">
+            <input name="phone" value={formData.phone} placeholder="Telefon" onChange={handleInputChange} className={`${inputBase}${errors.phone ? ` ${errCls}` : ""}`} required />
+            {errors.phone && <span className="text-red-500 text-[0.85rem] mt-0.5 block">{errors.phone}</span>}
           </div>
-            <div>
+          <div className="flex-[1_1_100%] min-w-[140px]">
             <input
               name="tcNo"
               value={formData.tcNo}
               placeholder="TC Kimlik No"
               onChange={handleInputChange}
-              className={errors.tcNo ? "error-input" : ""}
+              className={`${inputBase}${errors.tcNo ? ` ${errCls}` : ""}`}
               required
             />
-            {errors.tcNo && <span className="error-text">{errors.tcNo}</span>}
+            {errors.tcNo && <span className="text-red-500 text-[0.85rem] mt-0.5 block">{errors.tcNo}</span>}
           </div>
         </div>
 
-        <button type="submit" className="pay-button">Güvenli Ödemeye Geç</button>
+        <button type="submit" className="mt-5 py-4 bg-[rgb(241,90,3)] text-white text-[1.3rem] border border-[#ccc] rounded-[20px] cursor-pointer font-bold w-full hover:bg-[#e44608] transition-colors max-[768px]:text-[1.1rem] max-[768px]:py-3.5">Güvenli Ödemeye Geç</button>
       </form>
 
-      <div className="payment-summary">
-        <h4>Sepet Özeti</h4>
-        <ul>
+      <div className="flex-1 bg-white p-8 rounded-lg border border-[#eee] shadow-[0_2px_8px_rgba(0,0,0,0.05)] flex flex-col justify-evenly gap-4 max-[768px]:w-full max-[768px]:p-5">
+        <h4 className="text-[#d84207] text-[1.5rem] pb-[30px] m-0 max-[768px]:text-[1.3rem]">Sepet Özeti</h4>
+        <ul className="list-none p-0 m-0">
           {items.map((item, i) => (
-            <li key={i} className="summary-item">
+            <li key={i} className="py-2 text-[1.2rem] flex flex-col justify-between items-center">
               <div>
                 <strong>{item.name}</strong>
-                <p>{item.description}</p>
+                <p className="m-0 text-[#666] text-[0.85rem] leading-[1.4]">{item.description}</p>
               </div>
               <div>₺{lineTL(item).toFixed(2)}</div>
             </li>
@@ -369,25 +369,25 @@ const PaymentPage = () => {
         <div className="mt-4">
           <label className="block mb-1 font-semibold">Kupon Kodu</label>
           <div className="flex">
-            <input 
-              type="text" 
-              value={couponCode} 
-              onChange={(e) => setCouponCode(e.target.value.toUpperCase())} 
-              placeholder="İNDİRİM10" 
-              className="border p-2 rounded-l w-full" 
+            <input
+              type="text"
+              value={couponCode}
+              onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+              placeholder="İNDİRİM10"
+              className="border p-2 rounded-l w-full"
             />
             <button onClick={handleApplyCoupon} className="bg-green-600 text-white px-4 rounded-r">Uygula</button>
           </div>
           {couponMessage && <p className="mt-1 text-sm text-gray-700">{couponMessage}</p>}
         </div>
 
-        <div className="summary-total">
+        <div className="text-[1.5rem] text-black text-right mt-2.5 max-[768px]:text-left">
           <p>Ara Toplam (Özel Ders): <strong>₺{tutoringTotal.toFixed(2)}</strong></p>
           <p>Ara Toplam (Diğer): <strong>₺{otherTotal.toFixed(2)}</strong></p>
-          
+
           {calculatedDiscountValue > 0 && (
             <p className="text-green-600">
-              Kupon İndirimi ({couponData?.code}): 
+              Kupon İndirimi ({couponData?.code}):
               <strong> -₺{calculatedDiscountValue.toFixed(2)}</strong>
               {couponData?.validPackages?.length > 0 && <span className="text-xs ml-1">(Seçili Ürünler)</span>}
             </p>
@@ -401,12 +401,12 @@ const PaymentPage = () => {
         </div>
 
         {tutoringTotal > 0 && (
-          <p className="cart-note mt-2">
+          <p className="text-[0.85rem] text-[#888] mt-2">
             Özel ders seçimleri için <strong>%20 KDV</strong> ödeme adımında eklenir. Diğer paketleriniz KDV dâhildir.
           </p>
         )}
 
-        <div className="refund-note">
+        <div className="mt-3 p-2.5 bg-[#e6f4ea] rounded-md text-[#2e7d70] text-sm font-medium">
           📝 Siparişinizi teslim aldıktan sonra <strong>5 gün içinde</strong> koşulsuz cayma hakkınız bulunmaktadır.
         </div>
       </div>

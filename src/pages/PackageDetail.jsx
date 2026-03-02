@@ -1,16 +1,16 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import Seo from "../components/Seo"; 
-import { Helmet } from "react-helmet"; 
+import Seo from "../components/Seo";
+import { Helmet } from "react-helmet";
 
-import { 
-  FaCheckCircle, 
-  FaTimesCircle, 
-  FaShieldAlt, 
-  FaHeadset, 
-  FaCreditCard, 
-  FaChevronDown, 
-  FaChevronUp 
+import {
+  FaCheckCircle,
+  FaTimesCircle,
+  FaShieldAlt,
+  FaHeadset,
+  FaCreditCard,
+  FaChevronDown,
+  FaChevronUp
 } from "react-icons/fa";
 
 import Navbar from "../components/navbar";
@@ -18,20 +18,18 @@ import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
 import { PACKAGES } from "../hooks/packages";
 import Testimonials from "../components/Testimonials";
-import "../cssFiles/packageDetail.css";
 
 // Fiyat geçerlilik tarihi (Dinamik - 1 yıl sonrası)
 const getPriceValidUntil = () => {
   const date = new Date();
   date.setFullYear(date.getFullYear() + 1);
-  return date.toISOString().split("T")[0]; 
+  return date.toISOString().split("T")[0];
 };
 
 const PackageDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // URL'den slug'ı al veya varsayılanı kullan
+
   const querySlug = new URLSearchParams(location.search).get("slug");
   const packageList = useMemo(() => Object.values(PACKAGES).filter((p) => !p.hidden), []);
   const defaultSlug = "kocluk-2026";
@@ -43,8 +41,6 @@ const PackageDetail = () => {
     if (querySlug && PACKAGES[querySlug]) {
       setSelectedSlug(querySlug);
     } else if (!querySlug) {
-      // Eğer slug yoksa URL'i varsayılan slug ile güncelle (Redirect yerine replace)
-      // Bu, SEO için duplicate content oluşumunu engeller.
       const newUrl = `${location.pathname}?slug=${defaultSlug}`;
       window.history.replaceState(null, "", newUrl);
       setSelectedSlug(defaultSlug);
@@ -53,8 +49,7 @@ const PackageDetail = () => {
 
   const selected = PACKAGES[selectedSlug] || PACKAGES[defaultSlug];
 
-  // Yükleniyor durumu (SEO için boş sayfa dönmemesi adına önemli)
-  if (!selected) return null; 
+  if (!selected) return null;
 
   const isSpecialTutoring = selected.type === "tutoring_only" || selected.slug === "ozel-ders-paketi";
 
@@ -70,7 +65,7 @@ const PackageDetail = () => {
     setActiveIndex(activeIndex === index ? null : index);
   };
 
-  const features = (selected.features || []).map(f => 
+  const features = (selected.features || []).map(f =>
     typeof f === "string" ? { label: f, included: true } : f
   );
 
@@ -80,17 +75,11 @@ const PackageDetail = () => {
   ];
   const faqList = [...(selected.faq || []), ...defaultFaq];
 
-  // --- SEO VE SCHEMA DÜZELTMELERİ ---
-  
-  // 1. Fiyat Temizliği (Currency sembollerinden arındırılmış saf sayı)
-  const numericPrice = selected.priceText 
-    ? selected.priceText.replace(/[^0-9.]/g, '') // Nokta (.) ondalık için kalmalı
+  const numericPrice = selected.priceText
+    ? selected.priceText.replace(/[^0-9.]/g, '')
     : "0";
 
-  // 2. Mutlak URL (Canonical) Oluşturma
-  // 'window.location.origin' kullanarak domain adını dinamik alıyoruz.
-  // Ahrefs 'relative url' sevmez, tam yol ister.
-  const siteUrl = "https://sozderecekocluk.com"; 
+  const siteUrl = "https://sozderecekocluk.com";
   const canonicalUrl = `${siteUrl}/paket-detay?slug=${selected.slug}`;
 
   const productSchema = {
@@ -102,87 +91,29 @@ const PackageDetail = () => {
         `${siteUrl}/images/paketlerImage1.webp`
     ],
     "description": selected.subtitle || "Sözderece Koçluk YKS hazırlık paketi.",
-    "brand": {
-      "@type": "Brand",
-      "name": "Sözderece Koçluk"
-    },
+    "brand": { "@type": "Brand", "name": "Sözderece Koçluk" },
     "sku": selected.slug,
-    "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "5.0",
-        "reviewCount": "124",
-        "bestRating": "5",
-        "worstRating": "1"
-    },
-    "review": {
-        "@type": "Review",
-        "reviewRating": {
-            "@type": "Rating",
-            "ratingValue": "5",
-            "bestRating": "5"
-        },
-        "author": {
-            "@type": "Person",
-            "name": "Öğrenci Yorumu"
-        },
-        "reviewBody": "Sistemli çalışma ile netlerim arttı, kesinlikle tavsiye ederim."
-    },
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5.0", "reviewCount": "124", "bestRating": "5", "worstRating": "1" },
+    "review": { "@type": "Review", "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "author": { "@type": "Person", "name": "Öğrenci Yorumu" }, "reviewBody": "Sistemli çalışma ile netlerim arttı, kesinlikle tavsiye ederim." },
     "offers": {
       "@type": "Offer",
-      "url": canonicalUrl, // Canonical URL ile eşleşmeli
+      "url": canonicalUrl,
       "priceCurrency": "TRY",
       "price": numericPrice,
       "availability": "https://schema.org/InStock",
-      "seller": {
-        "@type": "Organization",
-        "name": "Sözderece"
-      },
+      "seller": { "@type": "Organization", "name": "Sözderece" },
       "priceValidUntil": getPriceValidUntil(),
-      "hasMerchantReturnPolicy": {
-        "@type": "MerchantReturnPolicy",
-        "applicableCountry": "TR",
-        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-        "merchantReturnDays": "5", // Politikayla uyumlu hale getirildi (5 gün)
-        "returnMethod": "https://schema.org/ReturnByMail",
-        "returnFees": "https://schema.org/FreeReturn"
-      },
-      "shippingDetails": {
-        "@type": "OfferShippingDetails",
-        "shippingRate": {
-            "@type": "MonetaryAmount",
-            "value": "0",
-            "currency": "TRY"
-        },
-        "shippingDestination": {
-            "@type": "DefinedRegion",
-            "addressCountry": "TR"
-        },
-        "deliveryTime": {
-            "@type": "ShippingDeliveryTime",
-            "handlingTime": {
-                "@type": "QuantitativeValue",
-                "minValue": "0",
-                "maxValue": "0", // Dijital ürün olduğu için anında teslim
-                "unitCode": "d"
-            },
-            "transitTime": {
-                "@type": "QuantitativeValue",
-                "minValue": "0",
-                "maxValue": "0",
-                "unitCode": "d"
-            }
-        }
-      }
+      "hasMerchantReturnPolicy": { "@type": "MerchantReturnPolicy", "applicableCountry": "TR", "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow", "merchantReturnDays": "5", "returnMethod": "https://schema.org/ReturnByMail", "returnFees": "https://schema.org/FreeReturn" },
+      "shippingDetails": { "@type": "OfferShippingDetails", "shippingRate": { "@type": "MonetaryAmount", "value": "0", "currency": "TRY" }, "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "TR" }, "deliveryTime": { "@type": "ShippingDeliveryTime", "handlingTime": { "@type": "QuantitativeValue", "minValue": "0", "maxValue": "0", "unitCode": "d" }, "transitTime": { "@type": "QuantitativeValue", "minValue": "0", "maxValue": "0", "unitCode": "d" } } }
     }
   };
 
   return (
     <>
-    
-      <Seo 
-        title={selected.title} 
+      <Seo
+        title={selected.title}
         description={selected.subtitle}
-        canonical={`/paket-detay?slug=${selected.slug}`} // Seo.jsx bunu domain ile birleştirecek
+        canonical={`/paket-detay?slug=${selected.slug}`}
       />
 
       <Helmet>
@@ -194,39 +125,32 @@ const PackageDetail = () => {
       <TopBar />
       <Navbar />
 
-      <div className="pd-wrapper">
-        <div className="pd-container">
-          
-          <div className="pd-info">
-            <div className="pd-header-center">
-                <span className="pd-badge">
+      <div className="bg-[#f8f9fa] py-[60px] min-h-[80vh]">
+        <div className="max-w-[800px] mx-auto px-5">
+
+          <div className="bg-white p-[50px] rounded-[20px] shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-[#eaeaea] max-[768px]:p-[25px]">
+            <div className="text-center mb-[30px]">
+              <span className="inline-block bg-[#e3f2fd] text-[#0f2a4a] font-bold py-1.5 px-4 rounded-[20px] text-[0.9rem] mb-[15px] tracking-wide uppercase">
                 {isSpecialTutoring ? "Özel Ders" : "En Çok Tercih Edilen"}
-                </span>
-                <h1 className="pd-title">{selected.title}</h1>
-                <p className="pd-subtitle">{selected.subtitle}</p>
+              </span>
+              <h1 className="text-[2.2rem] font-extrabold text-[#0f2a4a] mb-[15px] leading-[1.2] max-[768px]:text-[1.8rem]">{selected.title}</h1>
+              <p className="text-[1.1rem] text-[#666] leading-[1.6] max-w-[600px] mx-auto">{selected.subtitle}</p>
             </div>
 
-            <div className="pd-price-box">
-              <span className="pd-price">{selected.priceText}</span>
-              <p className="pd-vat">Tüm vergiler dahildir.</p>
+            <div className="text-center mb-[30px] pb-5 border-b border-[#f0f0f0]">
+              <span className="text-[2.5rem] font-extrabold text-[#f39c12] max-[768px]:text-[2rem]">{selected.priceText}</span>
+              <p className="text-[0.9rem] text-[#999] mt-1">Tüm vergiler dahildir.</p>
             </div>
 
-            {/* {!isSpecialTutoring && (
-            //  <div className="pd-discount-box">
-              //  🎁 <strong>Sozderece200</strong> kodu ile sepette anında <strong>200₺ indirim</strong> kazan!
-              // </div>
-            )}
-*/}
-
-            <div className="pd-select-group">
-              <label>Paket Seçenekleri:</label>
-              <select 
-                value={selectedSlug} 
+            <div className="mb-[30px]">
+              <label className="block font-semibold mb-2 text-[#333]">Paket Seçenekleri:</label>
+              <select
+                value={selectedSlug}
                 onChange={(e) => {
                   setSelectedSlug(e.target.value);
-                  // useNavigate yerine URL parametresini güncellemek daha sağlıklıdır
                   navigate(`?slug=${e.target.value}`, { replace: true });
                 }}
+                className="w-full py-3.5 px-3.5 border border-[#ddd] rounded-[10px] text-base bg-white cursor-pointer outline-none transition-all focus:border-[#f39c12]"
               >
                 {packageList.map(p => (
                   <option key={p.slug} value={p.slug}>{p.title}</option>
@@ -234,41 +158,50 @@ const PackageDetail = () => {
               </select>
             </div>
 
-            <ul className="pd-features">
+            <ul className="list-none p-[25px] mb-10 bg-[#f9f9f9] rounded-[15px]">
               {features.map((f, i) => (
-                <li key={i} className={f.included ? "inc" : "exc"}>
-                  {f.included ? <FaCheckCircle className="icon-check"/> : <FaTimesCircle className="icon-cross"/>}
+                <li key={i} className={`flex items-center gap-[15px] text-[1.05rem] mb-[15px] last:mb-0 ${f.included ? "text-[#444]" : "text-[#999] line-through opacity-70"}`}>
+                  {f.included
+                    ? <FaCheckCircle className="text-[#27ae60] text-[1.3rem] min-w-[24px]" />
+                    : <FaTimesCircle className="text-[#ccc] text-[1.3rem] min-w-[24px]" />
+                  }
                   {f.label}
                 </li>
               ))}
             </ul>
 
-            <div className="pd-trust">
-              <div className="trust-item"><FaShieldAlt /> %100 Güvenli Ödeme</div>
-              <div className="trust-item"><FaHeadset /> 7/24 Destek</div>
-              <div className="trust-item"><FaCreditCard /> Taksit İmkanı</div>
+            <div className="flex justify-center gap-[30px] mb-[30px] flex-wrap max-[768px]:gap-[15px]">
+              <div className="flex items-center gap-2 text-[0.9rem] text-[#555] font-semibold"><FaShieldAlt /> %100 Güvenli Ödeme</div>
+              <div className="flex items-center gap-2 text-[0.9rem] text-[#555] font-semibold"><FaHeadset /> 7/24 Destek</div>
+              <div className="flex items-center gap-2 text-[0.9rem] text-[#555] font-semibold"><FaCreditCard /> Taksit İmkanı</div>
             </div>
 
-            <button className="pd-cta-btn" onClick={handleContinue}>
+            <button
+              className="w-full py-5 bg-[#f39c12] text-white border-0 rounded-xl text-[1.3rem] font-bold cursor-pointer transition-all shadow-[0_10px_25px_rgba(243,156,18,0.3)] mb-5 hover:bg-[#d35400] hover:-translate-y-[3px] hover:shadow-[0_15px_30px_rgba(243,156,18,0.4)]"
+              onClick={handleContinue}
+            >
               {isSpecialTutoring ? "Öğretmenleri İncele" : "Hemen Başla (Güvenli Ödeme)"}
             </button>
 
-            <div className="pd-payment-logos">
-                <img src="/images/kare-logo-mastercard.webp" alt="Mastercard" width="40" height="25" loading="lazy" />
-                <img src="/images/kare-logo-visa.webp" alt="Visa" width="40" height="25" loading="lazy" />
-                <img src="/images/kare-logo-troy.webp" alt="Troy" width="40" height="25" loading="lazy" />
-                <img src="/images/kare-logo-paytr.webp" alt="PayTR" width="40" height="25" loading="lazy" />
+            <div className="flex justify-center gap-[15px] opacity-80 mb-10 pb-[30px] border-b border-[#eee]">
+              <img src="/images/kare-logo-mastercard.webp" alt="Mastercard" width="40" height="25" loading="lazy" className="h-[35px] object-contain grayscale hover:grayscale-0 transition-all max-[768px]:h-[25px]" />
+              <img src="/images/kare-logo-visa.webp" alt="Visa" width="40" height="25" loading="lazy" className="h-[35px] object-contain grayscale hover:grayscale-0 transition-all max-[768px]:h-[25px]" />
+              <img src="/images/kare-logo-troy.webp" alt="Troy" width="40" height="25" loading="lazy" className="h-[35px] object-contain grayscale hover:grayscale-0 transition-all max-[768px]:h-[25px]" />
+              <img src="/images/kare-logo-paytr.webp" alt="PayTR" width="40" height="25" loading="lazy" className="h-[35px] object-contain grayscale hover:grayscale-0 transition-all max-[768px]:h-[25px]" />
             </div>
-            
-            <div className="pd-faq">
-              <h3>Sıkça Sorulan Sorular</h3>
+
+            <div>
+              <h3 className="text-[1.4rem] text-[#0f2a4a] mb-[25px] text-center">Sıkça Sorulan Sorular</h3>
               {faqList.map((item, idx) => (
-                <div key={idx} className={`faq-item ${activeIndex === idx ? "active" : ""}`}>
-                  <button className="faq-head" onClick={() => toggleAccordion(idx)}>
+                <div key={idx} className="border border-[#eee] rounded-[10px] mb-3 overflow-hidden">
+                  <button
+                    className="w-full flex justify-between items-center py-[18px] px-[18px] bg-white border-0 font-semibold text-[#333] cursor-pointer text-left text-base transition-colors hover:bg-[#fcfcfc]"
+                    onClick={() => toggleAccordion(idx)}
+                  >
                     {item.title}
                     {activeIndex === idx ? <FaChevronUp /> : <FaChevronDown />}
                   </button>
-                  <div className="faq-body">
+                  <div className={`overflow-hidden transition-all duration-300 bg-[#f9f9f9] ${activeIndex === idx ? "max-h-[200px] py-[18px] px-[18px] text-[#555] leading-[1.6] border-t border-[#eee]" : "max-h-0"}`}>
                     <p>{item.content}</p>
                   </div>
                 </div>

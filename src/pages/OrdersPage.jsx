@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
-import "../cssFiles/ordersPage.css";
 import { format } from "date-fns";
 import trLocale from "date-fns/locale/tr";
 import RefundModal from "../components/RefundModal";
 import TopBar from "../components/TopBar";
 import Navbar from "../components/navbar";
 import { useNavigate } from "react-router-dom"; // ✅ eklendi
+
+const badgeBase = "inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-semibold w-max bg-[#f3f4f6] text-[#374151] border border-[#e5e7eb]";
+const refundBtnBase = "inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg border-0 bg-[#ffe69c] text-[#5a3e00] font-semibold cursor-pointer no-underline transition hover:brightness-[0.98] active:translate-y-px";
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
@@ -68,13 +70,13 @@ const OrdersPage = () => {
 
   // Yalnızca abonelik benzeri siparişlerde bitişe göre "Süresi Dolmuş" göster
   const getStatusLabel = (status, endDate, isTutorPkg) => {
-    if (status === "refunded") return { label: "İade Edildi", className: "badge-refunded" };
-    if (status === "refund_requested") return { label: "İade Talep Edildi", className: "badge-requested" };
-    if (status === "failed") return { label: "Ödeme Başarısız", className: "badge-failed" };
+    if (status === "refunded") return { label: "İade Edildi", variant: "bg-[rgba(14,165,233,0.08)] text-[#0ea5e9] border-[rgba(14,165,233,0.2)]" };
+    if (status === "refund_requested") return { label: "İade Talep Edildi", variant: "bg-[rgba(217,119,6,0.10)] text-[#d97706] border-[rgba(217,119,6,0.25)]" };
+    if (status === "failed") return { label: "Ödeme Başarısız", variant: "bg-[rgba(220,38,38,0.08)] text-[#dc2626] border-[rgba(220,38,38,0.2)]" };
     if (!isTutorPkg && endDate && new Date(endDate) < new Date()) {
-      return { label: "Süresi Dolmuş", className: "badge-expired" };
+      return { label: "Süresi Dolmuş", variant: "bg-[rgba(55,65,81,0.08)] text-[#374151] border-[rgba(55,65,81,0.2)]" };
     }
-    return { label: "Aktif", className: "badge-active" };
+    return { label: "Aktif", variant: "bg-[rgba(22,163,74,0.08)] text-[#16a34a] border-[rgba(22,163,74,0.2)]" };
   };
 
   const handleRefundRequest = (orderId) => {
@@ -99,7 +101,7 @@ const OrdersPage = () => {
     }
   };
 
-  // ✅ “Bu paketle ders seç” butonu
+  // ✅ "Bu paketle ders seç" butonu
   const goSelectWithPackage = (pkgSlug) => {
     const qs = new URLSearchParams({ useFreeRight: "1", pkg: pkgSlug });
     navigate(`/ogretmenler?${qs.toString()}`);
@@ -109,41 +111,41 @@ const OrdersPage = () => {
     <>
       <TopBar />
       <Navbar />
-      <div className="orders-page">
-        <div className="orders-center">
-          <div className="account-layout">
-            <main className="account-main">
-              <section className="info-card modern-form">
+      <div className="p-4">
+        <div className="w-full max-w-[780px] mx-auto">
+          <div>
+            <main className="max-w-[860px] w-full mx-auto">
+              <section className="bg-white p-[22px] rounded-[14px] shadow-[0_6px_24px_rgba(2,6,23,0.06)] border border-[#e5e7eb] mb-[18px]">
                 <h2>📦 Siparişlerim</h2>
 
                 {/* ✅ Ücretsiz ders hakları özeti */}
-                <div className="order-free-rights" style={{ marginBottom: 16 }}>
+                <div className="mb-4">
                   {freeRights.remaining > 0 ? (
-                    <div className="badge badge-active" style={{ display: "inline-block", marginBottom: 8 }}>
+                    <div className={`${badgeBase} bg-[rgba(22,163,74,0.08)] text-[#16a34a] border-[rgba(22,163,74,0.2)] inline-block mb-2`}>
                       🎁 Kalan ücretsiz ders hakkın: <strong>{freeRights.remaining}</strong>
                     </div>
                   ) : (
-                    <div className="muted" style={{ marginBottom: 8 }}>
+                    <div className="text-[#6b7280] text-xs mb-2">
                       🎁 Şu an ücretsiz ders hakkın bulunmuyor.
                     </div>
                   )}
 
                   {/* Paket bazında liste + CTA */}
                   {freeRights.items?.length > 0 && (
-                    <ul className="order-list" style={{ marginTop: 8 }}>
+                    <ul className="list-none p-0 m-0 flex flex-col gap-[14px] mt-2">
                       {freeRights.items.map((i) => (
-                        <li key={i.packageSlug} className="order-card">
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+                        <li key={i.packageSlug} className="bg-white border border-[#e5e7eb] rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-[14px] flex flex-col gap-2.5">
+                          <div className="flex justify-between items-center gap-3">
                             <div>
-                              <div style={{ fontWeight: 600 }}>{i.packageSlug}</div>
-                              <div className="muted">
+                              <div className="font-semibold">{i.packageSlug}</div>
+                              <div className="text-[#6b7280] text-xs">
                                 Dönem: {i.period} • Toplam: {i.total} • Kullanılan: {i.used} • Kalan: {i.remaining}
                               </div>
                             </div>
                             {i.remaining > 0 && (
                               <button
                                 onClick={() => goSelectWithPackage(i.packageSlug)}
-                                className="refund-btn"
+                                className={refundBtnBase}
                                 title="Bu paketle ücretsiz ders saati seç"
                               >
                                 ➕ Bu paketle ders seç
@@ -161,34 +163,36 @@ const OrdersPage = () => {
                 ) : orders.length === 0 ? (
                   <p>Henüz bir siparişiniz yok.</p>
                 ) : (
-                  <ul className="order-list">
+                  <ul className="list-none p-0 m-0 flex flex-col gap-[14px]">
                     {orders.map((order) => {
                       const tutorPkg = isTutorLessonPackage(order.package);
-                      const { label, className } = getStatusLabel(order.status, order.endDate, tutorPkg);
+                      const { label, variant } = getStatusLabel(order.status, order.endDate, tutorPkg);
 
                       return (
-                        <li className="order-card" key={order.id}>
-                          <h3><strong>{order.package}</strong></h3>
-                          <p>📄 <strong>Sipariş ID:</strong> {order.id}</p>
-                          <p>🗓️ <strong>Satın Alma:</strong> {formatDate(order.createdAt)}</p>
+                        <li className="bg-white border border-[#e5e7eb] rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-[14px] flex flex-col gap-2.5 max-[480px]:p-3" key={order.id}>
+                          <h3 className="m-0 mb-1.5 text-base leading-tight text-[#111827]"><strong>{order.package}</strong></h3>
+                          <p className="m-0 text-[#6b7280] text-sm">📄 <strong>Sipariş ID:</strong> {order.id}</p>
+                          <p className="m-0 text-[#6b7280] text-sm mt-1">🗓️ <strong>Satın Alma:</strong> {formatDate(order.createdAt)}</p>
 
                           {/* Tek/3/6 ders paketlerinde bitiş tarihi GÖSTERME */}
                           {!tutorPkg && (
-                            <p>📅 <strong>Bitiş Tarihi:</strong> {formatDate(order.endDate)}</p>
+                            <p className="m-0 text-[#6b7280] text-sm mt-1">📅 <strong>Bitiş Tarihi:</strong> {formatDate(order.endDate)}</p>
                           )}
 
-                          <span className={`badge ${className}`}>{label}</span>
+                          <span className={`${badgeBase} ${variant}`}>{label}</span>
 
                           {/* Tek/3/6 ders paketleri: Öğrenci paneline yönlendirme */}
                           {tutorPkg && (
-                            <div className="ordersPage-student-hint">
-                              <p style={{ marginTop: 8 }}>
+                            <div
+                              className="mt-3 p-3 px-[14px] bg-[#eef5ff] border border-[rgba(13,110,253,0.25)] rounded-lg"
+                              style={{ borderLeft: "4px solid #0d6efd" }}
+                            >
+                              <p className="m-0 mb-2 text-sm text-[#0b3c8a] mt-2">
                                 🔔 Talebinizin durumunu takip etmek için öğrenci paneline gidin.
                               </p>
                               <a
-                                href="/student/dashboard" // rotanıza göre güncelleyin
-                                className="refund-btn"
-                                style={{ marginTop: 6, display: "inline-block" }}
+                                href="/student/dashboard"
+                                className="inline-block mt-1.5 bg-[#0d6efd] text-white no-underline px-3 py-2 rounded-md font-semibold border-0 transition hover:bg-[#0b5ed7] focus:outline-[2px] focus:outline-[rgba(13,110,253,0.35)] focus:outline-offset-2"
                               >
                                 👩‍🎓 Öğrenci Paneline Git
                               </a>
@@ -206,14 +210,14 @@ const OrdersPage = () => {
                           </details>
 
                           {order.totalPrice && (
-                            <p><strong>Toplam Ödenen Miktar:</strong> ₺{order.totalPrice}</p>
+                            <p className="m-0 text-[#6b7280] text-sm mt-1"><strong>Toplam Ödenen Miktar:</strong> ₺{order.totalPrice}</p>
                           )}
                           {order.couponCode && (
-                            <p>🏷️ <strong>Kupon:</strong> {order.couponCode}</p>
+                            <p className="m-0 text-[#6b7280] text-sm mt-1">🏷️ <strong>Kupon:</strong> {order.couponCode}</p>
                           )}
 
                           {order.status === "paid" && (
-                            <button onClick={() => handleRefundRequest(order.id)} className="refund-btn">
+                            <button onClick={() => handleRefundRequest(order.id)} className={refundBtnBase}>
                               📝 İade Talebi Oluştur
                             </button>
                           )}
@@ -234,7 +238,7 @@ const OrdersPage = () => {
                             href={`https://wa.me/9055312546701?text=Merhaba, ${order.package} paketiyle ilgili bir sorum var. Sipariş ID: ${order.id}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="ordersPage-whatsapp-support-btn"
+                            className="mt-2 inline-block text-[#0a7c3a] no-underline font-semibold hover:underline"
                           >
                             💬 Destek İçin (WhatsApp)
                           </a>

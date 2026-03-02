@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
-import "../cssFiles/adminLessonRequest.css";
 
 
 export default function AdminTeacherRequests() {
@@ -26,8 +25,8 @@ export default function AdminTeacherRequests() {
   if (loading) return <div>Yükleniyor…</div>;
 
   return (
-    <div className="admin-lesson-requests">
-      <h2>👩‍🏫 Öğretmen Bazlı Talep Özeti</h2>
+    <div className="p-5 text-[#1f2937]">
+      <h2 className="text-xl font-bold m-0 mb-4">👩‍🏫 Öğretmen Bazlı Talep Özeti</h2>
       {rows.length === 0 ? (
         <p>Kayıt bulunamadı.</p>
       ) : (
@@ -50,18 +49,18 @@ export default function AdminTeacherRequests() {
             {rows.map((r) => (
               <tr key={r.teacher.id}>
                 <td>
-                  <div style={{ fontWeight: 600 }}>{r.teacher.name}</div>
-                  <div className="muted">{r.teacher.email}</div>
+                  <div className="font-semibold">{r.teacher.name}</div>
+                  <div className="text-[#6b7280] text-xs">{r.teacher.email}</div>
                 </td>
                 <td>{r.requests.SUBMITTED || 0}</td>
                 <td>{r.requests.PACKAGE_SELECTED || 0}</td>
                 <td>{r.requests.PAID || 0}</td>
                 <td>{r.requests.CANCELLED || 0}</td>
                 <td>{r.requests.ACCEPTED || 0}</td>
-                <td><span className="count-badge">{r.appointments.confirmed}</span></td>
-                <td><span className="count-badge">{r.appointments.pending}</span></td>
-                <td><span className="count-badge">{r.appointments.cancelled}</span></td>
-                <td><span className="count-badge">{r.appointments.completed}</span></td>
+                <td><span className="inline-block min-w-[24px] py-0.5 px-1.5 text-center rounded-md bg-[#f3f4f6] text-[#111827] text-xs font-semibold">{r.appointments.confirmed}</span></td>
+                <td><span className="inline-block min-w-[24px] py-0.5 px-1.5 text-center rounded-md bg-[#f3f4f6] text-[#111827] text-xs font-semibold">{r.appointments.pending}</span></td>
+                <td><span className="inline-block min-w-[24px] py-0.5 px-1.5 text-center rounded-md bg-[#f3f4f6] text-[#111827] text-xs font-semibold">{r.appointments.cancelled}</span></td>
+                <td><span className="inline-block min-w-[24px] py-0.5 px-1.5 text-center rounded-md bg-[#f3f4f6] text-[#111827] text-xs font-semibold">{r.appointments.completed}</span></td>
               </tr>
             ))}
           </tbody>

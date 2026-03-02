@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion"; // Animasyon için
-import "../cssFiles/mesafeliSozlesme.css";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";

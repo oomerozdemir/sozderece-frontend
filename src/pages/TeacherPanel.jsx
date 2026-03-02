@@ -9,7 +9,6 @@ import TimeOffManager from "../components/teacherComps/TimeOffManager";
 import TeacherLessons from "../components/teacherComps/TeacherLessons";
 import { RequestBadge } from "../utils/requestBadges";
 
-import "../cssFiles/teacher-panel.css";
 
 /* =======================
    Gelen Talepler Paneli

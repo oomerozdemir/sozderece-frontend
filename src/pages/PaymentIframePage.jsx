@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "../cssFiles/paymentIframe.css";
 
 const PaymentIframePage = () => {
   const { token } = useParams();
@@ -31,7 +30,7 @@ const PaymentIframePage = () => {
   }, [navigate]);
 
   return (
-    <div className="iframe-container">
+    <div className="w-screen h-screen bg-gray-50 block p-0 m-0 overflow-auto box-border">
       {token ? (
         <iframe
           src={`https://www.paytr.com/odeme/guvenli/${token}`}
@@ -48,7 +47,7 @@ const PaymentIframePage = () => {
           }}
         />
       ) : (
-        <div className="error-message">⚠️ Ödeme sayfası yüklenemedi.</div>
+        <div className="text-red-500 text-lg text-center p-8">⚠️ Ödeme sayfası yüklenemedi.</div>
       )}
     </div>
   );

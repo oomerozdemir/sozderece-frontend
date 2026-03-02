@@ -5,7 +5,6 @@ import { lazy, Suspense } from "react";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import RoleRoute from "./components/RoleRoutes.jsx";
 
-import "./cssFiles/App.css";
 import "./cssFiles/index.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";

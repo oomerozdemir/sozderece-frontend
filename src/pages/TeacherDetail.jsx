@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
-import "../cssFiles/teacher.css";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";

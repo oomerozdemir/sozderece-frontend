@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../cssFiles/PricingSection.css";
 
 // İkonlar
 import {
@@ -13,8 +12,8 @@ import {
   FaCalendarCheck,
   FaChartLine,
   FaUsers,
-  FaArrowLeft,  
-  FaArrowRight 
+  FaArrowLeft,
+  FaArrowRight
 } from "react-icons/fa";
 
 // Swiper (Slider)
@@ -31,8 +30,10 @@ import { PACKAGES, PACKAGES_ORDER } from "../hooks/packages.js";
 
 function FeatureItem({ label, included }) {
   return (
-    <li className={`feat ${included ? "on" : "off"}`}>
-      <span className="tick">{included ? <FaCheck /> : <FaTimes />}</span>
+    <li className={`flex items-start gap-[10px] text-[0.95rem] mb-3 leading-[1.4] ${included ? "text-[#444]" : "text-[#bbb] line-through"}`}>
+      <span className={`min-w-[20px] h-5 flex items-center justify-center text-[0.8rem] mt-0.5 ${included ? "text-[#27ae60]" : "text-[#ccc]"}`}>
+        {included ? <FaCheck /> : <FaTimes />}
+      </span>
       <span>{label}</span>
     </li>
   );
@@ -58,6 +59,13 @@ const badgeForType = (type) => {
   }
 };
 
+const colClassMap = {
+  1: "[grid-template-columns:minmax(300px,500px)] justify-center",
+  2: "grid-cols-2 max-w-[800px] mx-auto",
+  3: "grid-cols-3 max-[1024px]:grid-cols-2",
+  4: "grid-cols-4 max-[1024px]:grid-cols-2",
+};
+
 export default function PricingSection() {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
@@ -79,37 +87,56 @@ export default function PricingSection() {
   const renderCard = (p) => {
     const icon = iconForType(p.type);
     const badge = badgeForType(p.type);
-    const isPopular = p.type === "coaching_only"; 
+    const isPopular = p.type === "coaching_only";
+
+    const cardCls = [
+      "bg-white rounded-[20px] py-[30px] px-[25px] relative flex flex-col h-full",
+      "transition-all shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden group",
+      "lg:hover:-translate-y-[10px] lg:hover:shadow-[0_20px_40px_rgba(15,42,74,0.15)] lg:hover:border-[#f39c12]",
+      "max-[768px]:min-h-[500px]",
+      isPopular
+        ? "border-2 border-[#0f2a4a] before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[6px] before:bg-[#0f2a4a]"
+        : "border border-[#eaeaea]",
+    ].join(" ");
 
     return (
-      <div className={`pricing-card ${isPopular ? "popular-card" : ""}`}>
-        {badge && <div className="badge">{badge}</div>}
-
-        <div className="pricing-head">
-          <div className="icon-wrapper">{icon}</div>
-          <h3 className="pricing-name">{p.title}</h3>
-          
-          <div className="price-area">
-            {p.oldPriceText && <span className="old-price">{p.oldPriceText}</span>}
-            <span className="new-price">{p.priceText}</span>
+      <div className={cardCls}>
+        {badge && (
+          <div className="absolute top-5 right-5 bg-[#f39c12] text-white py-[6px] px-3 text-[0.75rem] rounded-[20px] font-bold uppercase tracking-[0.5px] z-10">
+            {badge}
           </div>
-          
-          {p.subtitle && <p className="pricing-desc">{p.subtitle}</p>}
+        )}
+
+        <div className="text-center mb-[15px]">
+          <div className="w-[60px] h-[60px] bg-[#f0f4f8] text-[#0f2a4a] rounded-full flex items-center justify-center text-[1.5rem] mx-auto mb-[15px] transition-all group-hover:bg-[#0f2a4a] group-hover:text-white">
+            {icon}
+          </div>
+          <h3 className="text-[1.2rem] font-bold text-[#333] mb-[15px] min-h-[50px] flex items-center justify-center">{p.title}</h3>
+
+          <div className="flex flex-col items-center mb-[15px]">
+            {p.oldPriceText && <span className="line-through text-[#999] text-base">{p.oldPriceText}</span>}
+            <span className="text-[#0f2a4a] text-[1.6rem] font-extrabold">{p.priceText}</span>
+          </div>
+
+          {p.subtitle && <p className="text-[0.9rem] text-[#666] leading-[1.5] mb-0 min-h-[60px]">{p.subtitle}</p>}
         </div>
 
-        <div className="divider"></div>
+        <div className="h-px bg-[#eee] my-5 w-full"></div>
 
         {Array.isArray(p.features) && (
-          <ul className="pricing-features">
+          <ul className="list-none p-0 m-0 mb-[30px] flex-grow">
             {p.features.map((f, i) => (
               <FeatureItem key={i} label={f.label} included={!!f.included} />
             ))}
           </ul>
         )}
 
-        <div className="card-footer">
+        <div className="mt-auto">
           {p.cta?.href && (
-            <button className="pricing-cta" onClick={() => navigate(p.cta.href)}>
+            <button
+              className="block w-full text-center bg-[#f39c12] text-white py-[14px] rounded-[10px] font-bold border-0 cursor-pointer text-base transition hover:bg-[#d35400] hover:-translate-y-0.5 hover:shadow-[0_5px_15px_rgba(243,156,18,0.3)]"
+              onClick={() => navigate(p.cta.href)}
+            >
               {p.cta.label || "Detayları İncele"}
             </button>
           )}
@@ -118,20 +145,23 @@ export default function PricingSection() {
     );
   };
 
+  const n = visiblePackages.length;
+  const gridClass = `grid gap-[30px] max-w-[1200px] mx-auto ${colClassMap[n] || colClassMap[4]}`;
+
   return (
-    <div className="pricing-section" id="paketler">
-      <div className="pricing-header">
-        <h2 className="pricing-section-title">Hedefine Uygun Planı Seç</h2>
-        <p className="pricing-section-subtitle">
+    <div className="bg-[#f8f9fa] py-[60px] px-5 relative" id="paketler">
+      <div className="text-center max-w-[800px] mx-auto mb-[50px]">
+        <h2 className="text-[2.2rem] font-extrabold text-[#0f2a4a] mb-[15px] max-[768px]:text-[1.8rem]">Hedefine Uygun Planı Seç</h2>
+        <p className="text-[1.1rem] text-[#666] leading-[1.6]">
           İster sadece özel ders, ister tam kapsamlı koçluk. Başarıya giden yolda sana en uygun paketi belirle.
         </p>
       </div>
 
       {/* --- PAKETLER ALANI --- */}
-      <div className="packages-container">
+      <div className="max-[768px]:px-[10px]">
         {isMobile ? (
           // MOBİL İÇİN SWIPER (SLIDER)
-          <div className="swiper-container-wrapper">
+          <div className="relative px-[5px]">
             <Swiper
               modules={[Pagination, Navigation]}
               pagination={{ clickable: true, dynamicBullets: true }}
@@ -140,9 +170,9 @@ export default function PricingSection() {
                 prevEl: '.swiper-button-prev-custom',
               }}
               spaceBetween={20}
-              slidesPerView={1} 
+              slidesPerView={1}
               centeredSlides={true}
-              initialSlide={2} // <--- ÖNEMLİ: 2500 TL'lik paket (3. sıra, index 2) varsayılan açılır
+              initialSlide={2} // 2500 TL'lik paket (3. sıra, index 2) varsayılan açılır
               className="pricing-swiper"
             >
               {visiblePackages.map((p) => (
@@ -153,14 +183,18 @@ export default function PricingSection() {
             </Swiper>
 
             {/* Özel Ok Butonları */}
-            <div className="swiper-button-prev-custom"><FaArrowLeft /></div>
-            <div className="swiper-button-next-custom"><FaArrowRight /></div>
+            <div className="absolute top-1/2 -translate-y-1/2 left-0 w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#0f2a4a] shadow-[0_4px_10px_rgba(0,0,0,0.15)] z-10 cursor-pointer border border-[#eee] transition active:bg-[#f39c12] active:text-white active:scale-90 swiper-button-prev-custom">
+              <FaArrowLeft />
+            </div>
+            <div className="absolute top-1/2 -translate-y-1/2 right-0 w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#0f2a4a] shadow-[0_4px_10px_rgba(0,0,0,0.15)] z-10 cursor-pointer border border-[#eee] transition active:bg-[#f39c12] active:text-white active:scale-90 swiper-button-next-custom">
+              <FaArrowRight />
+            </div>
           </div>
         ) : (
           // MASAÜSTÜ İÇİN GRID
-          <div className={`pricing-grid col-${visiblePackages.length}`}>
+          <div className={gridClass}>
             {visiblePackages.map((p) => (
-              <div key={p.slug} className="grid-item">
+              <div key={p.slug}>
                 {renderCard(p)}
               </div>
             ))}

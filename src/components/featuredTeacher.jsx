@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "../utils/axios";
-import "../cssFiles/teacher.css"; 
 
 function FeaturedTeachers() {
   const [teachers, setTeachers] = useState([]);

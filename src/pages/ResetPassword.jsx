@@ -1,7 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "../utils/axios";
-import "../cssFiles/login.css";
 
 
 const ResetPassword = () => {
@@ -32,11 +31,11 @@ const ResetPassword = () => {
   if (!token) return <p>Geçersiz bağlantı.</p>;
 
   return (
-    <div className="login-container">
-      <form onSubmit={handleSubmit} className="login-form">
-        <h2>Yeni Şifre Belirle</h2>
-        {message && <p className="success-message">{message}</p>}
-        {error && <p className="error-message">{error}</p>}
+    <div className="flex justify-center items-center h-[50vh] bg-white">
+      <form onSubmit={handleSubmit} className="w-full max-w-[400px] text-center px-6">
+        <h2 className="text-[2rem] mb-8 text-[#100383] font-semibold tracking-wide">Yeni Şifre Belirle</h2>
+        {message && <p className="text-green-600 text-sm mt-0 mb-2">{message}</p>}
+        {error && <p className="text-red-500 text-sm mt-0 mb-2">{error}</p>}
 
         <input
           type="password"
@@ -44,6 +43,7 @@ const ResetPassword = () => {
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           required
+          className="w-full border-0 border-b-2 border-black py-3 px-2 text-base mb-6 bg-transparent text-black focus:outline-none focus:border-gray-800"
         />
 
         <input
@@ -52,9 +52,15 @@ const ResetPassword = () => {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
+          className="w-full border-0 border-b-2 border-black py-3 px-2 text-base mb-6 bg-transparent text-black focus:outline-none focus:border-gray-800"
         />
 
-        <button type="submit">Şifreyi Güncelle</button>
+        <button
+          type="submit"
+          className="w-full py-3.5 bg-[#02095f] text-white font-bold text-[0.95rem] tracking-widest border-0 rounded mt-2.5 cursor-pointer transition-colors hover:bg-[#ec5802]"
+        >
+          Şifreyi Güncelle
+        </button>
       </form>
     </div>
   );

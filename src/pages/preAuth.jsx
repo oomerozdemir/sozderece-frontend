@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import { PACKAGES } from "../hooks/packages.js";
-import "../cssFiles/preAuth.css";
 import { isTokenValid } from "../utils/auth";
 
 export default function PreCartAuth() {
@@ -166,10 +165,10 @@ export default function PreCartAuth() {
 
   if (!pkg) {
     return (
-      <div className="preauth-container">
-        <form className="preauth-form" onSubmit={(e) => e.preventDefault()}>
+      <div className="flex justify-center items-start min-h-[60vh] bg-white">
+        <form className="w-full max-w-[420px] text-center p-6 mx-4 my-8" onSubmit={(e) => e.preventDefault()}>
           <h1>Paket bulunamadı</h1>
-          <button className="btn-primary" type="button" onClick={() => navigate("/#paketler")}>
+          <button className="w-full py-3.5 bg-[#02095f] text-white font-bold text-sm tracking-widest border-none rounded mt-1.5 cursor-pointer hover:bg-[#ec5802] transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-70" type="button" onClick={() => navigate("/#paketler")}>
             Paketlere dön
           </button>
         </form>
@@ -179,8 +178,8 @@ export default function PreCartAuth() {
 
   if (step === "checking" || step === "done") {
     return (
-      <div className="preauth-container">
-        <form className="preauth-form" onSubmit={(e) => e.preventDefault()}>
+      <div className="flex justify-center items-start min-h-[60vh] bg-white">
+        <form className="w-full max-w-[420px] text-center p-6 mx-4 my-8" onSubmit={(e) => e.preventDefault()}>
           <h1>Yönlendiriliyor…</h1>
         </form>
       </div>
@@ -188,10 +187,10 @@ export default function PreCartAuth() {
   }
 
   return (
-    <div className="preauth-container">
-      <form className="preauth-form" onSubmit={(e) => e.preventDefault()}>
+    <div className="flex justify-center items-start min-h-[60vh] bg-white">
+      <form className="w-full max-w-[420px] text-center p-6 mx-4 my-8" onSubmit={(e) => e.preventDefault()}>
         <h1>Devam etmeden önce giriş yap</h1>
-        <p className="subtitle">
+        <p className="text-sm text-slate-600 mb-6">
           {pkg.title} paketini sepete eklemek için e-posta ile tek kullanımlık kodla giriş yap.
         </p>
 
@@ -201,7 +200,7 @@ export default function PreCartAuth() {
             {hasRemember && (
               <div style={{ marginBottom: 10, textAlign: "center" }}>
                 <button
-                  className="btn-primary"
+                  className="w-full py-3.5 bg-[#02095f] text-white font-bold text-sm tracking-widest border-none rounded mt-1.5 cursor-pointer hover:bg-[#ec5802] transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-70"
                   type="button"
                   onClick={oneTapLoginAndAdd}
                   disabled={loading}
@@ -215,23 +214,25 @@ export default function PreCartAuth() {
               </div>
             )}
 
-            <label>E-posta</label>
+            <label className="block text-left text-sm text-gray-900 mb-1.5">E-posta</label>
             <input
               type="email"
               placeholder="ornek@eposta.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="w-full border-0 border-b-2 border-black py-3 px-2 text-base mb-4 bg-transparent text-black outline-none focus:border-gray-800"
             />
-            <label className="remember-me">
+            <label className="inline-flex items-center gap-2 my-2 mb-4 text-sm text-gray-900 cursor-pointer">
               <input
                 type="checkbox"
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
+                className="w-4 h-4 accent-[#02095f]"
               />
               Beni Hatırla
             </label>
             <button
-              className="btn-primary"
+              className="w-full py-3.5 bg-[#02095f] text-white font-bold text-sm tracking-widest border-none rounded mt-1.5 cursor-pointer hover:bg-[#ec5802] transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-70"
               type="button"
               onClick={sendCode}
               disabled={!email.includes("@") || resendIn > 0 || loading}
@@ -243,16 +244,17 @@ export default function PreCartAuth() {
 
         {step === "code" && (
           <>
-            <label>E-postana gelen kod</label>
+            <label className="block text-left text-sm text-gray-900 mb-1.5">E-postana gelen kod</label>
             <input
               type="text"
               placeholder="• • • •"
               value={code}
               onChange={(e) => setCode(e.target.value)}
               maxLength={8}
+              className="w-full border-0 border-b-2 border-black py-3 px-2 text-base mb-4 bg-transparent text-black outline-none focus:border-gray-800"
             />
             <button
-              className="btn-primary"
+              className="w-full py-3.5 bg-[#02095f] text-white font-bold text-sm tracking-widest border-none rounded mt-1.5 cursor-pointer hover:bg-[#ec5802] transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-70"
               type="button"
               onClick={verify}
               disabled={code.length < 4 || loading}
@@ -260,17 +262,17 @@ export default function PreCartAuth() {
               {loading ? "Doğrulanıyor..." : "Doğrula ve Sepete Ekle"}
             </button>
 
-            <button className="btn-secondary" type="button" onClick={sendCode} disabled={resendIn > 0 || loading}>
+            <button className="w-full py-3 text-gray-900 bg-white border border-slate-300 rounded cursor-pointer mt-2 hover:bg-slate-50 hover:border-slate-400 transition-all disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-70" type="button" onClick={sendCode} disabled={resendIn > 0 || loading}>
               {resendIn > 0 ? `Tekrar gönder (${resendIn})` : "Kodu tekrar gönder"}
             </button>
 
-            <button className="btn-secondary" type="button" style={{ marginTop: 8 }} onClick={() => setStep("email")}>
+            <button className="w-full py-3 text-gray-900 bg-white border border-slate-300 rounded cursor-pointer mt-2 hover:bg-slate-50 hover:border-slate-400 transition-all disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-70" type="button" style={{ marginTop: 8 }} onClick={() => setStep("email")}>
               E-postayı değiştir
             </button>
           </>
         )}
 
-        {!!msg && <p className="message">{msg}</p>}
+        {!!msg && <p className="mt-2.5 text-sm text-gray-700">{msg}</p>}
       </form>
     </div>
   );

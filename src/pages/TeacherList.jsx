@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { Link, useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "../utils/axios";
 import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
-import "../cssFiles/teacher.css";
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";

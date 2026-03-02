@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "../utils/axios";
 import { isTokenValid } from "../utils/auth";
-import "../cssFiles/teacher.css";
 
 export default function TutorPackageSelect() {
   const navigate = useNavigate();

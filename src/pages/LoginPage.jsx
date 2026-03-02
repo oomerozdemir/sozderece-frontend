@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
 import { Helmet } from "react-helmet";
 import axios from "../utils/axios";
-import "../cssFiles/login.css";
 import Navbar from "../components/navbar";
 import { isTokenValid, getRoleFromToken } from "../utils/auth";
 
@@ -37,7 +36,7 @@ const LoginPage = () => {
         } else {
           const res = await axios.get("/api/auth/silent-login?soft=1");
           if (res?.data?.authenticated === true) {
-            setHasRemember(true); 
+            setHasRemember(true);
           }
         }
       } catch {
@@ -54,7 +53,7 @@ const LoginPage = () => {
       const res = await axios.get("/api/auth/silent-login");
       if (res?.data?.token && res?.data?.user) {
        localStorage.setItem("token", res.data.token);
-      localStorage.setItem("userRole", res.data.user.role); 
+      localStorage.setItem("userRole", res.data.user.role);
       localStorage.setItem("userName", res.data.user.name);
         const role = res.data.user.role;
         if (role === "admin") navigate("/admin", { replace: true });
@@ -141,56 +140,55 @@ const LoginPage = () => {
       <Navbar />
 
       {/* İki sütun: sol öğretmen CTA, sağ öğrenci OTP girişi */}
-      <div className="login-container">
-        <div className="login-wrapper">
-          <div className="login-split">
+      <div className="flex justify-center items-center min-h-[50vh] bg-white max-[900px]:min-h-0">
+        <div className="w-full py-8 px-4 flex justify-center">
+          <div className="w-full max-w-[1000px] grid grid-cols-2 gap-7 items-stretch max-[900px]:grid-cols-1">
             {/* SOL — Öğretmen CTA */}
-            <aside className="teacher-card">
-              <h3>Özel ders vermek ister misin?</h3>
-              <p className="teacher-sub">
+            <aside className="bg-gradient-to-b from-[#f7f8ff] to-white border border-gray-200 rounded-2xl p-6 shadow-[0_8px_18px_rgba(0,0,0,0.06)]">
+              <h3 className="text-[#100383] text-[1.4rem] font-bold mt-0 mb-2.5">Özel ders vermek ister misin?</h3>
+              <p className="text-gray-700 mt-0 mb-4">
                 Profilini oluştur, fiyatını belirle ve öğrencilerle buluş.
               </p>
-              <ul className="teacher-benefits">
+              <ul className="mt-0 mb-[18px] pl-[18px] text-gray-800 leading-[1.45]">
                 <li>🔹 Şehir / ilçe & sınıf filtreleri</li>
                 <li>🔹 Online / yüz yüze seçenekleri</li>
                 <li>🔹 Kişisel profil sayfası</li>
               </ul>
 
-              <Link to="/ogretmen/kayit" className="teacher-primary-btn">
+              <Link to="/ogretmen/kayit" className="inline-block text-center w-full py-3 px-3.5 bg-[#02095f] text-white rounded-xl font-bold no-underline transition-all hover:bg-[#ec5802] hover:-translate-y-px">
                 Özel ders vermek için <strong>kayıt ol</strong>
               </Link>
 
-              <div className="teacher-secondary">
+              <div className="mt-2.5 text-center text-gray-600">
                 Zaten öğretmen misin?{" "}
-                <Link to="/ogretmen/giris" className="teacher-link">
+                <Link to="/ogretmen/giris" className="text-[#02095f] font-semibold underline">
                   Giriş yap
                 </Link>
               </div>
             </aside>
 
             {/* SAĞ — Öğrenci OTP Girişi */}
-            <section className="login-form-card">
-              <form className="login-form" onSubmit={(e) => e.preventDefault()}>
-                {step === "checking" && <h2>Yönlendiriliyor…</h2>}
-                {step !== "checking" && <h2>E-posta ile Giriş</h2>}
+            <section className="bg-white border border-gray-200 rounded-2xl px-2 py-4 shadow-[0_8px_18px_rgba(0,0,0,0.04)]">
+              <form className="w-full max-w-[400px] text-center px-6 mx-auto" onSubmit={(e) => e.preventDefault()}>
+                {step === "checking" && <h2 className="text-[2rem] mb-8 text-[#100383] font-semibold tracking-wide">Yönlendiriliyor…</h2>}
+                {step !== "checking" && <h2 className="text-[2rem] mb-8 text-[#100383] font-semibold tracking-wide">E-posta ile Giriş</h2>}
 
-                {!!error && <p className="error-message">{error}</p>}
+                {!!error && <p className="text-red-500 text-sm mt-0 mb-2">{error}</p>}
 
                 {step === "email" && (
                   <>
                     {/* Bu cihazda remember varsa Tek Tıkla Giriş */}
                     {hasRemember && (
-                      <div className="remember-cta" style={{ marginBottom: 10, textAlign: "center" }}>
+                      <div className="mb-2.5 text-center">
                         <button
                           type="button"
                           onClick={oneTapLogin}
                           disabled={loading}
-                          className="teacher-primary-btn"
-                          style={{ width: "100%" }}
+                          className="w-full py-3 px-3.5 bg-[#02095f] text-white rounded-xl font-bold border-0 cursor-pointer transition-all hover:bg-[#ec5802] hover:-translate-y-px disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-70"
                         >
                           Tek tıkla giriş yap
                         </button>
-                        <div style={{ fontSize: ".9rem", color: "#6b7280", marginTop: 6 }}>
+                        <div className="text-[0.9rem] text-gray-500 mt-1.5">
                           Bu cihazda kayıtlı oturum bulundu.
                         </div>
                       </div>
@@ -202,12 +200,14 @@ const LoginPage = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
+                      className="w-full border-0 border-b-2 border-black py-3 px-2 text-base mb-6 bg-transparent text-black focus:outline-none focus:border-gray-800"
                     />
-                    <label className="remember-me">
+                    <label className="flex items-center gap-2 my-2 mb-4 text-[0.95rem] text-gray-900 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={remember}
                         onChange={(e) => setRemember(e.target.checked)}
+                        className="w-4 h-4 m-0 p-0 accent-[#02095f]"
                       />
                       Beni Hatırla
                     </label>
@@ -215,6 +215,7 @@ const LoginPage = () => {
                       type="button"
                       onClick={sendCode}
                       disabled={!email.includes("@") || loading || resendIn > 0}
+                      className="w-full py-3.5 bg-[#02095f] text-white font-bold text-[0.95rem] tracking-widest border-0 rounded mt-2.5 cursor-pointer transition-colors hover:bg-[#ec5802] disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-70"
                     >
                       {loading
                         ? "Gönderiliyor..."
@@ -234,20 +235,22 @@ const LoginPage = () => {
                       onChange={(e) => setCode(e.target.value)}
                       maxLength={8}
                       required
+                      className="w-full border-0 border-b-2 border-black py-3 px-2 text-base mb-6 bg-transparent text-black focus:outline-none focus:border-gray-800"
                     />
                     <button
                       type="button"
                       onClick={verify}
                       disabled={code.trim().length < 4 || loading}
+                      className="w-full py-3.5 bg-[#02095f] text-white font-bold text-[0.95rem] tracking-widest border-0 rounded mt-2.5 cursor-pointer transition-colors hover:bg-[#ec5802] disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-70"
                     >
                       {loading ? "Doğrulanıyor..." : "Doğrula ve Giriş Yap"}
                     </button>
 
                     <button
                       type="button"
-                      className="linklike"
                       onClick={sendCode}
                       disabled={loading || resendIn > 0}
+                      className="bg-transparent border-0 text-[#02095f] cursor-pointer text-sm font-medium underline hover:text-[#ec5802] disabled:text-gray-400 disabled:cursor-not-allowed"
                       style={{ marginTop: 8 }}
                     >
                       {resendIn > 0
@@ -256,12 +259,12 @@ const LoginPage = () => {
                     </button>
                     <button
                       type="button"
-                      className="linklike"
                       onClick={() => {
                         setStep("email");
                         setCode("");
                         setError("");
                       }}
+                      className="bg-transparent border-0 text-[#02095f] cursor-pointer text-sm font-medium underline hover:text-[#ec5802]"
                       style={{ marginTop: 8 }}
                     >
                       E-postayı değiştir
@@ -275,19 +278,19 @@ const LoginPage = () => {
       </div>
 
       {/* FOOTER */}
-      <footer className="custom-footer">
-        <div className="footer-icons">
-          <a href="https://www.instagram.com/sozderece/"><FaInstagram /></a>
-          <FaTiktok />
-          <FaYoutube />
+      <footer className="mt-[120px] pt-10 px-5 pb-5 border-t border-gray-300 text-center bg-[#fafafa]">
+        <div className="flex justify-center gap-6 mb-5 text-[1.6rem]">
+          <a href="https://www.instagram.com/sozderece/" className="text-[#010c69] border border-[#020074] rounded-full p-2.5 w-11 h-11 flex items-center justify-center transition-all hover:bg-[#e94b02] hover:border-[#e94b02] hover:text-white"><FaInstagram /></a>
+          <span className="text-[#010c69] border border-[#020074] rounded-full p-2.5 w-11 h-11 flex items-center justify-center transition-all hover:bg-[#e94b02] hover:border-[#e94b02] hover:text-white"><FaTiktok /></span>
+          <span className="text-[#010c69] border border-[#020074] rounded-full p-2.5 w-11 h-11 flex items-center justify-center transition-all hover:bg-[#e94b02] hover:border-[#e94b02] hover:text-white"><FaYoutube /></span>
         </div>
-        <div className="footer-links">
-          <a href="/hakkimizda">Hakkımızda</a>
-          <a href="/mesafeli-hizmet-sozlesmesi">Mesafeli Hizmet Sözleşmesi</a>
-          <a href="/gizlilik-politikasi-kvkk">Gizlilik ve KVKK</a>
-          <a href="/iade-ve-cayma-politikasi">İade ve Cayma Politikası</a>
+        <div className="flex justify-center flex-wrap gap-6 mb-4 text-[0.95rem]">
+          <a href="/hakkimizda" className="text-gray-800 no-underline transition-colors hover:text-[#e5671e]">Hakkımızda</a>
+          <a href="/mesafeli-hizmet-sozlesmesi" className="text-gray-800 no-underline transition-colors hover:text-[#e5671e]">Mesafeli Hizmet Sözleşmesi</a>
+          <a href="/gizlilik-politikasi-kvkk" className="text-gray-800 no-underline transition-colors hover:text-[#e5671e]">Gizlilik ve KVKK</a>
+          <a href="/iade-ve-cayma-politikasi" className="text-gray-800 no-underline transition-colors hover:text-[#e5671e]">İade ve Cayma Politikası</a>
         </div>
-        <div className="footer-copy">© 2025 Sözderece Koçluk Her Hakkı Saklıdır</div>
+        <div className="text-sm text-gray-500">© 2025 Sözderece Koçluk Her Hakkı Saklıdır</div>
       </footer>
     </>
   );

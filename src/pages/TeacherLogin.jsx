@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
 import { isTokenValid, getRoleFromToken } from "../utils/auth";
-import "../cssFiles/teacher.css"; // ⬅️ YENİ: sayfaya özel css
 
 export default function TeacherLogin() {
   const navigate = useNavigate();

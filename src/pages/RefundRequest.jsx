@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
-import "../cssFiles/App.css";
 
 const RefundRequests = () => {
   const [refundOrders, setRefundOrders] = useState([]);

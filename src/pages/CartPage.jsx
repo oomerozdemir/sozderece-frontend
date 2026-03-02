@@ -1,7 +1,5 @@
 import { useState, useMemo } from "react";
 import useCart from "../hooks/useCart";
-import "../cssFiles/cart.css";
-import "../cssFiles/stepIndicator.css";
 import { CgTrash } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
@@ -97,18 +95,18 @@ const CartPage = () => {
       <TopBar />
       <Navbar />
 
-      <div className="cart-page">
+      <div className="max-w-[900px] mx-10 my-10 bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] px-[50px] max-[768px]:mx-2.5 max-[768px]:my-5 max-[768px]:px-5 max-[768px]:rounded-lg">
         <StepIndicator currentStep={1} />
-        <h2 className="cart-title">Sepet</h2>
+        <h2 className="text-[3rem] text-center mb-5 py-5 border-b border-[#e65e04] text-[#e45e04] font-normal max-[768px]:text-[2rem] max-[768px]:mb-4">Sepet</h2>
 
-        {loading && <div className="empty-message">Sepet yükleniyor…</div>}
-        {error && !loading && <div className="empty-message">{error}</div>}
+        {loading && <div>Sepet yükleniyor…</div>}
+        {error && !loading && <div>{error}</div>}
 
         {!loading && !error && items.length === 0 ? (
-          <div className="empty-message-container">
-            <p className="empty-message">Sepetiniz boş.</p>
+          <div className="text-center py-10">
+            <p>Sepetiniz boş.</p>
             <button
-              className="browse-packages-button"
+              className="mt-3 bg-[#e45e04] text-white py-2.5 px-[18px] text-base border-0 rounded-lg cursor-pointer transition-colors hover:bg-[#c94d03] max-[768px]:w-full"
               onClick={() => navigate("/paket-detay")}
             >
               Paketlere Göz At
@@ -116,7 +114,7 @@ const CartPage = () => {
           </div>
         ) : !loading && !error ? (
           <>
-            <ul className="cart-list">
+            <ul className="list-none p-5 m-0">
               {items.map((item, i) => {
                 const slug = getSlug(item);
                 const title = getTitle(item);
@@ -125,29 +123,29 @@ const CartPage = () => {
                 const totalItemTL = (unitTL * qty).toFixed(2);
 
                 return (
-                  <li key={`${slug}-${i}`} className="cart-item">
-                    <div className="cart-item-details">
-                      <div className="cart-item-image">
-                        <img src="/images/hero-logo.webp" alt={title} />
+                  <li key={`${slug}-${i}`} className="flex justify-between items-start py-5 border-b border-[#e74d05] text-[1.3rem] mb-4 max-[768px]:flex-col max-[768px]:items-start max-[768px]:text-base max-[768px]:py-4">
+                    <div className="flex gap-4 flex-1 max-[768px]:flex-col max-[768px]:gap-3">
+                      <div>
+                        <img src="/images/hero-logo.webp" alt={title} className="w-20 h-20 rounded-lg object-cover max-[768px]:w-[60px] max-[768px]:h-[60px]" />
                       </div>
-                      <div className="cart-item-text">
+                      <div>
                         <strong>{title}</strong>
                       </div>
                     </div>
 
                     {/* Miktar Kısmı Değiştirildi: Butonlar kaldırıldı, sabit metin eklendi */}
-                    <div className="cart-item-quantity" style={{ justifyContent: 'center', cursor: 'default' }}>
-                      <span style={{ fontSize: '0.9rem', color: '#555' }}>1 Adet</span>
+                    <div className="flex items-center gap-2 mb-1.5 justify-center cursor-default">
+                      <span className="text-[0.9rem] text-[#555]">1 Adet</span>
                     </div>
 
-                    <div className="cart-item-pricing">
-                      <div className="unit-price">₺{unitTL.toFixed(2)}</div>
-                      <div className="total-price">
+                    <div className="flex flex-col items-end gap-1 min-w-[100px] max-[768px]:items-start max-[768px]:text-left">
+                      <div className="text-[0.85rem] text-[#666]">₺{unitTL.toFixed(2)}</div>
+                      <div className="text-[1.2rem] font-normal text-black">
                         <strong>₺{totalItemTL}</strong>
                       </div>
                     </div>
 
-                    <button className="trashCan" onClick={() => onRemove(slug)}>
+                    <button className="border-none bg-transparent cursor-pointer text-[#e53e3e]" onClick={() => onRemove(slug)}>
                       <CgTrash size={22} />
                     </button>
                   </li>
@@ -155,18 +153,18 @@ const CartPage = () => {
               })}
             </ul>
 
-            <div className="cart-summary">
+            <div className="mt-[30px] text-center p-5 max-[768px]:p-4">
               <hr />
-              <p className="cart-total">
+              <p className="text-[1.5rem] font-bold">
                 <strong>Toplam:</strong> ₺{total.toFixed(2)}
               </p>
               {hasTutoring && (
-                <p className="cart-note">
+                <p className="text-[0.85rem] text-[#888] mt-2">
                   Özel ders seçimleri için <strong>KDV</strong> ödeme adımında hesaplanır ve eklenir.
                 </p>
               )}
 
-              <div className="cart-check">
+              <div className="mt-4 text-[0.9rem] flex items-center gap-2 justify-center">
                 <input
                   type="checkbox"
                   id="agreement"
@@ -179,14 +177,13 @@ const CartPage = () => {
                 </label>
               </div>
 
-              <button onClick={handleCheckout} className="checkout-button">
+              <button onClick={handleCheckout} className="mt-5 bg-black text-white py-3 px-6 rounded-md border-0 text-base font-bold cursor-pointer max-[768px]:w-full max-[768px]:text-[0.95rem] max-[768px]:py-2.5">
                 ÖDEMEYE GEÇ!
               </button>
 
               <p
-                className="continue-link"
+                className="mt-3 text-[0.9rem] text-[rgb(11,11,12)] cursor-pointer"
                 onClick={handleContinueShopping}
-                style={{ cursor: "pointer" }}
               >
                 Alışverişe devam et.
               </p>

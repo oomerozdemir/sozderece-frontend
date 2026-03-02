@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
-import "../cssFiles/adminCoach.css";
 
 const AdminCoachPage = () => {
   const [coaches, setCoaches] = useState([]);
@@ -103,7 +102,7 @@ const handleSubmit = async (e) => {
     setEditingCoach(coach);
     setFormData({
       name: coach.name,
-      email: coach.email, 
+      email: coach.email,
       subject: coach.subject,
       description: coach.description,
       imageFile: null,
@@ -157,6 +156,8 @@ const handleSubmit = async (e) => {
   // Sayfa değiştirici
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const paginationBtnCls = "border-0 mx-1 py-1.5 px-3 rounded-md cursor-pointer font-bold transition-colors bg-[#ee3c05] text-white disabled:opacity-50 disabled:cursor-default hover:enabled:bg-[#ddd]";
+
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Koç Yönetimi</h2>
@@ -167,13 +168,13 @@ const handleSubmit = async (e) => {
         encType="multipart/form-data"
       >
         <input
-  type="text"
-  placeholder="Kullanıcı Adı (Ad Soyad)"
-  value={formData.name}
-onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-  className="border p-2 w-full"
-  required
-/>
+          type="text"
+          placeholder="Kullanıcı Adı (Ad Soyad)"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          className="border p-2 w-full"
+          required
+        />
         <input
           type="email"
           placeholder="Email"
@@ -208,55 +209,60 @@ onChange={(e) => setFormData({ ...formData, name: e.target.value })}
         </button>
       </form>
 
-      <div className="coach-grid">
+      <div className="grid grid-cols-3 gap-5 mt-5 max-[768px]:grid-cols-2 max-[480px]:grid-cols-1">
         {currentCoaches.map((coach) => (
-          <div key={coach.id} className="coach-card">
+          <div key={coach.id} className="bg-white border border-[#ddd] rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.06)] transition-shadow hover:shadow-[0_6px_20px_rgba(0,0,0,0.1)]">
             <img
               src={coach.image}
               alt={coach.name}
-              className="coach-image"
+              className="w-full h-[200px] object-cover"
             />
-            <div className="coach-info">
-              <h3 className="coach-name">{coach.name}</h3>
-              <p className="coach-subject">{coach.subject}</p>
-              <p className="coach-description">{coach.description}</p>
-              <div className="coach-actions">
-                <button onClick={() => handleEdit(coach)} className="edit-btn">
+            <div className="p-4">
+              <h3 className="text-[18px] font-bold mb-1.5 text-[#333]">{coach.name}</h3>
+              <p className="text-sm text-[#555] mb-1">{coach.subject}</p>
+              <p className="text-[13px] text-[#666] mb-3">{coach.description}</p>
+              <div className="flex justify-end gap-2.5">
+                <button
+                  onClick={() => handleEdit(coach)}
+                  className="py-1.5 px-3 text-[13px] border-0 cursor-pointer rounded-md transition-colors bg-[#e0f0ff] text-[#0066cc] hover:bg-[#cce7ff]"
+                >
                   ✏️ Düzenle
                 </button>
-                <button onClick={() => handleDelete(coach.id)} className="delete-btn">
+                <button
+                  onClick={() => handleDelete(coach.id)}
+                  className="py-1.5 px-3 text-[13px] border-0 cursor-pointer rounded-md transition-colors bg-[#ffe6e6] text-[#cc0000] hover:bg-[#ffcccc]"
+                >
                   🗑 Sil
                 </button>
-                {/* Öğrenciye Ata Butonu */}
                 <button
                   onClick={() => setAssigningCoach(coach)}
-                  className="assign-btn"
+                  className="py-1.5 px-3 text-[13px] border-0 cursor-pointer rounded-md transition-colors bg-[#e8f5e9] text-[#2e7d32] hover:bg-[#c8e6c9]"
                 >
                   👥 Öğrenciye Ata
                 </button>
                {coach.assignedTo && coach.assignedTo.length > 0 && (
-  <div className="assigned-students mt-2">
-    <strong>Atanmış Öğrenciler:</strong>
-    <ul className="list-disc list-inside text-sm text-gray-700">
-      {coach.assignedTo.map((student) => (
-        <li key={student.id}>
-          {student.name} ({student.email})
-        </li>
-      ))}
-    </ul>
-  </div>
-)}
-
+                <div className="mt-2 bg-[#f7f7f7] p-2 rounded-md">
+                  <strong>Atanmış Öğrenciler:</strong>
+                  <ul className="list-disc list-inside text-sm text-gray-700">
+                    {coach.assignedTo.map((student) => (
+                      <li key={student.id}>
+                        {student.name} ({student.email})
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="pagination">
+      <div className="mt-5 text-center">
         <button
           disabled={currentPage === 1}
           onClick={() => paginate(currentPage - 1)}
+          className={paginationBtnCls}
         >
           ‹ Önceki
         </button>
@@ -264,7 +270,7 @@ onChange={(e) => setFormData({ ...formData, name: e.target.value })}
         {[...Array(totalPages)].map((_, i) => (
           <button
             key={i}
-            className={currentPage === i + 1 ? "active-page" : ""}
+            className={`${paginationBtnCls} ${currentPage === i + 1 ? "bg-[#ddd] text-black" : ""}`}
             onClick={() => paginate(i + 1)}
           >
             {i + 1}
@@ -274,6 +280,7 @@ onChange={(e) => setFormData({ ...formData, name: e.target.value })}
         <button
           disabled={currentPage === totalPages}
           onClick={() => paginate(currentPage + 1)}
+          className={paginationBtnCls}
         >
           Sonraki ›
         </button>
@@ -283,20 +290,21 @@ onChange={(e) => setFormData({ ...formData, name: e.target.value })}
       {assigningCoach && (
         <>
           <div
-            className="modal-overlay"
+            className="fixed top-0 left-0 w-screen h-screen bg-[rgba(0,0,0,0.5)] z-[999]"
             onClick={() => {
               setAssigningCoach(null);
               setSelectedStudentId("");
             }}
           ></div>
-          <div className="modal-content show">
-            <h3>
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[rgb(24,49,192)] p-6 rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.2)] z-[1000] w-[90%] max-w-[400px] text-white">
+            <h3 className="mb-3">
               {assigningCoach.name} koçunu öğrenciye ata
             </h3>
             <label>Öğrenci Seç:</label>
             <select
               value={selectedStudentId}
               onChange={(e) => setSelectedStudentId(e.target.value)}
+              className="w-full p-2 mt-2 text-black"
             >
               <option value="">-- Öğrenci seçin --</option>
               {students.map((student) => (
@@ -305,8 +313,12 @@ onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 </option>
               ))}
             </select>
-            <div className="modal-actions">
-              <button onClick={handleAssignCoach} disabled={!selectedStudentId}>
+            <div className="flex justify-end gap-2.5 mt-4">
+              <button
+                onClick={handleAssignCoach}
+                disabled={!selectedStudentId}
+                className="py-1.5 px-3 bg-green-600 text-white border-0 rounded-md cursor-pointer font-bold disabled:opacity-50"
+              >
                 💾 Ata
               </button>
               <button
@@ -314,6 +326,7 @@ onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   setAssigningCoach(null);
                   setSelectedStudentId("");
                 }}
+                className="py-1.5 px-3 bg-gray-200 text-black border-0 rounded-md cursor-pointer font-bold"
               >
                 İptal
               </button>

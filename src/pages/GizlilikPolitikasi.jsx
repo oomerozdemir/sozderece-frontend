@@ -1,5 +1,4 @@
 import React from "react";
-import "../cssFiles/mesafeliSozlesme.css";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";

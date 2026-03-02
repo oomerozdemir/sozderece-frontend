@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "../cssFiles/FaqSection.css";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom"; // Ahrefs uyarısı: <a> yerine <Link> kullanmalıyız

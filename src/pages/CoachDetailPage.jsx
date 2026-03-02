@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // 1. Link bileşeni eklendi
+import { Link } from "react-router-dom";
 import axios from "../utils/axios";
-import "../cssFiles/CoachDetail.css";
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
@@ -42,7 +41,6 @@ const CoachDetailPage = () => {
         "@type": "Person",
         "name": coach.name,
         "description": coach.description || "Derece Öğrencisi Koç",
-        // 2. DÜZELTME: Görsel URL'i 'http' ile başlamıyorsa başına site adresini ekle
         "image": coach.image?.startsWith("http") ? coach.image : `${siteUrl}${coach.image}`,
         "jobTitle": "Eğitim Koçu",
         "worksFor": {
@@ -61,8 +59,8 @@ const CoachDetailPage = () => {
 
   return (
     <>
-      <Seo 
-        title="Ekibimiz - Derece Yapan Koçlar" 
+      <Seo
+        title="Ekibimiz - Derece Yapan Koçlar"
         description="Sözderece Koçluk ekibiyle tanışın. Tıp, Mühendislik ve Hukuk kazanan derece öğrencisi koçlarımızla başarıya ulaşın."
         canonical="/ekibimiz"
       />
@@ -76,27 +74,26 @@ const CoachDetailPage = () => {
       <TopBar />
       <Navbar />
 
-      <div className="coach-detail-page">
-        <h1 className="coach-detail-title">Koçluk Ekibimiz</h1>
+      <div className="max-w-[1200px] my-10 mx-auto px-5 text-center min-h-[70vh]">
+        <h1 className="text-[2.2rem] font-bold mb-2.5 text-[#333]">Koçluk Ekibimiz</h1>
         <p style={{textAlign: 'center', maxWidth: '800px', margin: '0 auto 40px auto', color: '#666'}}>
           Sınav sürecini başarıyla tamamlamış, tecrübeli ve dinamik kadromuzla tanışın.
         </p>
 
-        <div className="coach-detail-list">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6 pb-10 max-[500px]:gap-4">
           {coaches.map((coach) => (
-            <div key={coach.id} className="coach-detail-card">
-              <img 
-                src={coach.image} 
-                alt={`${coach.name} - ${coach.subject || 'Derece Koçu'}`} // Alt metni zenginleştirdik
-                className="coach-detail-image" 
-                loading="lazy" 
-                // 3. DÜZELTME: CLS önlemek için yaklaşık en-boy oranı değerleri (CSS ile override edilebilir ama tarayıcı yer ayırır)
-                width="300" 
+            <div key={coach.id} className="bg-white rounded-2xl shadow-[0_4px_16px_rgba(0,0,0,0.1)] p-5 transition-transform hover:-translate-y-[5px] flex flex-col items-center text-left max-[500px]:p-4">
+              <img
+                src={coach.image}
+                alt={`${coach.name} - ${coach.subject || 'Derece Koçu'}`}
+                className="w-full max-h-[400px] [aspect-ratio:1/3] object-cover rounded-xl mb-[15px] max-[768px]:w-40 max-[768px]:h-40 max-[768px]:rounded-full max-[768px]:mx-auto max-[768px]:mb-3 max-[500px]:max-h-[500px]"
+                loading="lazy"
+                width="300"
                 height="300"
               />
-              <h3 className="coach-detail-name">{coach.name}</h3>
-              <p className="coach-detail-subject">{coach.subject}</p>
-              <p className="coach-detail-description">{coach.description}</p>
+              <h3 className="text-[1.2rem] font-semibold text-[#222] mb-1.5">{coach.name}</h3>
+              <p className="text-base text-[#777] mb-2.5">{coach.subject}</p>
+              <p className="text-[0.95rem] text-[#444] leading-[1.5] max-[768px]:text-[0.75rem]">{coach.description}</p>
             </div>
           ))}
         </div>
@@ -105,7 +102,7 @@ const CoachDetailPage = () => {
         <div style={{textAlign: 'center', marginTop: '50px', padding: '30px 20px', backgroundColor: '#f8f9fa', borderRadius: '12px'}}>
             <p style={{marginBottom: '15px', fontSize: '1.1rem'}}>Hala aklında sorular mı var?</p>
             <p>
-            <Link to="/sss" style={{color: '#0f2a4a', fontWeight: 'bold', textDecoration: 'underline'}}>Sıkça Sorulan Sorular</Link> sayfasına göz atabilir veya 
+            <Link to="/sss" style={{color: '#0f2a4a', fontWeight: 'bold', textDecoration: 'underline'}}>Sıkça Sorulan Sorular</Link> sayfasına göz atabilir veya
             hemen <Link to="/paket-detay" style={{color: '#f39c12', fontWeight: 'bold'}}>Koçluk Paketlerini</Link> inceleyebilirsin.
             </p>
         </div>

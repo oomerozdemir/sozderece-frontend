@@ -1,6 +1,5 @@
 import React from "react";
-import "../cssFiles/Testimonials.css";
-import { FaQuoteLeft, FaArrowUp } from "react-icons/fa";
+import { FaArrowUp } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -47,14 +46,14 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="testimonials-section">
-      <div className="testimonials-container">
-        
+    <section className="bg-[#100481] py-[80px] px-5 relative overflow-hidden testimonials-section">
+      <div className="max-w-[1200px] mx-auto relative z-[2]">
+
         {/* Başlık Alanı */}
-        <div className="section-header">
-          <span className="section-badge">GELİŞİM TABLOLARI</span>
-          <h2 className="section-title">Sadece Başarıyı Değil, <br/>Gelişimi Kutluyoruz!</h2>
-          <p className="section-subtitle">
+        <div className="text-center mb-[50px] text-white">
+          <span className="inline-block bg-[rgba(46,204,113,0.2)] text-[#2ecc71] py-1.5 px-4 rounded-[20px] text-[0.85rem] font-bold tracking-widest mb-[15px] border border-[rgba(46,204,113,0.4)]">GELİŞİM TABLOLARI</span>
+          <h2 className="text-[2.5rem] font-extrabold mb-[15px] text-white leading-[1.2] max-[768px]:text-[1.8rem]">Sadece Başarıyı Değil, <br/>Gelişimi Kutluyoruz!</h2>
+          <p className="text-[1.1rem] text-slate-300 max-w-[600px] mx-auto leading-[1.6]">
             Öğrencilerimiz nerede başladı, nereye geldi? İşte disiplinli çalışmanın ve doğru takibin kanıtları.
           </p>
         </div>
@@ -76,23 +75,21 @@ export default function Testimonials() {
         >
           {testimonials.map((item) => (
             <SwiperSlide key={item.id}>
-              <div className="testimonial-card">
-                
+              <div className="bg-white rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.2)] h-full flex flex-col overflow-hidden transition-transform duration-300 hover:-translate-y-[5px]">
+
                 {/* Kart Üstü: Net Artış Rozeti */}
-                <div className="net-increase-badge">
+                <div className="bg-[#e8f8f5] text-[#00b894] py-[15px] px-5 font-extrabold text-[1.05rem] flex items-center gap-2.5 border-b border-[#d1f2eb] max-[768px]:text-[0.95rem] max-[768px]:py-3 max-[768px]:px-[15px]">
                   <FaArrowUp /> {item.badge}
                 </div>
 
-                <div className="card-content">
-                    
-                    
-                    <p className="testimonial-text">"{item.text}"</p>
+                <div className="p-[25px] flex-grow">
+                  <p className="text-base text-[#334e68] leading-[1.6] italic m-0">"{item.text}"</p>
                 </div>
-                
-                <div className="testimonial-author">
-                  <div className="author-info">
-                    <h4 className="author-name">{item.name}</h4>
-                    <span className="author-role">{item.status}</span>
+
+                <div className="flex items-center gap-[15px] py-5 px-[25px] bg-[#f8f9fa] border-t border-[#eee]">
+                  <div className="flex flex-col">
+                    <h4 className="text-[0.95rem] font-bold text-[#0f2a4a] m-0">{item.name}</h4>
+                    <span className="text-[0.8rem] text-slate-500 font-medium">{item.status}</span>
                   </div>
                 </div>
               </div>
