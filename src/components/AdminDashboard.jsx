@@ -16,6 +16,51 @@ import AdminTeacherRequests from "../pages/AdminTeacherRequests";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
+const ROLE_META = {
+  admin:   { label: "Admin",    bg: "bg-[#fef2f2]", text: "text-[#991b1b]",  dot: "bg-[#ef4444]" },
+  coach:   { label: "Koç",      bg: "bg-[#ecfdf5]", text: "text-[#065f46]",  dot: "bg-[#10b981]" },
+  student: { label: "Öğrenci",  bg: "bg-[#eff6ff]", text: "text-[#1d4ed8]",  dot: "bg-[#3b82f6]" },
+};
+
+const RoleBadge = ({ role }) => {
+  const m = ROLE_META[role] || { label: role, bg: "bg-gray-100", text: "text-gray-600", dot: "bg-gray-400" };
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${m.bg} ${m.text}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${m.dot}`} />
+      {m.label}
+    </span>
+  );
+};
+
+const StatCard = ({ icon, label, value, color }) => (
+  <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] flex items-center gap-4 border border-[#f1f5f9]">
+    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${color}`}>
+      {icon}
+    </div>
+    <div>
+      <p className="text-xs font-semibold text-[#64748b] uppercase tracking-wide">{label}</p>
+      <p className="text-2xl font-black text-[#0f172a] mt-0.5">{value}</p>
+    </div>
+  </div>
+);
+
+const STATUS_META = {
+  refunded:         { label: "İade Edildi",       cls: "bg-[#fef2f2] text-[#991b1b] border-[#fecaca]" },
+  refund_requested: { label: "İade Talep Edildi", cls: "bg-[#fff7ed] text-[#9a3412] border-[#fed7aa]" },
+  failed:           { label: "Başarısız",          cls: "bg-[#fef2f2] text-[#991b1b] border-[#fecaca]" },
+  expired:          { label: "Süresi Doldu",       cls: "bg-[#f8fafc] text-[#475569] border-[#e2e8f0]" },
+  active:           { label: "Aktif",              cls: "bg-[#ecfdf5] text-[#065f46] border-[#a7f3d0]" },
+};
+
+const getOrderMeta = (order) => {
+  if (order.status === "refunded")         return STATUS_META.refunded;
+  if (order.status === "refund_requested") return STATUS_META.refund_requested;
+  if (order.status === "failed")           return STATUS_META.failed;
+  if (new Date(order.endDate) < new Date()) return STATUS_META.expired;
+  return STATUS_META.active;
+};
+
+const inputCls = "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -30,48 +75,37 @@ const AdminDashboard = () => {
   );
   const [editingBilling, setEditingBilling] = useState(null);
   const [updatedBillingInfo, setUpdatedBillingInfo] = useState({});
-  const [view, setView] = useState("user");
+  const [view, setView] = useState("dashboard");
 
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       try {
         const [userRes, orderRes] = await Promise.all([
-          axios.get("/api/admin/users", {headers: { Authorization: `Bearer ${token}` }, }),
-          axios.get("/api/admin/orders", {headers: { Authorization: `Bearer ${token}` },}),
+          axios.get("/api/admin/users", { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get("/api/admin/orders", { headers: { Authorization: `Bearer ${token}` } }),
         ]);
-
         setUsers(userRes.data);
         setOrders(orderRes.data);
       } catch (error) {
         console.error("Admin verileri alınamadı:", error);
       }
     };
-
     fetchData();
   }, []);
 
   useEffect(() => {
-    if (selectedUser) {
-      document.body.classList.add("modal-open");
-    } else {
-      document.body.classList.remove("modal-open");
-    }
+    document.body.classList.toggle("modal-open", !!selectedUser);
+    return () => document.body.classList.remove("modal-open");
   }, [selectedUser]);
 
   const countByRole = (role) => users.filter((u) => u.role === role).length;
 
-
   const handleDeleteOrder = async (id) => {
-    const confirm = window.confirm("Bu siparişi silmek istediğinizden emin misiniz?");
-    if (!confirm) return;
-
+    if (!window.confirm("Bu siparişi silmek istediğinizden emin misiniz?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`/api/admin/orders/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      await axios.delete(`/api/admin/orders/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       setOrders((prev) => prev.filter((o) => o.id !== id));
     } catch (err) {
       console.error("Sipariş silinirken hata oluştu:", err);
@@ -83,63 +117,35 @@ const AdminDashboard = () => {
     setEditingUser((prev) => ({ ...prev, [field]: value }));
   };
 
-const handleUserUpdate = async () => {
-  try {
-
-    const token = localStorage.getItem("token");
-
-    // Kullanıcı bilgilerini güncelle
-    await axios.put(`/api/admin/users/${editingUser.id}`, editingUser, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    // Koç atama (veya kaldırma)
-    let assignedCoachData = null;
-    if (editingUser.role === "student") {
-      const res = await axios.post(
-        "/api/admin/assign-coach",
-        {
-          userId: editingUser.id,
-          coachId: editingUser.assignedCoachId || null,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      assignedCoachData = res.data.coach || null;
-    }
-
-    // Güncel kullanıcıyı oluştur (koçla birlikte)
-    const updatedUser = {
-      ...editingUser,
-      assignedCoach: assignedCoachData,
-    };
-
-    // Local state'i güncelle
-    setUsers((prev) =>
-      prev.map((u) => (u.id === updatedUser.id ? updatedUser : u))
-    );
-
-    setSelectedUser(null);
-    setMessage("✅ Kullanıcı başarıyla güncellendi.");
-    setTimeout(() => setMessage(null), 3000);
-  } catch (error) {
-    console.error("Kullanıcı güncellenemedi:", error);
-    setMessage("❌ Güncelleme sırasında hata oluştu.");
-    setTimeout(() => setMessage(null), 3000);
-  }
-};
-
-
-
-  const handleUserDelete = async () => {
-    const confirmDelete = window.confirm("Bu kullanıcıyı silmek istediğinizden emin misiniz?");
-    if (!confirmDelete) return;
-
+  const handleUserUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`/api/admin/users/${selectedUser.id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.put(`/api/admin/users/${editingUser.id}`, editingUser, { headers: { Authorization: `Bearer ${token}` } });
+      let assignedCoachData = null;
+      if (editingUser.role === "student") {
+        const res = await axios.post("/api/admin/assign-coach",
+          { userId: editingUser.id, coachId: editingUser.assignedCoachId || null },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        assignedCoachData = res.data.coach || null;
+      }
+      const updatedUser = { ...editingUser, assignedCoach: assignedCoachData };
+      setUsers((prev) => prev.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
+      setSelectedUser(null);
+      setMessage("✅ Kullanıcı başarıyla güncellendi.");
+      setTimeout(() => setMessage(null), 3000);
+    } catch (error) {
+      console.error("Kullanıcı güncellenemedi:", error);
+      setMessage("❌ Güncelleme sırasında hata oluştu.");
+      setTimeout(() => setMessage(null), 3000);
+    }
+  };
 
+  const handleUserDelete = async () => {
+    if (!window.confirm("Bu kullanıcıyı silmek istediğinizden emin misiniz?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`/api/admin/users/${selectedUser.id}`, { headers: { Authorization: `Bearer ${token}` } });
       setUsers((prev) => prev.filter((u) => u.id !== selectedUser.id));
       setSelectedUser(null);
       setMessage("✅ Kullanıcı silindi.");
@@ -151,22 +157,10 @@ const handleUserUpdate = async () => {
     }
   };
 
-const getOrderStatusLabel = (order) => {
-  if (order.status === "refunded") return { label: "İade Edildi", color: "red" };
-  if (order.status === "refund_requested") return { label: "İade Talep Edildi", color: "orange" };
-  if (order.status === "failed") return { label: "Ödeme Başarısız", color: "darkred" };
-  if (new Date(order.endDate) < new Date()) return { label: "Süresi Dolmuş", color: "gray" };
-  return { label: "Aktif", color: "green" };
-};
-
-
-
   const handleApproveRefund = async (orderId) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`/api/admin/orders/${orderId}/approve-refund`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await axios.put(`/api/admin/orders/${orderId}/approve-refund`, {}, { headers: { Authorization: `Bearer ${token}` } });
       alert("İade onaylandı.");
       window.location.reload();
     } catch (err) {
@@ -174,507 +168,507 @@ const getOrderStatusLabel = (order) => {
     }
   };
 
-  const orderStats = useMemo(() => {
-  const now = new Date();
-  const thisMonth = now.getMonth();
-  const thisYear = now.getFullYear();
-
-  const totalOrders = orders.length;
-
-  const ordersThisMonth = orders.filter((order) => {
-    const orderDate = new Date(order.createdAt);
-    return (
-      orderDate.getMonth() === thisMonth &&
-      orderDate.getFullYear() === thisYear
-    );
-  }).length;
-
-  const packageCounts = {};
-  orders.forEach((order) => {
-    const pkg = order.package || "Bilinmiyor";
-    packageCounts[pkg] = (packageCounts[pkg] || 0) + 1;
-  });
-
-  const mostPopularPackage = Object.entries(packageCounts).sort(
-    (a, b) => b[1] - a[1]
-  )[0]?.[0] || "Veri yok";
-
-  return { totalOrders, ordersThisMonth, mostPopularPackage };
-}, [orders]);
-
-const monthlyOrderData = useMemo(() => {
-  const counts = new Array(12).fill(0);
-
-  orders.forEach((order) => {
-    const date = new Date(order.createdAt);
-    const month = date.getMonth(); // 0 - 11
-    counts[month]++;
-  });
-
-
-
-
-  return {
-    labels: [
-      "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
-      "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
-    ],
-    datasets: [
-      {
-        label: "Aylık Sipariş Sayısı",
-        data: counts,
-        backgroundColor: "#4a90e2",
-      },
-    ],
+  const handleOrderUpdate = async (orderId, newEndDate) => {
+    if (!window.confirm(`Siparişin bitiş tarihini ${newEndDate} olarak güncellemek istediğinize emin misiniz?`)) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(`/api/admin/orders/${orderId}`, { endDate: newEndDate }, { headers: { Authorization: `Bearer ${token}` } });
+      alert("Bitiş tarihi başarıyla güncellendi.");
+      window.location.reload();
+    } catch (error) {
+      console.error("Tarih güncellenemedi:", error);
+      alert("Bitiş tarihi güncellenirken bir hata oluştu.");
+    }
   };
-}, [orders]);
 
-const handleOrderUpdate = async (orderId, newEndDate) => {
-  const confirmation = window.confirm(
-    `Siparişin bitiş tarihini ${newEndDate} olarak güncellemek istediğinize emin misiniz?`
-  );
-  if (!confirmation) return;
+  const handleBillingUpdate = async (orderId) => {
+    if (!window.confirm("Fatura bilgilerini güncellemek istediğinize emin misiniz?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(`/api/admin/orders/${orderId}/billing`, updatedBillingInfo, { headers: { Authorization: `Bearer ${token}` } });
+      alert("Fatura bilgileri güncellendi.");
+      setEditingBilling(null);
+      window.location.reload();
+    } catch (err) {
+      console.error("Fatura güncelleme hatası:", err);
+      alert("Fatura bilgileri güncellenemedi.");
+    }
+  };
 
-  try {
-    const token = localStorage.getItem("token");
-    await axios.put(`/api/admin/orders/${orderId}`, { endDate: newEndDate }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    alert("Bitiş tarihi başarıyla güncellendi.");
-    window.location.reload();
-  } catch (error) {
-    console.error("Tarih güncellenemedi:", error);
-    alert("Bitiş tarihi güncellenirken bir hata oluştu.");
-  }
-};
+  const handleSendReminders = async () => {
+    if (!window.confirm("Süresi yaklaşan siparişler için e-posta hatırlatması gönderilsin mi?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post("/api/admin/orders/send-expiry-reminders", {}, { headers: { Authorization: `Bearer ${token}` } });
+      alert(res.data.message || "Hatırlatma e-postaları gönderildi.");
+    } catch (err) {
+      console.error("Hatırlatma gönderilemedi:", err);
+      alert("E-posta gönderimi başarısız oldu.");
+    }
+  };
 
-const handleBillingUpdate = async (orderId) => {
-  const confirm = window.confirm("Fatura bilgilerini güncellemek istediğinize emin misiniz?");
-  if (!confirm) return;
+  const orderStats = useMemo(() => {
+    const now = new Date();
+    const thisMonth = now.getMonth();
+    const thisYear = now.getFullYear();
+    const totalOrders = orders.length;
+    const ordersThisMonth = orders.filter((o) => {
+      const d = new Date(o.createdAt);
+      return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+    }).length;
+    const packageCounts = {};
+    orders.forEach((o) => { const p = o.package || "Bilinmiyor"; packageCounts[p] = (packageCounts[p] || 0) + 1; });
+    const mostPopularPackage = Object.entries(packageCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "Veri yok";
+    return { totalOrders, ordersThisMonth, mostPopularPackage };
+  }, [orders]);
 
-  try {
-    const token = localStorage.getItem("token");
-    await axios.put(`/api/admin/orders/${orderId}/billing`, updatedBillingInfo, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    alert("Fatura bilgileri güncellendi.");
-    setEditingBilling(null);
-    window.location.reload();
-  } catch (err) {
-    console.error("Fatura güncelleme hatası:", err);
-    alert("Fatura bilgileri güncellenemedi.");
-  }
-};
+  const monthlyOrderData = useMemo(() => {
+    const counts = new Array(12).fill(0);
+    orders.forEach((o) => { counts[new Date(o.createdAt).getMonth()]++; });
+    return {
+      labels: ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"],
+      datasets: [{ label: "Aylık Sipariş Sayısı", data: counts, backgroundColor: "#100481", borderRadius: 6 }],
+    };
+  }, [orders]);
 
-const handleSendReminders = async () => {
-  const confirm = window.confirm("Süresi yaklaşan siparişler için e-posta hatırlatması gönderilsin mi?");
-  if (!confirm) return;
+  const TABS = [
+    { key: "dashboard",          label: "📊 Genel Bakış" },
+    { key: "coaches",            label: "👨‍🏫 Koçlar" },
+    { key: "teacher-approvals",  label: "🧑‍🏫 Öğretmen Onayları" },
+    { key: "teacher-requests",   label: "📋 Talep Özeti" },
+    { key: "orders",             label: "📦 Siparişler" },
+    { key: "users",              label: "👥 Kullanıcılar" },
+  ];
 
-  try {
-    const token = localStorage.getItem("token");
-    const res = await axios.post("/api/admin/orders/send-expiry-reminders", {}, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    alert(res.data.message || "Hatırlatma e-postaları gönderildi.");
-  } catch (err) {
-    console.error("Hatırlatma gönderilemedi:", err);
-    alert("E-posta gönderimi başarısız oldu.");
-  }
-};
-
-
+  const tabCls = (key) =>
+    view === key
+      ? "px-4 py-2.5 rounded-xl text-sm font-bold bg-[#100481] text-white shadow-[0_4px_12px_rgba(16,4,129,0.25)] transition-all"
+      : "px-4 py-2.5 rounded-xl text-sm font-semibold text-[#475569] hover:bg-[#f1f5f9] transition-all";
 
   return (
-    <div className="admin-dashboard">
-      <h1>🛠 Admin Kontrol Paneli</h1>
+    <div className="min-h-screen bg-[#f1f5f9]">
 
+      {/* ── Toast ── */}
       {message && (
-        <div style={{
-          position: "fixed",
-          top: "600px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          background: "#333",
-          color: "white",
-          padding: "10px 20px",
-          borderRadius: "8px",
-          zIndex: 2000,
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-          fontSize: "0.95rem"
-        }}>
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[9999] bg-[#1e293b] text-white px-5 py-3 rounded-2xl shadow-[0_8px_24px_rgba(0,0,0,0.2)] text-sm font-semibold animate-fade-in">
           {message}
         </div>
       )}
 
-      <div className="admin-cards">
-        <div className="admin-card">👥 Toplam Kullanıcı: <strong>{users.length}</strong></div>
-        <div className="admin-card">👨‍🏫 Koçlar: <strong>{countByRole("coach")}</strong></div>
-        <div className="admin-card">🎓 Öğrenciler: <strong>{countByRole("student")}</strong></div>
-        <div className="admin-card">📦 Siparişler: <strong>{orders.length}</strong></div>
-      </div>
-
-      <div className="admin-tabs">
-        <button onClick={() => setView("coaches")} className={view === "coaches" ? "active-tab" : ""}>👨‍🏫 Koçlar</button>
-        <button onClick={() => setView("teacher-approvals")} className={view === "teacher-approvals" ? "active-tab" : ""}>🧑‍🏫 Öğretmen Onayları</button>
-        <button
-  onClick={() => setView("teacher-requests")}
-  className={view === "teacher-requests" ? "active-tab" : ""}
->
-  👩‍🏫 Öğretmen Talep Özeti
-</button>
-      </div>
-  
-
-{view === "coaches" && <AdminCoachPage />}
-{view === "teacher-approvals" && <AdminTeacherApprovals />}
-{view === "teacher-requests" && <AdminTeacherRequests />}
-
-
-
-
-      <section className="admin-section">
-        <h2>📦 Siparişler</h2>
-        <input
-  type="text"
-  placeholder="Kullanıcı adına göre filtrele..."
-  value={searchTerm}
-  onChange={(e) => setSearchTerm(e.target.value)}
-  style={{
-    padding: "8px",
-    width: "100%",
-    maxWidth: "400px",
-    marginBottom: "1rem",
-    borderRadius: "5px",
-    border: "1px solid #ccc"
-  }}
-/>
-
-        {orders.length === 0 ? (
-          <p>Henüz sipariş yok.</p>
-        ) : (
-          <ul className="admin-order-list">
-            
-            {filteredOrders.map((order) => (
-              
-              <details key={order.id} className="admin-order-item">
-                <summary>
-                  📦 <strong>{order.package}</strong> — {order.userName} ({order.userEmail})
-                </summary>
-                
-                <div className="order-details">
-                  <p><strong>Sipariş ID:</strong> {order.id}</p>
-                  <p><strong>Status Debug:</strong> {order.status}</p>
-
-               {["pending", "pending_payment"].includes(order.status) && (
-  <button
-    onClick={async () => {
-      const token = localStorage.getItem("token");
-      try {
-        const res = await axios.post(
-          "/api/admin/orders/check-payment",
-          { merchant_oid: order.merchantOid },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        alert(`Durum: ${res.data.status}`);
-        window.location.reload();
-      } catch (err) {
-        alert("Durum sorgusu başarısız.");
-        console.error("PayTR durum sorgu hatası:", err);
-      }
-    }}
-    className="paytr-status-btn"
-  >
-    🔄 Ödeme Durumunu Sorgula
-  </button>
-)}
-
-
-                <p><strong>Oluşturulma:</strong> {new Date(order.createdAt).toLocaleString("tr-TR")}</p>
-                <p><strong>Paket Adı:</strong> {order.package}</p>
-                  <p><strong>Toplam Fiyat:</strong> ₺{order.totalPrice}</p>
-                  <details style={{ marginTop: "10px" }}>
-  <summary style={{ cursor: "pointer", color: "#007bff" }}>
-    Fatura Bilgilerini Göster
-  </summary>
-  {order.billingInfo ? (
-    <div style={{ paddingLeft: "10px", marginTop: "5px" }}>
-     <p><strong>Ad Soyad:</strong> {order.billingInfo?.name} {order.billingInfo?.surname}</p>
-     <p><strong>Tc No:</strong> {order.billingInfo?.tcno}</p>
-
-        <p><strong>Adres:</strong> {order.billingInfo.address}, {order.billingInfo.district}</p>
-        <p><strong>Şehir:</strong> {order.billingInfo.city} - {order.billingInfo.postalCode}</p>
-        <p><strong>Telefon:</strong> {order.billingInfo.phone}</p>
-        <p><strong>E-posta:</strong> {order.billingInfo.email}</p>
-    </div>
-  ) : (
-    <p style={{ paddingLeft: "10px" }}>Fatura bilgisi bulunamadı.</p>
-  )}
-  {editingBilling === order.id ? (
-  <div className="billing-edit-form">
-    <input value={updatedBillingInfo.name || ""} onChange={(e) => setUpdatedBillingInfo({ ...updatedBillingInfo, name: e.target.value })} placeholder="Ad" />
-    <input value={updatedBillingInfo.surname || ""} onChange={(e) => setUpdatedBillingInfo({ ...updatedBillingInfo, surname: e.target.value })} placeholder="Soyad" />
-    <input value={updatedBillingInfo.address || ""} onChange={(e) => setUpdatedBillingInfo({ ...updatedBillingInfo, address: e.target.value })} placeholder="Adres" />
-    <input value={updatedBillingInfo.city || ""} onChange={(e) => setUpdatedBillingInfo({ ...updatedBillingInfo, city: e.target.value })} placeholder="Şehir" />
-    <input value={updatedBillingInfo.postalCode || ""} onChange={(e) => setUpdatedBillingInfo({ ...updatedBillingInfo, postalCode: e.target.value })} placeholder="Posta Kodu" />
-    <input value={updatedBillingInfo.phone || ""} onChange={(e) => setUpdatedBillingInfo({ ...updatedBillingInfo, phone: e.target.value })} placeholder="Telefon" />
-    <input value={updatedBillingInfo.email || ""} onChange={(e) => setUpdatedBillingInfo({ ...updatedBillingInfo, email: e.target.value })} placeholder="E-posta" />
-    <button onClick={() => handleBillingUpdate(order.id)}>Kaydet</button>
-    <button onClick={() => setEditingBilling(null)}>İptal</button>
-  </div>
-) : (
-  <button onClick={() => {
-    setEditingBilling(order.id);
-    setUpdatedBillingInfo(order.billingInfo || {});
-  }}>
-    Fatura Bilgisini Düzenle
-  </button>
-)}
-</details>
-
-
-        <h5 style={{color: "red"}}>Bitis Tarihi Guncelleme</h5>
-          <input
-            type="date"
-            value={order.endDate ? new Date(order.endDate).toISOString().split("T")[0] : ""}
-            onChange={(e) => handleOrderUpdate(order.id, e.target.value)}
-          />
-                    {(() => {
-  const { label, color } = getOrderStatusLabel(order);
-  return (
-    <p>
-      <strong>Durum:</strong>{" "}
-      <span style={{ color }}>{label}</span>
-    </p>
-  );
-})()}
-                  <button onClick={() => handleDeleteOrder(order.id)} className="delete-btn">❌ Bu Siparişi Sil</button>
-                </div>
-                {order.status === "refund_requested" && (
-                  <button onClick={() => handleApproveRefund(order.id)}>
-                    İadeyi Onayla
-                  </button>
-                )}
-              </details>
-            ))}
-          </ul>
-        )}
-        
-              <button
-  className="csv-export-button"
-  onClick={() => {
-    const token = localStorage.getItem("token");
-    fetch("/api/admin/orders/export", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(response => response.blob())
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "siparisler.csv";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      })
-      .catch(err => {
-        alert("CSV indirilemedi.");
-        console.error(err);
-      });
-  }}
->
-  📁 CSV Dışa Aktar
-</button>
-      </section>
-      
-      <section className="admin-section">
-      <Link to="/admin/coupons">Kupon Oluştur</Link>
-</section>
-
-<section className="admin-section">
-  <h2>📦 Siparişler</h2>
-
-  <button onClick={handleSendReminders} style={{
-    backgroundColor: "#28a745",
-    color: "white",
-    padding: "10px 16px",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    marginBottom: "1rem"
-  }}>
-    ✉️ Hatırlatma E-postası Gönder
-  </button>
-</section>
-
-        <section className="admin-section">
-        <Link to="/admin/refund-requests" className="refund-link"><h2>İade Talepleri</h2></Link>
-        </section>
-
-      <section className="admin-section">
-        <h2>👥 Kayıtlı Kullanıcılar</h2>
-     <div className="user-grid">
-  {users.map((user) => (
-    <div
-      key={user.id}
-      className="user-card"
-      onClick={() => {
-        setSelectedUser(user);
-        setEditingUser({
-  ...user,
-  assignedCoachId: user.assignedCoach?.id || null,
-});
-      }}
-    >
-      <h4>{user.name}</h4>
-      <p>{user.email}</p>
-
-      <div className="role-badge">
-        {user.role === "admin" ? "🔐 Admin" :
-         user.role === "coach" ? "👨‍🏫 Koç" : "🎓 Öğrenci"}
-      </div>
-
-      <div className="user-date">
-        📅 {new Date(user.createdAt).toLocaleDateString("tr-TR")}
-      </div>
-
-      {user.role === "student" && user.assignedCoach && (
-  <div className="assigned-coach">
-    ✅ Koç: {user.assignedCoach.name} ({user.assignedCoach.subject})
-  </div>
-)}
-    </div>
-  ))}
-</div>
-
-
-        <h2>➕ Yeni Kullanıcı Oluştur</h2>
-        <input placeholder="Ad Soyad" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
-        <input placeholder="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
-        <input placeholder="Şifre" type="password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
-        <select value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
-          <option value="student">Öğrenci</option>
-          <option value="admin">Admin</option>
-        </select>
-        <button onClick={async () => {
-          try {
-            const token = localStorage.getItem("token");
-            const res = await axios.post("/api/admin/users", newUser, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-            setUsers([...users, res.data]);
-            setNewUser({ name: "", email: "", password: "", role: "student" });
-            setMessage("✅ Yeni kullanıcı oluşturuldu.");
-            setTimeout(() => setMessage(null), 3000);
-          } catch (err) {
-            console.error(err);
-            setMessage("❌ Kullanıcı oluşturulamadı.");
-            setTimeout(() => setMessage(null), 3000);
-          }
-        }}>Kaydet</button>
-      </section>
-
- {selectedUser && (
-  <>
-    <div className="modal-overlay" onClick={() => setSelectedUser(null)}></div>
-    <div className="user-modal">
-      <h2>👤 {editingUser.name} — Detaylar</h2>
-
-      <div className="modal-section">
-        <label>Adı</label>
-        <input value={editingUser.name} onChange={(e) => updateUserField("name", e.target.value)} />
-      </div>
-
-      <div className="modal-section">
-        <label>Email</label>
-        <input value={editingUser.email} onChange={(e) => updateUserField("email", e.target.value)} />
-      </div>
-
-      <div className="modal-section">
-        <label>Telefon</label>
-        <input value={editingUser.phone || ""} onChange={(e) => updateUserField("phone", e.target.value)} />
-      </div>
-
-      <div className="modal-section">
-        <label>Rol</label>
-        <select value={editingUser.role} onChange={(e) => updateUserField("role", e.target.value)}>
-          <option value="student">Öğrenci</option>
-          <option value="coach">Koç</option>
-          <option value="admin">Admin</option>
-        </select>
-      </div>
-
-      {editingUser.role === "student" && (
-        <div className="modal-section">
-          <label>Koç Bilgisi</label>
-          {editingUser.assignedCoachId && editingUser.assignedCoach ? (
-            <div className="coach-box">
-              <span><strong>{editingUser.assignedCoach.name}</strong> — {editingUser.assignedCoach.subject}</span>
-              <button onClick={() => updateUserField("assignedCoachId", null)} className="remove-btn">❌ Kaldır</button>
-            </div>
-          ) : (
-            <p style={{ fontStyle: "italic", color: "gray" }}>Şu anda atanmış koç yok.</p>
-          )}
-          {editingUser.role === "student" && (
-  <>
-    <div className="modal-section">
-      <label>Sınıf</label>
-      <input
-        value={editingUser.grade || ""}
-        onChange={(e) => updateUserField("grade", e.target.value)}
-        placeholder="Örn: 11"
-      />
-    </div>
-
-    {["9", "10", "11", "12", "Mezun"].includes(editingUser.grade) && (
-      <div className="modal-section">
-        <label>Alan</label>
-        <select
-          value={editingUser.track || ""}
-          onChange={(e) => updateUserField("track", e.target.value)}
-        >
-          <option value="">Alan Seçin</option>
-          <option value="Sayısal">Sayısal</option>
-          <option value="Eşit Ağırlık">Eşit Ağırlık</option>
-          <option value="Sözel">Sözel</option>
-        </select>
-      </div>
-    )}
-  </>
-)}
-
-         
+      {/* ── Header ── */}
+      <div className="bg-gradient-to-r from-[#100481] to-[#2563eb] text-white px-8 py-6 shadow-lg">
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-2xl font-black tracking-tight">🛠 Admin Kontrol Paneli</h1>
+            <p className="text-blue-200 text-sm mt-0.5">Sözderece Koçluk Yönetim Sistemi</p>
+          </div>
+          <div className="flex items-center gap-3 flex-wrap">
+            <Link
+              to="/admin/coupons"
+              className="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-4 py-2 rounded-xl text-sm font-bold no-underline transition-all"
+            >
+              🏷 Kupon Oluştur
+            </Link>
+            <Link
+              to="/admin/refund-requests"
+              className="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-4 py-2 rounded-xl text-sm font-bold no-underline transition-all"
+            >
+              💸 İade Talepleri
+            </Link>
+          </div>
         </div>
+      </div>
+
+      <div className="max-w-[1400px] mx-auto px-6 py-6 space-y-6">
+
+        {/* ── Stat Cards ── */}
+        <div className="grid grid-cols-4 gap-4 max-[900px]:grid-cols-2 max-[500px]:grid-cols-1">
+          <StatCard icon="👥" label="Toplam Kullanıcı" value={users.length}          color="bg-[#eff6ff]" />
+          <StatCard icon="👨‍🏫" label="Koçlar"           value={countByRole("coach")}   color="bg-[#ecfdf5]" />
+          <StatCard icon="🎓" label="Öğrenciler"        value={countByRole("student")} color="bg-[#fdf4ff]" />
+          <StatCard icon="📦" label="Toplam Sipariş"    value={orders.length}          color="bg-[#fff7ed]" />
+        </div>
+
+        {/* ── Navigation Tabs ── */}
+        <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#f1f5f9] p-2 flex flex-wrap gap-1.5">
+          {TABS.map((t) => (
+            <button key={t.key} onClick={() => setView(t.key)} className={tabCls(t.key)}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* ── Sub-page Views ── */}
+        {view === "coaches"           && <AdminCoachPage />}
+        {view === "teacher-approvals" && <AdminTeacherApprovals />}
+        {view === "teacher-requests"  && <AdminTeacherRequests />}
+
+        {/* ══════════════════════════ GENEL BAKIŞ ══════════════════════════ */}
+        {view === "dashboard" && (
+          <div className="grid grid-cols-2 gap-6 max-[768px]:grid-cols-1">
+            {/* Sipariş Raporu */}
+            <div className="bg-white rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#f1f5f9]">
+              <h2 className="text-base font-black text-[#0f172a] mb-4">📈 Sipariş Raporu</h2>
+              <div className="space-y-3">
+                {[
+                  { label: "Toplam Sipariş",     value: orderStats.totalOrders },
+                  { label: "Bu Ayki Sipariş",    value: orderStats.ordersThisMonth },
+                  { label: "En Popüler Paket",   value: orderStats.mostPopularPackage },
+                ].map((item) => (
+                  <div key={item.label} className="flex items-center justify-between p-3 bg-[#f8fafc] rounded-xl border border-[#f1f5f9]">
+                    <span className="text-sm font-semibold text-[#475569]">{item.label}</span>
+                    <span className="text-sm font-black text-[#0f172a]">{item.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Chart */}
+            <div className="bg-white rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#f1f5f9]">
+              <h2 className="text-base font-black text-[#0f172a] mb-4">📊 Aylık Sipariş Grafiği</h2>
+              <Bar data={monthlyOrderData} options={{ responsive: true, plugins: { legend: { display: false } } }} />
+            </div>
+          </div>
+        )}
+
+        {/* ══════════════════════════ SİPARİŞLER ══════════════════════════ */}
+        {view === "orders" && (
+          <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#f1f5f9] overflow-hidden">
+            {/* Toolbar */}
+            <div className="p-5 border-b border-[#f1f5f9] flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-base font-black text-[#0f172a]">📦 Siparişler ({filteredOrders.length})</h2>
+              <div className="flex items-center gap-3 flex-wrap">
+                <div className="flex items-center gap-2 bg-[#f8fafc] border border-[#e5e7eb] rounded-xl px-3 py-2">
+                  <span className="text-[#94a3b8] text-sm">🔍</span>
+                  <input
+                    type="text"
+                    placeholder="Kullanıcı adına göre filtrele..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="border-0 outline-none bg-transparent text-sm min-w-[180px]"
+                  />
+                </div>
+                <button
+                  onClick={handleSendReminders}
+                  className="px-4 py-2 bg-[#ecfdf5] text-[#065f46] border border-[#a7f3d0] rounded-xl text-sm font-bold hover:bg-[#d1fae5] transition-all"
+                >
+                  ✉️ Hatırlatma Gönder
+                </button>
+                <button
+                  className="px-4 py-2 bg-[#100481] text-white rounded-xl text-sm font-bold hover:bg-[#1d4ed8] transition-all"
+                  onClick={() => {
+                    const token = localStorage.getItem("token");
+                    fetch("/api/admin/orders/export", { headers: { Authorization: `Bearer ${token}` } })
+                      .then((r) => r.blob())
+                      .then((blob) => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url; a.download = "siparisler.csv";
+                        document.body.appendChild(a); a.click(); a.remove();
+                      })
+                      .catch(() => alert("CSV indirilemedi."));
+                  }}
+                >
+                  📁 CSV İndir
+                </button>
+              </div>
+            </div>
+
+            {/* Order List */}
+            {filteredOrders.length === 0 ? (
+              <div className="p-10 text-center text-[#94a3b8] text-sm">Sipariş bulunamadı.</div>
+            ) : (
+              <ul className="divide-y divide-[#f1f5f9]">
+                {filteredOrders.map((order) => {
+                  const meta = getOrderMeta(order);
+                  return (
+                    <li key={order.id}>
+                      <details className="group">
+                        <summary className="flex items-center gap-3 px-5 py-4 cursor-pointer hover:bg-[#f8fafc] transition-all list-none select-none">
+                          <span className="text-lg">📦</span>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-[#0f172a] text-sm truncate">{order.package}</p>
+                            <p className="text-xs text-[#64748b] truncate">{order.userName} · {order.userEmail}</p>
+                          </div>
+                          <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${meta.cls} flex-shrink-0`}>
+                            {meta.label}
+                          </span>
+                          <span className="text-sm font-black text-[#0f172a] flex-shrink-0">₺{order.totalPrice}</span>
+                          <span className="text-[#94a3b8] group-open:rotate-180 transition-transform flex-shrink-0">▼</span>
+                        </summary>
+
+                        <div className="px-5 pb-5 pt-2 bg-[#f8fafc] border-t border-[#f1f5f9]">
+                          <div className="grid grid-cols-2 gap-3 mb-4 max-[640px]:grid-cols-1">
+                            <div className="bg-white rounded-xl p-3 border border-[#e5e7eb]">
+                              <p className="text-xs text-[#64748b] font-semibold">Sipariş ID</p>
+                              <p className="text-sm font-bold text-[#0f172a] font-mono mt-0.5">{order.id}</p>
+                            </div>
+                            <div className="bg-white rounded-xl p-3 border border-[#e5e7eb]">
+                              <p className="text-xs text-[#64748b] font-semibold">Oluşturulma</p>
+                              <p className="text-sm font-bold text-[#0f172a] mt-0.5">{new Date(order.createdAt).toLocaleString("tr-TR")}</p>
+                            </div>
+                          </div>
+
+                          {/* Fatura */}
+                          <details className="mb-4">
+                            <summary className="text-sm font-bold text-[#2563eb] cursor-pointer hover:text-[#1d4ed8] list-none">
+                              📄 Fatura Bilgileri
+                            </summary>
+                            {order.billingInfo ? (
+                              <div className="mt-2 bg-white rounded-xl p-3 border border-[#e5e7eb] text-xs space-y-1 text-[#334155]">
+                                <p><strong>Ad Soyad:</strong> {order.billingInfo?.name} {order.billingInfo?.surname}</p>
+                                <p><strong>TC No:</strong> {order.billingInfo?.tcno}</p>
+                                <p><strong>Adres:</strong> {order.billingInfo.address}, {order.billingInfo.district}</p>
+                                <p><strong>Şehir:</strong> {order.billingInfo.city} — {order.billingInfo.postalCode}</p>
+                                <p><strong>Telefon:</strong> {order.billingInfo.phone}</p>
+                                <p><strong>E-posta:</strong> {order.billingInfo.email}</p>
+                              </div>
+                            ) : (
+                              <p className="text-xs text-[#94a3b8] mt-1">Fatura bilgisi bulunamadı.</p>
+                            )}
+                            {editingBilling === order.id ? (
+                              <div className="mt-2 bg-white rounded-xl p-3 border border-[#e5e7eb] grid grid-cols-2 gap-2 max-[640px]:grid-cols-1">
+                                {["name","surname","address","city","postalCode","phone","email"].map((f) => (
+                                  <input key={f} className={inputCls} placeholder={f}
+                                    value={updatedBillingInfo[f] || ""}
+                                    onChange={(e) => setUpdatedBillingInfo({ ...updatedBillingInfo, [f]: e.target.value })}
+                                  />
+                                ))}
+                                <div className="col-span-2 flex gap-2 max-[640px]:col-span-1">
+                                  <button onClick={() => handleBillingUpdate(order.id)} className="flex-1 py-2 bg-[#100481] text-white rounded-xl text-sm font-bold hover:bg-[#1d4ed8] transition-all">Kaydet</button>
+                                  <button onClick={() => setEditingBilling(null)} className="flex-1 py-2 bg-[#f1f5f9] text-[#475569] rounded-xl text-sm font-bold hover:bg-[#e2e8f0] transition-all">İptal</button>
+                                </div>
+                              </div>
+                            ) : (
+                              <button
+                                className="mt-2 text-xs font-bold text-[#475569] hover:text-[#0f172a] underline"
+                                onClick={() => { setEditingBilling(order.id); setUpdatedBillingInfo(order.billingInfo || {}); }}
+                              >
+                                ✏️ Fatura Düzenle
+                              </button>
+                            )}
+                          </details>
+
+                          {/* Bitiş Tarihi */}
+                          <div className="flex flex-wrap items-center gap-3 mb-3">
+                            <label className="text-xs font-bold text-[#475569]">📅 Bitiş Tarihi:</label>
+                            <input
+                              type="date"
+                              className="px-3 py-1.5 border border-[#e5e7eb] rounded-xl text-sm outline-none focus:border-[#100481] transition-all"
+                              value={order.endDate ? new Date(order.endDate).toISOString().split("T")[0] : ""}
+                              onChange={(e) => handleOrderUpdate(order.id, e.target.value)}
+                            />
+                          </div>
+
+                          {/* Actions */}
+                          <div className="flex flex-wrap gap-2">
+                            {["pending", "pending_payment"].includes(order.status) && (
+                              <button
+                                onClick={async () => {
+                                  const token = localStorage.getItem("token");
+                                  try {
+                                    const res = await axios.post("/api/admin/orders/check-payment",
+                                      { merchant_oid: order.merchantOid },
+                                      { headers: { Authorization: `Bearer ${token}` } }
+                                    );
+                                    alert(`Durum: ${res.data.status}`);
+                                    window.location.reload();
+                                  } catch (err) {
+                                    alert("Durum sorgusu başarısız."); console.error(err);
+                                  }
+                                }}
+                                className="px-3 py-1.5 bg-[#eff6ff] text-[#1d4ed8] border border-[#bfdbfe] rounded-xl text-xs font-bold hover:bg-[#dbeafe] transition-all"
+                              >
+                                🔄 Ödeme Durumunu Sorgula
+                              </button>
+                            )}
+                            {order.status === "refund_requested" && (
+                              <button onClick={() => handleApproveRefund(order.id)} className="px-3 py-1.5 bg-[#ecfdf5] text-[#065f46] border border-[#a7f3d0] rounded-xl text-xs font-bold hover:bg-[#d1fae5] transition-all">
+                                ✅ İadeyi Onayla
+                              </button>
+                            )}
+                            <button onClick={() => handleDeleteOrder(order.id)} className="px-3 py-1.5 bg-[#fef2f2] text-[#991b1b] border border-[#fecaca] rounded-xl text-xs font-bold hover:bg-[#fee2e2] transition-all ml-auto">
+                              🗑 Siparişi Sil
+                            </button>
+                          </div>
+                        </div>
+                      </details>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        )}
+
+        {/* ══════════════════════════ KULLANICILAR ══════════════════════════ */}
+        {view === "users" && (
+          <div className="space-y-6">
+            {/* User Grid */}
+            <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#f1f5f9] overflow-hidden">
+              <div className="p-5 border-b border-[#f1f5f9]">
+                <h2 className="text-base font-black text-[#0f172a]">👥 Kayıtlı Kullanıcılar ({users.length})</h2>
+              </div>
+              <div className="p-5 grid grid-cols-3 gap-4 max-[900px]:grid-cols-2 max-[560px]:grid-cols-1">
+                {users.map((user) => (
+                  <div
+                    key={user.id}
+                    className="group border border-[#e5e7eb] rounded-2xl p-4 cursor-pointer hover:border-[#100481] hover:shadow-[0_4px_16px_rgba(16,4,129,0.12)] transition-all bg-white"
+                    onClick={() => { setSelectedUser(user); setEditingUser({ ...user, assignedCoachId: user.assignedCoach?.id || null }); }}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#100481] to-[#2563eb] flex items-center justify-center text-white font-black text-base flex-shrink-0">
+                        {(user.name || "?")[0].toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-bold text-[#0f172a] text-sm truncate">{user.name}</p>
+                        <p className="text-xs text-[#64748b] truncate">{user.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <RoleBadge role={user.role} />
+                      <span className="text-xs text-[#94a3b8]">{new Date(user.createdAt).toLocaleDateString("tr-TR")}</span>
+                    </div>
+                    {user.role === "student" && user.assignedCoach && (
+                      <div className="mt-2 text-xs text-[#065f46] bg-[#ecfdf5] border border-[#a7f3d0] rounded-lg px-2 py-1 truncate">
+                        ✅ {user.assignedCoach.name}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* New User Form */}
+            <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#f1f5f9] overflow-hidden">
+              <div className="p-5 border-b border-[#f1f5f9]">
+                <h2 className="text-base font-black text-[#0f172a]">➕ Yeni Kullanıcı Oluştur</h2>
+              </div>
+              <div className="p-5 grid grid-cols-2 gap-4 max-[640px]:grid-cols-1">
+                <input className={inputCls} placeholder="Ad Soyad" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
+                <input className={inputCls} placeholder="E-posta" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
+                <input className={inputCls} placeholder="Şifre" type="password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
+                <select className={inputCls} value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
+                  <option value="student">Öğrenci</option>
+                  <option value="admin">Admin</option>
+                </select>
+                <div className="col-span-2 max-[640px]:col-span-1">
+                  <button
+                    className="w-full py-3 bg-gradient-to-r from-[#100481] to-[#2563eb] text-white rounded-xl font-black text-sm hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(16,4,129,0.3)] transition-all"
+                    onClick={async () => {
+                      try {
+                        const token = localStorage.getItem("token");
+                        const res = await axios.post("/api/admin/users", newUser, { headers: { Authorization: `Bearer ${token}` } });
+                        setUsers([...users, res.data]);
+                        setNewUser({ name: "", email: "", password: "", role: "student" });
+                        setMessage("✅ Yeni kullanıcı oluşturuldu.");
+                        setTimeout(() => setMessage(null), 3000);
+                      } catch (err) {
+                        console.error(err);
+                        setMessage("❌ Kullanıcı oluşturulamadı.");
+                        setTimeout(() => setMessage(null), 3000);
+                      }
+                    }}
+                  >
+                    Kullanıcı Oluştur
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ══════════════════════════ USER MODAL ══════════════════════════ */}
+      {selectedUser && (
+        <>
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[1000]" onClick={() => setSelectedUser(null)} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92%] max-w-[520px] max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.25)] z-[1001]">
+            {/* Modal Header */}
+            <div className="flex items-center gap-3 p-5 border-b border-[#f1f5f9] sticky top-0 bg-white rounded-t-2xl z-10">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#100481] to-[#2563eb] flex items-center justify-center text-white font-black text-base flex-shrink-0">
+                {(editingUser?.name || "?")[0].toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <h2 className="font-black text-[#0f172a] text-base truncate">{editingUser?.name}</h2>
+                <p className="text-xs text-[#64748b] truncate">{editingUser?.email}</p>
+              </div>
+              <button onClick={() => setSelectedUser(null)} className="w-8 h-8 rounded-full bg-[#f1f5f9] hover:bg-[#e2e8f0] flex items-center justify-center text-[#64748b] text-lg transition-all font-bold">×</button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 space-y-4">
+              {[
+                { label: "Adı", field: "name", type: "text" },
+                { label: "Email", field: "email", type: "email" },
+                { label: "Telefon", field: "phone", type: "text" },
+              ].map(({ label, field, type }) => (
+                <div key={field}>
+                  <label className="block text-xs font-bold text-[#475569] mb-1.5">{label}</label>
+                  <input type={type} className={inputCls} value={editingUser?.[field] || ""} onChange={(e) => updateUserField(field, e.target.value)} />
+                </div>
+              ))}
+
+              <div>
+                <label className="block text-xs font-bold text-[#475569] mb-1.5">Rol</label>
+                <select className={inputCls} value={editingUser?.role} onChange={(e) => updateUserField("role", e.target.value)}>
+                  <option value="student">Öğrenci</option>
+                  <option value="coach">Koç</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+
+              {editingUser?.role === "student" && (
+                <div className="space-y-3 p-4 bg-[#f8fafc] rounded-xl border border-[#f1f5f9]">
+                  <p className="text-xs font-black text-[#475569] uppercase tracking-wide">Öğrenci Bilgileri</p>
+
+                  {/* Koç */}
+                  <div>
+                    <label className="block text-xs font-bold text-[#475569] mb-1.5">Atanmış Koç</label>
+                    {editingUser.assignedCoachId && editingUser.assignedCoach ? (
+                      <div className="flex items-center justify-between bg-white border border-[#a7f3d0] rounded-xl px-3 py-2">
+                        <span className="text-sm font-bold text-[#065f46]">{editingUser.assignedCoach.name} — {editingUser.assignedCoach.subject}</span>
+                        <button onClick={() => updateUserField("assignedCoachId", null)} className="text-xs text-[#ef4444] font-bold hover:text-[#dc2626] ml-2">Kaldır</button>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-[#94a3b8] italic">Henüz koç atanmamış.</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#475569] mb-1.5">Sınıf</label>
+                    <input className={inputCls} value={editingUser.grade || ""} onChange={(e) => updateUserField("grade", e.target.value)} placeholder="Örn: 11" />
+                  </div>
+
+                  {["9","10","11","12","Mezun"].includes(editingUser.grade) && (
+                    <div>
+                      <label className="block text-xs font-bold text-[#475569] mb-1.5">Alan</label>
+                      <select className={inputCls} value={editingUser.track || ""} onChange={(e) => updateUserField("track", e.target.value)}>
+                        <option value="">Alan Seçin</option>
+                        <option value="Sayısal">Sayısal</option>
+                        <option value="Eşit Ağırlık">Eşit Ağırlık</option>
+                        <option value="Sözel">Sözel</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex gap-2 p-5 border-t border-[#f1f5f9] sticky bottom-0 bg-white rounded-b-2xl">
+              <button className="flex-1 py-2.5 bg-gradient-to-r from-[#100481] to-[#2563eb] text-white rounded-xl text-sm font-black hover:shadow-[0_6px_16px_rgba(16,4,129,0.3)] hover:-translate-y-0.5 transition-all" onClick={handleUserUpdate}>
+                💾 Güncelle
+              </button>
+              <button className="flex-1 py-2.5 bg-[#fef2f2] text-[#991b1b] border border-[#fecaca] rounded-xl text-sm font-bold hover:bg-[#fee2e2] transition-all" onClick={handleUserDelete}>
+                🗑 Sil
+              </button>
+              <button className="py-2.5 px-4 bg-[#f1f5f9] text-[#475569] rounded-xl text-sm font-bold hover:bg-[#e2e8f0] transition-all" onClick={() => setSelectedUser(null)}>
+                Kapat
+              </button>
+            </div>
+          </div>
+        </>
       )}
-
-      <div className="modal-actions">
-        <button className="primary" onClick={handleUserUpdate}>💾 Güncelle</button>
-        <button className="danger" onClick={handleUserDelete}>❌ Sil</button>
-        <button onClick={() => setSelectedUser(null)}>🔙 Geri</button>
-      </div>
-    </div>
-  </>
-)}
-
-
-      <section className="admin-section">
-      <h2>📈 Sipariş Raporu</h2>
-      <ul style={{ listStyle: "none", paddingLeft: 0 }}>
-        <li><strong>📦 Toplam Sipariş:</strong> {orderStats.totalOrders}</li>
-        <li><strong>🗓 Bu Ayki Sipariş:</strong> {orderStats.ordersThisMonth}</li>
-        <li><strong>🏆 En Popüler Paket:</strong> {orderStats.mostPopularPackage}</li>
-      </ul>
-    </section>
-    <section className="admin-section">
-      <h2>📊 Aylık Sipariş Grafiği</h2>
-      <div style={{ maxWidth: "600px", margin: "0 auto" }}>
-        <Bar data={monthlyOrderData} />
-      </div>
-    </section>
-
     </div>
   );
 };
