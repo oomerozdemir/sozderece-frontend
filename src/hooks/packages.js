@@ -1,6 +1,6 @@
 
 export const PACKAGES = {
-  /* 1) ÖZEL DERS – dinamik fiyat (öğretmen belirler) */
+  /* 1) ÖZEL DERS – dinamik fiyat (öğretmen belirler) 
   "ozel-ders-paketi": {
     slug: "ozel-ders-paketi",
     title: "Özel Ders Paketi",
@@ -26,6 +26,7 @@ export const PACKAGES = {
     ],
     note: "Öğretmen ücreti öğretmene göre değişir."
   },
+  */
 
   /* 2) ÖZEL DERS + HAZIR PAKET (ara paket) */
   "tek-ders-kocluk-2026": {
@@ -74,7 +75,6 @@ export const PACKAGES = {
       { label: "Haftada Bir Koçunla Online Görüşme", included: true },
       { label: "7/24 WhatsApp Desteği", included: true },
       { label: "Günlük Takip Ve Durum Analizi ", included: true },
-      { label: "Özel Ders Paket İçeriği", included: false },
     ],
      images: [
       "/images/paketlerImage5.webp",

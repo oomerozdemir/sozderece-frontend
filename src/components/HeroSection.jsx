@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaChevronRight, FaChevronLeft, FaTimes } from "react-icons/fa";
 
-// Değişen metinler
 const DYNAMIC_TEXTS = [
   "Sana Özel Detaylı Programlar ve Günlük Takip",
   "Ön Görüşme Fırsatı",
@@ -11,20 +10,36 @@ const DYNAMIC_TEXTS = [
   "YKS ve LGS'de Netlerini Zirveye Taşı",
 ];
 
-// SEO İÇİN GÜNCELLEME: Resim yolları ve açıklamaları
-const MARQUEE_ITEMS = [
-  { src: "/images/geridonus.png", alt: "Sözderece Koçluk Öğrenci Geri Dönüşleri" },
-  { src: "/images/memnuniyet1.png", alt: "YKS ve LGS Koçluk Veli Memnuniyeti" },
-  { src: "/images/memnuniyet2.png", alt: "Online Koçluk Başarı Mesajları" },
-  { src: "/images/memnuniyet3.png", alt: "Öğrenci Koçluğu Tavsiyeleri" },
-  { src: "/images/ogrencilerinCalismalari.jpg", alt: "YKS Derece Öğrencilerinin Çalışma Masası" },
-  { src: "/images/ornekProgram.png", alt: "Sana Özel YKS Ders Çalışma Programı Örneği" },
-  { src: "/images/ornekProgram2.png", alt: "Haftalık LGS Ders Programı Taslağı" },
+const CATEGORIES = [
+  {
+    label: "Geri Dönüşler",
+    items: [
+      { src: "/images/geridonus.png", alt: "Sözderece Koçluk Öğrenci Geri Dönüşleri" },
+      { src: "/images/memnuniyet1.png", alt: "YKS ve LGS Koçluk Veli Memnuniyeti" },
+      { src: "/images/memnuniyet2.png", alt: "Online Koçluk Başarı Mesajları" },
+      { src: "/images/memnuniyet3.png", alt: "Öğrenci Koçluğu Tavsiyeleri" },
+    ],
+  },
+  {
+    label: "Program Örnekleri",
+    items: [
+      { src: "/images/ornekProgram.png", alt: "Sana Özel YKS Ders Çalışma Programı Örneği" },
+      { src: "/images/ornekProgram2.png", alt: "Haftalık LGS Ders Programı Taslağı" },
+    ],
+  },
+  {
+    label: "Çalışma Masaları",
+    items: [
+      { src: "/images/ogrencilerinCalismalari.jpg", alt: "YKS Derece Öğrencilerinin Çalışma Masası" },
+    ],
+  },
 ];
 
 export default function HeroSection() {
   const [index, setIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -35,15 +50,17 @@ export default function HeroSection() {
 
   const closeModal = () => setSelectedIndex(null);
 
+  const currentItems = CATEGORIES[activeTab].items;
+
   const showNext = useCallback((e) => {
-    if(e) e.stopPropagation();
-    setSelectedIndex((prev) => (prev + 1) % MARQUEE_ITEMS.length);
-  }, []);
+    if (e) e.stopPropagation();
+    setSelectedIndex((prev) => (prev + 1) % currentItems.length);
+  }, [currentItems.length]);
 
   const showPrev = useCallback((e) => {
-    if(e) e.stopPropagation();
-    setSelectedIndex((prev) => (prev - 1 + MARQUEE_ITEMS.length) % MARQUEE_ITEMS.length);
-  }, []);
+    if (e) e.stopPropagation();
+    setSelectedIndex((prev) => (prev - 1 + currentItems.length) % currentItems.length);
+  }, [currentItems.length]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -58,9 +75,10 @@ export default function HeroSection() {
 
   return (
     <section className="relative bg-gradient-to-br from-[#f8f9fa] to-[#e9ecef] pt-5 pb-0 flex flex-col justify-center gap-[15px] overflow-hidden max-[768px]:pt-10">
+
+      {/* HERO METIN */}
       <div className="max-w-[1000px] mx-auto px-5 text-center flex flex-col justify-center items-center z-10 max-[1100px]:px-[30px]">
         <div>
-          {/* SEO İÇİN KRİTİK: H1 Etiketi */}
           <h1 className="text-[2rem] font-semibold text-[#100481] mb-[5px] tracking-[1px] uppercase max-[1100px]:text-[1.6rem] max-[1100px]:mb-[10px]">
             Sözderece Koçluk İle
           </h1>
@@ -90,7 +108,7 @@ export default function HeroSection() {
               href="/ucretsiz-on-gorusme"
               className="bg-[#f39c12] text-white py-4 px-8 text-[1.1rem] font-bold rounded-[50px] no-underline flex items-center gap-[10px] transition shadow-[0_10px_20px_rgba(243,156,18,0.3)] hover:-translate-y-[3px] hover:shadow-[0_15px_30px_rgba(243,156,18,0.4)] max-[768px]:w-full max-[768px]:justify-center"
             >
-              Ön Görüşme Al <FaChevronRight /> 
+              Ön Görüşme Al <FaChevronRight />
             </a>
             <a
               href="/paket-detay"
@@ -102,30 +120,103 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <div style={{ textAlign: 'center', marginBottom: '10px', color: '#666', fontSize: '0.9rem' }}>
-        <small>👇 Örnek çalışmaları detaylı incelemek için görsellere tıklayınız 👇</small>
-      </div>
+      {/* --- GALERİ BÖLÜMÜ --- */}
+      <div className="w-full bg-white border-t border-[#eee] mt-5 px-5 md:px-10">
 
-      {/* --- ALT KISIM: SONSUZ KAYAN ŞERİT (MARQUEE) --- */}
-      <div className="w-full bg-white py-[15px] border-t border-[#eee] border-b overflow-hidden relative mt-5">
-        <div
-          className="flex gap-[40px] w-max hover:[animation-play-state:paused]"
-          style={{ animation: "scroll 40s linear infinite" }}
+        {/* AÇMA/KAPAMA BUTONU */}
+        <button
+          onClick={() => setGalleryOpen((prev) => !prev)}
+          className="w-full flex items-center justify-center gap-2 py-5 text-[#0f2a4a] font-semibold text-sm cursor-pointer bg-transparent border-0 hover:text-[#100481] transition-colors"
         >
-          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => {
-            const originalIndex = i % MARQUEE_ITEMS.length;
-            return (
-              <div
-                key={i}
-                className="w-[360px] h-[220px] rounded-xl overflow-hidden shadow-[0_8px_20px_rgba(0,0,0,0.1)] flex-shrink-0 cursor-zoom-in relative transition hover:scale-105 max-[768px]:w-[200px] max-[768px]:h-[100px]"
-                onClick={() => setSelectedIndex(originalIndex)}
-              >
-                {/* SEO: Alt etiketleri eklendi */}
-                <img src={item.src} alt={item.alt} loading="lazy" className="w-full h-full object-cover object-top" />
+          Örnek Çalışmalarımız
+          <motion.span
+            animate={{ rotate: galleryOpen ? 90 : 0 }}
+            transition={{ duration: 0.25 }}
+            className="inline-flex"
+          >
+            <FaChevronRight />
+          </motion.span>
+        </button>
+
+        {/* KATEGORİLİ GALERİ */}
+        <AnimatePresence initial={false}>
+          {galleryOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+              className="overflow-hidden"
+            >
+              <div className="pb-8">
+                {/* SEKMELER */}
+                <div className="flex justify-center gap-3 mb-7 flex-wrap">
+                  {CATEGORIES.map((cat, i) => (
+                    <button
+                      key={i}
+                      onClick={() => { setActiveTab(i); setSelectedIndex(null); }}
+                      className={`py-2 px-6 rounded-full font-semibold text-sm transition-all border-2 cursor-pointer ${
+                        activeTab === i
+                          ? "bg-[#100481] text-white border-[#100481] shadow-[0_4px_12px_rgba(16,4,129,0.25)]"
+                          : "bg-white text-[#0f2a4a] border-[#0f2a4a] hover:bg-[#0f2a4a] hover:text-white"
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* RESİMLER */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab}
+                    className="max-w-[1100px] mx-auto"
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -16 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {/* MOBİL: 2 sütunlu grid */}
+                    <div className="grid grid-cols-2 gap-3 md:hidden">
+                      {currentItems.map((item, i) => (
+                        <motion.div
+                          key={i}
+                          className="rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.1)] cursor-pointer active:scale-95 transition-transform"
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.25, delay: i * 0.06 }}
+                          onClick={() => setSelectedIndex(i)}
+                        >
+                          <img src={item.src} alt={item.alt} loading="lazy" className="w-full h-auto block" />
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* MASAÜSTÜ: grid */}
+                    <div
+                      className="hidden md:grid gap-4"
+                      style={{ gridTemplateColumns: `repeat(${Math.min(currentItems.length, 4)}, minmax(0, 1fr))` }}
+                    >
+                      {currentItems.map((item, i) => (
+                        <motion.div
+                          key={i}
+                          className="rounded-xl overflow-hidden shadow-[0_8px_20px_rgba(0,0,0,0.1)] cursor-zoom-in bg-[#f8f9fa] flex items-center justify-center h-[300px]"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: i * 0.08 }}
+                          whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+                          onClick={() => setSelectedIndex(i)}
+                        >
+                          <img src={item.src} alt={item.alt} loading="lazy" className="w-full h-full object-contain" />
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
               </div>
-            );
-          })}
-        </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* --- SLIDER MODAL --- */}
@@ -160,15 +251,15 @@ export default function HeroSection() {
               </button>
               <motion.img
                 key={selectedIndex}
-                src={MARQUEE_ITEMS[selectedIndex].src}
-                alt={MARQUEE_ITEMS[selectedIndex].alt}
+                src={currentItems[selectedIndex].src}
+                alt={currentItems[selectedIndex].alt}
                 className="w-full h-auto max-h-[85vh] block object-contain max-[768px]:max-h-[70vh]"
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3 }}
               />
               <div className="absolute bottom-[10px] bg-black/60 text-white py-[5px] px-3 rounded-[20px] text-[0.9rem] font-medium pointer-events-none">
-                {selectedIndex + 1} / {MARQUEE_ITEMS.length}
+                {selectedIndex + 1} / {currentItems.length}
               </div>
             </motion.div>
 

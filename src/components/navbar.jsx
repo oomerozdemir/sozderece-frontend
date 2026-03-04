@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { SHOW_OGRETMEN } from "../config/features";
 import useCart from "../hooks/useCart";
 import {
   FaShoppingCart,
@@ -62,7 +63,7 @@ export default function Navbar() {
 
   const centerLinks = [
     { name: "Koçluk Paketleri", path: "/paket-detay" },
-    { name: "Özel Ders", path: "/ogretmenler" },
+    ...(SHOW_OGRETMEN ? [{ name: "Özel Ders", path: "/ogretmenler" }] : []),
   ];
 
   return (

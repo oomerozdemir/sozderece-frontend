@@ -1,6 +1,7 @@
 import { FaInstagram, FaLinkedin } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { SHOW_OGRETMEN } from "../config/features";
 
 const Footer = () => {
   return (
@@ -44,7 +45,7 @@ const Footer = () => {
             <h4 className="mb-3 border-b-2 border-[#eb8a0b] inline-block pb-1 text-white text-[1.2rem]">Kategoriler</h4>
             <ul className="list-none p-0 m-0">
               <li><Link to="/paket-detay" className="cursor-pointer text-gray-300 no-underline transition-colors text-[1.1rem] hover:text-orange-400">Paketler</Link></li>
-              <li><Link to="/ogretmenler" className="cursor-pointer text-gray-300 no-underline transition-colors text-[1.1rem] hover:text-orange-400">Özel Ders</Link></li>
+              {SHOW_OGRETMEN && <li><Link to="/ogretmenler" className="cursor-pointer text-gray-300 no-underline transition-colors text-[1.1rem] hover:text-orange-400">Özel Ders</Link></li>}
               <li><Link to="/blog" className="cursor-pointer text-gray-300 no-underline transition-colors text-[1.1rem] hover:text-orange-400">Sözderece Blog</Link></li>
             </ul>
           </div>
