@@ -5,8 +5,10 @@ import { FaChevronRight, FaChevronLeft, FaTimes } from "react-icons/fa";
 // Değişen metinler
 const DYNAMIC_TEXTS = [
   "Sana Özel Detaylı Programlar ve Günlük Takip",
-  "Ücretsiz Ön Görüşme Fırsatı",
-  "3 Günlük Ücretsiz Deneme Hakkı",
+  "Ön Görüşme Fırsatı",
+  "Derece Öğrencisi Koçlarla Birebir Çalışma",
+  "Seviye Analizi ve Hedef Belirleme",
+  "YKS ve LGS'de Netlerini Zirveye Taşı",
 ];
 
 // SEO İÇİN GÜNCELLEME: Resim yolları ve açıklamaları
@@ -88,7 +90,7 @@ export default function HeroSection() {
               href="/ucretsiz-on-gorusme"
               className="bg-[#f39c12] text-white py-4 px-8 text-[1.1rem] font-bold rounded-[50px] no-underline flex items-center gap-[10px] transition shadow-[0_10px_20px_rgba(243,156,18,0.3)] hover:-translate-y-[3px] hover:shadow-[0_15px_30px_rgba(243,156,18,0.4)] max-[768px]:w-full max-[768px]:justify-center"
             >
-              Ücretsiz Ön Görüşme Al <FaChevronRight />
+              Ön Görüşme Al <FaChevronRight /> 
             </a>
             <a
               href="/paket-detay"
