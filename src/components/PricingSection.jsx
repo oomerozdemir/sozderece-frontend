@@ -25,6 +25,7 @@ import "swiper/css/navigation";
 
 // Veri
 import { PACKAGES, PACKAGES_ORDER } from "../hooks/packages.js";
+import CountdownPricingBanner from "./CountdownPricingBanner";
 
 // --- YARDIMCI BİLEŞENLER ---
 
@@ -155,6 +156,11 @@ export default function PricingSection() {
         <p className="text-[1.1rem] text-[#666] leading-[1.6]">
           İster sadece özel ders, ister tam kapsamlı koçluk. Başarıya giden yolda sana en uygun paketi belirle.
         </p>
+      </div>
+
+      {/* --- GERİ SAYIM BANNER --- */}
+      <div className="px-5 max-[768px]:px-[10px]">
+        <CountdownPricingBanner />
       </div>
 
       {/* --- PAKETLER ALANI --- */}

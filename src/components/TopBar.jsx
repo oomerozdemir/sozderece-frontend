@@ -1,5 +1,4 @@
-import "../cssFiles/index.css"; 
-// Eğer ayrı bir CSS dosyası kullanmıyorsanız index.css içinde stilleri tanımlayacağız.
+import "../cssFiles/index.css";
 import {
   FaEnvelope,
   FaPhone,
@@ -8,9 +7,12 @@ import {
   FaYoutube,
   FaWhatsapp
 } from "react-icons/fa";
+import CountdownTopBar from "./CountdownTopBar";
 
 function TopBar() {
   return (
+    <>
+    <CountdownTopBar />
     <div className="top-bar" role="banner">
       <div className="container top-bar-container">
         
@@ -57,6 +59,7 @@ function TopBar() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

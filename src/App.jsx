@@ -28,6 +28,7 @@ const PackageDetail = lazy(() => import("./pages/PackageDetail"));
 const CoachDetail = lazy(() => import("./pages/CoachDetailPage"));
 const AdminCoachPage = lazy(() => import("./pages/AdminCoachPage"));
 const AdminCouponPage = lazy(() => import("./pages/AdminCouponPage"));
+const AdminCountdownPage = lazy(() => import("./pages/AdminCountdownPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 const PaymentIframePage = lazy(() => import("./pages/PaymentIframePage"));
 const PaymentFailPage = lazy(() => import("./pages/PaymentFailPage"));
@@ -121,6 +122,7 @@ function App() {
             <Route path="/admin/coaches" element={<RoleRoute allowedRoles={["admin"]}><AdminCoachPage /></RoleRoute>} />
             <Route path="/admin/coupons" element={<RoleRoute allowedRoles={["admin"]}><AdminCouponPage /></RoleRoute>} />
             <Route path="/admin/refund-requests" element={<RoleRoute allowedRoles={["admin"]}><RefundRequests /></RoleRoute>} />
+            <Route path="/admin/countdown" element={<RoleRoute allowedRoles={["admin"]}><AdminCountdownPage /></RoleRoute>} />
 
             {/* Common */}
             <Route path="/unauthorized" element={<div>Erişim izniniz yok.</div>} />
