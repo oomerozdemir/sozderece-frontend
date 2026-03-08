@@ -275,6 +275,12 @@ const AdminDashboard = () => {
             >
               💸 İade Talepleri
             </Link>
+            <Link
+              to="/admin/countdown"
+              className="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-4 py-2 rounded-xl text-sm font-bold no-underline transition-all"
+            >
+              ⏳ Geri Sayım
+            </Link>
           </div>
         </div>
       </div>
