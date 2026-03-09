@@ -47,6 +47,8 @@ const PaymentPage = () => {
     phone: "",
     allowEmails: false,
     tcNo: "",
+    sinif: "",
+    alan: "",
   });
 
   // --- GÜNCELLENEN STATE YAPISI ---
@@ -229,6 +231,8 @@ const PaymentPage = () => {
     if (!formData.city.trim()) newErrors.city = "Şehir boş bırakılamaz.";
     if (!formData.district.trim()) newErrors.district = "İlçe boş bırakılamaz.";
     if (formData.postalCode && !isValidPostalCode(formData.postalCode)) newErrors.postalCode = "5 haneli posta kodu girin.";
+    if (!formData.sinif) newErrors.sinif = "Sınıf seçimi zorunludur.";
+    if (!formData.alan) newErrors.alan = "Alan seçimi zorunludur.";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -346,6 +350,42 @@ const PaymentPage = () => {
               required
             />
             {errors.tcNo && <span className="text-red-500 text-[0.85rem] mt-0.5 block">{errors.tcNo}</span>}
+          </div>
+          <div className="flex-[1_1_48%] min-w-[140px]">
+            <select
+              name="sinif"
+              value={formData.sinif}
+              onChange={handleInputChange}
+              className={`${inputBase}${errors.sinif ? ` ${errCls}` : ""}`}
+              required
+            >
+              <option value="">Sınıf Seçin</option>
+              <option value="9">9. Sınıf</option>
+              <option value="10">10. Sınıf</option>
+              <option value="11">11. Sınıf</option>
+              <option value="12">12. Sınıf</option>
+              <option value="Mezun">Mezun</option>
+              <option value="Üniversite">Üniversite</option>
+              <option value="Diğer">Diğer</option>
+            </select>
+            {errors.sinif && <span className="text-red-500 text-[0.85rem] mt-0.5 block">{errors.sinif}</span>}
+          </div>
+          <div className="flex-[1_1_48%] min-w-[140px]">
+            <select
+              name="alan"
+              value={formData.alan}
+              onChange={handleInputChange}
+              className={`${inputBase}${errors.alan ? ` ${errCls}` : ""}`}
+              required
+            >
+              <option value="">Alan Seçin</option>
+              <option value="Sayısal">Sayısal</option>
+              <option value="Sözel">Sözel</option>
+              <option value="Eşit Ağırlık">Eşit Ağırlık</option>
+              <option value="Dil">Dil</option>
+              <option value="Diğer">Diğer</option>
+            </select>
+            {errors.alan && <span className="text-red-500 text-[0.85rem] mt-0.5 block">{errors.alan}</span>}
           </div>
         </div>
 
