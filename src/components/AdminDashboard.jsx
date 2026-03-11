@@ -13,6 +13,7 @@ import {
 import AdminCoachPage from "../pages/AdminCoachPage";
 import AdminTeacherApprovals from "../pages/AdminTeacherApprovels";
 import AdminTeacherRequests from "../pages/AdminTeacherRequests";
+import AdminPackagePage from "../pages/AdminPackagePage";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -234,6 +235,7 @@ const AdminDashboard = () => {
   const TABS = [
     { key: "dashboard",          label: "📊 Genel Bakış" },
     { key: "coaches",            label: "👨‍🏫 Koçlar" },
+    { key: "packages",           label: "🛒 Paketler" },
     { key: "teacher-approvals",  label: "🧑‍🏫 Öğretmen Onayları" },
     { key: "teacher-requests",   label: "📋 Talep Özeti" },
     { key: "orders",             label: "📦 Siparişler" },
@@ -306,6 +308,7 @@ const AdminDashboard = () => {
 
         {/* ── Sub-page Views ── */}
         {view === "coaches"           && <AdminCoachPage />}
+        {view === "packages"          && <AdminPackagePage />}
         {view === "teacher-approvals" && <AdminTeacherApprovals />}
         {view === "teacher-requests"  && <AdminTeacherRequests />}
 

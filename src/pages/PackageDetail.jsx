@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Seo from "../components/Seo";
 import { Helmet } from "react-helmet";
@@ -16,7 +16,6 @@ import {
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
-import { PACKAGES } from "../hooks/packages";
 import Testimonials from "../components/Testimonials";
 
 // Fiyat geçerlilik tarihi (Dinamik - 1 yıl sonrası)
@@ -26,28 +25,39 @@ const getPriceValidUntil = () => {
   return date.toISOString().split("T")[0];
 };
 
+const defaultSlug = "kocluk-2026";
+
 const PackageDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const querySlug = new URLSearchParams(location.search).get("slug");
-  const packageList = useMemo(() => Object.values(PACKAGES).filter((p) => !p.hidden), []);
-  const defaultSlug = "kocluk-2026";
 
+  const [packages, setPackages] = useState([]);
   const [selectedSlug, setSelectedSlug] = useState(querySlug || defaultSlug);
   const [activeIndex, setActiveIndex] = useState(null);
 
   useEffect(() => {
-    if (querySlug && PACKAGES[querySlug]) {
+    fetch(`${process.env.REACT_APP_API_URL}/api/packages`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) setPackages(data.packages);
+      })
+      .catch((err) => console.error("Paketler yüklenemedi:", err));
+  }, []);
+
+  useEffect(() => {
+    if (querySlug) {
       setSelectedSlug(querySlug);
-    } else if (!querySlug) {
+    } else {
       const newUrl = `${location.pathname}?slug=${defaultSlug}`;
       window.history.replaceState(null, "", newUrl);
       setSelectedSlug(defaultSlug);
     }
-  }, [querySlug, defaultSlug, location.pathname]);
+  }, [querySlug, location.pathname]);
 
-  const selected = PACKAGES[selectedSlug] || PACKAGES[defaultSlug];
+  const pkgMap = Object.fromEntries(packages.map((p) => [p.slug, p]));
+  const selected = pkgMap[selectedSlug] || pkgMap[defaultSlug] || packages[0];
 
   if (!selected) return null;
 
@@ -65,7 +75,7 @@ const PackageDetail = () => {
     setActiveIndex(activeIndex === index ? null : index);
   };
 
-  const features = (selected.features || []).map(f =>
+  const features = (Array.isArray(selected.features) ? selected.features : []).map((f) =>
     typeof f === "string" ? { label: f, included: true } : f
   );
 
@@ -73,11 +83,11 @@ const PackageDetail = () => {
     { title: "Ödeme güvenli mi?", content: "Evet, tüm ödemeler Paytr altyapısı ile korunmaktadır." },
     { title: "İade politikanız nedir?", content: "Koçluk programınız size verildikten sonraki ilk 5 gün içerisinde koşulsuz iade hakkınız vardır." }
   ];
-  const faqList = [...(selected.faq || []), ...defaultFaq];
+  const faqList = [...defaultFaq];
 
   const numericPrice = selected.priceText
-    ? selected.priceText.replace(/[^0-9.]/g, '')
-    : "0";
+    ? selected.priceText.replace(/[^0-9.]/g, "")
+    : String(selected.price || "0");
 
   const siteUrl = "https://sozderecekocluk.com";
   const canonicalUrl = `${siteUrl}/paket-detay?slug=${selected.slug}`;
@@ -85,11 +95,8 @@ const PackageDetail = () => {
   const productSchema = {
     "@context": "https://schema.org/",
     "@type": "Product",
-    "name": selected.title,
-    "image": [
-        `${siteUrl}/images/hero-logo.webp`,
-        `${siteUrl}/images/paketlerImage1.webp`
-    ],
+    "name": selected.name,
+    "image": [`${siteUrl}/images/hero-logo.webp`, `${siteUrl}/images/paketlerImage1.webp`],
     "description": selected.subtitle || "Sözderece Koçluk YKS hazırlık paketi.",
     "brand": { "@type": "Brand", "name": "Sözderece Koçluk" },
     "sku": selected.slug,
@@ -103,15 +110,13 @@ const PackageDetail = () => {
       "availability": "https://schema.org/InStock",
       "seller": { "@type": "Organization", "name": "Sözderece" },
       "priceValidUntil": getPriceValidUntil(),
-      "hasMerchantReturnPolicy": { "@type": "MerchantReturnPolicy", "applicableCountry": "TR", "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow", "merchantReturnDays": "5", "returnMethod": "https://schema.org/ReturnByMail", "returnFees": "https://schema.org/FreeReturn" },
-      "shippingDetails": { "@type": "OfferShippingDetails", "shippingRate": { "@type": "MonetaryAmount", "value": "0", "currency": "TRY" }, "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "TR" }, "deliveryTime": { "@type": "ShippingDeliveryTime", "handlingTime": { "@type": "QuantitativeValue", "minValue": "0", "maxValue": "0", "unitCode": "d" }, "transitTime": { "@type": "QuantitativeValue", "minValue": "0", "maxValue": "0", "unitCode": "d" } } }
     }
   };
 
   return (
     <>
       <Seo
-        title={selected.title}
+        title={selected.name}
         description={selected.subtitle}
         canonical={`/paket-detay?slug=${selected.slug}`}
       />
@@ -133,30 +138,34 @@ const PackageDetail = () => {
               <span className="inline-block bg-[#e3f2fd] text-[#0f2a4a] font-bold py-1.5 px-4 rounded-[20px] text-[0.9rem] mb-[15px] tracking-wide uppercase">
                 {isSpecialTutoring ? "Özel Ders" : "En Çok Tercih Edilen"}
               </span>
-              <h1 className="text-[2.2rem] font-extrabold text-[#0f2a4a] mb-[15px] leading-[1.2] max-[768px]:text-[1.8rem]">{selected.title}</h1>
+              <h1 className="text-[2.2rem] font-extrabold text-[#0f2a4a] mb-[15px] leading-[1.2] max-[768px]:text-[1.8rem]">{selected.name}</h1>
               <p className="text-[1.1rem] text-[#666] leading-[1.6] max-w-[600px] mx-auto">{selected.subtitle}</p>
             </div>
 
             <div className="text-center mb-[30px] pb-5 border-b border-[#f0f0f0]">
-              <span className="text-[2.5rem] font-extrabold text-[#f39c12] max-[768px]:text-[2rem]">{selected.priceText}</span>
+              <span className="text-[2.5rem] font-extrabold text-[#f39c12] max-[768px]:text-[2rem]">
+                {selected.priceText || `${selected.price}₺`}
+              </span>
               <p className="text-[0.9rem] text-[#999] mt-1">Tüm vergiler dahildir.</p>
             </div>
 
-            <div className="mb-[30px]">
-              <label className="block font-semibold mb-2 text-[#333]">Paket Seçenekleri:</label>
-              <select
-                value={selectedSlug}
-                onChange={(e) => {
-                  setSelectedSlug(e.target.value);
-                  navigate(`?slug=${e.target.value}`, { replace: true });
-                }}
-                className="w-full py-3.5 px-3.5 border border-[#ddd] rounded-[10px] text-base bg-white cursor-pointer outline-none transition-all focus:border-[#f39c12]"
-              >
-                {packageList.map(p => (
-                  <option key={p.slug} value={p.slug}>{p.title}</option>
-                ))}
-              </select>
-            </div>
+            {packages.length > 1 && (
+              <div className="mb-[30px]">
+                <label className="block font-semibold mb-2 text-[#333]">Paket Seçenekleri:</label>
+                <select
+                  value={selectedSlug}
+                  onChange={(e) => {
+                    setSelectedSlug(e.target.value);
+                    navigate(`?slug=${e.target.value}`, { replace: true });
+                  }}
+                  className="w-full py-3.5 px-3.5 border border-[#ddd] rounded-[10px] text-base bg-white cursor-pointer outline-none transition-all focus:border-[#f39c12]"
+                >
+                  {packages.map((p) => (
+                    <option key={p.slug} value={p.slug}>{p.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <ul className="list-none p-[25px] mb-10 bg-[#f9f9f9] rounded-[15px]">
               {features.map((f, i) => (

@@ -23,8 +23,6 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
-// Veri
-import { PACKAGES, PACKAGES_ORDER } from "../hooks/packages.js";
 import CountdownPricingBanner from "./CountdownPricingBanner";
 
 // --- YARDIMCI BİLEŞENLER ---
@@ -70,6 +68,7 @@ const colClassMap = {
 export default function PricingSection() {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
+  const [packages, setPackages] = useState([]);
 
   // Ekran boyutunu dinle
   useEffect(() => {
@@ -79,16 +78,22 @@ export default function PricingSection() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Görüntülenecek paketleri filtrele
-  const visiblePackages = PACKAGES_ORDER.filter(
-    (slug) => PACKAGES[slug] && !PACKAGES[slug].hidden
-  ).map((key) => PACKAGES[key]);
+  // Paketleri API'den çek
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/packages`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) setPackages(data.packages);
+      })
+      .catch((err) => console.error("Paketler yüklenemedi:", err));
+  }, []);
 
   // Kart Oluşturma Fonksiyonu
   const renderCard = (p) => {
     const icon = iconForType(p.type);
     const badge = badgeForType(p.type);
     const isPopular = p.type === "coaching_only";
+    const features = Array.isArray(p.features) ? p.features : [];
 
     const cardCls = [
       "bg-white rounded-[20px] py-[30px] px-[25px] relative flex flex-col h-full",
@@ -112,11 +117,11 @@ export default function PricingSection() {
           <div className="w-[60px] h-[60px] bg-[#f0f4f8] text-[#0f2a4a] rounded-full flex items-center justify-center text-[1.5rem] mx-auto mb-[15px] transition-all group-hover:bg-[#0f2a4a] group-hover:text-white">
             {icon}
           </div>
-          <h3 className="text-[1.2rem] font-bold text-[#333] mb-[15px] min-h-[50px] flex items-center justify-center">{p.title}</h3>
+          <h3 className="text-[1.2rem] font-bold text-[#333] mb-[15px] min-h-[50px] flex items-center justify-center">{p.name}</h3>
 
           <div className="flex flex-col items-center mb-[15px]">
             {p.oldPriceText && <span className="line-through text-[#999] text-base">{p.oldPriceText}</span>}
-            <span className="text-[#0f2a4a] text-[1.6rem] font-extrabold">{p.priceText}</span>
+            <span className="text-[#0f2a4a] text-[1.6rem] font-extrabold">{p.priceText || `${p.price}₺`}</span>
           </div>
 
           {p.subtitle && <p className="text-[0.9rem] text-[#666] leading-[1.5] mb-0 min-h-[60px]">{p.subtitle}</p>}
@@ -124,21 +129,21 @@ export default function PricingSection() {
 
         <div className="h-px bg-[#eee] my-5 w-full"></div>
 
-        {Array.isArray(p.features) && (
+        {features.length > 0 && (
           <ul className="list-none p-0 m-0 mb-[30px] flex-grow">
-            {p.features.map((f, i) => (
+            {features.map((f, i) => (
               <FeatureItem key={i} label={f.label} included={!!f.included} />
             ))}
           </ul>
         )}
 
         <div className="mt-auto">
-          {p.cta?.href && (
+          {p.ctaHref && (
             <button
               className="block w-full text-center bg-[#f39c12] text-white py-[14px] rounded-[10px] font-bold border-0 cursor-pointer text-base transition hover:bg-[#d35400] hover:-translate-y-0.5 hover:shadow-[0_5px_15px_rgba(243,156,18,0.3)]"
-              onClick={() => navigate(p.cta.href)}
+              onClick={() => navigate(p.ctaHref)}
             >
-              {p.cta.label || "Detayları İncele"}
+              {p.ctaLabel || "Detayları İncele"}
             </button>
           )}
         </div>
@@ -146,8 +151,10 @@ export default function PricingSection() {
     );
   };
 
-  const n = visiblePackages.length;
+  const n = Math.min(packages.length, 4);
   const gridClass = `grid gap-[30px] max-w-[1200px] mx-auto ${colClassMap[n] || colClassMap[4]}`;
+
+  if (packages.length === 0) return null;
 
   return (
     <div className="bg-[#f8f9fa] py-[60px] px-5 relative" id="paketler">
@@ -178,10 +185,10 @@ export default function PricingSection() {
               spaceBetween={20}
               slidesPerView={1}
               centeredSlides={true}
-              initialSlide={2} // 2500 TL'lik paket (3. sıra, index 2) varsayılan açılır
+              initialSlide={Math.min(1, packages.length - 1)}
               className="pricing-swiper"
             >
-              {visiblePackages.map((p) => (
+              {packages.map((p) => (
                 <SwiperSlide key={p.slug}>
                   {renderCard(p)}
                 </SwiperSlide>
@@ -199,7 +206,7 @@ export default function PricingSection() {
         ) : (
           // MASAÜSTÜ İÇİN GRID
           <div className={gridClass}>
-            {visiblePackages.map((p) => (
+            {packages.map((p) => (
               <div key={p.slug}>
                 {renderCard(p)}
               </div>

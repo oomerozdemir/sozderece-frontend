@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
-import { PACKAGES } from "../hooks/packages.js";
 import { isTokenValid } from "../utils/auth";
 
 export default function PreCartAuth() {
@@ -12,14 +11,28 @@ export default function PreCartAuth() {
 
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
-  const [step, setStep] = useState("checking"); 
+  const [step, setStep] = useState("checking");
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
   const [resendIn, setResendIn] = useState(0);
-  const [hasRemember, setHasRemember] = useState(false); 
+  const [hasRemember, setHasRemember] = useState(false);
+  const [pkg, setPkg] = useState(null);
+  const [pkgLoaded, setPkgLoaded] = useState(false);
 
-  const pkg = slug ? PACKAGES[slug] : null; 
+  useEffect(() => {
+    if (!slug) { setPkgLoaded(true); return; }
+    fetch(`${process.env.REACT_APP_API_URL}/api/packages`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) {
+          const found = data.packages.find((p) => p.slug === slug) || null;
+          setPkg(found);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setPkgLoaded(true));
+  }, [slug]);
 
   const trackAddToCart = () => {
     try {
@@ -40,8 +53,8 @@ export default function PreCartAuth() {
         "/api/cart/items",
         {
           slug,
-          title: pkg.title,
-          name: pkg.title,
+          title: pkg.name,
+          name: pkg.name,
           unitPrice: Number(pkg.unitPrice),
           quantity: 1,
           email: userEmail || undefined,
@@ -59,6 +72,7 @@ export default function PreCartAuth() {
 
   // AÇILIŞ AKIŞI
   useEffect(() => {
+    if (!pkgLoaded) return;
     (async () => {
       if (!pkg) {
         setStep("email");
@@ -93,7 +107,7 @@ export default function PreCartAuth() {
       localStorage.removeItem("token");
       setStep("email");
     })();
-  }, [slug, pkg, navigate]);
+  }, [slug, pkg, pkgLoaded, navigate]);
 
   // "Tek tıkla giriş ve sepete ekle"
   const oneTapLoginAndAdd = async () => {
@@ -163,6 +177,16 @@ export default function PreCartAuth() {
     }
   };
 
+  if (!pkgLoaded || step === "checking" || step === "done") {
+    return (
+      <div className="flex justify-center items-start min-h-[60vh] bg-white">
+        <form className="w-full max-w-[420px] text-center p-6 mx-4 my-8" onSubmit={(e) => e.preventDefault()}>
+          <h1>Yönlendiriliyor…</h1>
+        </form>
+      </div>
+    );
+  }
+
   if (!pkg) {
     return (
       <div className="flex justify-center items-start min-h-[60vh] bg-white">
@@ -176,22 +200,12 @@ export default function PreCartAuth() {
     );
   }
 
-  if (step === "checking" || step === "done") {
-    return (
-      <div className="flex justify-center items-start min-h-[60vh] bg-white">
-        <form className="w-full max-w-[420px] text-center p-6 mx-4 my-8" onSubmit={(e) => e.preventDefault()}>
-          <h1>Yönlendiriliyor…</h1>
-        </form>
-      </div>
-    );
-  }
-
   return (
     <div className="flex justify-center items-start min-h-[60vh] bg-white">
       <form className="w-full max-w-[420px] text-center p-6 mx-4 my-8" onSubmit={(e) => e.preventDefault()}>
         <h1>Devam etmeden önce giriş yap</h1>
         <p className="text-sm text-slate-600 mb-6">
-          {pkg.title} paketini sepete eklemek için e-posta ile tek kullanımlık kodla giriş yap.
+          {pkg.name} paketini sepete eklemek için e-posta ile tek kullanımlık kodla giriş yap.
         </p>
 
         {step === "email" && (
