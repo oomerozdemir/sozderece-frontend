@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import axios from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
@@ -40,6 +40,35 @@ const IletisimPage = () => {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [blockedSlots, setBlockedSlots] = useState(new Set());
+  const [slotsLoading, setSlotsLoading] = useState(false);
+
+  const fetchBlockedSlots = useCallback(async (date) => {
+    if (!date) return;
+    setSlotsLoading(true);
+    try {
+      const res = await axios.get(`/api/contact/slots?date=${date}`);
+      setBlockedSlots(new Set(res.data.blockedSlots || []));
+    } catch {
+      // fetch başarısız olursa tüm slotlar boş kalır
+    } finally {
+      setSlotsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!formData.meetingDate) {
+      setBlockedSlots(new Set());
+      return;
+    }
+    fetchBlockedSlots(formData.meetingDate);
+
+    const interval = setInterval(() => {
+      fetchBlockedSlots(formData.meetingDate);
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [formData.meetingDate, fetchBlockedSlots]);
 
   // --- GÜNCELLEME: 20 Dakikalık Aralıklar ---
   const timeSlots = [
@@ -66,7 +95,11 @@ const IletisimPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === "meetingDate") {
+      setFormData((prev) => ({ ...prev, meetingDate: value, meetingTime: "" }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -200,10 +233,20 @@ const IletisimPage = () => {
                       <input type="date" name="meetingDate" value={formData.meetingDate} onChange={handleInputChange} min={today} required style={{ cursor: "pointer" }} className={inputClass} />
                     </div>
                     <div className="mb-3 flex-1 max-[600px]:w-full">
-                      <label className={labelClass}>Müsait olduğunuz Saat Aralığı</label>
-                      <select name="meetingTime" value={formData.meetingTime} onChange={handleInputChange} required className={inputClass}>
-                        <option value="">Seçiniz...</option>
-                        {timeSlots.map((slot, i) => <option key={i} value={slot}>{slot}</option>)}
+                      <label className={labelClass}>
+                        Müsait olduğunuz Saat Aralığı
+                        {slotsLoading && <span className="text-[0.75rem] text-gray-400 ml-2">güncelleniyor...</span>}
+                      </label>
+                      <select name="meetingTime" value={formData.meetingTime} onChange={handleInputChange} required className={inputClass} disabled={slotsLoading && !formData.meetingDate}>
+                        <option value="">{formData.meetingDate ? "Seçiniz..." : "Önce tarih seçin"}</option>
+                        {timeSlots.map((slot, i) => {
+                          const dolu = blockedSlots.has(slot);
+                          return (
+                            <option key={i} value={slot} disabled={dolu} style={dolu ? { color: "#aaa" } : {}}>
+                              {slot}{dolu ? " (Dolu)" : ""}
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
                   </div>
@@ -231,8 +274,8 @@ const IletisimPage = () => {
         {/* PROCESS SECTION */}
         <div className="py-[60px] bg-white">
           <div className="max-w-[1200px] mx-auto px-5">
-            <h2 className="text-center text-[1.8rem] text-[#0f2a4a] mb-10">Süreç Nasıl İşliyor?</h2>
-            <div className="grid grid-cols-3 gap-5 max-[960px]:grid-cols-1 max-[960px]:gap-[30px]">
+            <h2 className="text-center text-[1.8rem] text-[#0f2a4a] mb-10 max-[480px]:text-[1.3rem] max-[480px]:mb-6">Süreç Nasıl İşliyor?</h2>
+            <div className="grid grid-cols-3 gap-5 max-[960px]:grid-cols-1 max-[960px]:gap-[30px] max-[480px]:gap-4">
               <div className="text-center p-2.5">
                 <div className="w-[45px] h-[45px] bg-[#eef2ff] text-[#0f2a4a] rounded-full text-[1.3rem] font-extrabold flex items-center justify-center mx-auto mb-[15px] border-2 border-[#0f2a4a]">1</div>
                 <h4>Randevu</h4>

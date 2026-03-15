@@ -71,9 +71,9 @@ const BlogDetail = () => {
       <TopBar />
       <Navbar />
 
-      <div className="max-w-[850px] mx-auto my-[50px] bg-white py-10 px-8 rounded-2xl shadow-[0_6px_18px_rgba(0,0,0,0.06)] leading-[1.8] max-[768px]:py-6 max-[768px]:px-4">
+      <div className="max-w-[850px] mx-auto my-[50px] bg-white py-10 px-8 rounded-2xl shadow-[0_6px_18px_rgba(0,0,0,0.06)] leading-[1.8] max-[768px]:py-6 max-[768px]:px-4 max-[480px]:my-4 max-[480px]:rounded-none max-[480px]:shadow-none max-[480px]:px-3">
         <div>
-          <h1 className="text-[2.2rem] font-bold mb-3 text-[#111] max-[768px]:text-[1.4rem]">{post.title}</h1>
+          <h1 className="text-[2.2rem] font-bold mb-3 text-[#111] max-[768px]:text-[1.4rem] max-[480px]:text-[1.2rem]">{post.title}</h1>
           <p className="text-[#777] text-sm mb-[25px]">{post.date} | <span style={{color: '#f39c12'}}>{post.category}</span></p>
 
           <img
@@ -84,7 +84,7 @@ const BlogDetail = () => {
               display: 'block',
               maxWidth: '100%',
               width: 'auto',
-              maxHeight: '500px',
+              maxHeight: '400px',
               margin: '0 auto 30px',
               objectFit: 'contain',
               borderRadius: '10px',
@@ -100,20 +100,20 @@ const BlogDetail = () => {
 
         <section className="mt-[50px] border-t border-[#eee] pt-[30px]">
           <h3 className="text-[1.4rem] text-[#222] mb-[18px] text-center">Diğer Yazılarımız</h3>
-          <div className="flex justify-center gap-5 flex-wrap max-[768px]:flex-col max-[768px]:items-center max-[768px]:gap-2.5">
+          <div className="grid grid-cols-3 gap-4 max-[768px]:grid-cols-2 max-[480px]:grid-cols-1">
             {blogPosts
               .filter(p => p.id !== post.id)
               .slice(0, 3)
               .map((rel) => (
                 <div
                   key={rel.id}
-                  className="cursor-pointer w-[220px] hover:opacity-80 transition-opacity"
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
                   onClick={() => {
                     navigate(`/blog/${rel.slug}`);
                     window.scrollTo(0, 0);
                   }}
                 >
-                  <img src={rel.image} alt={rel.title} loading="lazy" className="w-full rounded-lg mb-2" />
+                  <img src={rel.image} alt={rel.title} loading="lazy" className="w-full rounded-lg mb-2 h-[140px] object-cover max-[480px]:h-[180px]" />
                   <h4 className="text-sm font-semibold text-[#222]">{rel.title}</h4>
                 </div>
             ))}

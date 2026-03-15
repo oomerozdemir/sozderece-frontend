@@ -244,8 +244,8 @@ const AdminDashboard = () => {
 
   const tabCls = (key) =>
     view === key
-      ? "px-4 py-2.5 rounded-xl text-sm font-bold bg-[#100481] text-white shadow-[0_4px_12px_rgba(16,4,129,0.25)] transition-all"
-      : "px-4 py-2.5 rounded-xl text-sm font-semibold text-[#475569] hover:bg-[#f1f5f9] transition-all";
+      ? "px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-[#100481] text-white shadow-[0_4px_12px_rgba(16,4,129,0.25)] transition-all"
+      : "px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold text-[#475569] hover:bg-[#f1f5f9] transition-all";
 
   return (
     <div className="min-h-screen bg-[#f1f5f9]">
@@ -282,6 +282,12 @@ const AdminDashboard = () => {
               className="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-4 py-2 rounded-xl text-sm font-bold no-underline transition-all"
             >
               ⏳ Geri Sayım
+            </Link>
+            <Link
+              to="/admin/randevu-slotlari"
+              className="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-4 py-2 rounded-xl text-sm font-bold no-underline transition-all"
+            >
+              📅 Randevu Slotları
             </Link>
           </div>
         </div>

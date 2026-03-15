@@ -141,8 +141,8 @@ const LoginPage = () => {
 
       {/* İki sütun: sol öğretmen CTA, sağ öğrenci OTP girişi */}
       <div className="flex justify-center items-center min-h-[50vh] bg-white max-[900px]:min-h-0">
-        <div className="w-full py-8 px-4 flex justify-center">
-          <div className="w-full max-w-[1000px] grid grid-cols-2 gap-7 items-stretch max-[900px]:grid-cols-1">
+        <div className="w-full py-8 px-4 flex justify-center max-[480px]:py-4 max-[480px]:px-3">
+          <div className="w-full max-w-[1000px] grid grid-cols-2 gap-7 items-stretch max-[900px]:grid-cols-1 max-[480px]:gap-4">
             {/* SOL — Öğretmen CTA */}
             <aside className="bg-gradient-to-b from-[#f7f8ff] to-white border border-gray-200 rounded-2xl p-6 shadow-[0_8px_18px_rgba(0,0,0,0.06)]">
               <h3 className="text-[#100383] text-[1.4rem] font-bold mt-0 mb-2.5">Özel ders vermek ister misin?</h3>
@@ -169,9 +169,9 @@ const LoginPage = () => {
 
             {/* SAĞ — Öğrenci OTP Girişi */}
             <section className="bg-white border border-gray-200 rounded-2xl px-2 py-4 shadow-[0_8px_18px_rgba(0,0,0,0.04)]">
-              <form className="w-full max-w-[400px] text-center px-6 mx-auto" onSubmit={(e) => e.preventDefault()}>
-                {step === "checking" && <h2 className="text-[2rem] mb-8 text-[#100383] font-semibold tracking-wide">Yönlendiriliyor…</h2>}
-                {step !== "checking" && <h2 className="text-[2rem] mb-8 text-[#100383] font-semibold tracking-wide">E-posta ile Giriş</h2>}
+              <form className="w-full max-w-[400px] text-center px-6 mx-auto max-[480px]:px-3" onSubmit={(e) => e.preventDefault()}>
+                {step === "checking" && <h2 className="text-[2rem] mb-8 text-[#100383] font-semibold tracking-wide max-[480px]:text-[1.5rem] max-[480px]:mb-5">Yönlendiriliyor…</h2>}
+                {step !== "checking" && <h2 className="text-[2rem] mb-8 text-[#100383] font-semibold tracking-wide max-[480px]:text-[1.5rem] max-[480px]:mb-5">E-posta ile Giriş</h2>}
 
                 {!!error && <p className="text-red-500 text-sm mt-0 mb-2">{error}</p>}
 
@@ -200,9 +200,9 @@ const LoginPage = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full border-0 border-b-2 border-black py-3 px-2 text-base mb-6 bg-transparent text-black focus:outline-none focus:border-gray-800"
+                      className="w-full border-0 border-b-2 border-black py-3 px-2 text-base mb-4 bg-transparent text-black focus:outline-none focus:border-gray-800"
                     />
-                    <label className="flex items-center gap-2 my-2 mb-4 text-[0.95rem] text-gray-900 cursor-pointer">
+                    <label className="flex items-center gap-2 my-2 mb-3 text-[0.95rem] text-gray-900 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={remember}
@@ -278,13 +278,13 @@ const LoginPage = () => {
       </div>
 
       {/* FOOTER */}
-      <footer className="mt-[120px] pt-10 px-5 pb-5 border-t border-gray-300 text-center bg-[#fafafa]">
-        <div className="flex justify-center gap-6 mb-5 text-[1.6rem]">
+      <footer className="mt-[80px] pt-10 px-5 pb-5 border-t border-gray-300 text-center bg-[#fafafa] max-[480px]:mt-10">
+        <div className="flex justify-center gap-4 mb-5 text-[1.6rem]">
           <a href="https://www.instagram.com/sozderece/" className="text-[#010c69] border border-[#020074] rounded-full p-2.5 w-11 h-11 flex items-center justify-center transition-all hover:bg-[#e94b02] hover:border-[#e94b02] hover:text-white"><FaInstagram /></a>
           <span className="text-[#010c69] border border-[#020074] rounded-full p-2.5 w-11 h-11 flex items-center justify-center transition-all hover:bg-[#e94b02] hover:border-[#e94b02] hover:text-white"><FaTiktok /></span>
           <span className="text-[#010c69] border border-[#020074] rounded-full p-2.5 w-11 h-11 flex items-center justify-center transition-all hover:bg-[#e94b02] hover:border-[#e94b02] hover:text-white"><FaYoutube /></span>
         </div>
-        <div className="flex justify-center flex-wrap gap-6 mb-4 text-[0.95rem]">
+        <div className="flex justify-center flex-wrap gap-4 mb-4 text-[0.9rem] max-[480px]:gap-2 max-[480px]:text-[0.8rem]">
           <a href="/hakkimizda" className="text-gray-800 no-underline transition-colors hover:text-[#e5671e]">Hakkımızda</a>
           <a href="/mesafeli-hizmet-sozlesmesi" className="text-gray-800 no-underline transition-colors hover:text-[#e5671e]">Mesafeli Hizmet Sözleşmesi</a>
           <a href="/gizlilik-politikasi-kvkk" className="text-gray-800 no-underline transition-colors hover:text-[#e5671e]">Gizlilik ve KVKK</a>

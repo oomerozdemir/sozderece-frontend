@@ -99,7 +99,6 @@ export default function PricingSection() {
       "bg-white rounded-[20px] py-[30px] px-[25px] relative flex flex-col h-full",
       "transition-all shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden group",
       "lg:hover:-translate-y-[10px] lg:hover:shadow-[0_20px_40px_rgba(15,42,74,0.15)] lg:hover:border-[#f39c12]",
-      "max-[768px]:min-h-[500px]",
       isPopular
         ? "border-2 border-[#0f2a4a] before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[6px] before:bg-[#0f2a4a]"
         : "border border-[#eaeaea]",
@@ -159,8 +158,8 @@ export default function PricingSection() {
   return (
     <div className="bg-[#f8f9fa] py-[60px] px-5 relative" id="paketler">
       <div className="text-center max-w-[800px] mx-auto mb-[50px]">
-        <h2 className="text-[2.2rem] font-extrabold text-[#0f2a4a] mb-[15px] max-[768px]:text-[1.8rem]">Hedefine Uygun Planı Seç</h2>
-        <p className="text-[1.1rem] text-[#666] leading-[1.6]">
+        <h2 className="text-[2.2rem] font-extrabold text-[#0f2a4a] mb-[15px] max-[768px]:text-[1.8rem] max-[480px]:text-[1.4rem]">Hedefine Uygun Planı Seç</h2>
+        <p className="text-[1.1rem] text-[#666] leading-[1.6] max-[480px]:text-[0.95rem]">
           İster sadece özel ders, ister tam kapsamlı koçluk. Başarıya giden yolda sana en uygun paketi belirle.
         </p>
       </div>
@@ -196,10 +195,10 @@ export default function PricingSection() {
             </Swiper>
 
             {/* Özel Ok Butonları */}
-            <div className="absolute top-1/2 -translate-y-1/2 left-0 w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#0f2a4a] shadow-[0_4px_10px_rgba(0,0,0,0.15)] z-10 cursor-pointer border border-[#eee] transition active:bg-[#f39c12] active:text-white active:scale-90 swiper-button-prev-custom">
+            <div className="absolute top-1/2 -translate-y-1/2 left-0 w-11 h-11 bg-white rounded-full flex items-center justify-center text-[#0f2a4a] shadow-[0_4px_10px_rgba(0,0,0,0.15)] z-10 cursor-pointer border border-[#eee] transition active:bg-[#f39c12] active:text-white active:scale-90 swiper-button-prev-custom">
               <FaArrowLeft />
             </div>
-            <div className="absolute top-1/2 -translate-y-1/2 right-0 w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#0f2a4a] shadow-[0_4px_10px_rgba(0,0,0,0.15)] z-10 cursor-pointer border border-[#eee] transition active:bg-[#f39c12] active:text-white active:scale-90 swiper-button-next-custom">
+            <div className="absolute top-1/2 -translate-y-1/2 right-0 w-11 h-11 bg-white rounded-full flex items-center justify-center text-[#0f2a4a] shadow-[0_4px_10px_rgba(0,0,0,0.15)] z-10 cursor-pointer border border-[#eee] transition active:bg-[#f39c12] active:text-white active:scale-90 swiper-button-next-custom">
               <FaArrowRight />
             </div>
           </div>

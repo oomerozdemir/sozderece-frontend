@@ -79,11 +79,11 @@ export default function HeroSection() {
       {/* HERO METIN */}
       <div className="max-w-[1000px] mx-auto px-5 text-center flex flex-col justify-center items-center z-10 max-[1100px]:px-[30px]">
         <div>
-          <h1 className="text-[2rem] font-semibold text-[#100481] mb-[5px] tracking-[1px] uppercase max-[1100px]:text-[1.6rem] max-[1100px]:mb-[10px]">
+          <h1 className="text-[2rem] font-semibold text-[#100481] mb-[5px] tracking-[1px] uppercase max-[1100px]:text-[1.6rem] max-[1100px]:mb-[10px] max-[480px]:text-[1.2rem]">
             Sözderece Koçluk İle
           </h1>
 
-          <div className="h-[60px] flex items-center justify-center mb-[10px] max-[1100px]:h-auto max-[1100px]:min-h-[70px] max-[1100px]:mb-[15px] max-[768px]:h-auto max-[768px]:min-h-[80px]">
+          <div className="h-[60px] flex items-center justify-center mb-[10px] max-[1100px]:h-auto max-[1100px]:min-h-[70px] max-[1100px]:mb-[15px] max-[768px]:h-auto max-[768px]:min-h-[60px]">
             <AnimatePresence mode="wait">
               <motion.p
                 key={index}
@@ -91,19 +91,19 @@ export default function HeroSection() {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}
                 transition={{ duration: 0.5 }}
-                className="text-[2.5rem] font-extrabold bg-gradient-to-tr from-[#100481] to-[#ff9203] bg-clip-text text-transparent m-0 leading-[1.1] max-[1100px]:text-[2.2rem] max-[1100px]:leading-[1.2] max-[768px]:text-[1.8rem]"
+                className="text-[2.5rem] font-extrabold bg-gradient-to-tr from-[#100481] to-[#ff9203] bg-clip-text text-transparent m-0 leading-[1.1] max-[1100px]:text-[2.2rem] max-[1100px]:leading-[1.2] max-[768px]:text-[1.8rem] max-[480px]:text-[1.3rem] max-[480px]:leading-[1.3]"
               >
                 {DYNAMIC_TEXTS[index]}
               </motion.p>
             </AnimatePresence>
           </div>
 
-          <p className="text-[1.1rem] text-[#666] max-w-[600px] mx-auto mb-[25px] leading-[1.5]">
+          <p className="text-[1.1rem] text-[#666] max-w-[600px] mx-auto mb-[25px] leading-[1.5] max-[480px]:text-[0.95rem] max-[480px]:mb-4 max-[480px]:px-2">
             YKS ve LGS sürecinde kaybolma! Derece öğrencisi koçlarımızla tanış,
             seviye analizi ve sana özel programlarla netlerini zirveye taşı.
           </p>
 
-          <div className="flex gap-5 justify-center flex-wrap">
+          <div className="flex gap-5 justify-center flex-wrap max-[480px]:gap-3">
             <a
               href="/ucretsiz-on-gorusme"
               className="bg-[#f39c12] text-white py-4 px-8 text-[1.1rem] font-bold rounded-[50px] no-underline flex items-center gap-[10px] transition shadow-[0_10px_20px_rgba(243,156,18,0.3)] hover:-translate-y-[3px] hover:shadow-[0_15px_30px_rgba(243,156,18,0.4)] max-[768px]:w-full max-[768px]:justify-center"
@@ -176,8 +176,8 @@ export default function HeroSection() {
                     exit={{ opacity: 0, y: -16 }}
                     transition={{ duration: 0.3 }}
                   >
-                    {/* MOBİL: 2 sütunlu grid */}
-                    <div className="grid grid-cols-2 gap-3 md:hidden">
+                    {/* MOBİL: 1 veya 2 sütunlu grid */}
+                    <div className="grid grid-cols-2 gap-3 md:hidden max-[360px]:grid-cols-1">
                       {currentItems.map((item, i) => (
                         <motion.div
                           key={i}
@@ -230,7 +230,7 @@ export default function HeroSection() {
             onClick={closeModal}
           >
             <button
-              className="absolute top-1/2 -translate-y-1/2 left-[30px] bg-white/[0.15] border border-white/20 text-white w-[50px] h-[50px] rounded-full flex items-center justify-center text-[1.5rem] cursor-pointer z-[2001] transition hover:bg-white/40 hover:scale-110 max-[768px]:w-10 max-[768px]:h-10 max-[768px]:text-[1.2rem] max-[768px]:bg-black/50 max-[768px]:left-[10px]"
+              className="absolute top-1/2 -translate-y-1/2 left-[30px] bg-white/[0.15] border border-white/20 text-white w-[50px] h-[50px] rounded-full flex items-center justify-center text-[1.5rem] cursor-pointer z-[2001] transition hover:bg-white/40 hover:scale-110 max-[768px]:w-11 max-[768px]:h-11 max-[768px]:text-[1.2rem] max-[768px]:bg-black/50 max-[768px]:left-[10px]"
               onClick={showPrev}
             >
               <FaChevronLeft />
@@ -264,7 +264,7 @@ export default function HeroSection() {
             </motion.div>
 
             <button
-              className="absolute top-1/2 -translate-y-1/2 right-[30px] bg-white/[0.15] border border-white/20 text-white w-[50px] h-[50px] rounded-full flex items-center justify-center text-[1.5rem] cursor-pointer z-[2001] transition hover:bg-white/40 hover:scale-110 max-[768px]:w-10 max-[768px]:h-10 max-[768px]:text-[1.2rem] max-[768px]:bg-black/50 max-[768px]:right-[10px]"
+              className="absolute top-1/2 -translate-y-1/2 right-[30px] bg-white/[0.15] border border-white/20 text-white w-[50px] h-[50px] rounded-full flex items-center justify-center text-[1.5rem] cursor-pointer z-[2001] transition hover:bg-white/40 hover:scale-110 max-[768px]:w-11 max-[768px]:h-11 max-[768px]:text-[1.2rem] max-[768px]:bg-black/50 max-[768px]:right-[10px]"
               onClick={showNext}
             >
               <FaChevronRight />

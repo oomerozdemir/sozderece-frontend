@@ -32,33 +32,33 @@ const BlogList = () => {
       <Navbar />
 
       <div className="py-10 px-5 bg-[#fafafa] min-h-screen text-[#1a1a1a] max-[768px]:py-6 max-[768px]:px-3.5">
-        <header className="text-center mb-[50px]">
-          <h1 className="text-[2rem] font-bold text-[#222] max-[768px]:text-[1.4rem]">Sözderece Blog</h1>
-          <p>YKS ve LGS sürecinde ihtiyacın olan tüm rehberlik yazıları burada.</p>
+        <header className="text-center mb-[50px] max-[480px]:mb-8">
+          <h1 className="text-[2rem] font-bold text-[#222] max-[768px]:text-[1.4rem] max-[480px]:text-[1.2rem]">Sözderece Blog</h1>
+          <p className="max-[480px]:text-[0.9rem] max-[480px]:px-2">YKS ve LGS sürecinde ihtiyacın olan tüm rehberlik yazıları burada.</p>
           <div>
             <input
               type="text"
               placeholder="İçeriklerde ara..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="py-2.5 px-3.5 w-[60%] max-w-[400px] mt-3.5 rounded-lg border border-[#ccc] outline-none transition-all focus:border-[#fbbf24] focus:shadow-[0_0_0_3px_rgba(251,191,36,0.2)] max-[768px]:w-[90%]"
+              className="py-2.5 px-3.5 w-[60%] max-w-[400px] mt-3.5 rounded-lg border border-[#ccc] outline-none transition-all focus:border-[#fbbf24] focus:shadow-[0_0_0_3px_rgba(251,191,36,0.2)] max-[768px]:w-[90%] max-[480px]:w-full"
             />
           </div>
         </header>
 
-        <div className="flex gap-10 flex-wrap justify-center max-w-[1200px] mx-auto">
-          <section className="flex-[3] grid gap-6 grid-cols-[repeat(auto-fit,minmax(280px,1fr))]">
+        <div className="flex gap-10 flex-wrap justify-center max-w-[1200px] mx-auto max-[768px]:flex-col max-[768px]:gap-6">
+          <section className="flex-[3] grid gap-6 grid-cols-[repeat(auto-fill,minmax(min(280px,100%),1fr))]">
             {filteredPosts.slice(0, visibleCount).map((post) => (
               <div
                 key={post.id}
-                className="relative h-[320px] rounded-2xl overflow-hidden cursor-pointer bg-cover bg-center flex items-end text-white shadow-[0_3px_10px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-[5px] hover:shadow-[0_6px_16px_rgba(0,0,0,0.2)]"
+                className="relative h-[320px] max-[480px]:h-[220px] rounded-2xl overflow-hidden cursor-pointer bg-cover bg-center flex items-end text-white shadow-[0_3px_10px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-[5px] hover:shadow-[0_6px_16px_rgba(0,0,0,0.2)]"
                 style={{ backgroundImage: `url(${post.image})` }}
                 onClick={() => navigate(`/blog/${post.slug}`)}
               >
-                <div className="bg-gradient-to-t from-[rgba(0,0,0,0.65)] to-transparent p-5 w-full">
+                <div className="bg-gradient-to-t from-[rgba(0,0,0,0.65)] to-transparent p-5 w-full max-[480px]:p-3">
                   <span className="text-xs text-yellow-300">{post.category}</span>
-                  <h3 className="text-[1.3rem] font-semibold mb-2">{post.title}</h3>
-                  <p className="text-[0.95rem] text-[#fbbf24] m-0">{post.description}</p>
+                  <h3 className="text-[1.3rem] font-semibold mb-2 max-[480px]:text-[1.1rem] max-[480px]:mb-1">{post.title}</h3>
+                  <p className="text-[0.95rem] text-[#fbbf24] m-0 max-[480px]:text-[0.85rem]">{post.description}</p>
                   <span className="text-xs text-gray-300">{post.date}</span>
                 </div>
               </div>
@@ -79,21 +79,23 @@ const BlogList = () => {
             )}
           </section>
 
-          <aside className="flex-1 max-w-[320px]">
+          <aside className="flex-1 max-w-[320px] max-[768px]:max-w-full max-[768px]:w-full">
             <h4 className="font-bold mb-4">Öne Çıkanlar</h4>
+            <div className="max-[768px]:grid max-[768px]:grid-cols-2 max-[480px]:grid-cols-1 max-[768px]:gap-3">
             {blogPosts.slice(0, 5).map((post) => (
               <div
                 key={post.id}
-                className="flex gap-3 items-center mb-[18px] cursor-pointer transition-transform hover:translate-x-1"
+                className="flex gap-3 items-center mb-[18px] max-[768px]:mb-0 cursor-pointer transition-transform hover:translate-x-1"
                 onClick={() => navigate(`/blog/${post.slug}`)}
               >
-                <img src={post.image} alt={post.title} loading="lazy" className="w-[65px] h-[65px] object-cover rounded-md" />
+                <img src={post.image} alt={post.title} loading="lazy" className="w-[65px] h-[65px] object-cover rounded-md flex-shrink-0" />
                 <div>
                   <span className="text-xs text-[#888]">{post.date}</span>
                   <p className="text-[0.9rem] text-[#333] font-medium">{post.title}</p>
                 </div>
               </div>
             ))}
+            </div>
           </aside>
         </div>
       </div>

@@ -12,7 +12,7 @@ import {
   FaCog
 } from "react-icons/fa";
 
-const mobileLinkCls = "flex items-center justify-center gap-[10px] py-[15px] text-[1.1rem] text-[#0f2a4a] no-underline border-b border-[#f0f0f0] text-center";
+const mobileLinkCls = "flex items-center justify-center gap-[10px] py-[13px] text-[1rem] text-[#0f2a4a] no-underline border-b border-[#f0f0f0] text-center";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -67,12 +67,12 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="w-full h-20 bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)] sticky top-0 z-[1000] flex items-center justify-center">
+    <nav className="w-full h-16 bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)] sticky top-0 z-[1000] flex items-center justify-center max-[960px]:h-14">
       <div className="w-[90%] max-w-[1200px] flex justify-between items-center">
 
         {/* SOL: LOGO */}
         <Link to="/">
-          <img src="/images/hero-logo.webp" alt="Sözderece Koçluk" className="h-[50px] w-auto object-contain" />
+          <img src="/images/hero-logo.webp" alt="Sözderece Koçluk" className="h-[46px] w-auto object-contain max-[960px]:h-9" />
         </Link>
 
         {/* ORTA: LİNKLER (Masaüstü) */}
@@ -152,8 +152,8 @@ export default function Navbar() {
       </div>
 
       {/* MOBİL MENÜ (OVERLAY) */}
-      <div className={`block fixed top-20 left-0 w-full h-[calc(100vh-80px)] bg-white z-[999] transition-transform duration-300 ease-in-out border-t border-[#eee] overflow-y-auto ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
-        <div className="flex flex-col p-5">
+      <div className={`block fixed top-14 left-0 w-full h-[calc(100vh-56px)] bg-white z-[999] transition-transform duration-300 ease-in-out border-t border-[#eee] overflow-y-auto ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
+        <div className="flex flex-col p-5 pb-8">
 
           {/* MOBİL SEPET */}
           <Link to="/sepetim" onClick={() => setIsMobileMenuOpen(false)} className={`${mobileLinkCls} font-bold !text-[#e67e22]`}>

@@ -45,10 +45,10 @@ export default function HomePage() {
 
       {/* İçerik Bileşenleri */}
       <Suspense fallback={<LoadingSpinner />}>
+        <Testimonials />
         <PricingSection />
         <HomeCoachSlider />
 
-        <Testimonials />
         <WhyChooseUs />
         
         {/* Low Word Count hatasını çözmek için S.S.S. bölümünü ekledik */}
