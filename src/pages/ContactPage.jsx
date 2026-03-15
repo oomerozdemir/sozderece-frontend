@@ -104,6 +104,10 @@ const IletisimPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.meetingTime) {
+      setErrorMsg("Lütfen bir saat seçin.");
+      return;
+    }
     setLoading(true);
     setSuccessMsg("");
     setErrorMsg("");
@@ -227,28 +231,78 @@ const IletisimPage = () => {
                   </div>
 
                   {/* TARİH VE SAAT SEÇİMİ */}
-                  <div className="flex gap-[15px] w-full max-[600px]:flex-col max-[600px]:gap-0">
-                    <div className="mb-3 flex-1 max-[600px]:w-full">
-                      <label className={labelClass}>Tarih Seçiniz</label>
-                      <input type="date" name="meetingDate" value={formData.meetingDate} onChange={handleInputChange} min={today} required style={{ cursor: "pointer" }} className={inputClass} />
-                    </div>
-                    <div className="mb-3 flex-1 max-[600px]:w-full">
-                      <label className={labelClass}>
-                        Müsait olduğunuz Saat Aralığı
-                        {slotsLoading && <span className="text-[0.75rem] text-gray-400 ml-2">güncelleniyor...</span>}
-                      </label>
-                      <select name="meetingTime" value={formData.meetingTime} onChange={handleInputChange} required className={inputClass} disabled={slotsLoading && !formData.meetingDate}>
-                        <option value="">{formData.meetingDate ? "Seçiniz..." : "Önce tarih seçin"}</option>
-                        {timeSlots.map((slot, i) => {
-                          const dolu = blockedSlots.has(slot);
-                          return (
-                            <option key={i} value={slot} disabled={dolu} style={dolu ? { color: "#aaa" } : {}}>
-                              {slot}{dolu ? " (Dolu)" : ""}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div>
+                  <div className="mb-3">
+                    <label className={labelClass}>Tarih Seçiniz</label>
+                    <input type="date" name="meetingDate" value={formData.meetingDate} onChange={handleInputChange} min={today} required style={{ cursor: "pointer" }} className={inputClass} />
+                  </div>
+
+                  {/* SAAT SLOT GRID */}
+                  <div className="mb-3">
+                    <label className={labelClass}>
+                      Müsait Olduğunuz Saat Aralığı
+                      {slotsLoading && <span className="text-[0.75rem] text-gray-400 ml-2">güncelleniyor…</span>}
+                    </label>
+
+                    {!formData.meetingDate ? (
+                      <div className="w-full p-3 border border-[#ddd] rounded-lg text-[0.9rem] text-gray-400 bg-[#f9f9f9] text-center">
+                        Önce tarih seçin
+                      </div>
+                    ) : (
+                      <>
+                        {/* Legenda */}
+                        <div className="flex gap-3 mb-2 text-[0.75rem] text-gray-500">
+                          <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-[#e8f5e9] border border-[#4caf50]"></span>Boş</span>
+                          <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-[#fde8e8] border border-[#e57373]"></span>Dolu</span>
+                          <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-[#100481] border border-[#100481]"></span>Seçili</span>
+                        </div>
+
+                        {/* Gruplara göre slotlar */}
+                        {[
+                          { label: "Sabah", slots: timeSlots.slice(0, 9) },
+                          { label: "Öğle", slots: timeSlots.slice(9, 18) },
+                          { label: "Öğleden Sonra", slots: timeSlots.slice(18, 27) },
+                          { label: "Akşam", slots: timeSlots.slice(27) },
+                        ].map((group) => (
+                          <div key={group.label} className="mb-3">
+                            <div className="text-[0.72rem] font-bold text-gray-400 uppercase tracking-wider mb-1">{group.label}</div>
+                            <div className="grid grid-cols-3 gap-1.5">
+                              {group.slots.map((slot) => {
+                                const dolu = blockedSlots.has(slot);
+                                const secili = formData.meetingTime === slot;
+                                return (
+                                  <button
+                                    key={slot}
+                                    type="button"
+                                    disabled={dolu}
+                                    onClick={() => !dolu && setFormData((prev) => ({ ...prev, meetingTime: slot }))}
+                                    className={`py-1.5 px-1 rounded-md text-[0.72rem] font-medium border transition-all text-center leading-tight
+                                      ${secili
+                                        ? "bg-[#100481] text-white border-[#100481] shadow-md"
+                                        : dolu
+                                        ? "bg-[#fde8e8] text-[#c62828] border-[#e57373] cursor-not-allowed opacity-70"
+                                        : "bg-[#e8f5e9] text-[#2e7d32] border-[#4caf50] hover:bg-[#100481] hover:text-white hover:border-[#100481] cursor-pointer"
+                                      }`}
+                                  >
+                                    {slot.replace(" - ", "–")}
+                                    {dolu && <span className="block text-[0.65rem] mt-0.5 opacity-80">Dolu</span>}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+
+                        {/* Seçilen saati göster */}
+                        {formData.meetingTime && (
+                          <div className="mt-1 text-[0.8rem] text-[#100481] font-semibold">
+                            ✓ Seçilen saat: {formData.meetingTime}
+                          </div>
+                        )}
+
+                        {/* Hidden input for form validation */}
+                        <input type="hidden" name="meetingTime" value={formData.meetingTime} required />
+                      </>
+                    )}
                   </div>
 
                   <div className="mb-3">
