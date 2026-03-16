@@ -278,6 +278,12 @@ const AdminDashboard = () => {
               💸 İade Talepleri
             </Link>
             <Link
+              to="/admin/popup"
+              className="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-4 py-2 rounded-xl text-sm font-bold no-underline transition-all"
+            >
+              🎁 Popup Kuponu
+            </Link>
+            <Link
               to="/admin/countdown"
               className="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-4 py-2 rounded-xl text-sm font-bold no-underline transition-all"
             >
@@ -404,6 +410,11 @@ const AdminDashboard = () => {
                             <p className="font-bold text-[#0f172a] text-sm truncate">{order.package}</p>
                             <p className="text-xs text-[#64748b] truncate">{order.userName} · {order.userEmail}</p>
                           </div>
+                          {order.couponCode && (
+                            <span className="text-xs font-bold px-2.5 py-1 rounded-full border bg-[#fefce8] text-[#854d0e] border-[#fde68a] flex-shrink-0">
+                              🎟 {order.couponCode}
+                            </span>
+                          )}
                           <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${meta.cls} flex-shrink-0`}>
                             {meta.label}
                           </span>
@@ -421,6 +432,17 @@ const AdminDashboard = () => {
                               <p className="text-xs text-[#64748b] font-semibold">Oluşturulma</p>
                               <p className="text-sm font-bold text-[#0f172a] mt-0.5">{new Date(order.createdAt).toLocaleString("tr-TR")}</p>
                             </div>
+                            {order.couponCode && (
+                              <div className="col-span-2 bg-[#fefce8] rounded-xl p-3 border border-[#fde68a] max-[640px]:col-span-1">
+                                <p className="text-xs text-[#854d0e] font-semibold">🎟 Kullanılan Kupon</p>
+                                <p className="text-sm font-bold text-[#713f12] font-mono mt-0.5">
+                                  {order.couponCode}
+                                  {order.discountRate > 0 && (
+                                    <span className="ml-2 text-xs font-normal text-[#92400e]">(%{order.discountRate} indirim)</span>
+                                  )}
+                                </p>
+                              </div>
+                            )}
                           </div>
 
                           {/* Fatura */}
@@ -431,7 +453,7 @@ const AdminDashboard = () => {
                             {order.billingInfo ? (
                               <div className="mt-2 bg-white rounded-xl p-3 border border-[#e5e7eb] text-xs space-y-1 text-[#334155]">
                                 <p><strong>Ad Soyad:</strong> {order.billingInfo?.name} {order.billingInfo?.surname}</p>
-                                <p><strong>TC No:</strong> {order.billingInfo?.tcno}</p>
+                                <p><strong>TC No:</strong> {order.billingInfo?.tcNo}</p>
                                 <p><strong>Adres:</strong> {order.billingInfo.address}, {order.billingInfo.district}</p>
                                 <p><strong>Şehir:</strong> {order.billingInfo.city} — {order.billingInfo.postalCode}</p>
                                 <p><strong>Telefon:</strong> {order.billingInfo.phone}</p>
@@ -442,7 +464,7 @@ const AdminDashboard = () => {
                             )}
                             {editingBilling === order.id ? (
                               <div className="mt-2 bg-white rounded-xl p-3 border border-[#e5e7eb] grid grid-cols-2 gap-2 max-[640px]:grid-cols-1">
-                                {["name","surname","address","city","postalCode","phone","email"].map((f) => (
+                                {["name","surname","tcNo","address","city","postalCode","phone","email"].map((f) => (
                                   <input key={f} className={inputCls} placeholder={f}
                                     value={updatedBillingInfo[f] || ""}
                                     onChange={(e) => setUpdatedBillingInfo({ ...updatedBillingInfo, [f]: e.target.value })}
