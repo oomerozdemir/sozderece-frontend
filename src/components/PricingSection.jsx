@@ -73,11 +73,169 @@ const BADGE_COLORS = {
   red:    "bg-[#fee2e2] text-[#991b1b]",
 };
 
+function PackageCard({ p, navigate }) {
+  const [activePlanIdx, setActivePlanIdx] = useState(0);
+
+  const icon = iconForType(p.type);
+  const badge = badgeForType(p.type);
+  const isPopular = p.type === "coaching_only";
+  const features = Array.isArray(p.features) ? p.features : [];
+  const plans = Array.isArray(p.plans) ? p.plans : [];
+  const hasPlanTabs = plans.length > 1;
+  const activePlan = hasPlanTabs ? plans[activePlanIdx] : null;
+
+  let displayPrice, strikethroughPrice, badgeText, badgeStyle, durationText, planBadge, planBadgeStyle;
+
+  if (activePlan) {
+    displayPrice = activePlan.priceText || "";
+    durationText = activePlan.durationText || "";
+    strikethroughPrice = activePlan.oldPriceText || null;
+    badgeText = null;
+    badgeStyle = "";
+    planBadge = activePlan.badge || null;
+    planBadgeStyle = BADGE_COLORS[activePlan.badgeColor] || BADGE_COLORS.green;
+  } else {
+    durationText = "";
+    planBadge = null;
+    planBadgeStyle = "";
+    const examActive = isExamPriceActive(p);
+    const promoActive = !examActive && isPromoActive(p);
+
+    if (examActive) {
+      const examPrice = getExamPrice(p);
+      const daysLeft = getExamDaysLeft(p);
+      const rate = p.examDiscountRate ?? 5;
+      displayPrice = `${examPrice}₺`;
+      strikethroughPrice = p.priceText || `${p.price}₺`;
+      badgeText = `Sınava ${daysLeft} gün kaldı — %${rate} indirimli`;
+      badgeStyle = "bg-[#dbeafe] text-[#1e40af]";
+    } else if (promoActive) {
+      displayPrice = `${p.promoPrice}₺`;
+      strikethroughPrice = p.priceText || `${p.price}₺`;
+      badgeText = p.promoLabel || `${formatPromoEndDate(p.promoEndDate)} tarihine kadar`;
+      badgeStyle = "bg-[#fef3c7] text-[#92400e]";
+    } else {
+      displayPrice = p.priceText || `${p.price}₺`;
+      strikethroughPrice = p.oldPriceText;
+      badgeText = null;
+      badgeStyle = "";
+    }
+  }
+
+  const cardCls = [
+    "bg-white rounded-[20px] py-[30px] px-[25px] relative flex flex-col h-full",
+    "transition-all shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden group",
+    "lg:hover:-translate-y-[10px] lg:hover:shadow-[0_20px_40px_rgba(15,42,74,0.15)] lg:hover:border-[#f39c12]",
+    isPopular
+      ? "border-2 border-[#0f2a4a] before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[6px] before:bg-[#0f2a4a]"
+      : "border border-[#eaeaea]",
+  ].join(" ");
+
+  return (
+    <div className={cardCls}>
+      {badge && (
+        <div className="absolute top-5 right-5 bg-[#f39c12] text-white py-[6px] px-3 text-[0.75rem] rounded-[20px] font-bold uppercase tracking-[0.5px] z-10">
+          {badge}
+        </div>
+      )}
+
+      <div className="text-center mb-[15px]">
+        <div className="w-[60px] h-[60px] bg-[#f0f4f8] text-[#0f2a4a] rounded-full flex items-center justify-center text-[1.5rem] mx-auto mb-[15px] transition-all group-hover:bg-[#0f2a4a] group-hover:text-white">
+          {icon}
+        </div>
+        <h3 className="text-[1.2rem] font-bold text-[#333] mb-[15px] min-h-[50px] flex items-center justify-center">{p.name}</h3>
+
+        {/* Süre sekmeleri */}
+        {hasPlanTabs && (
+          <div className="flex bg-[#f1f5f9] rounded-full p-1 mb-4 mx-2">
+            {plans.map((plan, i) => (
+              <button
+                key={i}
+                type="button"
+                className={`flex-1 py-1.5 text-xs font-bold rounded-full transition-all ${
+                  activePlanIdx === i
+                    ? "bg-white shadow text-[#0f2a4a]"
+                    : "text-[#64748b] hover:text-[#0f2a4a]"
+                }`}
+                onClick={() => setActivePlanIdx(i)}
+              >
+                {plan.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="flex flex-col items-center mb-[15px]">
+          {planBadge && (
+            <span className={`mb-2 inline-block text-[0.72rem] font-bold px-3 py-1 rounded-full ${planBadgeStyle}`}>
+              {planBadge}
+            </span>
+          )}
+          {strikethroughPrice && <span className="line-through text-[#999] text-base">{strikethroughPrice}</span>}
+          <div className="flex items-baseline gap-1">
+            <span className="text-[#0f2a4a] text-[1.6rem] font-extrabold">{displayPrice}</span>
+            {durationText && <span className="text-[#64748b] text-sm font-semibold">{durationText}</span>}
+          </div>
+          {badgeText && (
+            <span className={`mt-1.5 inline-block text-[0.72rem] font-bold px-3 py-1 rounded-full ${badgeStyle}`}>
+              {badgeText}
+            </span>
+          )}
+          {!activePlan && isExamPriceActive(p) && (() => {
+            const dailyCost = getExamDailyCost(p);
+            const savings = getExamSavings(p);
+            return (
+              <>
+                {dailyCost && (
+                  <p className="text-[0.72rem] text-[#64748b] mt-1">
+                    Günlük sadece <strong>{dailyCost}₺</strong> ile
+                  </p>
+                )}
+                {savings && (
+                  <span className="mt-1 inline-block bg-[#dcfce7] text-[#166534] text-[0.72rem] font-bold px-3 py-0.5 rounded-full">
+                    {savings}₺ tasarruf
+                  </span>
+                )}
+              </>
+            );
+          })()}
+        </div>
+
+        {p.subtitle && <p className="text-[0.9rem] text-[#666] leading-[1.5] mb-0 min-h-[60px]">{p.subtitle}</p>}
+      </div>
+
+      <div className="h-px bg-[#eee] my-5 w-full"></div>
+
+      {features.length > 0 && (
+        <ul className="list-none p-0 m-0 mb-[30px] flex-grow">
+          {features.map((f, i) => (
+            <FeatureItem key={i} label={f.label} included={!!f.included} />
+          ))}
+        </ul>
+      )}
+
+      <div className="mt-auto">
+        {p.ctaHref && (
+          <button
+            className="block w-full text-center bg-[#f39c12] text-white py-[14px] rounded-[10px] font-bold border-0 cursor-pointer text-base transition hover:bg-[#d35400] hover:-translate-y-0.5 hover:shadow-[0_5px_15px_rgba(243,156,18,0.3)]"
+            onClick={() => {
+              const href = activePlan?.ctaHref || p.ctaHref;
+              const withPlan = hasPlanTabs ? `${href}${href.includes("?") ? "&" : "?"}plan=${activePlanIdx}` : href;
+              navigate(withPlan);
+            }}
+          >
+            {activePlan?.ctaLabel || p.ctaLabel || "Detayları İncele"}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function PricingSection() {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
   const [packages, setPackages] = useState([]);
-  const [activePlans, setActivePlans] = useState({});
 
   // Ekran boyutunu dinle
   useEffect(() => {
@@ -96,168 +254,6 @@ export default function PricingSection() {
       })
       .catch((err) => console.error("Paketler yüklenemedi:", err));
   }, []);
-
-  // Kart Oluşturma Fonksiyonu
-  const renderCard = (p) => {
-    const icon = iconForType(p.type);
-    const badge = badgeForType(p.type);
-    const isPopular = p.type === "coaching_only";
-    const features = Array.isArray(p.features) ? p.features : [];
-    const plans = Array.isArray(p.plans) ? p.plans : [];
-    const hasPlanTabs = plans.length > 1;
-    const activePlanIdx = activePlans[p.slug] ?? 0;
-    const activePlan = hasPlanTabs ? plans[activePlanIdx] : null;
-
-    let displayPrice, strikethroughPrice, badgeText, badgeStyle, durationText, planBadge, planBadgeStyle;
-
-    if (activePlan) {
-      // Plan sekmesi aktifse plan verilerini kullan
-      displayPrice = activePlan.priceText || "";
-      durationText = activePlan.durationText || "";
-      strikethroughPrice = activePlan.oldPriceText || null;
-      badgeText = null;
-      badgeStyle = "";
-      planBadge = activePlan.badge || null;
-      planBadgeStyle = BADGE_COLORS[activePlan.badgeColor] || BADGE_COLORS.green;
-    } else {
-      durationText = "";
-      planBadge = null;
-      planBadgeStyle = "";
-      const examActive = isExamPriceActive(p);
-      const promoActive = !examActive && isPromoActive(p);
-
-      if (examActive) {
-        const examPrice = getExamPrice(p);
-        const daysLeft = getExamDaysLeft(p);
-        const rate = p.examDiscountRate ?? 5;
-        displayPrice = `${examPrice}₺`;
-        strikethroughPrice = p.priceText || `${p.price}₺`;
-        badgeText = `Sınava ${daysLeft} gün kaldı — %${rate} indirimli`;
-        badgeStyle = "bg-[#dbeafe] text-[#1e40af]";
-      } else if (promoActive) {
-        displayPrice = `${p.promoPrice}₺`;
-        strikethroughPrice = p.priceText || `${p.price}₺`;
-        badgeText = p.promoLabel || `${formatPromoEndDate(p.promoEndDate)} tarihine kadar`;
-        badgeStyle = "bg-[#fef3c7] text-[#92400e]";
-      } else {
-        displayPrice = p.priceText || `${p.price}₺`;
-        strikethroughPrice = p.oldPriceText;
-        badgeText = null;
-        badgeStyle = "";
-      }
-    }
-
-    const cardCls = [
-      "bg-white rounded-[20px] py-[30px] px-[25px] relative flex flex-col h-full",
-      "transition-all shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden group",
-      "lg:hover:-translate-y-[10px] lg:hover:shadow-[0_20px_40px_rgba(15,42,74,0.15)] lg:hover:border-[#f39c12]",
-      isPopular
-        ? "border-2 border-[#0f2a4a] before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[6px] before:bg-[#0f2a4a]"
-        : "border border-[#eaeaea]",
-    ].join(" ");
-
-    return (
-      <div className={cardCls}>
-        {badge && (
-          <div className="absolute top-5 right-5 bg-[#f39c12] text-white py-[6px] px-3 text-[0.75rem] rounded-[20px] font-bold uppercase tracking-[0.5px] z-10">
-            {badge}
-          </div>
-        )}
-
-        <div className="text-center mb-[15px]">
-          <div className="w-[60px] h-[60px] bg-[#f0f4f8] text-[#0f2a4a] rounded-full flex items-center justify-center text-[1.5rem] mx-auto mb-[15px] transition-all group-hover:bg-[#0f2a4a] group-hover:text-white">
-            {icon}
-          </div>
-          <h3 className="text-[1.2rem] font-bold text-[#333] mb-[15px] min-h-[50px] flex items-center justify-center">{p.name}</h3>
-
-          {/* Süre sekmeleri */}
-          {hasPlanTabs && (
-            <div className="flex bg-[#f1f5f9] rounded-full p-1 mb-4 mx-2">
-              {plans.map((plan, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  className={`flex-1 py-1.5 text-xs font-bold rounded-full transition-all ${
-                    activePlanIdx === i
-                      ? "bg-white shadow text-[#0f2a4a]"
-                      : "text-[#64748b] hover:text-[#0f2a4a]"
-                  }`}
-                  onClick={() => setActivePlans((prev) => ({ ...prev, [p.slug]: i }))}
-                >
-                  {plan.label}
-                </button>
-              ))}
-            </div>
-          )}
-
-          <div className="flex flex-col items-center mb-[15px]">
-            {/* Plan rozeti (seçili plana ait) */}
-            {planBadge && (
-              <span className={`mb-2 inline-block text-[0.72rem] font-bold px-3 py-1 rounded-full ${planBadgeStyle}`}>
-                {planBadge}
-              </span>
-            )}
-            {strikethroughPrice && <span className="line-through text-[#999] text-base">{strikethroughPrice}</span>}
-            <div className="flex items-baseline gap-1">
-              <span className="text-[#0f2a4a] text-[1.6rem] font-extrabold">{displayPrice}</span>
-              {durationText && <span className="text-[#64748b] text-sm font-semibold">{durationText}</span>}
-            </div>
-            {badgeText && (
-              <span className={`mt-1.5 inline-block text-[0.72rem] font-bold px-3 py-1 rounded-full ${badgeStyle}`}>
-                {badgeText}
-              </span>
-            )}
-            {!activePlan && isExamPriceActive(p) && (() => {
-
-              const dailyCost = getExamDailyCost(p);
-              const savings = getExamSavings(p);
-              return (
-                <>
-                  {dailyCost && (
-                    <p className="text-[0.72rem] text-[#64748b] mt-1">
-                      Günlük sadece <strong>{dailyCost}₺</strong> ile
-                    </p>
-                  )}
-                  {savings && (
-                    <span className="mt-1 inline-block bg-[#dcfce7] text-[#166534] text-[0.72rem] font-bold px-3 py-0.5 rounded-full">
-                      {savings}₺ tasarruf
-                    </span>
-                  )}
-                </>
-              );
-            })()}
-          </div>
-
-          {p.subtitle && <p className="text-[0.9rem] text-[#666] leading-[1.5] mb-0 min-h-[60px]">{p.subtitle}</p>}
-        </div>
-
-        <div className="h-px bg-[#eee] my-5 w-full"></div>
-
-        {features.length > 0 && (
-          <ul className="list-none p-0 m-0 mb-[30px] flex-grow">
-            {features.map((f, i) => (
-              <FeatureItem key={i} label={f.label} included={!!f.included} />
-            ))}
-          </ul>
-        )}
-
-        <div className="mt-auto">
-          {p.ctaHref && (
-            <button
-              className="block w-full text-center bg-[#f39c12] text-white py-[14px] rounded-[10px] font-bold border-0 cursor-pointer text-base transition hover:bg-[#d35400] hover:-translate-y-0.5 hover:shadow-[0_5px_15px_rgba(243,156,18,0.3)]"
-              onClick={() => {
-                const href = activePlan?.ctaHref || p.ctaHref;
-                const withPlan = hasPlanTabs ? `${href}${href.includes("?") ? "&" : "?"}plan=${activePlanIdx}` : href;
-                navigate(withPlan);
-              }}
-            >
-              {activePlan?.ctaLabel || p.ctaLabel || "Detayları İncele"}
-            </button>
-          )}
-        </div>
-      </div>
-    );
-  };
 
   const n = Math.min(packages.length, 4);
   const gridClass = `grid gap-[30px] max-w-[1200px] mx-auto ${colClassMap[n] || colClassMap[4]}`;
@@ -298,7 +294,7 @@ export default function PricingSection() {
             >
               {packages.map((p) => (
                 <SwiperSlide key={p.slug}>
-                  {renderCard(p)}
+                  <PackageCard p={p} navigate={navigate} />
                 </SwiperSlide>
               ))}
             </Swiper>
@@ -316,7 +312,7 @@ export default function PricingSection() {
           <div className={gridClass}>
             {packages.map((p) => (
               <div key={p.slug}>
-                {renderCard(p)}
+                <PackageCard p={p} navigate={navigate} />
               </div>
             ))}
           </div>
