@@ -17,6 +17,7 @@ import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
 import Testimonials from "../components/Testimonials";
+import { isPromoActive, formatPromoEndDate } from "../utils/promoUtils";
 
 // Fiyat geçerlilik tarihi (Dinamik - 1 yıl sonrası)
 const getPriceValidUntil = () => {
@@ -85,9 +86,20 @@ const PackageDetail = () => {
   ];
   const faqList = [...defaultFaq];
 
-  const numericPrice = selected.priceText
-    ? selected.priceText.replace(/[^0-9.]/g, "")
-    : String(selected.price || "0");
+  const promoActive = isPromoActive(selected);
+  const displayPrice = promoActive
+    ? `${selected.promoPrice}₺`
+    : (selected.priceText || `${selected.price}₺`);
+  const strikethroughPrice = promoActive ? (selected.priceText || `${selected.price}₺`) : null;
+  const promoLabelText = promoActive
+    ? (selected.promoLabel || `${formatPromoEndDate(selected.promoEndDate)} tarihine kadar`)
+    : null;
+
+  const numericPrice = promoActive
+    ? String(selected.promoPrice || "0")
+    : (selected.priceText
+        ? selected.priceText.replace(/[^0-9.]/g, "")
+        : String(selected.price || "0"));
 
   const siteUrl = "https://sozderecekocluk.com";
   const canonicalUrl = `${siteUrl}/paket-detay?slug=${selected.slug}`;
@@ -143,9 +155,19 @@ const PackageDetail = () => {
             </div>
 
             <div className="text-center mb-[30px] pb-5 border-b border-[#f0f0f0]">
+              {strikethroughPrice && (
+                <div className="line-through text-[#999] text-[1.3rem] mb-1">{strikethroughPrice}</div>
+              )}
               <span className="text-[2.5rem] font-extrabold text-[#f39c12] max-[768px]:text-[2rem]">
-                {selected.priceText || `${selected.price}₺`}
+                {displayPrice}
               </span>
+              {promoLabelText && (
+                <div className="mt-2">
+                  <span className="inline-block bg-[#fef3c7] text-[#92400e] text-[0.8rem] font-bold px-4 py-1.5 rounded-full">
+                    {promoLabelText}
+                  </span>
+                </div>
+              )}
               <p className="text-[0.9rem] text-[#999] mt-1">Tüm vergiler dahildir.</p>
             </div>
 

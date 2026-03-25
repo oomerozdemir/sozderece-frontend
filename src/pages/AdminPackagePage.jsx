@@ -28,6 +28,10 @@ const emptyForm = {
   features: [],
   note: "",
   freeLessons: "",
+  promoPrice: "",
+  promoUnitPrice: "",
+  promoEndDate: "",
+  promoLabel: "",
 };
 
 const AdminPackagePage = () => {
@@ -86,6 +90,10 @@ const AdminPackagePage = () => {
       features: Array.isArray(pkg.features) ? [...pkg.features] : [],
       note: pkg.note || "",
       freeLessons: pkg.freeLessons || "",
+      promoPrice: pkg.promoPrice || "",
+      promoUnitPrice: pkg.promoUnitPrice || "",
+      promoEndDate: pkg.promoEndDate ? pkg.promoEndDate.slice(0, 10) : "",
+      promoLabel: pkg.promoLabel || "",
     });
     setShowForm(true);
   };
@@ -214,6 +222,11 @@ const AdminPackagePage = () => {
                   <span className="text-sm font-black text-[#100481]">{pkg.priceText || `${pkg.price}₺`}</span>
                   {pkg.oldPriceText && (
                     <span className="text-xs text-[#94a3b8] line-through">{pkg.oldPriceText}</span>
+                  )}
+                  {pkg.promoPrice && pkg.promoEndDate && new Date(pkg.promoEndDate) > new Date() && (
+                    <span className="text-xs font-bold text-white bg-[#c0392b] px-2 py-0.5 rounded-full">
+                      Promo: {pkg.promoPrice}₺ — {new Date(pkg.promoEndDate).toLocaleDateString("tr-TR")} kadar
+                    </span>
                   )}
                   <span className="text-xs text-[#94a3b8]">Sıra: {pkg.displayOrder}</span>
                   <span className="text-xs text-[#94a3b8]">Tür: {pkg.type || "—"}</span>
@@ -435,6 +448,57 @@ const AdminPackagePage = () => {
                     onChange={(e) => setForm({ ...form, freeLessons: e.target.value })}
                   />
                 </div>
+              </div>
+
+              {/* Promosyon Fiyatı */}
+              <div className="border border-[#fde68a] bg-[#fffbeb] rounded-xl p-4 space-y-3">
+                <label className="block text-xs font-black text-[#92400e]">Promosyon Fiyatı (Opsiyonel)</label>
+                <div className="grid grid-cols-2 gap-3 max-[560px]:grid-cols-1">
+                  <div>
+                    <label className="block text-xs font-bold text-[#475569] mb-1.5">Promo Fiyat (₺)</label>
+                    <input
+                      type="number"
+                      className={inputCls}
+                      placeholder="1999"
+                      value={form.promoPrice}
+                      onChange={(e) => setForm({ ...form, promoPrice: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-[#475569] mb-1.5">Promo Unit Price (kuruş)</label>
+                    <input
+                      type="number"
+                      className={inputCls}
+                      placeholder="199900"
+                      value={form.promoUnitPrice}
+                      onChange={(e) => setForm({ ...form, promoUnitPrice: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-[#475569] mb-1.5">Bitiş Tarihi</label>
+                    <input
+                      type="date"
+                      className={inputCls}
+                      value={form.promoEndDate}
+                      onChange={(e) => setForm({ ...form, promoEndDate: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-[#475569] mb-1.5">Etiket</label>
+                    <input
+                      type="text"
+                      className={inputCls}
+                      placeholder="Sınava özel fiyat"
+                      value={form.promoLabel}
+                      onChange={(e) => setForm({ ...form, promoLabel: e.target.value })}
+                    />
+                  </div>
+                </div>
+                {form.promoEndDate && (
+                  new Date(form.promoEndDate) > new Date()
+                    ? <p className="text-xs font-semibold text-[#065f46]">Promosyon aktif olacak.</p>
+                    : <p className="text-xs font-semibold text-[#991b1b]">Bu tarih geçmiş — promosyon gösterilmez.</p>
+                )}
               </div>
 
               {/* Görünürlük */}
