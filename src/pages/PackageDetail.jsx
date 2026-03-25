@@ -19,6 +19,13 @@ import Footer from "../components/Footer";
 import Testimonials from "../components/Testimonials";
 import { isPromoActive, formatPromoEndDate, isExamPriceActive, getExamPrice, getExamDaysLeft, getExamDailyCost, getExamSavings } from "../utils/promoUtils";
 
+const BADGE_COLORS = {
+  green:  "bg-[#dcfce7] text-[#166534]",
+  blue:   "bg-[#dbeafe] text-[#1e40af]",
+  orange: "bg-[#fef3c7] text-[#92400e]",
+  red:    "bg-[#fee2e2] text-[#991b1b]",
+};
+
 // Fiyat geçerlilik tarihi (Dinamik - 1 yıl sonrası)
 const getPriceValidUntil = () => {
   const date = new Date();
@@ -37,6 +44,7 @@ const PackageDetail = () => {
   const [packages, setPackages] = useState([]);
   const [selectedSlug, setSelectedSlug] = useState(querySlug || defaultSlug);
   const [activeIndex, setActiveIndex] = useState(null);
+  const [activePlanIdx, setActivePlanIdx] = useState(0);
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/api/packages`)
@@ -55,6 +63,7 @@ const PackageDetail = () => {
       window.history.replaceState(null, "", newUrl);
       setSelectedSlug(defaultSlug);
     }
+    setActivePlanIdx(0);
   }, [querySlug, location.pathname]);
 
   const pkgMap = Object.fromEntries(packages.map((p) => [p.slug, p]));
@@ -64,11 +73,17 @@ const PackageDetail = () => {
 
   const isSpecialTutoring = selected.type === "tutoring_only" || selected.slug === "ozel-ders-paketi";
 
+  const plans = Array.isArray(selected.plans) ? selected.plans : [];
+  const hasPlanTabs = plans.length > 1;
+  const activePlan = hasPlanTabs ? plans[activePlanIdx] : null;
+
   const handleContinue = () => {
     if (isSpecialTutoring) {
       navigate("/ogretmenler");
     } else {
-      navigate(`/pre-auth?slug=${encodeURIComponent(selected.slug)}`);
+      const href = activePlan?.ctaHref || `/pre-auth?slug=${encodeURIComponent(selected.slug)}`;
+      const withPlan = hasPlanTabs ? `${href}${href.includes("?") ? "&" : "?"}plan=${activePlanIdx}` : href;
+      navigate(withPlan);
     }
   };
 
@@ -86,28 +101,45 @@ const PackageDetail = () => {
   ];
   const faqList = [...defaultFaq];
 
-  const examActive = isExamPriceActive(selected);
-  const promoActive = !examActive && isPromoActive(selected);
+  const examActive = !activePlan && isExamPriceActive(selected);
+  const promoActive = !activePlan && !examActive && isPromoActive(selected);
 
-  let displayPrice, strikethroughPrice, priceBadgeText, priceBadgeStyle;
-  if (examActive) {
+  let displayPrice, strikethroughPrice, priceBadgeText, priceBadgeStyle, durationText, planBadge, planBadgeStyle;
+  if (activePlan) {
+    displayPrice = activePlan.priceText || "";
+    durationText = activePlan.durationText || "";
+    strikethroughPrice = activePlan.oldPriceText || null;
+    priceBadgeText = null;
+    priceBadgeStyle = "";
+    planBadge = activePlan.badge || null;
+    planBadgeStyle = BADGE_COLORS[activePlan.badgeColor] || BADGE_COLORS.green;
+  } else if (examActive) {
     const examPrice = getExamPrice(selected);
     const daysLeft = getExamDaysLeft(selected);
     const rate = selected.examDiscountRate ?? 5;
     displayPrice = `${examPrice}₺`;
+    durationText = "";
     strikethroughPrice = selected.priceText || `${selected.price}₺`;
     priceBadgeText = `Sınava ${daysLeft} gün kaldı — %${rate} indirimli`;
     priceBadgeStyle = "bg-[#dbeafe] text-[#1e40af]";
+    planBadge = null;
+    planBadgeStyle = "";
   } else if (promoActive) {
     displayPrice = `${selected.promoPrice}₺`;
+    durationText = "";
     strikethroughPrice = selected.priceText || `${selected.price}₺`;
     priceBadgeText = selected.promoLabel || `${formatPromoEndDate(selected.promoEndDate)} tarihine kadar`;
     priceBadgeStyle = "bg-[#fef3c7] text-[#92400e]";
+    planBadge = null;
+    planBadgeStyle = "";
   } else {
     displayPrice = selected.priceText || `${selected.price}₺`;
+    durationText = "";
     strikethroughPrice = null;
     priceBadgeText = null;
     priceBadgeStyle = "";
+    planBadge = null;
+    planBadgeStyle = "";
   }
 
   const numericPrice = examActive
@@ -171,13 +203,45 @@ const PackageDetail = () => {
               <p className="text-[1.1rem] text-[#666] leading-[1.6] max-w-[600px] mx-auto">{selected.subtitle}</p>
             </div>
 
+            {/* Süre sekmeleri */}
+            {hasPlanTabs && (
+              <div className="flex bg-[#f1f5f9] rounded-full p-1 mb-6 max-w-[320px] mx-auto">
+                {plans.map((plan, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className={`flex-1 py-2 text-sm font-bold rounded-full transition-all ${
+                      activePlanIdx === i
+                        ? "bg-white shadow text-[#0f2a4a]"
+                        : "text-[#64748b] hover:text-[#0f2a4a]"
+                    }`}
+                    onClick={() => setActivePlanIdx(i)}
+                  >
+                    {plan.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div className="text-center mb-[30px] pb-5 border-b border-[#f0f0f0]">
+              {planBadge && (
+                <div className="mb-2">
+                  <span className={`inline-block text-[0.8rem] font-bold px-4 py-1.5 rounded-full ${planBadgeStyle}`}>
+                    {planBadge}
+                  </span>
+                </div>
+              )}
               {strikethroughPrice && (
                 <div className="line-through text-[#999] text-[1.3rem] mb-1">{strikethroughPrice}</div>
               )}
-              <span className="text-[2.5rem] font-extrabold text-[#f39c12] max-[768px]:text-[2rem]">
-                {displayPrice}
-              </span>
+              <div className="flex items-baseline justify-center gap-2">
+                <span className="text-[2.5rem] font-extrabold text-[#f39c12] max-[768px]:text-[2rem]">
+                  {displayPrice}
+                </span>
+                {durationText && (
+                  <span className="text-[#64748b] text-base font-semibold">{durationText}</span>
+                )}
+              </div>
               {priceBadgeText && (
                 <div className="mt-2">
                   <span className={`inline-block text-[0.8rem] font-bold px-4 py-1.5 rounded-full ${priceBadgeStyle}`}>
@@ -242,7 +306,7 @@ const PackageDetail = () => {
               className="w-full py-5 bg-[#f39c12] text-white border-0 rounded-xl text-[1.3rem] font-bold cursor-pointer transition-all shadow-[0_10px_25px_rgba(243,156,18,0.3)] mb-5 hover:bg-[#d35400] hover:-translate-y-[3px] hover:shadow-[0_15px_30px_rgba(243,156,18,0.4)]"
               onClick={handleContinue}
             >
-              {isSpecialTutoring ? "Öğretmenleri İncele" : "Hemen Başla (Güvenli Ödeme)"}
+              {isSpecialTutoring ? "Öğretmenleri İncele" : (activePlan?.ctaLabel || "Hemen Başla (Güvenli Ödeme)")}
             </button>
 
             <div className="flex justify-center gap-[15px] opacity-80 mb-10 pb-[30px] border-b border-[#eee]">
