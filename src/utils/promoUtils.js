@@ -41,6 +41,23 @@ export function getExamPrice(pkg) {
   return Math.round(total * (1 - rate / 100));
 }
 
+/** Sınava özel günlük maliyeti ₺ olarak döndürür. */
+export function getExamDailyCost(pkg) {
+  const price = getExamPrice(pkg);
+  const days = getExamDaysLeft(pkg);
+  if (!price || !days) return null;
+  return Math.round(price / days);
+}
+
+/** İndirimden kaynaklanan tasarruf miktarını ₺ olarak döndürür. */
+export function getExamSavings(pkg) {
+  const days = getExamDaysLeft(pkg);
+  if (!days) return null;
+  const rate = pkg.examDiscountRate ?? 5;
+  const base = (days / 30) * pkg.price;
+  return Math.round(base * (rate / 100));
+}
+
 /** Sınav fiyatını kuruş cinsinden döndürür (ödeme sistemi için). */
 export function getExamUnitPrice(pkg) {
   const price = getExamPrice(pkg);

@@ -8,6 +8,8 @@ export default function PreCartAuth() {
   const { search } = useLocation();
   const qs = useMemo(() => new URLSearchParams(search), [search]);
   const slug = qs.get("slug");
+  const planParam = qs.get("plan");
+  const planIndex = planParam !== null ? parseInt(planParam) : undefined;
 
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -49,18 +51,28 @@ export default function PreCartAuth() {
   // Server sepetine ekle ve /sepet'e git
   const addToCartAndGo = async (tokenToUse, userEmail) => {
     try {
+      // Plan seçilmişse o planın fiyatını kullan
+      const plans = Array.isArray(pkg.plans) ? pkg.plans : [];
+      const selectedPlan = planIndex !== undefined ? plans[planIndex] : null;
+      const effectiveUnitPrice = selectedPlan?.unitPrice ?? Number(pkg.unitPrice);
+
       await axios.post(
         "/api/cart/items",
         {
           slug,
           title: pkg.name,
           name: pkg.name,
-          unitPrice: Number(pkg.unitPrice),
+          unitPrice: effectiveUnitPrice,
           quantity: 1,
           email: userEmail || undefined,
+          ...(planIndex !== undefined ? { planIndex } : {}),
         },
         tokenToUse ? { headers: { Authorization: `Bearer ${tokenToUse}` } } : undefined
       );
+      // Misafir ise email'i localStorage'a kaydet
+      if (!tokenToUse && userEmail) {
+        localStorage.setItem("guestCartEmail", userEmail);
+      }
       trackAddToCart();
     } catch {
       // hata olsa da akışı bozma
@@ -68,6 +80,15 @@ export default function PreCartAuth() {
       setStep("done");
       navigate("/sepet", { replace: true });
     }
+  };
+
+  // Giriş yapmadan devam et
+  const continueAsGuest = async () => {
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed.includes("@")) return;
+    setLoading(true);
+    await addToCartAndGo(null, trimmed);
+    setLoading(false);
   };
 
   // AÇILIŞ AKIŞI
@@ -252,6 +273,19 @@ export default function PreCartAuth() {
               disabled={!email.includes("@") || resendIn > 0 || loading}
             >
               {loading ? "Gönderiliyor..." : "Kodu Gönder"}
+            </button>
+            <div className="flex items-center gap-2 my-3">
+              <div className="flex-1 h-px bg-slate-200" />
+              <span className="text-xs text-slate-400">veya</span>
+              <div className="flex-1 h-px bg-slate-200" />
+            </div>
+            <button
+              className="w-full py-3.5 bg-white text-[#02095f] font-bold text-sm tracking-widest border border-[#02095f] rounded cursor-pointer hover:bg-[#f0f4ff] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              type="button"
+              onClick={continueAsGuest}
+              disabled={!email.includes("@") || loading}
+            >
+              {loading ? "Yükleniyor..." : "Giriş yapmadan devam et"}
             </button>
           </>
         )}

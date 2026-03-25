@@ -17,7 +17,7 @@ import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
 import Testimonials from "../components/Testimonials";
-import { isPromoActive, formatPromoEndDate, isExamPriceActive, getExamPrice, getExamDaysLeft } from "../utils/promoUtils";
+import { isPromoActive, formatPromoEndDate, isExamPriceActive, getExamPrice, getExamDaysLeft, getExamDailyCost, getExamSavings } from "../utils/promoUtils";
 
 // Fiyat geçerlilik tarihi (Dinamik - 1 yıl sonrası)
 const getPriceValidUntil = () => {
@@ -183,6 +183,20 @@ const PackageDetail = () => {
                   <span className={`inline-block text-[0.8rem] font-bold px-4 py-1.5 rounded-full ${priceBadgeStyle}`}>
                     {priceBadgeText}
                   </span>
+                </div>
+              )}
+              {examActive && (
+                <div className="flex items-center justify-center gap-2 mt-2 flex-wrap">
+                  {getExamDailyCost(selected) && (
+                    <span className="text-[0.8rem] text-[#64748b]">
+                      Günlük sadece <strong>{getExamDailyCost(selected)}₺</strong> ile
+                    </span>
+                  )}
+                  {getExamSavings(selected) && (
+                    <span className="inline-block bg-[#dcfce7] text-[#166534] text-[0.78rem] font-bold px-3 py-0.5 rounded-full">
+                      {getExamSavings(selected)}₺ tasarruf
+                    </span>
+                  )}
                 </div>
               )}
               <p className="text-[0.9rem] text-[#999] mt-1">Tüm vergiler dahildir.</p>

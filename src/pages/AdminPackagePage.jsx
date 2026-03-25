@@ -35,6 +35,7 @@ const emptyForm = {
   promoLabel: "",
   examDate: "",
   examDiscountRate: "5",
+  plans: [],
 };
 
 const AdminPackagePage = () => {
@@ -43,6 +44,8 @@ const AdminPackagePage = () => {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [newFeature, setNewFeature] = useState({ label: "", included: true });
+  const emptyPlan = { label: "", priceText: "", durationText: "", oldPriceText: "", unitPrice: "", badge: "", badgeColor: "green" };
+  const [newPlan, setNewPlan] = useState(emptyPlan);
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -99,6 +102,7 @@ const AdminPackagePage = () => {
       promoLabel: pkg.promoLabel || "",
       examDate: pkg.examDate ? pkg.examDate.slice(0, 10) : "",
       examDiscountRate: pkg.examDiscountRate ?? "5",
+      plans: Array.isArray(pkg.plans) ? pkg.plans : [],
     });
     setShowForm(true);
   };
@@ -586,6 +590,103 @@ const AdminPackagePage = () => {
                 <label htmlFor="hidden-toggle" className="text-sm font-semibold text-[#475569] cursor-pointer">
                   Vitrinde gizle (müşteriler göremez)
                 </label>
+              </div>
+
+              {/* Süre Planları (Sekmeli Fiyatlandırma) */}
+              <div className="border border-[#e0e7ff] bg-[#f5f3ff] rounded-xl p-4 space-y-3">
+                <div>
+                  <label className="block text-xs font-black text-[#4c1d95] mb-0.5">Süre Planları (Sekmeli)</label>
+                  <p className="text-[11px] text-[#7c3aed]">Eklenirse kart üstünde sekme gösterilir. Boşsa normal fiyat kullanılır.</p>
+                </div>
+                {/* Mevcut planlar */}
+                {form.plans.length > 0 && (
+                  <div className="space-y-2">
+                    {form.plans.map((plan, i) => (
+                      <div key={i} className="flex items-center gap-2 bg-white rounded-xl px-3 py-2 border border-[#ddd6fe]">
+                        <div className="flex-1 text-xs">
+                          <span className="font-bold text-[#4c1d95]">{plan.label}</span>
+                          <span className="text-[#64748b] ml-2">{plan.priceText}{plan.durationText}</span>
+                          {plan.oldPriceText && <span className="text-[#94a3b8] line-through ml-2">{plan.oldPriceText}</span>}
+                          {plan.badge && <span className="ml-2 bg-[#dcfce7] text-[#166534] text-[10px] font-bold px-1.5 py-0.5 rounded-full">{plan.badge}</span>}
+                        </div>
+                        <div className="flex gap-1 flex-shrink-0">
+                          {i > 0 && (
+                            <button type="button" onClick={() => {
+                              const arr = [...form.plans];
+                              [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]];
+                              setForm({ ...form, plans: arr });
+                            }} className="text-[#7c3aed] text-xs font-bold hover:text-[#4c1d95]">↑</button>
+                          )}
+                          {i < form.plans.length - 1 && (
+                            <button type="button" onClick={() => {
+                              const arr = [...form.plans];
+                              [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+                              setForm({ ...form, plans: arr });
+                            }} className="text-[#7c3aed] text-xs font-bold hover:text-[#4c1d95]">↓</button>
+                          )}
+                          <button type="button" onClick={() => setForm({ ...form, plans: form.plans.filter((_, idx) => idx !== i) })}
+                            className="text-[#ef4444] text-xs font-bold hover:text-[#dc2626] ml-1">×</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {/* Yeni plan ekle */}
+                <div className="bg-white rounded-xl p-3 border border-[#ddd6fe] space-y-2">
+                  <p className="text-[11px] font-bold text-[#475569]">Yeni Plan Ekle</p>
+                  <div className="grid grid-cols-2 gap-2 max-[560px]:grid-cols-1">
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#475569] mb-1">Sekme Adı *</label>
+                      <input className={inputCls} placeholder="Sınava Kadar" value={newPlan.label}
+                        onChange={(e) => setNewPlan({ ...newPlan, label: e.target.value })} />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#475569] mb-1">Fiyat Metni</label>
+                      <input className={inputCls} placeholder="8.800₺" value={newPlan.priceText}
+                        onChange={(e) => setNewPlan({ ...newPlan, priceText: e.target.value })} />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#475569] mb-1">Süre Etiketi</label>
+                      <input className={inputCls} placeholder="/12 Hafta" value={newPlan.durationText}
+                        onChange={(e) => setNewPlan({ ...newPlan, durationText: e.target.value })} />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#475569] mb-1">Eski Fiyat (üstü çizili)</label>
+                      <input className={inputCls} placeholder="10.347₺" value={newPlan.oldPriceText}
+                        onChange={(e) => setNewPlan({ ...newPlan, oldPriceText: e.target.value })} />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#475569] mb-1">Unit Price (kuruş) *</label>
+                      <input type="number" className={inputCls} placeholder="880000" value={newPlan.unitPrice}
+                        onChange={(e) => setNewPlan({ ...newPlan, unitPrice: parseInt(e.target.value) || "" })} />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#475569] mb-1">Rozet (opsiyonel)</label>
+                      <input className={inputCls} placeholder="Sınırlı Kontenjan" value={newPlan.badge}
+                        onChange={(e) => setNewPlan({ ...newPlan, badge: e.target.value })} />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#475569] mb-1">Rozet Rengi</label>
+                      <select className={inputCls} value={newPlan.badgeColor}
+                        onChange={(e) => setNewPlan({ ...newPlan, badgeColor: e.target.value })}>
+                        <option value="green">Yeşil</option>
+                        <option value="blue">Mavi</option>
+                        <option value="orange">Turuncu</option>
+                        <option value="red">Kırmızı</option>
+                      </select>
+                    </div>
+                  </div>
+                  <button type="button"
+                    onClick={() => {
+                      if (!newPlan.label || !newPlan.unitPrice) return;
+                      setForm({ ...form, plans: [...form.plans, { ...newPlan }] });
+                      setNewPlan(emptyPlan);
+                    }}
+                    className="w-full py-2 bg-[#7c3aed] text-white rounded-xl text-xs font-bold hover:bg-[#4c1d95] transition-all"
+                  >
+                    + Plan Ekle
+                  </button>
+                </div>
               </div>
 
               {/* Özellikler */}

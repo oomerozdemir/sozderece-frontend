@@ -27,12 +27,16 @@ export default function useCart() {
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
+  const guestEmail = () => localStorage.getItem("guestCartEmail");
 
   const refresh = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await axios.get("/api/cart", { headers: authHeaders() });
+      const token = localStorage.getItem("token");
+      const ge = !token ? guestEmail() : null;
+      const url = ge ? `/api/cart?email=${encodeURIComponent(ge)}` : "/api/cart";
+      const res = await axios.get(url, { headers: authHeaders() });
       // Backend tek tip: { success, cart:{ items:[] } } ya da { items:[] }
       const serverCart = res.data?.cart?.items ? res.data.cart : (res.data?.items ? res.data : { items: [] });
       setCart(toUiItems(serverCart));
@@ -57,9 +61,11 @@ export default function useCart() {
         }
       }
 
+      const token = localStorage.getItem("token");
+      const emailToUse = email || (!token ? guestEmail() : undefined);
       await axios.post(
         "/api/cart/items",
-        { slug, title, unitPrice, quantity, ...(email ? { email } : {}), ...(name ? { name } : {}) },
+        { slug, title, unitPrice, quantity, ...(emailToUse ? { email: emailToUse } : {}), ...(name ? { name } : {}) },
         { headers: authHeaders() }
       );
       await refresh();
@@ -78,26 +84,33 @@ export default function useCart() {
 
 
   const increaseQuantity = useCallback(async (slug) => {
+    const token = localStorage.getItem("token");
+    const ge = !token ? guestEmail() : undefined;
     await axios.patch(
       "/api/cart/items",
-      { slug, op: "increase" },
+      { slug, op: "increase", ...(ge ? { email: ge } : {}) },
       { headers: authHeaders() }
     );
     await refresh();
   }, [refresh]);
 
-const decreaseQuantity = useCallback(async (slug) => {
+  const decreaseQuantity = useCallback(async (slug) => {
+    const token = localStorage.getItem("token");
+    const ge = !token ? guestEmail() : undefined;
     await axios.patch(
       "/api/cart/items",
-      { slug, op: "decrease" },
+      { slug, op: "decrease", ...(ge ? { email: ge } : {}) },
       { headers: authHeaders() }
     );
     await refresh();
   }, [refresh]);
 
-    const removeFromCart = useCallback(async (slug) => {
+  const removeFromCart = useCallback(async (slug) => {
+    const token = localStorage.getItem("token");
+    const ge = !token ? guestEmail() : undefined;
     await axios.delete(`/api/cart/items/${encodeURIComponent(slug)}`, {
-      headers: authHeaders()
+      headers: authHeaders(),
+      data: ge ? { email: ge } : undefined,
     });
     await refresh();
   }, [refresh]);
