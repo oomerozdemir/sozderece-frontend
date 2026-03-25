@@ -17,7 +17,7 @@ import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
 import Testimonials from "../components/Testimonials";
-import { isPromoActive, formatPromoEndDate } from "../utils/promoUtils";
+import { isPromoActive, formatPromoEndDate, isExamPriceActive, getExamPrice, getExamDaysLeft } from "../utils/promoUtils";
 
 // Fiyat geçerlilik tarihi (Dinamik - 1 yıl sonrası)
 const getPriceValidUntil = () => {
@@ -86,20 +86,37 @@ const PackageDetail = () => {
   ];
   const faqList = [...defaultFaq];
 
-  const promoActive = isPromoActive(selected);
-  const displayPrice = promoActive
-    ? `${selected.promoPrice}₺`
-    : (selected.priceText || `${selected.price}₺`);
-  const strikethroughPrice = promoActive ? (selected.priceText || `${selected.price}₺`) : null;
-  const promoLabelText = promoActive
-    ? (selected.promoLabel || `${formatPromoEndDate(selected.promoEndDate)} tarihine kadar`)
-    : null;
+  const examActive = isExamPriceActive(selected);
+  const promoActive = !examActive && isPromoActive(selected);
 
-  const numericPrice = promoActive
-    ? String(selected.promoPrice || "0")
-    : (selected.priceText
-        ? selected.priceText.replace(/[^0-9.]/g, "")
-        : String(selected.price || "0"));
+  let displayPrice, strikethroughPrice, priceBadgeText, priceBadgeStyle;
+  if (examActive) {
+    const examPrice = getExamPrice(selected);
+    const daysLeft = getExamDaysLeft(selected);
+    const rate = selected.examDiscountRate ?? 5;
+    displayPrice = `${examPrice}₺`;
+    strikethroughPrice = selected.priceText || `${selected.price}₺`;
+    priceBadgeText = `Sınava ${daysLeft} gün kaldı — %${rate} indirimli`;
+    priceBadgeStyle = "bg-[#dbeafe] text-[#1e40af]";
+  } else if (promoActive) {
+    displayPrice = `${selected.promoPrice}₺`;
+    strikethroughPrice = selected.priceText || `${selected.price}₺`;
+    priceBadgeText = selected.promoLabel || `${formatPromoEndDate(selected.promoEndDate)} tarihine kadar`;
+    priceBadgeStyle = "bg-[#fef3c7] text-[#92400e]";
+  } else {
+    displayPrice = selected.priceText || `${selected.price}₺`;
+    strikethroughPrice = null;
+    priceBadgeText = null;
+    priceBadgeStyle = "";
+  }
+
+  const numericPrice = examActive
+    ? String(getExamPrice(selected) || "0")
+    : promoActive
+      ? String(selected.promoPrice || "0")
+      : (selected.priceText
+          ? selected.priceText.replace(/[^0-9.]/g, "")
+          : String(selected.price || "0"));
 
   const siteUrl = "https://sozderecekocluk.com";
   const canonicalUrl = `${siteUrl}/paket-detay?slug=${selected.slug}`;
@@ -161,10 +178,10 @@ const PackageDetail = () => {
               <span className="text-[2.5rem] font-extrabold text-[#f39c12] max-[768px]:text-[2rem]">
                 {displayPrice}
               </span>
-              {promoLabelText && (
+              {priceBadgeText && (
                 <div className="mt-2">
-                  <span className="inline-block bg-[#fef3c7] text-[#92400e] text-[0.8rem] font-bold px-4 py-1.5 rounded-full">
-                    {promoLabelText}
+                  <span className={`inline-block text-[0.8rem] font-bold px-4 py-1.5 rounded-full ${priceBadgeStyle}`}>
+                    {priceBadgeText}
                   </span>
                 </div>
               )}

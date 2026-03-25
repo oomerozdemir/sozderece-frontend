@@ -24,7 +24,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 
 import CountdownPricingBanner from "./CountdownPricingBanner";
-import { isPromoActive, formatPromoEndDate } from "../utils/promoUtils";
+import { isPromoActive, formatPromoEndDate, isExamPriceActive, getExamPrice, getExamDaysLeft } from "../utils/promoUtils";
 
 // --- YARDIMCI BİLEŞENLER ---
 
@@ -96,14 +96,30 @@ export default function PricingSection() {
     const isPopular = p.type === "coaching_only";
     const features = Array.isArray(p.features) ? p.features : [];
 
-    const promoActive = isPromoActive(p);
-    const displayPrice = promoActive ? `${p.promoPrice}₺` : (p.priceText || `${p.price}₺`);
-    const strikethroughPrice = promoActive
-      ? (p.priceText || `${p.price}₺`)
-      : p.oldPriceText;
-    const promoLabelText = promoActive
-      ? (p.promoLabel || `${formatPromoEndDate(p.promoEndDate)} tarihine kadar`)
-      : null;
+    const examActive = isExamPriceActive(p);
+    const promoActive = !examActive && isPromoActive(p);
+
+    let displayPrice, strikethroughPrice, badgeText, badgeStyle;
+
+    if (examActive) {
+      const examPrice = getExamPrice(p);
+      const daysLeft = getExamDaysLeft(p);
+      const rate = p.examDiscountRate ?? 5;
+      displayPrice = `${examPrice}₺`;
+      strikethroughPrice = p.priceText || `${p.price}₺`;
+      badgeText = `Sınava ${daysLeft} gün kaldı — %${rate} indirimli`;
+      badgeStyle = "bg-[#dbeafe] text-[#1e40af]";
+    } else if (promoActive) {
+      displayPrice = `${p.promoPrice}₺`;
+      strikethroughPrice = p.priceText || `${p.price}₺`;
+      badgeText = p.promoLabel || `${formatPromoEndDate(p.promoEndDate)} tarihine kadar`;
+      badgeStyle = "bg-[#fef3c7] text-[#92400e]";
+    } else {
+      displayPrice = p.priceText || `${p.price}₺`;
+      strikethroughPrice = p.oldPriceText;
+      badgeText = null;
+      badgeStyle = "";
+    }
 
     const cardCls = [
       "bg-white rounded-[20px] py-[30px] px-[25px] relative flex flex-col h-full",
@@ -131,9 +147,9 @@ export default function PricingSection() {
           <div className="flex flex-col items-center mb-[15px]">
             {strikethroughPrice && <span className="line-through text-[#999] text-base">{strikethroughPrice}</span>}
             <span className="text-[#0f2a4a] text-[1.6rem] font-extrabold">{displayPrice}</span>
-            {promoLabelText && (
-              <span className="mt-1.5 inline-block bg-[#fef3c7] text-[#92400e] text-[0.72rem] font-bold px-3 py-1 rounded-full">
-                {promoLabelText}
+            {badgeText && (
+              <span className={`mt-1.5 inline-block text-[0.72rem] font-bold px-3 py-1 rounded-full ${badgeStyle}`}>
+                {badgeText}
               </span>
             )}
           </div>

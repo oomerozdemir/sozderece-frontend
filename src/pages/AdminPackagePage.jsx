@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
+import { getExamDaysLeft, getExamPrice } from "../utils/promoUtils";
 
 const inputCls =
   "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
@@ -32,6 +33,8 @@ const emptyForm = {
   promoUnitPrice: "",
   promoEndDate: "",
   promoLabel: "",
+  examDate: "",
+  examDiscountRate: "5",
 };
 
 const AdminPackagePage = () => {
@@ -94,6 +97,8 @@ const AdminPackagePage = () => {
       promoUnitPrice: pkg.promoUnitPrice || "",
       promoEndDate: pkg.promoEndDate ? pkg.promoEndDate.slice(0, 10) : "",
       promoLabel: pkg.promoLabel || "",
+      examDate: pkg.examDate ? pkg.examDate.slice(0, 10) : "",
+      examDiscountRate: pkg.examDiscountRate ?? "5",
     });
     setShowForm(true);
   };
@@ -228,6 +233,16 @@ const AdminPackagePage = () => {
                       Promo: {pkg.promoPrice}₺ — {new Date(pkg.promoEndDate).toLocaleDateString("tr-TR")} kadar
                     </span>
                   )}
+                  {pkg.examDate && new Date(pkg.examDate) > new Date() && (() => {
+                    const d = { examDate: pkg.examDate, examDiscountRate: pkg.examDiscountRate ?? 5, price: pkg.price };
+                    const days = getExamDaysLeft(d);
+                    const ep = getExamPrice(d);
+                    return (
+                      <span className="text-xs font-bold text-white bg-[#1d4ed8] px-2 py-0.5 rounded-full">
+                        Sınav: {ep}₺ ({days} gün)
+                      </span>
+                    );
+                  })()}
                   <span className="text-xs text-[#94a3b8]">Sıra: {pkg.displayOrder}</span>
                   <span className="text-xs text-[#94a3b8]">Tür: {pkg.type || "—"}</span>
                 </div>
@@ -499,6 +514,64 @@ const AdminPackagePage = () => {
                     ? <p className="text-xs font-semibold text-[#065f46]">Promosyon aktif olacak.</p>
                     : <p className="text-xs font-semibold text-[#991b1b]">Bu tarih geçmiş — promosyon gösterilmez.</p>
                 )}
+              </div>
+
+              {/* Sınava Özel Dinamik Fiyat */}
+              <div className="border border-[#bfdbfe] bg-[#eff6ff] rounded-xl p-4 space-y-3">
+                <div>
+                  <label className="block text-xs font-black text-[#1e40af] mb-0.5">Sınava Özel Dinamik Fiyat</label>
+                  <p className="text-[11px] text-[#3b82f6]">
+                    Sınav tarihi girilirse fiyat otomatik hesaplanır: <strong>(kalan gün / 30) × aylık fiyat × (1 − indirim%)</strong>. Her gün fiyat düşer.
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-3 max-[560px]:grid-cols-1">
+                  <div>
+                    <label className="block text-xs font-bold text-[#475569] mb-1.5">Sınav Tarihi</label>
+                    <input
+                      type="date"
+                      className={inputCls}
+                      value={form.examDate}
+                      onChange={(e) => setForm({ ...form, examDate: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-[#475569] mb-1.5">İndirim Oranı (%)</label>
+                    <input
+                      type="number"
+                      className={inputCls}
+                      placeholder="5"
+                      min="0"
+                      max="100"
+                      value={form.examDiscountRate}
+                      onChange={(e) => setForm({ ...form, examDiscountRate: e.target.value })}
+                    />
+                  </div>
+                </div>
+                {/* Önizleme */}
+                {form.examDate && form.price && (() => {
+                  const previewPkg = {
+                    examDate: form.examDate,
+                    examDiscountRate: parseFloat(form.examDiscountRate) || 5,
+                    price: parseFloat(form.price) || 0,
+                  };
+                  const daysLeft = getExamDaysLeft(previewPkg);
+                  const examPrice = getExamPrice(previewPkg);
+                  if (daysLeft <= 0) return (
+                    <p className="text-xs font-semibold text-[#991b1b]">Sınav tarihi geçmiş — dinamik fiyat gösterilmez.</p>
+                  );
+                  const baseTotal = Math.round((daysLeft / 30) * (parseFloat(form.price) || 0));
+                  return (
+                    <div className="bg-white rounded-xl p-3 border border-[#bfdbfe] space-y-1 text-xs">
+                      <p className="font-bold text-[#1e40af]">Bugünkü fiyat önizlemesi:</p>
+                      <p className="text-[#334155]">
+                        {daysLeft} gün kaldı → {daysLeft}/30 × {form.price}₺ = <span className="line-through text-[#94a3b8]">{baseTotal}₺</span>
+                        {" "}→ <span className="font-black text-[#1e40af] text-sm">{examPrice}₺</span>
+                        {" "}(%{form.examDiscountRate || 5} indirimli)
+                      </p>
+                      <p className="text-[#64748b]">Yarın: <strong>{Math.round(((daysLeft - 1) / 30) * (parseFloat(form.price) || 0) * (1 - (parseFloat(form.examDiscountRate) || 5) / 100))}₺</strong></p>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Görünürlük */}
