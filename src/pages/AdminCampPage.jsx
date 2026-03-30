@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
 
-const inputCls = "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
+const inputCls = "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] placeholder:text-[#9ca3af] focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
 
 export default function AdminCampPage() {
   const [content, setContent] = useState(null);
@@ -164,7 +164,7 @@ export default function AdminCampPage() {
                 <div className="flex items-center gap-0">
                   <span className="px-3 py-2.5 bg-[#f1f5f9] border border-r-0 border-[#e5e7eb] rounded-l-xl text-xs text-[#64748b] whitespace-nowrap">sozderecekocluk.com/</span>
                   <input
-                    className="flex-1 px-3 py-2.5 rounded-r-xl border border-[#e5e7eb] outline-none text-sm focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white"
+                    className="flex-1 px-3 py-2.5 rounded-r-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] placeholder:text-[#9ca3af] focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white"
                     placeholder="deneme-kampi"
                     value={content.slug || ""}
                     onChange={(e) => set("slug", e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))}

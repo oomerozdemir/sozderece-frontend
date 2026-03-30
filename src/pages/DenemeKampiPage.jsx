@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/navbar";
-import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
 import Seo from "../components/Seo";
 import useCampPage from "../hooks/useCampPage";
@@ -89,7 +87,6 @@ export default function DenemeKampiPage() {
 
   if (loading) return (
     <>
-      <TopBar /><Navbar />
       <div className="bg-[#f8f9fa] min-h-screen"><Skeleton /></div>
       <Footer />
     </>
@@ -99,7 +96,6 @@ export default function DenemeKampiPage() {
 
   if (content.isActive === false) return (
     <>
-      <TopBar /><Navbar />
       <div className="min-h-[60vh] flex items-center justify-center bg-[#f8f9fa]">
         <div className="text-center p-10">
           <div className="text-5xl mb-4">🏕</div>
@@ -116,8 +112,6 @@ export default function DenemeKampiPage() {
   return (
     <>
       <Seo title={`${content.name || "Deneme Kampı"} — Sözderece Koçluk`} description={hero.subtitle} canonical={`/${content.slug || "deneme-kampi"}`} />
-      <TopBar />
-      <Navbar />
 
       {/* ══════════ HERO ══════════ */}
       <section className="relative bg-gradient-to-br from-[#100481] to-[#0a0a1a] text-white py-20 px-5 overflow-hidden">
