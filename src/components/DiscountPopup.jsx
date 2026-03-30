@@ -108,7 +108,7 @@ export default function DiscountPopup() {
             onClick={handleClose}
             className="w-full py-3 bg-gradient-to-r from-[#100481] to-[#2563eb] text-white font-bold rounded-2xl hover:opacity-90 transition-all text-sm shadow-[0_4px_16px_rgba(16,4,129,0.3)]"
           >
-            Hemen Kullan →
+            Hemen Kullan 
           </button>
         </div>
       </div>
