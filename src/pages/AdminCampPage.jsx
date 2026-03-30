@@ -122,6 +122,7 @@ export default function AdminCampPage() {
     { key: "camp",          label: "🏕 Program" },
     { key: "testimonials",  label: "⭐ Yorumlar" },
     { key: "offer",         label: "💰 Teklif" },
+    { key: "form",          label: "📝 Form" },
     { key: "applications",  label: `📋 Başvurular${quotaInfo.total > 0 ? ` (${quotaInfo.total})` : ""}` },
   ];
   const tabCls = (k) => `px-3 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${tab === k ? "bg-[#100481] text-white" : "text-[#64748b] hover:bg-[#f1f5f9]"}`;
@@ -205,6 +206,11 @@ export default function AdminCampPage() {
             <textarea className={`${inp} resize-none`} rows={3} value={content.hero?.subtitle || ""} onChange={(e) => set("hero.subtitle", e.target.value)} />
           </div>
           <div>
+            <Label>Turuncu Vurgulanan İfade (başlık veya alt başlıkta)</Label>
+            <input className={inp} placeholder="Sözderece ile" value={content.hero?.highlightPhrase || ""} onChange={(e) => set("hero.highlightPhrase", e.target.value)} />
+            <p className="text-xs text-[#9ca3af] mt-1">Bu ifade başlıkta ve alt başlıkta turuncu renkte gösterilir.</p>
+          </div>
+          <div>
             <Label>Video URL (YouTube embed veya boş bırak)</Label>
             <input className={inp} placeholder="https://www.youtube.com/embed/..." value={content.hero?.videoUrl || ""} onChange={(e) => set("hero.videoUrl", e.target.value)} />
           </div>
@@ -221,6 +227,10 @@ export default function AdminCampPage() {
               <Label>Chip 2 Metni</Label>
               <input className={inp} placeholder="🎯 Kontenjan Dolmadan Kayıt Ol" value={content.hero?.chip2 || ""} onChange={(e) => set("hero.chip2", e.target.value)} />
             </div>
+          </div>
+          <div>
+            <Label>Sosyal Kanıt Metni (butonun altı)</Label>
+            <input className={inp} placeholder="+124 Mutlu Öğrenci" value={content.hero?.socialProofText || ""} onChange={(e) => set("hero.socialProofText", e.target.value)} />
           </div>
         </Card>
       )}
@@ -303,7 +313,24 @@ export default function AdminCampPage() {
             <AddBtn onClick={() => arrAdd("camp.weeks", { week: "", title: "", desc: "" })} label="Hafta Ekle" />
           </Card>
 
-          <Card title="📊 Karşılaştırma Tablosu">
+          <Card title="📊 Karşılaştırma Tablosu — Başlık & CTA">
+            <div className="grid grid-cols-2 gap-3 max-[500px]:grid-cols-1">
+              <div>
+                <Label>Tablo Başlığı</Label>
+                <input className={inp} placeholder="Neden Sözderece?" value={content.camp?.comparisonTitle || ""} onChange={(e) => set("camp.comparisonTitle", e.target.value)} />
+              </div>
+              <div>
+                <Label>Altındaki Buton Metni</Label>
+                <input className={inp} placeholder="Hemen Kayıt Ol" value={content.camp?.comparisonCTAText || ""} onChange={(e) => set("camp.comparisonCTAText", e.target.value)} />
+              </div>
+              <div>
+                <Label>Rating Metni (butonun altı)</Label>
+                <input className={inp} placeholder="★★★★★ 4.7" value={content.camp?.comparisonRating || ""} onChange={(e) => set("camp.comparisonRating", e.target.value)} />
+              </div>
+            </div>
+          </Card>
+
+          <Card title="📊 Karşılaştırma Satırları">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[420px] text-xs border-collapse">
                 <thead>
@@ -419,6 +446,42 @@ export default function AdminCampPage() {
             </div>
           </div>
 
+          {/* Plan tabs */}
+          <div>
+            <Label>Fiyat Planları (sekme olarak gösterilir, birden fazla eklenirse)</Label>
+            {getArr("offer.plans").map((plan, i) => (
+              <div key={i} className="bg-[#f8fafc] rounded-xl p-4 border border-[#e2e8f0] mb-3 space-y-2">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-black text-[#64748b] uppercase tracking-wide">Plan {i + 1}</span>
+                  <DelBtn onClick={() => arrDel("offer.plans", i)} />
+                </div>
+                <div className="grid grid-cols-2 gap-2 max-[500px]:grid-cols-1">
+                  <div>
+                    <Label>Sekme Etiketi</Label>
+                    <input className={inp} placeholder="Aylık" value={plan.label || ""} onChange={(e) => arrSet("offer.plans", i, "label", e.target.value)} />
+                  </div>
+                  <div>
+                    <Label>Fiyat (₺)</Label>
+                    <input className={inp} type="number" placeholder="850" value={plan.price || ""} onChange={(e) => arrSet("offer.plans", i, "price", e.target.value)} />
+                  </div>
+                  <div>
+                    <Label>Fiyat Metni (/ ay, toplam...)</Label>
+                    <input className={inp} placeholder="/ ay" value={plan.priceText || ""} onChange={(e) => arrSet("offer.plans", i, "priceText", e.target.value)} />
+                  </div>
+                  <div>
+                    <Label>Açıklama</Label>
+                    <input className={inp} placeholder="Esnek, iptal edilebilir" value={plan.desc || ""} onChange={(e) => arrSet("offer.plans", i, "desc", e.target.value)} />
+                  </div>
+                  <div className="col-span-2 max-[500px]:col-span-1">
+                    <Label>Rozet (boş bırakılabilir)</Label>
+                    <input className={inp} placeholder="En İyi Değer" value={plan.badge || ""} onChange={(e) => arrSet("offer.plans", i, "badge", e.target.value)} />
+                  </div>
+                </div>
+              </div>
+            ))}
+            <AddBtn onClick={() => arrAdd("offer.plans", { label: "", price: "", priceText: "", desc: "", badge: "" })} label="Plan Ekle" />
+          </div>
+
           <div>
             <Label>Pakete Dahil Olanlar</Label>
             {(content.offer?.includes || []).map((item, i) => (
@@ -455,6 +518,42 @@ export default function AdminCampPage() {
               </div>
             ))}
             <AddBtn onClick={() => set("offer.guarantees", [...(content.offer?.guarantees || []), ""])} label="Garanti Ekle" />
+          </div>
+        </Card>
+      )}
+
+      {/* ═══ FORM ═══ */}
+      {tab === "form" && (
+        <Card title="📝 Başvuru Formu">
+          <div className="grid grid-cols-2 gap-3 max-[500px]:grid-cols-1">
+            <div>
+              <Label>Form Başlığı</Label>
+              <input className={inp} placeholder="Yerini Şimdi Ayırt" value={content.form?.title || ""} onChange={(e) => set("form.title", e.target.value)} />
+            </div>
+            <div>
+              <Label>Form Alt Başlığı</Label>
+              <input className={inp} placeholder="Kontenjan dolmadan..." value={content.form?.subtitle || ""} onChange={(e) => set("form.subtitle", e.target.value)} />
+            </div>
+            <div>
+              <Label>Ücretsiz Buton Metni</Label>
+              <input className={inp} placeholder="🆓 Ücretsiz Görüşme" value={content.form?.freeButtonText || ""} onChange={(e) => set("form.freeButtonText", e.target.value)} />
+            </div>
+            <div>
+              <Label>Ücretsiz Buton Alt Metni</Label>
+              <input className={inp} placeholder="Tanışalım, ihtiyacını anlayalım" value={content.form?.freeButtonSub || ""} onChange={(e) => set("form.freeButtonSub", e.target.value)} />
+            </div>
+            <div>
+              <Label>Ücretli Buton Metni</Label>
+              <input className={inp} placeholder="💳 Hemen Başla" value={content.form?.paidButtonText || ""} onChange={(e) => set("form.paidButtonText", e.target.value)} />
+            </div>
+            <div>
+              <Label>Başarı Başlığı</Label>
+              <input className={inp} placeholder="Başvurun Alındı!" value={content.form?.successTitle || ""} onChange={(e) => set("form.successTitle", e.target.value)} />
+            </div>
+            <div className="col-span-2 max-[500px]:col-span-1">
+              <Label>Başarı Alt Metni</Label>
+              <input className={inp} placeholder="En kısa sürede seninle iletişime geçeceğiz." value={content.form?.successText || ""} onChange={(e) => set("form.successText", e.target.value)} />
+            </div>
           </div>
         </Card>
       )}
