@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
+import EmojiPicker from "@emoji-mart/react";
+import emojiData from "@emoji-mart/data";
 
 const inp = "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] placeholder:text-[#9ca3af] focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
 const Label = ({ children }) => <label className="block text-xs font-semibold text-[#374151] mb-1">{children}</label>;
@@ -21,6 +23,26 @@ const DelBtn = ({ onClick }) => (
     Sil
   </button>
 );
+
+function EmojiField({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative">
+      <div className="flex gap-2">
+        <button type="button" onClick={() => setOpen((p) => !p)}
+          className="w-12 h-10 rounded-xl border border-[#e5e7eb] bg-white text-2xl flex items-center justify-center hover:border-[#100481] transition-all">
+          {value || "😊"}
+        </button>
+        <input className={inp} placeholder="Emoji seç" value={value} onChange={(e) => onChange(e.target.value)} />
+      </div>
+      {open && (
+        <div className="absolute z-50 top-12 left-0 shadow-2xl rounded-2xl overflow-hidden">
+          <EmojiPicker data={emojiData} locale="tr" theme="light" onEmojiSelect={(e) => { onChange(e.native); setOpen(false); }} />
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function AdminCampPage() {
   const [content, setContent] = useState(null);
@@ -197,9 +219,13 @@ export default function AdminCampPage() {
       {tab === "hero" && (
         <Card title="🎯 Hero Bölümü">
           <div>
-            <Label>Başlık</Label>
+            <Label>Başlık — 1. Satır</Label>
             <input className={inp} value={content.hero?.title || ""} onChange={(e) => set("hero.title", e.target.value)} />
-            <p className="text-xs text-[#9ca3af] mt-1">İpucu: "Kontrol Altında" ifadesi otomatik turuncu renk alır.</p>
+          </div>
+          <div>
+            <Label>Başlık — 2. Satır (alt satır, boş bırakılabilir)</Label>
+            <input className={inp} placeholder="Sınava Kadar Her Şey Kontrol Altında" value={content.hero?.titleLine2 || ""} onChange={(e) => set("hero.titleLine2", e.target.value)} />
+            <p className="text-xs text-[#9ca3af] mt-1">"Kontrol Altında" ifadesi 2. satırda turuncu renk alır.</p>
           </div>
           <div>
             <Label>Alt Başlık</Label>
@@ -229,8 +255,31 @@ export default function AdminCampPage() {
             </div>
           </div>
           <div>
-            <Label>Sosyal Kanıt Metni (butonun altı)</Label>
+            <Label>Sosyal Kanıt Metni (avatar grubu yanı)</Label>
             <input className={inp} placeholder="+124 Mutlu Öğrenci" value={content.hero?.socialProofText || ""} onChange={(e) => set("hero.socialProofText", e.target.value)} />
+          </div>
+
+          <div>
+            <Label>Buton Altı Rozetler</Label>
+            <p className="text-xs text-[#9ca3af] mb-2">Butonun hemen altında gösterilir. İkon alanı boş bırakılabilir.</p>
+            {getArr("hero.ctaBadges").map((badge, i) => (
+              <div key={i} className="flex gap-2 items-center mb-2">
+                <div className="w-10 flex-shrink-0">
+                  <EmojiField
+                    value={badge.icon || ""}
+                    onChange={(v) => arrSet("hero.ctaBadges", i, "icon", v)}
+                  />
+                </div>
+                <input
+                  className={inp}
+                  placeholder="+124 Mutlu Öğrenci"
+                  value={badge.text || ""}
+                  onChange={(e) => arrSet("hero.ctaBadges", i, "text", e.target.value)}
+                />
+                <DelBtn onClick={() => arrDel("hero.ctaBadges", i)} />
+              </div>
+            ))}
+            <AddBtn onClick={() => arrAdd("hero.ctaBadges", { icon: "⭐", text: "" })} label="Rozet Ekle" />
           </div>
         </Card>
       )}
@@ -255,7 +304,7 @@ export default function AdminCampPage() {
                 <div className="grid grid-cols-4 gap-2">
                   <div>
                     <Label>İkon</Label>
-                    <input className={inp} placeholder="📉" value={item.icon || ""} onChange={(e) => arrSet("painPoints.items", i, "icon", e.target.value)} />
+                    <EmojiField value={item.icon || ""} onChange={(v) => arrSet("painPoints.items", i, "icon", v)} />
                   </div>
                   <div className="col-span-3">
                     <Label>Başlık</Label>
@@ -444,15 +493,30 @@ export default function AdminCampPage() {
               <Label>YKS Tarihi (geri sayım için)</Label>
               <input className={inp} type="date" value={content.offer?.yksDate || ""} onChange={(e) => set("offer.yksDate", e.target.value)} />
             </div>
+            <div>
+              <Label>Ana CTA Buton Metni</Label>
+              <input className={inp} placeholder="Hemen Başla" value={content.offer?.ctaButtonText || ""} onChange={(e) => set("offer.ctaButtonText", e.target.value)} />
+            </div>
           </div>
 
           {/* Plan tabs */}
           <div>
-            <Label>Fiyat Planları (sekme olarak gösterilir, birden fazla eklenirse)</Label>
+            <Label>Fiyat Planları (kart olarak gösterilir)</Label>
             {getArr("offer.plans").map((plan, i) => (
-              <div key={i} className="bg-[#f8fafc] rounded-xl p-4 border border-[#e2e8f0] mb-3 space-y-2">
+              <div key={i} className={`rounded-xl p-4 border mb-3 space-y-3 ${plan.isFeatured ? "bg-[#eff6ff] border-[#3b82f6]" : "bg-[#f8fafc] border-[#e2e8f0]"}`}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-black text-[#64748b] uppercase tracking-wide">Plan {i + 1}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-black text-[#64748b] uppercase tracking-wide">Plan {i + 1}</span>
+                    <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={!!plan.isFeatured}
+                        onChange={(e) => arrSet("offer.plans", i, "isFeatured", e.target.checked)}
+                        className="w-4 h-4 accent-[#3b82f6]"
+                      />
+                      <span className="text-xs font-semibold text-[#3b82f6]">Öne Çıkan (beyaz kart)</span>
+                    </label>
+                  </div>
                   <DelBtn onClick={() => arrDel("offer.plans", i)} />
                 </div>
                 <div className="grid grid-cols-2 gap-2 max-[500px]:grid-cols-1">
@@ -465,6 +529,10 @@ export default function AdminCampPage() {
                     <input className={inp} type="number" placeholder="850" value={plan.price || ""} onChange={(e) => arrSet("offer.plans", i, "price", e.target.value)} />
                   </div>
                   <div>
+                    <Label>Üstü Çizili Eski Fiyat (boş bırakılabilir)</Label>
+                    <input className={inp} type="number" placeholder="3200" value={plan.oldPrice || ""} onChange={(e) => arrSet("offer.plans", i, "oldPrice", e.target.value)} />
+                  </div>
+                  <div>
                     <Label>Fiyat Metni (/ ay, toplam...)</Label>
                     <input className={inp} placeholder="/ ay" value={plan.priceText || ""} onChange={(e) => arrSet("offer.plans", i, "priceText", e.target.value)} />
                   </div>
@@ -472,14 +540,40 @@ export default function AdminCampPage() {
                     <Label>Açıklama</Label>
                     <input className={inp} placeholder="Esnek, iptal edilebilir" value={plan.desc || ""} onChange={(e) => arrSet("offer.plans", i, "desc", e.target.value)} />
                   </div>
-                  <div className="col-span-2 max-[500px]:col-span-1">
+                  <div>
                     <Label>Rozet (boş bırakılabilir)</Label>
                     <input className={inp} placeholder="En İyi Değer" value={plan.badge || ""} onChange={(e) => arrSet("offer.plans", i, "badge", e.target.value)} />
                   </div>
+                  <div className="col-span-2 max-[500px]:col-span-1">
+                    <Label>Buton Metni</Label>
+                    <input className={inp} placeholder="Hemen Başla" value={plan.ctaText || ""} onChange={(e) => arrSet("offer.plans", i, "ctaText", e.target.value)} />
+                  </div>
+                </div>
+                {/* Per-plan includes */}
+                <div>
+                  <Label>Bu Plana Özel Dahil Olanlar (boş bırakılırsa genel liste kullanılır)</Label>
+                  {(plan.includes || []).map((item, j) => (
+                    <div key={j} className="flex gap-2 mb-2">
+                      <input
+                        className={inp}
+                        value={item}
+                        onChange={(e) => {
+                          const next = [...(plan.includes || [])];
+                          next[j] = e.target.value;
+                          arrSet("offer.plans", i, "includes", next);
+                        }}
+                      />
+                      <DelBtn onClick={() => {
+                        const next = (plan.includes || []).filter((_, k) => k !== j);
+                        arrSet("offer.plans", i, "includes", next);
+                      }} />
+                    </div>
+                  ))}
+                  <AddBtn onClick={() => arrSet("offer.plans", i, "includes", [...(plan.includes || []), ""])} label="Madde Ekle" />
                 </div>
               </div>
             ))}
-            <AddBtn onClick={() => arrAdd("offer.plans", { label: "", price: "", priceText: "", desc: "", badge: "" })} label="Plan Ekle" />
+            <AddBtn onClick={() => arrAdd("offer.plans", { label: "", price: "", oldPrice: "", priceText: "", desc: "", badge: "", isFeatured: false, ctaText: "", includes: [] })} label="Plan Ekle" />
           </div>
 
           <div>

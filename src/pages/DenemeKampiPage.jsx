@@ -70,7 +70,7 @@ export default function DenemeKampiPage() {
   const formRef = useRef(null);
 
   const [coaches, setCoaches] = useState([]);
-  const [activePlan, setActivePlan] = useState(0);
+  const [activePlan, setActivePlan] = useState(0); // eslint-disable-line no-unused-vars
   const [form, setForm] = useState({ firstName: "", lastName: "", phone: "", email: "", grade: "" });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -80,6 +80,8 @@ export default function DenemeKampiPage() {
     axios.get("/api/coach/public-coach").then((r) => setCoaches(r.data || [])).catch(() => {});
   }, []);
 
+  const offerRef = useRef(null);
+  const scrollToOffer = () => offerRef.current?.scrollIntoView({ behavior: "smooth" });
   const scrollToForm = () => formRef.current?.scrollIntoView({ behavior: "smooth" });
   const countdown = useCountdown(content?.offer?.yksDate || "2026-06-15");
 
@@ -150,8 +152,11 @@ export default function DenemeKampiPage() {
             🏕 {content.name || "Deneme Kampı"}
           </div>
 
-          <h1 className="text-4xl max-[768px]:text-2xl font-black leading-[1.2] mb-6">
-            <HighlightedText text={hero.title} phrase="Kontrol Altında" />
+          <h1 className="text-4xl max-[768px]:text-2xl font-black leading-[1.25] mb-6">
+            <span className="block"><HighlightedText text={hero.title} phrase={hero.highlightPhrase || "Sözderece ile"} /></span>
+            {hero.titleLine2 && (
+              <span className="block"><HighlightedText text={hero.titleLine2} phrase="Kontrol Altında" /></span>
+            )}
           </h1>
 
           <p className="text-white/70 text-lg max-[768px]:text-base mb-8 max-w-2xl mx-auto leading-relaxed">
@@ -168,15 +173,27 @@ export default function DenemeKampiPage() {
 
           {/* CTA */}
           <button
-            onClick={scrollToForm}
+            onClick={scrollToOffer}
             className="bg-[#f39c12] hover:bg-[#d35400] text-white font-black text-lg px-10 py-4 rounded-2xl transition-all shadow-[0_10px_30px_rgba(243,156,18,0.35)] hover:-translate-y-1"
           >
             {hero.buttonText || "Yerini Ayırt"}
           </button>
 
+          {/* CTA Badges */}
+          {Array.isArray(hero.ctaBadges) && hero.ctaBadges.length > 0 && (
+            <div className="flex flex-wrap items-center justify-center gap-3 mt-4">
+              {hero.ctaBadges.map((b, i) => (
+                <span key={i} className="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-semibold backdrop-blur text-white/90">
+                  {b.icon && <span>{b.icon}</span>}
+                  {b.text}
+                </span>
+              ))}
+            </div>
+          )}
+
           {/* Social proof avatars */}
           {hero.socialProofText && (
-            <div className="flex items-center justify-center gap-2 mt-5">
+            <div className="flex items-center justify-center gap-2 mt-4">
               <div className="flex -space-x-2">
                 {(hero.socialProofAvatars || ["#3b82f6","#10b981","#f59e0b","#ef4444","#8b5cf6"]).slice(0, 5).map((color, i) => (
                   <div key={i} className="w-8 h-8 rounded-full border-2 border-[#100481] flex items-center justify-center text-white text-xs font-black" style={{ backgroundColor: color }}>
@@ -216,15 +233,20 @@ export default function DenemeKampiPage() {
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl max-[768px]:text-2xl font-black text-[#0f172a] text-center mb-12">{painPoints.title}</h2>
           <div className="grid grid-cols-2 gap-5 max-[640px]:grid-cols-1">
-            {painPoints.items.map((item, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm flex gap-4">
-                <div className="text-3xl flex-shrink-0">{item.icon}</div>
-                <div>
-                  <h3 className="font-black text-[#0f172a] mb-1 text-base">{item.title}</h3>
-                  <p className="text-[#64748b] text-sm leading-relaxed">{item.desc}</p>
+            {painPoints.items.map((item, i) => {
+              const bgColors = ["bg-[#fef3c7]","bg-[#ede9fe]","bg-[#fce7f3]","bg-[#dcfce7]","bg-[#dbeafe]","bg-[#fff1f2]"];
+              return (
+                <div key={i} className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-md transition-shadow flex gap-4">
+                  <div className={`w-14 h-14 rounded-2xl ${bgColors[i % bgColors.length]} flex items-center justify-center text-2xl flex-shrink-0`}>
+                    {item.icon}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-black text-[#0f172a] mb-1.5 text-base leading-snug">{item.title}</h3>
+                    <p className="text-[#64748b] text-sm leading-relaxed">{item.desc}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -276,7 +298,7 @@ export default function DenemeKampiPage() {
           {/* CTA below table */}
           <div className="text-center">
             <button
-              onClick={scrollToForm}
+              onClick={scrollToOffer}
               className="bg-[#f39c12] hover:bg-[#d35400] text-white font-black text-base px-10 py-4 rounded-2xl transition-all shadow-[0_8px_24px_rgba(243,156,18,0.3)] hover:-translate-y-0.5 mb-3"
             >
               {camp.comparisonCTAText || "Hemen Kayıt Ol"}
@@ -319,87 +341,135 @@ export default function DenemeKampiPage() {
       </section>
 
       {/* ══════════ OFFER + COUNTDOWN ══════════ */}
-      <section className="bg-gradient-to-br from-[#100481] to-[#0a0a1a] py-20 px-5 text-white">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl max-[768px]:text-2xl font-black mb-3">{offer.title}</h2>
+      <section id="teklif" ref={offerRef} className="relative bg-gradient-to-br from-[#100481] to-[#0a0a1a] py-20 px-5 text-white overflow-hidden">
+        {/* Decorative blobs */}
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#f39c12]/5 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-white/3 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3 pointer-events-none" />
 
-          {/* Quota badge */}
-          {remainingQuota > 0 && remainingQuota <= offer.maxQuota && (
-            <div className="inline-flex items-center gap-1.5 bg-[#ef4444]/20 border border-[#ef4444]/40 rounded-full px-4 py-1 text-sm font-bold text-[#fca5a5] mb-6">
-              🔥 Sadece {remainingQuota} yer kaldı
-            </div>
-          )}
+        <div className="max-w-5xl mx-auto relative">
+          {/* Header */}
+          <div className="text-center mb-6">
+            <h2 className="text-3xl max-[768px]:text-2xl font-black mb-3">{offer.title}</h2>
 
-          {/* Plan tabs */}
-          {plans.length > 1 && (
-            <div className="flex bg-white/10 rounded-full p-1 mb-8 max-w-xs mx-auto border border-white/20">
-              {plans.map((plan, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  className={`flex-1 py-2 text-sm font-bold rounded-full transition-all ${activePlan === i ? "bg-white text-[#100481] shadow" : "text-white/70 hover:text-white"}`}
-                  onClick={() => setActivePlan(i)}
-                >
-                  {plan.label}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Price display */}
-          {currentPlan ? (
-            <div className="mb-4">
-              {currentPlan.badge && (
-                <span className="inline-block bg-[#f39c12] text-white text-xs font-black px-3 py-1 rounded-full mb-3">{currentPlan.badge}</span>
-              )}
-              <div className="flex items-baseline justify-center gap-2">
-                <span className="text-6xl max-[768px]:text-4xl font-black text-[#f39c12]">{currentPlan.price}₺</span>
-                <span className="text-white/60 text-base">{currentPlan.priceText}</span>
-              </div>
-              <p className="text-white/50 text-sm mt-1">{currentPlan.desc}</p>
-            </div>
-          ) : (
-            <div className="text-6xl max-[768px]:text-4xl font-black text-[#f39c12] mb-2">{offer.price}₺</div>
-          )}
-
-          <p className="text-white/50 text-sm mb-8">Tüm vergiler dahil</p>
-
-          {/* Countdown */}
-          <div className="mb-8">
-            <p className="text-white/60 text-sm mb-3 font-semibold uppercase tracking-wide">YKS'ye kalan süre</p>
-            <div className="flex justify-center gap-4">
+            {/* Countdown */}
+            <div className="flex justify-center gap-3 mb-5">
               <CountdownBox value={countdown.days} label="Gün" />
               <CountdownBox value={countdown.hours} label="Saat" />
               <CountdownBox value={countdown.minutes} label="Dakika" />
               <CountdownBox value={countdown.seconds} label="Saniye" />
             </div>
+
+            {remainingQuota > 0 && remainingQuota <= offer.maxQuota && (
+              <div className="inline-flex items-center gap-1.5 bg-[#ef4444]/20 border border-[#ef4444]/40 rounded-full px-4 py-1 text-sm font-bold text-[#fca5a5]">
+                🔥 Sadece {remainingQuota} yer kaldı
+              </div>
+            )}
           </div>
 
-          {/* Includes */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-6 text-left backdrop-blur">
-            <h3 className="font-black mb-4 text-base">Pakete dahil:</h3>
-            <ul className="space-y-2">
-              {offer.includes.map((item, i) => (
-                <li key={i} className="flex items-center gap-2.5 text-sm text-white/80">
-                  <span className="text-[#22c55e]">✓</span> {item}
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Plan cards */}
+          {plans.length > 0 ? (
+            <div className={`grid gap-5 mb-10 ${plans.length === 1 ? "max-w-sm mx-auto" : plans.length === 2 ? "grid-cols-2 max-w-2xl mx-auto max-[640px]:grid-cols-1" : "grid-cols-3 max-[768px]:grid-cols-1"}`}>
+              {plans.map((plan, i) => {
+                const planIncludes = Array.isArray(plan.includes) && plan.includes.length > 0 ? plan.includes : offer.includes;
+                return plan.isFeatured ? (
+                  /* ── Featured card (white) ── */
+                  <div key={i} className="relative bg-white rounded-3xl p-7 flex flex-col shadow-2xl">
+                    {plan.badge && (
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                        <span className="bg-[#f39c12] text-white text-xs font-black px-5 py-1.5 rounded-full shadow-lg whitespace-nowrap">
+                          {plan.badge}
+                        </span>
+                      </div>
+                    )}
+                    <div className="pt-2 mb-5">
+                      <p className="text-[#100481] font-black text-sm uppercase tracking-widest mb-3">{plan.label}</p>
+                      {plan.oldPrice && (
+                        <p className="line-through text-[#9ca3af] text-base">{plan.oldPrice}₺</p>
+                      )}
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-5xl font-black text-[#100481]">{plan.price}₺</span>
+                        <span className="text-[#64748b] text-sm font-semibold">{plan.priceText}</span>
+                      </div>
+                      {plan.desc && <p className="text-[#64748b] text-sm mt-1.5">{plan.desc}</p>}
+                    </div>
+                    <ul className="space-y-2 mb-6 flex-grow">
+                      {planIncludes.map((item, j) => (
+                        <li key={j} className="flex items-center gap-2 text-sm text-[#374151]">
+                          <span className="w-5 h-5 rounded-full bg-[#dcfce7] flex items-center justify-center text-[#166534] text-xs font-black flex-shrink-0">✓</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      onClick={scrollToForm}
+                      className="w-full py-4 rounded-2xl bg-[#f39c12] hover:bg-[#d35400] text-white font-black text-base transition-all shadow-[0_6px_20px_rgba(243,156,18,0.3)] hover:-translate-y-0.5"
+                    >
+                      {plan.ctaText || offer.ctaButtonText || "Hemen Başla"}
+                    </button>
+                  </div>
+                ) : (
+                  /* ── Normal card (glass) ── */
+                  <div key={i} className="relative bg-white/8 border border-white/15 rounded-3xl p-7 flex flex-col backdrop-blur-sm">
+                    {plan.badge && (
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                        <span className="bg-white/20 text-white text-xs font-black px-5 py-1.5 rounded-full border border-white/30 whitespace-nowrap">
+                          {plan.badge}
+                        </span>
+                      </div>
+                    )}
+                    <div className="pt-2 mb-5">
+                      <p className="text-white/60 font-black text-sm uppercase tracking-widest mb-3">{plan.label}</p>
+                      {plan.oldPrice && (
+                        <p className="line-through text-white/30 text-base">{plan.oldPrice}₺</p>
+                      )}
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-5xl font-black text-white">{plan.price}₺</span>
+                        <span className="text-white/50 text-sm font-semibold">{plan.priceText}</span>
+                      </div>
+                      {plan.desc && <p className="text-white/50 text-sm mt-1.5">{plan.desc}</p>}
+                    </div>
+                    <ul className="space-y-2 mb-6 flex-grow">
+                      {planIncludes.map((item, j) => (
+                        <li key={j} className="flex items-center gap-2 text-sm text-white/70">
+                          <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[#22c55e] text-xs font-black flex-shrink-0">✓</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      onClick={scrollToForm}
+                      className="w-full py-4 rounded-2xl border-2 border-white/30 hover:border-white/60 text-white font-black text-base transition-all hover:bg-white/10"
+                    >
+                      {plan.ctaText || offer.ctaButtonText || "Başla"}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            /* ── Fallback: no plans, single price ── */
+            <div className="max-w-sm mx-auto bg-white/8 border border-white/15 rounded-3xl p-8 text-center mb-10 backdrop-blur-sm">
+              <div className="text-6xl font-black text-[#f39c12] mb-1">{offer.price}₺</div>
+              <p className="text-white/50 text-sm mb-6">Tüm vergiler dahil</p>
+              <ul className="space-y-2 mb-6 text-left">
+                {offer.includes.map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-white/70">
+                    <span className="text-[#22c55e]">✓</span> {item}
+                  </li>
+                ))}
+              </ul>
+              <button onClick={scrollToForm} className="w-full py-4 rounded-2xl bg-[#f39c12] hover:bg-[#d35400] text-white font-black transition-all">
+                {offer.ctaButtonText || "Hemen Başla"}
+              </button>
+            </div>
+          )}
 
           {/* Guarantees */}
-          <div className="flex flex-wrap justify-center gap-3 mb-8">
+          <div className="flex flex-wrap justify-center gap-3">
             {offer.guarantees.map((g, i) => (
               <span key={i} className="bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-semibold backdrop-blur">🛡 {g}</span>
             ))}
           </div>
-
-          <button
-            onClick={scrollToForm}
-            className="bg-[#f39c12] hover:bg-[#d35400] text-white font-black text-lg px-12 py-5 rounded-2xl transition-all shadow-[0_10px_30px_rgba(243,156,18,0.35)] hover:-translate-y-1 w-full max-w-md"
-          >
-            Hemen Başvur
-          </button>
         </div>
       </section>
 
