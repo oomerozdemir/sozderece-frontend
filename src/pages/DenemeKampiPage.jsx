@@ -137,8 +137,8 @@ export default function DenemeKampiPage() {
           <p className="text-white/70 text-lg max-[768px]:text-base mb-8 max-w-2xl mx-auto leading-relaxed">{hero.subtitle}</p>
 
           <div className="flex flex-wrap justify-center gap-3 mb-8">
-            <span className="bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-semibold backdrop-blur">✅ Sınava Kadar Takip</span>
-            <span className="bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-semibold backdrop-blur">🎯 Kontenjan Dolmadan Kayıt Ol</span>
+            {(hero.chip1 || "✅ Sınava Kadar Takip") && <span className="bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-semibold backdrop-blur">{hero.chip1 || "✅ Sınava Kadar Takip"}</span>}
+            {(hero.chip2 || "🎯 Kontenjan Dolmadan Kayıt Ol") && <span className="bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-semibold backdrop-blur">{hero.chip2 || "🎯 Kontenjan Dolmadan Kayıt Ol"}</span>}
           </div>
 
           <button
