@@ -92,7 +92,8 @@ export default function AdminCampPage() {
       const next = JSON.parse(JSON.stringify(prev));
       const keys = arrPath.split(".");
       let obj = next;
-      for (const k of keys) obj = obj[k];
+      for (const k of keys) obj = obj?.[k];
+      if (!obj || !obj[idx]) return prev;
       obj[idx][key] = value;
       return next;
     });
@@ -102,8 +103,13 @@ export default function AdminCampPage() {
       const next = JSON.parse(JSON.stringify(prev));
       const keys = arrPath.split(".");
       let obj = next;
-      for (const k of keys) obj = obj[k];
-      obj.push({ ...template });
+      for (let i = 0; i < keys.length - 1; i++) {
+        if (!obj[keys[i]] || typeof obj[keys[i]] !== "object") obj[keys[i]] = {};
+        obj = obj[keys[i]];
+      }
+      const lastKey = keys[keys.length - 1];
+      if (!Array.isArray(obj[lastKey])) obj[lastKey] = [];
+      obj[lastKey].push({ ...template });
       return next;
     });
   };
@@ -112,7 +118,8 @@ export default function AdminCampPage() {
       const next = JSON.parse(JSON.stringify(prev));
       const keys = arrPath.split(".");
       let obj = next;
-      for (const k of keys) obj = obj[k];
+      for (const k of keys) obj = obj?.[k];
+      if (!Array.isArray(obj)) return prev;
       obj.splice(idx, 1);
       return next;
     });
