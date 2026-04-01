@@ -68,7 +68,7 @@ const inpCls = "w-full px-4 py-3 rounded-xl border border-[#e5e7eb] text-sm text
 export default function DenemeKampiPage() {
   const navigate = useNavigate();
   const { content, loading } = useCampPage();
-  const { addToCart } = useCart();
+  const { cart, addToCart, removeFromCart } = useCart();
   const formRef = useRef(null);
 
   const [coaches, setCoaches] = useState([]);
@@ -93,6 +93,12 @@ export default function DenemeKampiPage() {
     const slug = `camp-${campSlug}-plan-${planIndex}`;
     const title = plan.label || content?.name || "Deneme Kampı";
     try {
+      // Sepetteki tüm mevcut ürünleri temizle — son seçilen plan geçerli olsun
+      if (Array.isArray(cart) && cart.length > 0) {
+        for (const item of cart) {
+          await removeFromCart(item.slug);
+        }
+      }
       await addToCart({ slug, title, unitPrice: price * 100 });
       navigate("/payment");
     } catch (err) {
