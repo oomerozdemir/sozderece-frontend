@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import Seo from "../components/Seo";
 import useCampPage from "../hooks/useCampPage";
+import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
 
 // ── Helpers ───────────────────────────────────────────────────
@@ -67,6 +68,7 @@ const inpCls = "w-full px-4 py-3 rounded-xl border border-[#e5e7eb] text-sm text
 export default function DenemeKampiPage() {
   const navigate = useNavigate();
   const { content, loading } = useCampPage();
+  const { addToCart } = useCart();
   const formRef = useRef(null);
 
   const [coaches, setCoaches] = useState([]);
@@ -83,6 +85,26 @@ export default function DenemeKampiPage() {
   const offerRef = useRef(null);
   const scrollToOffer = () => offerRef.current?.scrollIntoView({ behavior: "smooth" });
   const scrollToForm = () => formRef.current?.scrollIntoView({ behavior: "smooth" });
+
+  const addToCartAndPay = async (plan, planIndex) => {
+    const price = parseInt(plan.price);
+    if (!price || isNaN(price)) { alert("Bu plan için fiyat bilgisi eksik."); return; }
+    const campSlug = content?.slug || "deneme-kampi";
+    const slug = `camp-${campSlug}-plan-${planIndex}`;
+    const title = plan.label || content?.name || "Deneme Kampı";
+    try {
+      await addToCart({ slug, title, unitPrice: price * 100 });
+      navigate("/payment");
+    } catch (err) {
+      const msg = err?.response?.data?.message || "";
+      if (err?.response?.status === 401 || msg.toLowerCase().includes("giriş")) {
+        navigate("/login", { state: { next: "/payment" } });
+      } else {
+        console.error(err);
+        alert("Bir hata oluştu, lütfen tekrar deneyin.");
+      }
+    }
+  };
   const countdown = useCountdown(content?.offer?.yksDate || "2026-06-15");
 
   const handleSubmit = async (type = "free") => {
@@ -401,7 +423,7 @@ export default function DenemeKampiPage() {
                       ))}
                     </ul>
                     <button
-                      onClick={scrollToForm}
+                      onClick={() => addToCartAndPay(plan, i)}
                       className="w-full py-4 rounded-2xl bg-[#f39c12] hover:bg-[#d35400] text-white font-black text-base transition-all shadow-[0_6px_20px_rgba(243,156,18,0.3)] hover:-translate-y-0.5"
                     >
                       {plan.ctaText || offer.ctaButtonText || "Hemen Başla"}
@@ -437,7 +459,7 @@ export default function DenemeKampiPage() {
                       ))}
                     </ul>
                     <button
-                      onClick={scrollToForm}
+                      onClick={() => addToCartAndPay(plan, i)}
                       className="w-full py-4 rounded-2xl border-2 border-white/30 hover:border-white/60 text-white font-black text-base transition-all hover:bg-white/10"
                     >
                       {plan.ctaText || offer.ctaButtonText || "Başla"}
@@ -458,7 +480,10 @@ export default function DenemeKampiPage() {
                   </li>
                 ))}
               </ul>
-              <button onClick={scrollToForm} className="w-full py-4 rounded-2xl bg-[#f39c12] hover:bg-[#d35400] text-white font-black transition-all">
+              <button
+                onClick={() => addToCartAndPay({ price: offer.price, label: offer.ctaButtonText || "Deneme Kampı" }, 0)}
+                className="w-full py-4 rounded-2xl bg-[#f39c12] hover:bg-[#d35400] text-white font-black transition-all"
+              >
                 {offer.ctaButtonText || "Hemen Başla"}
               </button>
             </div>
