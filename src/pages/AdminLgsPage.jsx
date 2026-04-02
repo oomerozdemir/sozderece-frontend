@@ -3,7 +3,16 @@ import axios from "../utils/axios";
 
 const TABS = [
   { key: "applications", label: "📋 Başvurular" },
+  { key: "content", label: "✏️ İçerik" },
   { key: "settings", label: "⚙️ Ayarlar" },
+];
+
+const CONTENT_TABS = [
+  { key: "hero", label: "🎯 Hero" },
+  { key: "painPoints", label: "😟 Acı Noktaları" },
+  { key: "howItWorks", label: "🏗 Nasıl Çalışır" },
+  { key: "socialProof", label: "⭐ Sosyal Kanıt" },
+  { key: "offer", label: "💰 Teklif & Form" },
 ];
 
 const authHeaders = () => {
@@ -11,13 +20,427 @@ const authHeaders = () => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
+// ── Deep path helpers ─────────────────────────────────────────
+const deepClone = (v) => JSON.parse(JSON.stringify(v));
+
+const set = (setter, path, value) =>
+  setter((prev) => {
+    const next = deepClone(prev);
+    const keys = path.split(".");
+    let obj = next;
+    for (let i = 0; i < keys.length - 1; i++) {
+      if (!obj[keys[i]] || typeof obj[keys[i]] !== "object") obj[keys[i]] = {};
+      obj = obj[keys[i]];
+    }
+    obj[keys[keys.length - 1]] = value;
+    return next;
+  });
+
+const arrSet = (setter, arrPath, index, field, value) =>
+  setter((prev) => {
+    const next = deepClone(prev);
+    const keys = arrPath.split(".");
+    let obj = next;
+    for (const k of keys) obj = obj?.[k];
+    if (Array.isArray(obj) && obj[index] !== undefined) obj[index][field] = value;
+    return next;
+  });
+
+const arrAdd = (setter, arrPath, template) =>
+  setter((prev) => {
+    const next = deepClone(prev);
+    const keys = arrPath.split(".");
+    let obj = next;
+    for (let i = 0; i < keys.length - 1; i++) {
+      if (!obj[keys[i]] || typeof obj[keys[i]] !== "object") obj[keys[i]] = {};
+      obj = obj[keys[i]];
+    }
+    const lastKey = keys[keys.length - 1];
+    if (!Array.isArray(obj[lastKey])) obj[lastKey] = [];
+    obj[lastKey].push({ ...template });
+    return next;
+  });
+
+const arrDel = (setter, arrPath, index) =>
+  setter((prev) => {
+    const next = deepClone(prev);
+    const keys = arrPath.split(".");
+    let obj = next;
+    for (const k of keys) obj = obj?.[k];
+    if (Array.isArray(obj)) obj.splice(index, 1);
+    return next;
+  });
+
+// ── Shared UI components ──────────────────────────────────────
+const inp = "w-full border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-[#100481] bg-white";
+const Label = ({ children }) => <p className="text-xs font-bold text-[#374151] mb-1">{children}</p>;
+const Field = ({ label, children }) => (
+  <div>
+    <Label>{label}</Label>
+    {children}
+  </div>
+);
+const AddBtn = ({ onClick, label = "Ekle" }) => (
+  <button onClick={onClick} className="text-xs font-bold bg-[#eff6ff] text-[#1d4ed8] border border-[#bfdbfe] px-3 py-1.5 rounded-lg hover:bg-[#dbeafe] transition-colors">
+    + {label}
+  </button>
+);
+const DelBtn = ({ onClick }) => (
+  <button onClick={onClick} className="text-xs text-[#ef4444] hover:text-[#b91c1c] font-bold px-2 py-1 rounded transition-colors">✕</button>
+);
+
+// ── Section editors ───────────────────────────────────────────
+
+function HeroEditor({ content, setContent }) {
+  const h = content.hero || {};
+  const s = (field, val) => set(setContent, `hero.${field}`, val);
+  return (
+    <div className="space-y-4">
+      <Field label="LGS Tarihi (YYYY-MM-DD)">
+        <input type="date" value={content.lgsDate || "2026-06-14"} onChange={(e) => set(setContent, "lgsDate", e.target.value)} className={inp} />
+      </Field>
+      <Field label="Alt Başlık">
+        <input value={h.subtitle || ""} onChange={(e) => s("subtitle", e.target.value)} className={inp} placeholder="Her gün yanında biri var..." />
+      </Field>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Chip 1">
+          <input value={h.chip1 || ""} onChange={(e) => s("chip1", e.target.value)} className={inp} />
+        </Field>
+        <Field label="Chip 2">
+          <input value={h.chip2 || ""} onChange={(e) => s("chip2", e.target.value)} className={inp} />
+        </Field>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Ana CTA Butonu">
+          <input value={h.ctaPrimary || ""} onChange={(e) => s("ctaPrimary", e.target.value)} className={inp} />
+        </Field>
+        <Field label="İkincil CTA Butonu">
+          <input value={h.ctaSecondary || ""} onChange={(e) => s("ctaSecondary", e.target.value)} className={inp} />
+        </Field>
+      </div>
+      <Field label="Navbar CTA Butonu">
+        <input value={h.navbarCta || ""} onChange={(e) => s("navbarCta", e.target.value)} className={inp} />
+      </Field>
+    </div>
+  );
+}
+
+function PainPointsEditor({ content, setContent }) {
+  const pp = content.painPoints || {};
+  const items = pp.items || [];
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Bölüm Başlığı">
+          <input value={pp.title || ""} onChange={(e) => set(setContent, "painPoints.title", e.target.value)} className={inp} />
+        </Field>
+        <Field label="Alt Başlık">
+          <input value={pp.subtitle || ""} onChange={(e) => set(setContent, "painPoints.subtitle", e.target.value)} className={inp} />
+        </Field>
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <Label>Sorun Kartları</Label>
+          <AddBtn onClick={() => arrAdd(setContent, "painPoints.items", { emoji: "❓", title: "", desc: "" })} label="Kart Ekle" />
+        </div>
+        <div className="space-y-3">
+          {items.map((item, i) => (
+            <div key={i} className="bg-[#f8fafc] rounded-xl p-4 border border-[#e2e8f0] space-y-2">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex gap-2 flex-1">
+                  <input
+                    value={item.emoji || ""}
+                    onChange={(e) => arrSet(setContent, "painPoints.items", i, "emoji", e.target.value)}
+                    className={`${inp} w-20 text-center text-lg`}
+                    placeholder="📚"
+                  />
+                  <input
+                    value={item.title || ""}
+                    onChange={(e) => arrSet(setContent, "painPoints.items", i, "title", e.target.value)}
+                    className={`${inp} flex-1`}
+                    placeholder="Başlık"
+                  />
+                </div>
+                <DelBtn onClick={() => arrDel(setContent, "painPoints.items", i)} />
+              </div>
+              <textarea
+                value={item.desc || ""}
+                onChange={(e) => arrSet(setContent, "painPoints.items", i, "desc", e.target.value)}
+                className={`${inp} resize-none h-16`}
+                placeholder="Açıklama"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HowItWorksEditor({ content, setContent }) {
+  const how = content.howItWorks || {};
+  const steps = how.steps || [];
+  const comparison = how.comparison || [];
+  return (
+    <div className="space-y-6">
+      {/* Adımlar */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <Label>Adımlar</Label>
+          <AddBtn onClick={() => arrAdd(setContent, "howItWorks.steps", { title: "", desc: "" })} label="Adım Ekle" />
+        </div>
+        <div className="space-y-3">
+          {steps.map((s, i) => (
+            <div key={i} className="bg-[#f8fafc] rounded-xl p-4 border border-[#e2e8f0] space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black text-[#100481] bg-[#eff6ff] px-2 py-1 rounded-lg min-w-[28px] text-center">{i + 1}</span>
+                <input
+                  value={s.title || ""}
+                  onChange={(e) => arrSet(setContent, "howItWorks.steps", i, "title", e.target.value)}
+                  className={`${inp} flex-1`}
+                  placeholder="Adım başlığı"
+                />
+                <DelBtn onClick={() => arrDel(setContent, "howItWorks.steps", i)} />
+              </div>
+              <textarea
+                value={s.desc || ""}
+                onChange={(e) => arrSet(setContent, "howItWorks.steps", i, "desc", e.target.value)}
+                className={`${inp} resize-none h-16`}
+                placeholder="Adım açıklaması"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Karşılaştırma tablosu */}
+      <div>
+        <div className="grid grid-cols-2 gap-3 mb-3">
+          <Field label="Karşılaştırma Başlığı">
+            <input value={how.comparisonTitle || ""} onChange={(e) => set(setContent, "howItWorks.comparisonTitle", e.target.value)} className={inp} />
+          </Field>
+          <Field label="Karşılaştırma CTA">
+            <input value={how.comparisonCta || ""} onChange={(e) => set(setContent, "howItWorks.comparisonCta", e.target.value)} className={inp} />
+          </Field>
+        </div>
+        <div className="flex items-center justify-between mb-3">
+          <Label>Karşılaştırma Satırları</Label>
+          <AddBtn onClick={() => arrAdd(setContent, "howItWorks.comparison", { label: "" })} label="Satır Ekle" />
+        </div>
+        <div className="space-y-2">
+          {comparison.map((row, i) => (
+            <div key={i} className="flex items-center gap-2 bg-[#f8fafc] rounded-xl px-4 py-2.5 border border-[#e2e8f0]">
+              <input
+                value={row.label || ""}
+                onChange={(e) => arrSet(setContent, "howItWorks.comparison", i, "label", e.target.value)}
+                className={`${inp} flex-1`}
+                placeholder="Özellik adı"
+              />
+              <DelBtn onClick={() => arrDel(setContent, "howItWorks.comparison", i)} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SocialProofEditor({ content, setContent }) {
+  const sp = content.socialProof || {};
+  const stats = sp.stats || [];
+  const testimonials = sp.testimonials || [];
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Başlık">
+          <input value={sp.title || ""} onChange={(e) => set(setContent, "socialProof.title", e.target.value)} className={inp} />
+        </Field>
+        <Field label="Başlık Aksanı (turuncu)">
+          <input value={sp.titleAccent || ""} onChange={(e) => set(setContent, "socialProof.titleAccent", e.target.value)} className={inp} />
+        </Field>
+      </div>
+
+      {/* İstatistikler */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <Label>İstatistikler</Label>
+          <AddBtn onClick={() => arrAdd(setContent, "socialProof.stats", { val: "", label: "" })} label="İstatistik Ekle" />
+        </div>
+        <div className="space-y-2">
+          {stats.map((s, i) => (
+            <div key={i} className="flex items-center gap-2 bg-[#f8fafc] rounded-xl px-4 py-2.5 border border-[#e2e8f0]">
+              <input
+                value={s.val || ""}
+                onChange={(e) => arrSet(setContent, "socialProof.stats", i, "val", e.target.value)}
+                className={`${inp} w-28`}
+                placeholder="21"
+              />
+              <input
+                value={s.label || ""}
+                onChange={(e) => arrSet(setContent, "socialProof.stats", i, "label", e.target.value)}
+                className={`${inp} flex-1`}
+                placeholder="Aktif öğrenci"
+              />
+              <DelBtn onClick={() => arrDel(setContent, "socialProof.stats", i)} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Yorumlar */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <Label>Yorumlar</Label>
+          <AddBtn onClick={() => arrAdd(setContent, "socialProof.testimonials", { quote: "", author: "", isParent: true })} label="Yorum Ekle" />
+        </div>
+        <div className="space-y-3">
+          {testimonials.map((t, i) => (
+            <div key={i} className="bg-[#f8fafc] rounded-xl p-4 border border-[#e2e8f0] space-y-2">
+              <div className="flex items-start justify-between gap-2">
+                <textarea
+                  value={t.quote || ""}
+                  onChange={(e) => arrSet(setContent, "socialProof.testimonials", i, "quote", e.target.value)}
+                  className={`${inp} resize-none h-16 flex-1`}
+                  placeholder="Yorum metni..."
+                />
+                <DelBtn onClick={() => arrDel(setContent, "socialProof.testimonials", i)} />
+              </div>
+              <div className="flex items-center gap-3">
+                <input
+                  value={t.author || ""}
+                  onChange={(e) => arrSet(setContent, "socialProof.testimonials", i, "author", e.target.value)}
+                  className={`${inp} flex-1`}
+                  placeholder="Yazar adı"
+                />
+                <label className="flex items-center gap-1.5 text-xs font-semibold text-[#374151] whitespace-nowrap cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={!!t.isParent}
+                    onChange={(e) => arrSet(setContent, "socialProof.testimonials", i, "isParent", e.target.checked)}
+                    className="rounded"
+                  />
+                  Veli mi?
+                </label>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OfferFormEditor({ content, setContent }) {
+  const o = content.offer || {};
+  const f = content.form || {};
+  const includes = o.includes || [];
+  return (
+    <div className="space-y-6">
+      {/* Teklif */}
+      <div>
+        <p className="text-sm font-black text-[#0f172a] mb-3 pb-2 border-b border-[#f1f5f9]">Teklif Bloğu</p>
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Başlık">
+              <input value={o.title || ""} onChange={(e) => set(setContent, "offer.title", e.target.value)} className={inp} />
+            </Field>
+            <Field label="Alt Başlık">
+              <input value={o.subtitle || ""} onChange={(e) => set(setContent, "offer.subtitle", e.target.value)} className={inp} />
+            </Field>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <Field label="Fiyat (₺)">
+              <input type="number" value={o.price || ""} onChange={(e) => set(setContent, "offer.price", e.target.value)} className={inp} placeholder="2500" />
+            </Field>
+            <Field label="Fiyat Etiketi">
+              <input value={o.priceLabel || ""} onChange={(e) => set(setContent, "offer.priceLabel", e.target.value)} className={inp} />
+            </Field>
+            <Field label="Satın Al Linki">
+              <input value={o.buyLink || ""} onChange={(e) => set(setContent, "offer.buyLink", e.target.value)} className={inp} placeholder="/paket-detay" />
+            </Field>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Ana CTA">
+              <input value={o.ctaPrimary || ""} onChange={(e) => set(setContent, "offer.ctaPrimary", e.target.value)} className={inp} />
+            </Field>
+            <Field label="İkincil CTA">
+              <input value={o.ctaSecondary || ""} onChange={(e) => set(setContent, "offer.ctaSecondary", e.target.value)} className={inp} />
+            </Field>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <Label>Paket İçerikleri</Label>
+              <AddBtn onClick={() => arrAdd(setContent, "offer.includes", "")} label="Madde Ekle" />
+            </div>
+            <div className="space-y-2">
+              {includes.map((item, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="text-[#22c55e] font-black">✓</span>
+                  <input
+                    value={item}
+                    onChange={(e) => {
+                      setContent((prev) => {
+                        const next = deepClone(prev);
+                        if (!next.offer) next.offer = {};
+                        if (!Array.isArray(next.offer.includes)) next.offer.includes = [];
+                        next.offer.includes[i] = e.target.value;
+                        return next;
+                      });
+                    }}
+                    className={`${inp} flex-1`}
+                    placeholder="Dahil olan özellik..."
+                  />
+                  <DelBtn onClick={() => arrDel(setContent, "offer.includes", i)} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Form */}
+      <div>
+        <p className="text-sm font-black text-[#0f172a] mb-3 pb-2 border-b border-[#f1f5f9]">Form Bloğu</p>
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Form Başlığı">
+              <input value={f.title || ""} onChange={(e) => set(setContent, "form.title", e.target.value)} className={inp} />
+            </Field>
+            <Field label="Form Alt Başlığı">
+              <input value={f.subtitle || ""} onChange={(e) => set(setContent, "form.subtitle", e.target.value)} className={inp} />
+            </Field>
+          </div>
+          <Field label="Gönder Butonu Metni">
+            <input value={f.submitText || ""} onChange={(e) => set(setContent, "form.submitText", e.target.value)} className={inp} />
+          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Başarı Başlığı">
+              <input value={f.successTitle || ""} onChange={(e) => set(setContent, "form.successTitle", e.target.value)} className={inp} />
+            </Field>
+            <Field label="Başarı Alt Metni">
+              <input value={f.successSubtitle || ""} onChange={(e) => set(setContent, "form.successSubtitle", e.target.value)} className={inp} />
+            </Field>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────
 export default function AdminLgsPage() {
   const [tab, setTab] = useState("applications");
+  const [contentTab, setContentTab] = useState("hero");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [maxQuota, setMaxQuota] = useState(10);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [content, setContent] = useState(null);
+  const [contentSaving, setContentSaving] = useState(false);
+  const [contentSaved, setContentSaved] = useState(false);
 
   const load = () => {
     setLoading(true);
@@ -30,7 +453,16 @@ export default function AdminLgsPage() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { load(); }, []);
+  const loadContent = () => {
+    axios.get("/api/lgs-content")
+      .then((r) => setContent(r.data))
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    load();
+    loadContent();
+  }, []);
 
   const handleExport = () => {
     const token = localStorage.getItem("token");
@@ -51,17 +483,35 @@ export default function AdminLgsPage() {
     }
   };
 
+  const handleSaveContent = async () => {
+    setContentSaving(true);
+    try {
+      await axios.put("/api/admin/lgs-content", content, { headers: authHeaders() });
+      setContentSaved(true);
+      setTimeout(() => setContentSaved(false), 2500);
+    } catch {
+      alert("İçerik kaydedilemedi.");
+    } finally {
+      setContentSaving(false);
+    }
+  };
+
   const tabCls = (key) =>
     tab === key
       ? "px-3 py-2 rounded-xl text-xs font-bold bg-[#100481] text-white shadow transition-all"
       : "px-3 py-2 rounded-xl text-xs font-semibold text-[#475569] hover:bg-[#f1f5f9] transition-all";
 
+  const ctabCls = (key) =>
+    contentTab === key
+      ? "px-3 py-1.5 rounded-lg text-xs font-bold bg-[#100481] text-white transition-all"
+      : "px-3 py-1.5 rounded-lg text-xs font-semibold text-[#475569] hover:bg-[#f1f5f9] transition-all";
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-xl font-black text-[#0f172a]">📚 LGS Hazırlık Başvuruları</h2>
-          <p className="text-xs text-[#64748b] mt-0.5">/lgs-hazirlik sayfasından gelen başvurular</p>
+          <h2 className="text-xl font-black text-[#0f172a]">📚 LGS Hazırlık</h2>
+          <p className="text-xs text-[#64748b] mt-0.5">/lgs-hazirlik sayfası yönetimi</p>
         </div>
         {data && (
           <div className="flex gap-3 flex-wrap">
@@ -138,6 +588,44 @@ export default function AdminLgsPage() {
                 </tbody>
               </table>
             </div>
+          )}
+        </div>
+      )}
+
+      {/* ── İÇERİK ── */}
+      {tab === "content" && (
+        <div className="bg-white rounded-2xl border border-[#f1f5f9] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+          {!content ? (
+            <div className="py-12 text-center text-[#94a3b8] text-sm">Yükleniyor...</div>
+          ) : (
+            <>
+              {/* Content sub-tabs */}
+              <div className="px-5 pt-4 pb-3 border-b border-[#f1f5f9] flex gap-1.5 flex-wrap">
+                {CONTENT_TABS.map((ct) => (
+                  <button key={ct.key} onClick={() => setContentTab(ct.key)} className={ctabCls(ct.key)}>
+                    {ct.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="p-6">
+                {contentTab === "hero" && <HeroEditor content={content} setContent={setContent} />}
+                {contentTab === "painPoints" && <PainPointsEditor content={content} setContent={setContent} />}
+                {contentTab === "howItWorks" && <HowItWorksEditor content={content} setContent={setContent} />}
+                {contentTab === "socialProof" && <SocialProofEditor content={content} setContent={setContent} />}
+                {contentTab === "offer" && <OfferFormEditor content={content} setContent={setContent} />}
+              </div>
+
+              <div className="px-6 pb-6">
+                <button
+                  onClick={handleSaveContent}
+                  disabled={contentSaving}
+                  className="px-6 py-2.5 rounded-xl bg-[#100481] hover:bg-[#0a0357] text-white font-bold text-sm transition-colors disabled:opacity-60"
+                >
+                  {contentSaving ? "Kaydediliyor..." : contentSaved ? "✅ Kaydedildi" : "💾 İçeriği Kaydet"}
+                </button>
+              </div>
+            </>
           )}
         </div>
       )}
