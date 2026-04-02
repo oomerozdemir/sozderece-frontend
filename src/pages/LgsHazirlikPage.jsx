@@ -136,12 +136,12 @@ export default function LgsHazirlikPage() {
         <div className="max-w-3xl mx-auto text-center relative">
           <motion.div {...fadeUp}>
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-semibold mb-6">
-              📅 LGS'ye <span className="text-[#f39c12] font-black">{days} gün</span> kaldı
+              🎯LGS<span className="text-[#f39c12] font-black">Öğrencilerine</span> Özel
             </div>
 
             <h1 className="text-4xl max-[640px]:text-3xl font-black leading-tight mb-4">
               LGS'ye {days} gün kaldı.<br />
-              <span className="text-[#f39c12]">Çocuğunuz hazır mı?</span>
+              <span className="text-[#f39c12]">Çocuğunuz Masaya Oturmuyor mu? Kalan Sürede Kontrolü Bize Bırakın.</span>
             </h1>
             <p className="text-white/70 text-lg max-[640px]:text-base mb-8">
               {hero.subtitle || "Her gün yanında biri var — koçu, planı, sistemi."}

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "../utils/axios";
 import EmojiPicker from "@emoji-mart/react";
 import emojiData from "@emoji-mart/data";
+import ImageUpload from "../components/ImageUpload";
 
 const inp = "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] placeholder:text-[#9ca3af] focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
 const Label = ({ children }) => <label className="block text-xs font-semibold text-[#374151] mb-1">{children}</label>;
@@ -270,16 +271,16 @@ export default function AdminCampPage() {
                 {[0, 1, 2].map((i) => (
                   <div key={i} className="bg-[#f8fafc] rounded-xl p-3 border border-[#e2e8f0] space-y-2">
                     <span className="text-xs font-bold text-[#64748b]">Resim {i + 1}</span>
-                    <input
-                      className={inp}
-                      placeholder="https://... (resim URL'si)"
+                    <ImageUpload
                       value={content.hero?.images?.[i]?.url || ""}
-                      onChange={(e) => {
+                      onChange={(url) => {
                         const imgs = [...(content.hero?.images || [{}, {}, {}])];
                         while (imgs.length <= i) imgs.push({});
-                        imgs[i] = { ...imgs[i], url: e.target.value };
+                        imgs[i] = { ...imgs[i], url };
                         set("hero.images", imgs);
                       }}
+                      placeholder="https://... (resim URL'si)"
+                      previewClass="h-20 object-cover"
                     />
                     <input
                       className={inp}
@@ -416,25 +417,22 @@ export default function AdminCampPage() {
                   <textarea className={`${inp} resize-none`} rows={2} value={week.desc || ""} onChange={(e) => arrSet("camp.weeks", i, "desc", e.target.value)} />
                 </div>
                 <div className="pt-1 border-t border-[#e2e8f0]">
-                  <Label>Görsel URL (opsiyonel — kutu altına eklenir)</Label>
-                  <input
-                    className={inp}
-                    placeholder="https://... (ekran görüntüsü, fotoğraf...)"
+                  <Label>Görsel (opsiyonel — kutu altına eklenir)</Label>
+                  <ImageUpload
                     value={week.imageUrl || ""}
-                    onChange={(e) => arrSet("camp.weeks", i, "imageUrl", e.target.value)}
+                    onChange={(url) => arrSet("camp.weeks", i, "imageUrl", url)}
+                    placeholder="https://... (ekran görüntüsü, fotoğraf...)"
+                    previewClass="h-20 object-cover"
                   />
                   {week.imageUrl && (
-                    <div className="mt-2 flex items-start gap-3">
-                      <img src={week.imageUrl} alt="önizleme" className="h-20 rounded-lg border border-[#e2e8f0] object-cover" />
-                      <div className="flex-1">
-                        <Label>Alt Metin</Label>
-                        <input
-                          className={inp}
-                          placeholder="Görsel açıklaması"
-                          value={week.imageAlt || ""}
-                          onChange={(e) => arrSet("camp.weeks", i, "imageAlt", e.target.value)}
-                        />
-                      </div>
+                    <div className="mt-2">
+                      <Label>Alt Metin</Label>
+                      <input
+                        className={inp}
+                        placeholder="Görsel açıklaması"
+                        value={week.imageAlt || ""}
+                        onChange={(e) => arrSet("camp.weeks", i, "imageAlt", e.target.value)}
+                      />
                     </div>
                   )}
                 </div>
@@ -599,34 +597,31 @@ export default function AdminCampPage() {
                 return (
                   <div key={i} className="bg-[#f8fafc] rounded-xl p-3 border border-[#e2e8f0] space-y-2">
                     <span className="text-xs font-bold text-[#64748b]">Görsel {i + 1}</span>
-                    <input
-                      className={inp}
-                      placeholder="https://... (ekran görüntüsü URL'si)"
+                    <ImageUpload
                       value={img.url || ""}
-                      onChange={(e) => {
+                      onChange={(url) => {
                         const imgs = [...(content.testimonials?.whatsappImages || [{}, {}, {}, {}])];
                         while (imgs.length <= i) imgs.push({});
-                        imgs[i] = { ...imgs[i], url: e.target.value };
+                        imgs[i] = { ...imgs[i], url };
                         set("testimonials.whatsappImages", imgs);
                       }}
+                      placeholder="https://... (ekran görüntüsü)"
+                      previewClass="h-24 object-cover"
                     />
                     {img.url && (
-                      <div className="flex items-start gap-3">
-                        <img src={img.url} alt="önizleme" className="h-24 rounded-lg border border-[#e2e8f0] object-cover" />
-                        <div className="flex-1">
-                          <Label>Alt Metin (opsiyonel)</Label>
-                          <input
-                            className={inp}
-                            placeholder="WhatsApp mesajlaşması"
-                            value={img.alt || ""}
-                            onChange={(e) => {
-                              const imgs = [...(content.testimonials?.whatsappImages || [{}, {}, {}, {}])];
-                              while (imgs.length <= i) imgs.push({});
-                              imgs[i] = { ...imgs[i], alt: e.target.value };
-                              set("testimonials.whatsappImages", imgs);
-                            }}
-                          />
-                        </div>
+                      <div>
+                        <Label>Alt Metin (opsiyonel)</Label>
+                        <input
+                          className={inp}
+                          placeholder="WhatsApp mesajlaşması"
+                          value={img.alt || ""}
+                          onChange={(e) => {
+                            const imgs = [...(content.testimonials?.whatsappImages || [{}, {}, {}, {}])];
+                            while (imgs.length <= i) imgs.push({});
+                            imgs[i] = { ...imgs[i], alt: e.target.value };
+                            set("testimonials.whatsappImages", imgs);
+                          }}
+                        />
                       </div>
                     )}
                   </div>
