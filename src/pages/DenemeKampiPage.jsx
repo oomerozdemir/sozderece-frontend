@@ -62,6 +62,24 @@ function Skeleton() {
 
 const Check = () => <span className="text-[#22c55e] text-lg font-black">✓</span>;
 const Cross = () => <span className="text-[#ef4444] text-lg">✗</span>;
+
+// Belirtilen ifadeyi metinde kalın + turuncu gösterir
+function BoldText({ text, phrase }) {
+  if (!phrase || !text || !text.includes(phrase)) return <>{text}</>;
+  const parts = text.split(phrase);
+  return (
+    <>
+      {parts.map((part, i) => (
+        <React.Fragment key={i}>
+          {part}
+          {i < parts.length - 1 && (
+            <strong className="font-black text-[#0f172a] not-italic">{phrase}</strong>
+          )}
+        </React.Fragment>
+      ))}
+    </>
+  );
+}
 const inpCls = "w-full px-4 py-3 rounded-xl border border-[#e5e7eb] text-sm text-[#0f172a] outline-none focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
 
 // ─────────────────────────────────────────────────────────────
@@ -329,10 +347,21 @@ export default function DenemeKampiPage() {
           {/* Timeline */}
           <div className="grid grid-cols-3 gap-5 mb-16 max-[640px]:grid-cols-1">
             {camp.weeks.map((w, i) => (
-              <div key={i} className="relative bg-[#f0f4ff] rounded-2xl p-6 border border-[#c7d2fe]">
-                <div className="absolute -top-3 left-5 bg-[#100481] text-white text-xs font-black px-3 py-1 rounded-full">{w.week}</div>
-                <h3 className="font-black text-[#100481] mb-2 mt-2 text-base">{w.title}</h3>
-                <p className="text-[#475569] text-sm leading-relaxed">{w.desc}</p>
+              <div key={i} className="relative bg-[#f0f4ff] rounded-2xl border border-[#c7d2fe] overflow-hidden flex flex-col">
+                <div className="px-6 pt-8 pb-5">
+                  <div className="absolute top-4 left-5 bg-[#100481] text-white text-xs font-black px-3 py-1 rounded-full">{w.week}</div>
+                  <h3 className="font-black text-[#100481] mb-2 text-base">{w.title}</h3>
+                  <p className="text-[#475569] text-sm leading-relaxed">{w.desc}</p>
+                </div>
+                {w.imageUrl && (
+                  <div className="mt-auto border-t border-[#c7d2fe]/60">
+                    <img
+                      src={w.imageUrl}
+                      alt={w.imageAlt || w.title}
+                      className="w-full object-cover max-h-48"
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -344,23 +373,40 @@ export default function DenemeKampiPage() {
           <div className="overflow-x-auto rounded-2xl border border-[#e2e8f0] shadow-sm mb-8">
             <table className="w-full min-w-[520px]">
               <thead>
-                <tr className="bg-[#100481] text-white text-sm">
-                  <th className="text-left px-5 py-4 font-bold rounded-tl-2xl">Özellik</th>
-                  <th className="px-4 py-4 font-bold">Sözderece</th>
-                  <th className="px-4 py-4 font-bold">Dershane</th>
-                  <th className="px-4 py-4 font-bold rounded-tr-2xl">Tekli Öğretmen</th>
+                <tr className="text-sm">
+                  <th className="text-left px-5 py-4 font-bold bg-[#0f172a] text-white rounded-tl-2xl">Özellik</th>
+                  <th className="px-4 py-4 font-bold bg-[#100481] text-white relative">
+                    <span className="relative z-10 flex flex-col items-center gap-0.5">
+                      <span className="text-[#f39c12]">★</span>
+                      Sözderece
+                    </span>
+                    {/* glow altı */}
+                    <span className="absolute inset-0 bg-[#100481] shadow-[0_0_24px_rgba(16,4,129,0.5)]" />
+                  </th>
+                  <th className="px-4 py-4 font-bold bg-[#0f172a] text-white/70">Dershane</th>
+                  <th className="px-4 py-4 font-bold bg-[#0f172a] text-white/70 rounded-tr-2xl">Tekli Öğretmen</th>
                 </tr>
               </thead>
               <tbody>
                 {camp.comparison.map((row, i) => (
                   <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-[#f8fafc]"}>
                     <td className="px-5 py-3 text-sm font-semibold text-[#374151]">{row.feature}</td>
-                    <td className="px-4 py-3 text-center">{row.sozderece ? <Check /> : <Cross />}</td>
+                    <td className="px-4 py-3 text-center bg-[#eff6ff] border-x-2 border-[#100481]/20 font-bold">
+                      {row.sozderece ? <Check /> : <Cross />}
+                    </td>
                     <td className="px-4 py-3 text-center">{row.dershane ? <Check /> : <Cross />}</td>
                     <td className="px-4 py-3 text-center">{row.tekli ? <Check /> : <Cross />}</td>
                   </tr>
                 ))}
               </tbody>
+              <tfoot>
+                <tr>
+                  <td className="rounded-bl-2xl bg-white" />
+                  <td className="bg-[#eff6ff] border-x-2 border-b-2 border-[#100481]/20 rounded-b-xl py-1" />
+                  <td className="bg-white" />
+                  <td className="bg-white rounded-br-2xl" />
+                </tr>
+              </tfoot>
             </table>
           </div>
 
@@ -383,6 +429,23 @@ export default function DenemeKampiPage() {
       <section className="bg-[#f8fafc] py-20 px-5">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl max-[768px]:text-2xl font-black text-[#0f172a] text-center mb-10">{testimonials.title}</h2>
+
+          {/* Dikey tanıtım videosu */}
+          {testimonials.promoVideo?.visible && testimonials.promoVideo?.url && (
+            <div className="flex justify-center mb-12">
+              <div className="relative rounded-2xl overflow-hidden shadow-xl border border-[#e2e8f0] bg-black" style={{ width: 280, aspectRatio: "9/16" }}>
+                <iframe
+                  src={testimonials.promoVideo.url}
+                  title="Tanıtım Videosu"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* İstatistikler */}
           <div className="grid grid-cols-3 gap-5 mb-12 max-[640px]:grid-cols-1">
             {testimonials.stats.map((s, i) => (
               <div key={i} className="bg-white rounded-2xl p-6 border border-[#e2e8f0] text-center shadow-sm">
@@ -391,6 +454,8 @@ export default function DenemeKampiPage() {
               </div>
             ))}
           </div>
+
+          {/* Yorum kartları */}
           <div className="grid grid-cols-3 gap-5 max-[640px]:grid-cols-1">
             {testimonials.items.map((t, i) => (
               <div key={i} className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm flex flex-col gap-3">
@@ -401,11 +466,27 @@ export default function DenemeKampiPage() {
                   <span className="font-black text-[#0f172a] text-sm">{t.name}</span>
                   <span className="ml-auto bg-[#dcfce7] text-[#166534] text-xs font-bold px-2.5 py-0.5 rounded-full">{t.badge}</span>
                 </div>
-                <p className="text-[#475569] text-sm leading-relaxed">"{t.text}"</p>
+                <p className="text-[#475569] text-sm leading-relaxed italic">
+                  "<BoldText text={t.text} phrase={t.boldPhrase} />"
+                </p>
                 <div className="flex gap-0.5">{[...Array(5)].map((_, j) => <span key={j} className="text-[#f39c12]">★</span>)}</div>
               </div>
             ))}
           </div>
+
+          {/* WhatsApp ekran görüntüleri */}
+          {Array.isArray(testimonials.whatsappImages) && testimonials.whatsappImages.some((img) => img?.url) && (
+            <div className="mt-14">
+              <p className="text-center text-xs font-bold text-[#94a3b8] uppercase tracking-widest mb-5">Gerçek Mesajlaşmalar</p>
+              <div className="grid grid-cols-4 gap-4 max-[768px]:grid-cols-2 max-[480px]:grid-cols-1">
+                {testimonials.whatsappImages.filter((img) => img?.url).map((img, i) => (
+                  <div key={i} className="rounded-2xl overflow-hidden border border-[#e2e8f0] shadow-sm bg-white">
+                    <img src={img.url} alt={img.alt || `WhatsApp ekran görüntüsü ${i + 1}`} className="w-full object-cover" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

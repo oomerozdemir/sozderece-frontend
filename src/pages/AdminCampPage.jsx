@@ -394,15 +394,16 @@ export default function AdminCampPage() {
           </Card>
 
           <Card title="📅 Haftalık Program">
+            <p className="text-xs text-[#9ca3af] -mt-2">Her kutunun altına görsel ekleyebilirsiniz (örn. WhatsApp ekran görüntüsü). Boş bırakılırsa görsel gösterilmez.</p>
             {getArr("camp.weeks").map((week, i) => (
               <div key={i} className="bg-[#f8fafc] rounded-xl p-4 border border-[#e2e8f0] space-y-2">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-black text-[#64748b] uppercase tracking-wide">Hafta {i + 1}</span>
+                  <span className="text-xs font-black text-[#64748b] uppercase tracking-wide">Kutu {i + 1}</span>
                   <DelBtn onClick={() => arrDel("camp.weeks", i)} />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <Label>Hafta Etiketi</Label>
+                    <Label>Etiket</Label>
                     <input className={inp} placeholder="1. Hafta" value={week.week || ""} onChange={(e) => arrSet("camp.weeks", i, "week", e.target.value)} />
                   </div>
                   <div>
@@ -414,9 +415,32 @@ export default function AdminCampPage() {
                   <Label>Açıklama</Label>
                   <textarea className={`${inp} resize-none`} rows={2} value={week.desc || ""} onChange={(e) => arrSet("camp.weeks", i, "desc", e.target.value)} />
                 </div>
+                <div className="pt-1 border-t border-[#e2e8f0]">
+                  <Label>Görsel URL (opsiyonel — kutu altına eklenir)</Label>
+                  <input
+                    className={inp}
+                    placeholder="https://... (ekran görüntüsü, fotoğraf...)"
+                    value={week.imageUrl || ""}
+                    onChange={(e) => arrSet("camp.weeks", i, "imageUrl", e.target.value)}
+                  />
+                  {week.imageUrl && (
+                    <div className="mt-2 flex items-start gap-3">
+                      <img src={week.imageUrl} alt="önizleme" className="h-20 rounded-lg border border-[#e2e8f0] object-cover" />
+                      <div className="flex-1">
+                        <Label>Alt Metin</Label>
+                        <input
+                          className={inp}
+                          placeholder="Görsel açıklaması"
+                          value={week.imageAlt || ""}
+                          onChange={(e) => arrSet("camp.weeks", i, "imageAlt", e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
-            <AddBtn onClick={() => arrAdd("camp.weeks", { week: "", title: "", desc: "" })} label="Hafta Ekle" />
+            <AddBtn onClick={() => arrAdd("camp.weeks", { week: "", title: "", desc: "", imageUrl: "", imageAlt: "" })} label="Kutu Ekle" />
           </Card>
 
           <Card title="📊 Karşılaştırma Tablosu — Başlık & CTA">
@@ -523,9 +547,92 @@ export default function AdminCampPage() {
                   <Label>Yorum Metni</Label>
                   <textarea className={`${inp} resize-none`} rows={3} value={item.text || ""} onChange={(e) => arrSet("testimonials.items", i, "text", e.target.value)} />
                 </div>
+                <div>
+                  <Label>Kalın Gösterilecek İfade (metinde geçmeli)</Label>
+                  <input
+                    className={inp}
+                    placeholder="örn: 10 puan arttı"
+                    value={item.boldPhrase || ""}
+                    onChange={(e) => arrSet("testimonials.items", i, "boldPhrase", e.target.value)}
+                  />
+                  <p className="text-xs text-[#9ca3af] mt-1">Bu ifade yorum metninde kalın + koyu renkte gösterilir.</p>
+                </div>
               </div>
             ))}
-            <AddBtn onClick={() => arrAdd("testimonials.items", { name: "", text: "", badge: "" })} label="Yorum Ekle" />
+            <AddBtn onClick={() => arrAdd("testimonials.items", { name: "", text: "", badge: "", boldPhrase: "" })} label="Yorum Ekle" />
+          </Card>
+
+          <Card title="🎬 Dikey Tanıtım Videosu">
+            <p className="text-xs text-[#9ca3af] -mt-2">Yorum kartlarının üstünde dikey (9:16) bir video gösterilir. İstediğinizde gizleyebilirsiniz.</p>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={!!content.testimonials?.promoVideo?.visible}
+                onChange={(e) => set("testimonials.promoVideo.visible", e.target.checked)}
+                className="w-5 h-5 accent-[#100481]"
+              />
+              <span className="text-sm font-bold text-[#0f172a]">Videoyu göster</span>
+            </label>
+            <div>
+              <Label>Video URL (YouTube embed — dikey format önerilir)</Label>
+              <input
+                className={inp}
+                placeholder="https://www.youtube.com/embed/..."
+                value={content.testimonials?.promoVideo?.url || ""}
+                onChange={(e) => set("testimonials.promoVideo.url", e.target.value)}
+              />
+            </div>
+            {content.testimonials?.promoVideo?.url && (
+              <div className="mt-2 flex justify-center">
+                <div className="rounded-xl overflow-hidden border border-[#e2e8f0] shadow-sm bg-black" style={{ width: 160, aspectRatio: "9/16" }}>
+                  <iframe src={content.testimonials.promoVideo.url} title="Önizleme" className="w-full h-full" allowFullScreen />
+                </div>
+              </div>
+            )}
+          </Card>
+
+          <Card title="📱 WhatsApp Ekran Görüntüleri">
+            <p className="text-xs text-[#9ca3af] -mt-2">Yorumların altında 4'lü grid olarak gösterilir. Boş bırakılanlar gizlenir.</p>
+            <div className="space-y-3">
+              {[0, 1, 2, 3].map((i) => {
+                const img = content.testimonials?.whatsappImages?.[i] || {};
+                return (
+                  <div key={i} className="bg-[#f8fafc] rounded-xl p-3 border border-[#e2e8f0] space-y-2">
+                    <span className="text-xs font-bold text-[#64748b]">Görsel {i + 1}</span>
+                    <input
+                      className={inp}
+                      placeholder="https://... (ekran görüntüsü URL'si)"
+                      value={img.url || ""}
+                      onChange={(e) => {
+                        const imgs = [...(content.testimonials?.whatsappImages || [{}, {}, {}, {}])];
+                        while (imgs.length <= i) imgs.push({});
+                        imgs[i] = { ...imgs[i], url: e.target.value };
+                        set("testimonials.whatsappImages", imgs);
+                      }}
+                    />
+                    {img.url && (
+                      <div className="flex items-start gap-3">
+                        <img src={img.url} alt="önizleme" className="h-24 rounded-lg border border-[#e2e8f0] object-cover" />
+                        <div className="flex-1">
+                          <Label>Alt Metin (opsiyonel)</Label>
+                          <input
+                            className={inp}
+                            placeholder="WhatsApp mesajlaşması"
+                            value={img.alt || ""}
+                            onChange={(e) => {
+                              const imgs = [...(content.testimonials?.whatsappImages || [{}, {}, {}, {}])];
+                              while (imgs.length <= i) imgs.push({});
+                              imgs[i] = { ...imgs[i], alt: e.target.value };
+                              set("testimonials.whatsappImages", imgs);
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </Card>
         </div>
       )}
