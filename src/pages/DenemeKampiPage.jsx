@@ -279,19 +279,43 @@ export default function DenemeKampiPage() {
           <h2 className="text-3xl max-[768px]:text-2xl font-black text-[#0f172a] text-center mb-12">{painPoints.title}</h2>
           <div className="grid grid-cols-2 gap-5 max-[640px]:grid-cols-1">
             {painPoints.items.map((item, i) => {
-              const bgColors = ["bg-[#fef3c7]","bg-[#ede9fe]","bg-[#fce7f3]","bg-[#dcfce7]","bg-[#dbeafe]","bg-[#fff1f2]"];
+              const iconBgs = [
+                "bg-[#eff6ff] text-[#1d4ed8]",
+                "bg-[#fff7ed] text-[#c2410c]",
+                "bg-[#f0fdf4] text-[#15803d]",
+                "bg-[#fef2f2] text-[#b91c1c]",
+                "bg-[#faf5ff] text-[#7c3aed]",
+                "bg-[#eff6ff] text-[#1d4ed8]",
+              ];
               return (
-                <div key={i} className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-md transition-shadow flex gap-4">
-                  <div className={`w-14 h-14 rounded-2xl ${bgColors[i % bgColors.length]} flex items-center justify-center text-2xl flex-shrink-0`}>
+                <div
+                  key={i}
+                  className="group bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-[0_8px_24px_rgba(16,4,129,0.10)] hover:border-[#100481]/30 transition-all duration-200 flex gap-4 cursor-default"
+                >
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 transition-colors duration-200 group-hover:bg-[#100481] group-hover:text-white ${iconBgs[i % iconBgs.length]}`}>
                     {item.icon}
                   </div>
                   <div className="min-w-0">
-                    <h3 className="font-black text-[#0f172a] mb-1.5 text-base leading-snug">{item.title}</h3>
+                    <h3 className="font-black text-[#0f172a] mb-1.5 text-base leading-snug group-hover:text-[#100481] transition-colors duration-200">{item.title}</h3>
                     <p className="text-[#64748b] text-sm leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               );
             })}
+          </div>
+
+          {/* Mikro-CTA */}
+          <div className="mt-12 text-center">
+            <p className="text-[#475569] text-base max-w-xl mx-auto mb-5 leading-relaxed">
+              Eğer bunlardan en az birini yaşıyorsan, yanlış giden bir şeyler var demektir.{" "}
+              <span className="font-semibold text-[#0f172a]">Gel, sana özel bir çıkış yolu çizelim.</span>
+            </p>
+            <button
+              onClick={scrollToForm}
+              className="inline-flex items-center gap-2 bg-[#100481] hover:bg-[#0a0260] text-white font-bold text-sm px-7 py-3.5 rounded-2xl transition-all shadow-[0_4px_16px_rgba(16,4,129,0.2)] hover:-translate-y-0.5"
+            >
+              Sorunumu Çözmek İçin Ücretsiz Danış →
+            </button>
           </div>
         </div>
       </section>
