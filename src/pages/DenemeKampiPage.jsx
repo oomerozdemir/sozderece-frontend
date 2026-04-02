@@ -63,6 +63,77 @@ function Skeleton() {
 const Check = () => <span className="text-[#22c55e] text-lg font-black">✓</span>;
 const Cross = () => <span className="text-[#ef4444] text-lg">✗</span>;
 
+// ── Lightbox state (tek global state, sayfada paylaşılır) ─────
+let _setLightbox = null;
+function openLightbox(src, alt) { _setLightbox?.({ src, alt }); }
+
+function Lightbox() {
+  const [img, setImg] = React.useState(null);
+  _setLightbox = setImg;
+
+  useEffect(() => {
+    if (!img) return;
+    const onKey = (e) => { if (e.key === "Escape") setImg(null); };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [img]);
+
+  if (!img) return null;
+  return (
+    <div
+      className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4 cursor-zoom-out"
+      onClick={() => setImg(null)}
+    >
+      <button
+        className="absolute top-4 right-4 text-white/70 hover:text-white text-3xl font-light leading-none"
+        onClick={() => setImg(null)}
+      >
+        ×
+      </button>
+      <img
+        src={img.src}
+        alt={img.alt || ""}
+        className="max-h-[90vh] max-w-[90vw] object-contain rounded-xl shadow-2xl cursor-default"
+        onClick={(e) => e.stopPropagation()}
+      />
+    </div>
+  );
+}
+
+/**
+ * ZoomableImage — sabit aspect ratio + hover scale + tıkla/dokun → lightbox
+ * Props:
+ *   src, alt   : görsel bilgileri
+ *   aspect     : CSS aspect-ratio değeri (ör. "4/3", "3/4", "1/1")  default "4/3"
+ *   className  : wrapper'a ek class
+ */
+function ZoomableImage({ src, alt, aspect = "4/3", className = "" }) {
+  return (
+    <div
+      className={`relative overflow-hidden rounded-2xl cursor-zoom-in group ${className}`}
+      style={{ aspectRatio: aspect }}
+      onClick={() => openLightbox(src, alt)}
+    >
+      <img
+        src={src}
+        alt={alt || ""}
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+        draggable={false}
+      />
+      {/* Hover overlay hint */}
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+        <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-sm pointer-events-none">
+          Büyüt
+        </span>
+      </div>
+    </div>
+  );
+}
+
 // Belirtilen ifadeyi metinde kalın + turuncu gösterir
 function BoldText({ text, phrase }) {
   if (!phrase || !text || !text.includes(phrase)) return <>{text}</>;
@@ -174,6 +245,7 @@ export default function DenemeKampiPage() {
 
   return (
     <>
+      <Lightbox />
       <Seo
         title={`${content.name || "Deneme Kampı"} — Sözderece Koçluk`}
         description={hero.subtitle}
@@ -265,9 +337,13 @@ export default function DenemeKampiPage() {
                 <div className="grid grid-cols-3 gap-3 max-w-3xl mx-auto max-[640px]:grid-cols-1">
                   {hero.images.slice(0, 3).map((img, i) =>
                     img?.url ? (
-                      <div key={i} className="rounded-2xl overflow-hidden border border-white/10 shadow-xl aspect-[4/3]">
-                        <img src={img.url} alt={img.alt || `Görsel ${i + 1}`} className="w-full h-full object-cover" />
-                      </div>
+                      <ZoomableImage
+                        key={i}
+                        src={img.url}
+                        alt={img.alt || `Görsel ${i + 1}`}
+                        aspect="4/3"
+                        className="border border-white/10 shadow-xl"
+                      />
                     ) : null
                   )}
                 </div>
@@ -355,10 +431,11 @@ export default function DenemeKampiPage() {
                 </div>
                 {w.imageUrl && (
                   <div className="mt-auto border-t border-[#c7d2fe]/60">
-                    <img
+                    <ZoomableImage
                       src={w.imageUrl}
                       alt={w.imageAlt || w.title}
-                      className="w-full object-cover max-h-48"
+                      aspect="4/3"
+                      className="rounded-none rounded-b-2xl"
                     />
                   </div>
                 )}
@@ -478,11 +555,15 @@ export default function DenemeKampiPage() {
           {Array.isArray(testimonials.whatsappImages) && testimonials.whatsappImages.some((img) => img?.url) && (
             <div className="mt-14">
               <p className="text-center text-xs font-bold text-[#94a3b8] uppercase tracking-widest mb-5">Gerçek Mesajlaşmalar</p>
-              <div className="grid grid-cols-4 gap-4 max-[768px]:grid-cols-2 max-[480px]:grid-cols-1">
+              <div className="grid grid-cols-4 gap-4 max-[768px]:grid-cols-2 max-[480px]:grid-cols-2">
                 {testimonials.whatsappImages.filter((img) => img?.url).map((img, i) => (
-                  <div key={i} className="rounded-2xl overflow-hidden border border-[#e2e8f0] shadow-sm bg-white">
-                    <img src={img.url} alt={img.alt || `WhatsApp ekran görüntüsü ${i + 1}`} className="w-full object-cover" />
-                  </div>
+                  <ZoomableImage
+                    key={i}
+                    src={img.url}
+                    alt={img.alt || `WhatsApp ekran görüntüsü ${i + 1}`}
+                    aspect="3/4"
+                    className="border border-[#e2e8f0] shadow-sm"
+                  />
                 ))}
               </div>
             </div>
