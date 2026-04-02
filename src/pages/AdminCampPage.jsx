@@ -243,9 +243,59 @@ export default function AdminCampPage() {
             <input className={inp} placeholder="Sözderece ile" value={content.hero?.highlightPhrase || ""} onChange={(e) => set("hero.highlightPhrase", e.target.value)} />
             <p className="text-xs text-[#9ca3af] mt-1">Bu ifade başlıkta ve alt başlıkta turuncu renkte gösterilir.</p>
           </div>
+          {/* Medya tipi seçici */}
           <div>
-            <Label>Video URL (YouTube embed veya boş bırak)</Label>
-            <input className={inp} placeholder="https://www.youtube.com/embed/..." value={content.hero?.videoUrl || ""} onChange={(e) => set("hero.videoUrl", e.target.value)} />
+            <Label>Hero Medya Tipi</Label>
+            <div className="flex gap-2 mb-3">
+              {[{ val: "video", label: "🎬 Video" }, { val: "images", label: "🖼️ 3 Resim" }].map(({ val, label }) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => set("hero.mediaType", val)}
+                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${(content.hero?.mediaType || "video") === val ? "bg-[#100481] text-white border-[#100481]" : "bg-white text-[#475569] border-[#e5e7eb] hover:border-[#100481]"}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {(content.hero?.mediaType || "video") === "video" ? (
+              <div>
+                <Label>Video URL (YouTube embed)</Label>
+                <input className={inp} placeholder="https://www.youtube.com/embed/..." value={content.hero?.videoUrl || ""} onChange={(e) => set("hero.videoUrl", e.target.value)} />
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-xs text-[#9ca3af]">3 resim yan yana gösterilir. Boş bırakılanlar gizlenir.</p>
+                {[0, 1, 2].map((i) => (
+                  <div key={i} className="bg-[#f8fafc] rounded-xl p-3 border border-[#e2e8f0] space-y-2">
+                    <span className="text-xs font-bold text-[#64748b]">Resim {i + 1}</span>
+                    <input
+                      className={inp}
+                      placeholder="https://... (resim URL'si)"
+                      value={content.hero?.images?.[i]?.url || ""}
+                      onChange={(e) => {
+                        const imgs = [...(content.hero?.images || [{}, {}, {}])];
+                        while (imgs.length <= i) imgs.push({});
+                        imgs[i] = { ...imgs[i], url: e.target.value };
+                        set("hero.images", imgs);
+                      }}
+                    />
+                    <input
+                      className={inp}
+                      placeholder="Alt metin (opsiyonel)"
+                      value={content.hero?.images?.[i]?.alt || ""}
+                      onChange={(e) => {
+                        const imgs = [...(content.hero?.images || [{}, {}, {}])];
+                        while (imgs.length <= i) imgs.push({});
+                        imgs[i] = { ...imgs[i], alt: e.target.value };
+                        set("hero.images", imgs);
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
           <div>
             <Label>CTA Buton Metni</Label>

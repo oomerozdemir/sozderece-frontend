@@ -335,11 +335,15 @@ function OfferFormEditor({ content, setContent }) {
   const o = content.offer || {};
   const f = content.form || {};
   const includes = o.includes || [];
+  const plans = Array.isArray(o.plans) ? o.plans : [];
+
+  const PLAN_TEMPLATE = { label: "", price: "", oldPrice: "", priceText: "", desc: "", badge: "", isFeatured: false, ctaText: "", includes: [] };
+
   return (
     <div className="space-y-6">
-      {/* Teklif */}
+      {/* Teklif Başlık */}
       <div>
-        <p className="text-sm font-black text-[#0f172a] mb-3 pb-2 border-b border-[#f1f5f9]">Teklif Bloğu</p>
+        <p className="text-sm font-black text-[#0f172a] mb-3 pb-2 border-b border-[#f1f5f9]">Genel Teklif Bilgileri</p>
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <Field label="Başlık">
@@ -349,54 +353,151 @@ function OfferFormEditor({ content, setContent }) {
               <input value={o.subtitle || ""} onChange={(e) => set(setContent, "offer.subtitle", e.target.value)} className={inp} />
             </Field>
           </div>
-          <div className="grid grid-cols-3 gap-3">
-            <Field label="Fiyat (₺)">
-              <input type="number" value={o.price || ""} onChange={(e) => set(setContent, "offer.price", e.target.value)} className={inp} placeholder="2500" />
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="İkincil CTA (form linki)">
+              <input value={o.ctaSecondary || ""} onChange={(e) => set(setContent, "offer.ctaSecondary", e.target.value)} className={inp} placeholder="📞 Önce Konuşalım" />
             </Field>
-            <Field label="Fiyat Etiketi">
-              <input value={o.priceLabel || ""} onChange={(e) => set(setContent, "offer.priceLabel", e.target.value)} className={inp} />
-            </Field>
-            <Field label="Satın Al Linki">
+            <Field label="Fallback Satın Al Linki (plan yoksa)">
               <input value={o.buyLink || ""} onChange={(e) => set(setContent, "offer.buyLink", e.target.value)} className={inp} placeholder="/paket-detay" />
             </Field>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Ana CTA">
-              <input value={o.ctaPrimary || ""} onChange={(e) => set(setContent, "offer.ctaPrimary", e.target.value)} className={inp} />
-            </Field>
-            <Field label="İkincil CTA">
-              <input value={o.ctaSecondary || ""} onChange={(e) => set(setContent, "offer.ctaSecondary", e.target.value)} className={inp} />
-            </Field>
-          </div>
+          <p className="text-xs text-[#94a3b8]">Plan kartları eklendiğinde butona tıklamak sepete ekler ve ödemeye yönlendirir. Plan yoksa "Satın Al Linki"ne gider.</p>
+        </div>
+      </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <Label>Paket İçerikleri</Label>
-              <AddBtn onClick={() => arrAdd(setContent, "offer.includes", "")} label="Madde Ekle" />
-            </div>
-            <div className="space-y-2">
-              {includes.map((item, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <span className="text-[#22c55e] font-black">✓</span>
-                  <input
-                    value={item}
-                    onChange={(e) => {
-                      setContent((prev) => {
-                        const next = deepClone(prev);
-                        if (!next.offer) next.offer = {};
-                        if (!Array.isArray(next.offer.includes)) next.offer.includes = [];
-                        next.offer.includes[i] = e.target.value;
-                        return next;
-                      });
-                    }}
-                    className={`${inp} flex-1`}
-                    placeholder="Dahil olan özellik..."
-                  />
-                  <DelBtn onClick={() => arrDel(setContent, "offer.includes", i)} />
-                </div>
-              ))}
-            </div>
+      {/* Plan Kartları */}
+      <div>
+        <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#f1f5f9]">
+          <p className="text-sm font-black text-[#0f172a]">Fiyat Planları (yan yana kart olarak gösterilir)</p>
+          <AddBtn onClick={() => arrAdd(setContent, "offer.plans", PLAN_TEMPLATE)} label="Plan Ekle" />
+        </div>
+        {plans.length === 0 && (
+          <div className="text-xs text-[#94a3b8] bg-[#f8fafc] rounded-xl p-4 border border-[#e2e8f0] mb-3">
+            Plan eklenmedi. Aşağıdaki "Fallback Fiyat" değerleri tek fiyat bloğu olarak gösterilir.
           </div>
+        )}
+        <div className="space-y-4">
+          {plans.map((plan, i) => (
+            <div key={i} className={`rounded-xl p-4 border space-y-3 ${plan.isFeatured ? "bg-[#eff6ff] border-[#3b82f6]" : "bg-[#f8fafc] border-[#e2e8f0]"}`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-black text-[#64748b] uppercase tracking-wide">Plan {i + 1}</span>
+                  <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={!!plan.isFeatured}
+                      onChange={(e) => arrSet(setContent, "offer.plans", i, "isFeatured", e.target.checked)}
+                      className="w-4 h-4 accent-[#3b82f6]"
+                    />
+                    <span className="text-xs font-semibold text-[#3b82f6]">Öne Çıkan (beyaz kart)</span>
+                  </label>
+                </div>
+                <DelBtn onClick={() => arrDel(setContent, "offer.plans", i)} />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <Field label="Plan Etiketi">
+                  <input className={inp} placeholder="2 Aylık Plan" value={plan.label || ""} onChange={(e) => arrSet(setContent, "offer.plans", i, "label", e.target.value)} />
+                </Field>
+                <Field label="Fiyat (₺)">
+                  <input className={inp} type="number" placeholder="1500" value={plan.price || ""} onChange={(e) => arrSet(setContent, "offer.plans", i, "price", e.target.value)} />
+                </Field>
+                <Field label="Üstü Çizili Eski Fiyat">
+                  <input className={inp} type="number" placeholder="2000" value={plan.oldPrice || ""} onChange={(e) => arrSet(setContent, "offer.plans", i, "oldPrice", e.target.value)} />
+                </Field>
+                <Field label="Fiyat Metni (/ 2 ay, / LGS'ye kadar...)">
+                  <input className={inp} placeholder="/ 2 ay" value={plan.priceText || ""} onChange={(e) => arrSet(setContent, "offer.plans", i, "priceText", e.target.value)} />
+                </Field>
+                <Field label="Açıklama">
+                  <input className={inp} placeholder="Hızlı ivme kazanmak isteyenler için" value={plan.desc || ""} onChange={(e) => arrSet(setContent, "offer.plans", i, "desc", e.target.value)} />
+                </Field>
+                <Field label="Rozet (boş bırakılabilir)">
+                  <input className={inp} placeholder="En İyi Değer" value={plan.badge || ""} onChange={(e) => arrSet(setContent, "offer.plans", i, "badge", e.target.value)} />
+                </Field>
+                <Field label="Buton Metni">
+                  <input className={inp} placeholder="⚡ Yerimi Ayırt" value={plan.ctaText || ""} onChange={(e) => arrSet(setContent, "offer.plans", i, "ctaText", e.target.value)} />
+                </Field>
+              </div>
+
+              {/* Per-plan includes */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label>Bu Plana Özel Dahil Olanlar <span className="text-[#94a3b8] font-normal">(boşsa genel liste kullanılır)</span></Label>
+                  <button
+                    onClick={() => arrSet(setContent, "offer.plans", i, "includes", [...(plan.includes || []), ""])}
+                    className="text-xs font-bold bg-[#eff6ff] text-[#1d4ed8] border border-[#bfdbfe] px-2 py-1 rounded-lg hover:bg-[#dbeafe]"
+                  >
+                    + Madde
+                  </button>
+                </div>
+                {(plan.includes || []).map((item, j) => (
+                  <div key={j} className="flex gap-2 mb-2">
+                    <input
+                      className={inp}
+                      value={item}
+                      onChange={(e) => {
+                        const next = [...(plan.includes || [])];
+                        next[j] = e.target.value;
+                        arrSet(setContent, "offer.plans", i, "includes", next);
+                      }}
+                    />
+                    <DelBtn onClick={() => {
+                      const next = (plan.includes || []).filter((_, k) => k !== j);
+                      arrSet(setContent, "offer.plans", i, "includes", next);
+                    }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Genel Dahil Olanlar (fallback / paylaşılan) */}
+      <div>
+        <p className="text-sm font-black text-[#0f172a] mb-3 pb-2 border-b border-[#f1f5f9]">
+          Genel Dahil Olanlar <span className="text-[#94a3b8] font-normal text-xs">(plan özel liste yoksa burası kullanılır)</span>
+        </p>
+        <div className="space-y-2">
+          {includes.map((item, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <span className="text-[#22c55e] font-black">✓</span>
+              <input
+                value={item}
+                onChange={(e) => {
+                  setContent((prev) => {
+                    const next = deepClone(prev);
+                    if (!next.offer) next.offer = {};
+                    if (!Array.isArray(next.offer.includes)) next.offer.includes = [];
+                    next.offer.includes[i] = e.target.value;
+                    return next;
+                  });
+                }}
+                className={`${inp} flex-1`}
+                placeholder="Dahil olan özellik..."
+              />
+              <DelBtn onClick={() => arrDel(setContent, "offer.includes", i)} />
+            </div>
+          ))}
+          <AddBtn onClick={() => arrAdd(setContent, "offer.includes", "")} label="Madde Ekle" />
+        </div>
+      </div>
+
+      {/* Fallback tek fiyat (plan yoksa gösterilir) */}
+      <div>
+        <p className="text-sm font-black text-[#0f172a] mb-3 pb-2 border-b border-[#f1f5f9]">
+          Fallback Fiyat <span className="text-[#94a3b8] font-normal text-xs">(yukarıda plan yoksa bu tek blok gösterilir)</span>
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Fiyat (₺)">
+            <input type="number" value={o.price || ""} onChange={(e) => set(setContent, "offer.price", e.target.value)} className={inp} placeholder="2500" />
+          </Field>
+          <Field label="Fiyat Etiketi">
+            <input value={o.priceLabel || ""} onChange={(e) => set(setContent, "offer.priceLabel", e.target.value)} className={inp} placeholder="LGS'ye kadar — tek seferlik" />
+          </Field>
+          <Field label="Ana CTA">
+            <input value={o.ctaPrimary || ""} onChange={(e) => set(setContent, "offer.ctaPrimary", e.target.value)} className={inp} placeholder="⚡ Yerimi Ayırt" />
+          </Field>
         </div>
       </div>
 

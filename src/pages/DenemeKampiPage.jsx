@@ -172,7 +172,7 @@ export default function DenemeKampiPage() {
           {daysLeft > 0 && (
             <div className="inline-flex items-center gap-2 bg-[#f39c12]/20 border border-[#f39c12]/40 rounded-full px-4 py-1.5 text-sm font-bold mb-5 backdrop-blur">
               ⏳ YKS'ye <span className="text-[#f39c12] font-black">{daysLeft} gün</span> kaldı —&nbsp;
-              <span className="text-[#f39c12]">{hero.highlightPhrase || "Sözderece ile"}</span>&nbsp;hazır ol
+              <span className="text-[#f39c12]">{hero.highlightPhrase || "Sözderece ile"}</span> kontrol sende!
             </div>
           )}
 
@@ -240,9 +240,26 @@ export default function DenemeKampiPage() {
             </div>
           )}
 
-          {/* Video */}
+          {/* Medya: Video veya 3 Resim */}
           <div className="mt-12">
-            {hero.videoUrl ? (
+            {hero.mediaType === "images" ? (
+              Array.isArray(hero.images) && hero.images.some((img) => img?.url) ? (
+                <div className="grid grid-cols-3 gap-3 max-w-3xl mx-auto max-[640px]:grid-cols-1">
+                  {hero.images.slice(0, 3).map((img, i) =>
+                    img?.url ? (
+                      <div key={i} className="rounded-2xl overflow-hidden border border-white/10 shadow-xl aspect-[4/3]">
+                        <img src={img.url} alt={img.alt || `Görsel ${i + 1}`} className="w-full h-full object-cover" />
+                      </div>
+                    ) : null
+                  )}
+                </div>
+              ) : (
+                <div className="bg-white/5 border border-white/10 rounded-2xl py-10 px-6 max-w-2xl mx-auto flex flex-col items-center gap-3">
+                  <div className="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center text-2xl">🖼️</div>
+                  <p className="text-white/40 text-sm">Görseller henüz eklenmedi</p>
+                </div>
+              )
+            ) : hero.videoUrl ? (
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 aspect-video max-w-2xl mx-auto">
                 <iframe src={hero.videoUrl} title="Tanıtım" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="w-full h-full" />
               </div>

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "../utils/axios";
 import Footer from "../components/Footer";
+import useCart from "../hooks/useCart";
 
 const fadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.55 } };
 const inp = "w-full px-4 py-3 rounded-xl border border-[#e5e7eb] text-sm text-[#0f172a] outline-none focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
@@ -15,6 +16,7 @@ export default function LgsHazirlikPage() {
   const navigate = useNavigate();
 
   const [content, setContent] = useState(null);
+  const { cart, addToCart, removeFromCart } = useCart();
   const [quota, setQuota] = useState({ remainingQuota: null, maxQuota: 10 });
   const [showSticky, setShowSticky] = useState(false);
   const [stickyHidden, setStickyHidden] = useState(false);
@@ -46,6 +48,27 @@ export default function LgsHazirlikPage() {
 
   const scrollToOffer = () => offerRef.current?.scrollIntoView({ behavior: "smooth" });
   const scrollToForm = () => formRef.current?.scrollIntoView({ behavior: "smooth" });
+
+  const addToCartAndPay = async (plan, planIndex) => {
+    const price = parseInt(plan.price);
+    if (!price || isNaN(price)) { alert("Bu plan için fiyat bilgisi eksik."); return; }
+    const slug = `lgs-hazirlik-plan-${planIndex}`;
+    const title = plan.label || "LGS Hazırlık";
+    try {
+      if (Array.isArray(cart) && cart.length > 0) {
+        for (const item of cart) { await removeFromCart(item.slug); }
+      }
+      await addToCart({ slug, title, unitPrice: price * 100 });
+      navigate("/payment");
+    } catch (err) {
+      const msg = err?.response?.data?.message || "";
+      if (err?.response?.status === 401 || msg.toLowerCase().includes("giriş")) {
+        navigate("/giris-yap", { state: { next: "/payment" } });
+      } else {
+        alert("Bir hata oluştu, lütfen tekrar deneyin.");
+      }
+    }
+  };
 
   const handleFormChange = (e) => {
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
@@ -87,6 +110,7 @@ export default function LgsHazirlikPage() {
   const socialProof = content.socialProof || {};
   const offer = content.offer || {};
   const formContent = content.form || {};
+  const plans = Array.isArray(offer.plans) ? offer.plans : [];
 
   return (
     <div className="min-h-screen flex flex-col bg-white font-poppins">
@@ -300,113 +324,279 @@ export default function LgsHazirlikPage() {
       )}
 
       {/* ══════════ TEKLİF + FORM ══════════ */}
-      <section id="lgs-teklif" ref={offerRef} className="py-20 px-5 bg-white">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-2 gap-8 max-[768px]:grid-cols-1">
-            {/* Sol: Teklif */}
-            <motion.div {...fadeUp}
-              className="bg-gradient-to-br from-[#100481] to-[#0a0357] rounded-3xl p-8 text-white flex flex-col">
-              <h2 className="text-2xl font-black mb-2">{offer.title || "LGS'ye Kadar Yanındayız"}</h2>
-              <p className="text-white/60 text-sm mb-6">{offer.subtitle || "Tek seferlik ödeme, LGS'ye kadar tam destek."}</p>
+      <section id="lgs-teklif" ref={offerRef} className="relative bg-gradient-to-br from-[#100481] to-[#0a0357] py-20 px-5 text-white overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#f39c12]/8 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-white/3 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3 pointer-events-none" />
 
-              {remaining !== null && remaining > 0 && (
-                <div className="inline-flex items-center gap-1.5 bg-[#ef4444]/20 border border-[#ef4444]/40 rounded-full px-3 py-1 text-xs font-bold text-[#fca5a5] mb-5 self-start">
-                  🔥 Sadece {remaining} yer kaldı
+        <div className="max-w-5xl mx-auto relative">
+          {/* Başlık */}
+          <motion.div {...fadeUp} className="text-center mb-8">
+            <h2 className="text-3xl max-[640px]:text-2xl font-black mb-2">
+              {offer.title || "LGS'ye Kadar Yanındayız"}
+            </h2>
+            <p className="text-white/60 text-sm">{offer.subtitle || "Planını seç, hemen başla."}</p>
+            {remaining !== null && remaining > 0 && (
+              <div className="inline-flex items-center gap-1.5 bg-[#ef4444]/20 border border-[#ef4444]/40 rounded-full px-4 py-1 text-sm font-bold text-[#fca5a5] mt-4">
+                🔥 Sadece {remaining} yer kaldı
+              </div>
+            )}
+          </motion.div>
+
+          {/* Plan kartları + Form yan yana */}
+          {plans.length > 0 ? (
+            <div className="grid gap-8 max-[900px]:grid-cols-1" style={{ gridTemplateColumns: "1fr auto" }}>
+              {/* Plan kartları */}
+              <motion.div {...fadeUp}>
+                <div className={`grid gap-5 max-[640px]:grid-cols-1 ${plans.length === 1 ? "grid-cols-1 max-w-sm" : "grid-cols-2"}`}>
+                  {plans.map((plan, i) => {
+                    const planIncludes = Array.isArray(plan.includes) && plan.includes.length > 0
+                      ? plan.includes
+                      : (offer.includes || []);
+                    return plan.isFeatured ? (
+                      /* ── Featured card (beyaz) ── */
+                      <div key={i} className="relative bg-white rounded-3xl p-7 flex flex-col shadow-2xl">
+                        {plan.badge && (
+                          <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                            <span className="bg-[#f39c12] text-white text-xs font-black px-5 py-1.5 rounded-full shadow-lg whitespace-nowrap">
+                              {plan.badge}
+                            </span>
+                          </div>
+                        )}
+                        <div className="pt-2 mb-5">
+                          <p className="text-[#100481] font-black text-xs uppercase tracking-widest mb-2">{plan.label}</p>
+                          {plan.oldPrice && (
+                            <p className="line-through text-[#9ca3af] text-sm">₺{plan.oldPrice}</p>
+                          )}
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-4xl font-black text-[#100481]">₺{plan.price}</span>
+                            {plan.priceText && <span className="text-[#64748b] text-xs font-semibold">{plan.priceText}</span>}
+                          </div>
+                          {plan.desc && <p className="text-[#64748b] text-xs mt-1">{plan.desc}</p>}
+                          {days > 0 && parseInt(plan.price) > 0 && (
+                            <p className="text-[#64748b] text-xs mt-1">
+                              ~₺{Math.round(parseInt(plan.price) / days)} / gün
+                            </p>
+                          )}
+                        </div>
+                        {planIncludes.length > 0 && (
+                          <ul className="space-y-1.5 mb-6 flex-grow">
+                            {planIncludes.map((item, j) => (
+                              <li key={j} className="flex items-center gap-2 text-xs text-[#374151]">
+                                <span className="w-4 h-4 rounded-full bg-[#dcfce7] flex items-center justify-center text-[#166534] text-xs font-black flex-shrink-0">✓</span>
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        <button
+                          onClick={() => addToCartAndPay(plan, i)}
+                          className="w-full py-3.5 rounded-2xl bg-[#f39c12] hover:bg-[#d35400] text-white font-black text-sm transition-all shadow-[0_6px_20px_rgba(243,156,18,0.3)] hover:-translate-y-0.5"
+                        >
+                          {plan.ctaText || "⚡ Yerimi Ayırt"}
+                        </button>
+                      </div>
+                    ) : (
+                      /* ── Normal card (koyu cam) ── */
+                      <div key={i} className="relative bg-white/8 border border-white/15 rounded-3xl p-7 flex flex-col backdrop-blur-sm">
+                        {plan.badge && (
+                          <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                            <span className="bg-white/20 text-white text-xs font-black px-5 py-1.5 rounded-full border border-white/30 whitespace-nowrap">
+                              {plan.badge}
+                            </span>
+                          </div>
+                        )}
+                        <div className="pt-2 mb-5">
+                          <p className="text-white/60 font-black text-xs uppercase tracking-widest mb-2">{plan.label}</p>
+                          {plan.oldPrice && (
+                            <p className="line-through text-white/30 text-sm">₺{plan.oldPrice}</p>
+                          )}
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-4xl font-black text-white">₺{plan.price}</span>
+                            {plan.priceText && <span className="text-white/50 text-xs font-semibold">{plan.priceText}</span>}
+                          </div>
+                          {plan.desc && <p className="text-white/50 text-xs mt-1">{plan.desc}</p>}
+                          {days > 0 && parseInt(plan.price) > 0 && (
+                            <p className="text-white/40 text-xs mt-1">
+                              ~₺{Math.round(parseInt(plan.price) / days)} / gün
+                            </p>
+                          )}
+                        </div>
+                        {planIncludes.length > 0 && (
+                          <ul className="space-y-1.5 mb-6 flex-grow">
+                            {planIncludes.map((item, j) => (
+                              <li key={j} className="flex items-center gap-2 text-xs text-white/70">
+                                <span className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center text-[#22c55e] text-xs font-black flex-shrink-0">✓</span>
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        <button
+                          onClick={() => addToCartAndPay(plan, i)}
+                          className="w-full py-3.5 rounded-2xl border-2 border-white/30 hover:border-white/60 text-white font-black text-sm transition-all hover:bg-white/10"
+                        >
+                          {plan.ctaText || "Başla"}
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
-              )}
-
-              <div className="mb-6">
-                <div className="text-5xl font-black text-[#f39c12]">₺{offer.price || "2.500"}</div>
-                <p className="text-white/50 text-xs mt-1">{offer.priceLabel || "LGS'ye kadar — tek seferlik"}</p>
-                {days > 0 && (
-                  <p className="text-white/60 text-sm mt-1">
-                    Günlük maliyetin: <span className="text-[#f39c12] font-bold">~₺{dailyCost}</span>
-                  </p>
-                )}
-              </div>
-
-              {offer.includes?.length > 0 && (
-                <ul className="space-y-2 mb-8 flex-grow">
-                  {offer.includes.map((item, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm text-white/80">
-                      <span className="w-5 h-5 rounded-full bg-[#22c55e]/20 flex items-center justify-center text-[#22c55e] text-xs font-black flex-shrink-0">✓</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              <div className="flex flex-col gap-3">
-                <button
-                  onClick={() => navigate(offer.buyLink || "/paket-detay")}
-                  className="w-full py-4 rounded-2xl bg-[#f39c12] hover:bg-[#d35400] text-white font-black text-base transition-all shadow-[0_6px_20px_rgba(243,156,18,0.3)] hover:-translate-y-0.5"
-                >
-                  {offer.ctaPrimary || "⚡ Yerimi Ayırt"}
-                </button>
-                <button
-                  onClick={scrollToForm}
-                  className="w-full py-3.5 rounded-2xl border-2 border-white/30 hover:border-white/60 text-white font-bold text-sm transition-all hover:bg-white/10"
-                >
-                  {offer.ctaSecondary || "📞 Önce Konuşalım"}
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Sağ: Form */}
-            <motion.div {...fadeUp} transition={{ delay: 0.1 }}>
-              <div id="lgs-form" ref={formRef} className="bg-[#f8fafc] rounded-3xl p-8 border border-[#e2e8f0]">
-                <h3 className="text-xl font-black text-[#0f172a] mb-1">
-                  {formContent.title || "Hâlâ sorunuz var mı?"}
-                </h3>
-                <p className="text-[#64748b] text-sm mb-6">
-                  {formContent.subtitle || "Formu doldurun, sizi arayalım."}
+                <p className="text-center text-white/40 text-xs mt-4">
+                  <button onClick={scrollToForm} className="underline underline-offset-2 hover:text-white/70 transition-colors">
+                    {offer.ctaSecondary || "📞 Önce Konuşalım"}
+                  </button>
                 </p>
+              </motion.div>
 
-                {submitted ? (
-                  <div className="py-10 text-center">
-                    <div className="text-5xl mb-3">✅</div>
-                    <h4 className="text-lg font-black text-[#0f172a] mb-1">
-                      {formContent.successTitle || "Başvurunuz alındı!"}
-                    </h4>
-                    <p className="text-[#64748b] text-sm">
-                      {formContent.successSubtitle || "En kısa sürede sizi arayacağız."}
+              {/* Form sağ sütun */}
+              <motion.div {...fadeUp} transition={{ delay: 0.1 }} className="w-[340px] max-[900px]:w-full">
+                <div id="lgs-form" ref={formRef} className="bg-white rounded-3xl p-7 border border-white/20">
+                  <h3 className="text-lg font-black text-[#0f172a] mb-0.5">
+                    {formContent.title || "Hâlâ sorunuz var mı?"}
+                  </h3>
+                  <p className="text-[#64748b] text-xs mb-5">
+                    {formContent.subtitle || "Formu doldurun, sizi arayalım."}
+                  </p>
+                  {submitted ? (
+                    <div className="py-8 text-center">
+                      <div className="text-4xl mb-2">✅</div>
+                      <h4 className="text-base font-black text-[#0f172a] mb-1">
+                        {formContent.successTitle || "Başvurunuz alındı!"}
+                      </h4>
+                      <p className="text-[#64748b] text-xs">
+                        {formContent.successSubtitle || "En kısa sürede sizi arayacağız."}
+                      </p>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="space-y-2.5">
+                      <div>
+                        <label className="text-xs font-bold text-[#374151] block mb-1">Ad Soyad *</label>
+                        <input name="name" value={form.name} onChange={handleFormChange} className={inp} placeholder="Ayşe Yılmaz" required />
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-[#374151] block mb-1">Telefon *</label>
+                        <input name="phone" type="tel" value={form.phone} onChange={handleFormChange} className={inp} placeholder="05XX XXX XX XX" required />
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-[#374151] block mb-1">Kaçıncı sınıf? *</label>
+                        <select name="grade" value={form.grade} onChange={handleFormChange} className={inp} required>
+                          <option value="">Seçiniz</option>
+                          <option value="7. Sınıf">7. Sınıf</option>
+                          <option value="8. Sınıf">8. Sınıf</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-[#374151] block mb-1">Mesajınız (opsiyonel)</label>
+                        <textarea name="message" value={form.message} onChange={handleFormChange} className={`${inp} resize-none h-16`} placeholder="Merak ettiklerinizi yazabilirsiniz..." />
+                      </div>
+                      {formError && <p className="text-red-500 text-xs">{formError}</p>}
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="w-full py-3.5 rounded-2xl bg-[#100481] hover:bg-[#0a0357] text-white font-black text-sm transition-all disabled:opacity-60 shadow-[0_6px_20px_rgba(16,4,129,0.25)] hover:-translate-y-0.5"
+                      >
+                        {submitting ? "Gönderiliyor..." : (formContent.submitText || "Gönder, Sizi Arayalım →")}
+                      </button>
+                    </form>
+                  )}
+                </div>
+              </motion.div>
+            </div>
+          ) : (
+            /* ── Plansız fallback: tek fiyat + form ── */
+            <div className="grid grid-cols-2 gap-8 max-[768px]:grid-cols-1">
+              {/* Sol: Tek fiyat */}
+              <motion.div {...fadeUp} className="bg-white/8 border border-white/15 rounded-3xl p-8 flex flex-col backdrop-blur-sm">
+                <div className="mb-6">
+                  <div className="text-5xl font-black text-[#f39c12]">₺{offer.price || "2.500"}</div>
+                  <p className="text-white/50 text-xs mt-1">{offer.priceLabel || "LGS'ye kadar — tek seferlik"}</p>
+                  {days > 0 && (
+                    <p className="text-white/60 text-sm mt-1">
+                      ~₺{dailyCost} / gün
                     </p>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-3">
-                    <div>
-                      <label className="text-xs font-bold text-[#374151] block mb-1">Ad Soyad *</label>
-                      <input name="name" value={form.name} onChange={handleFormChange} className={inp} placeholder="Ayşe Yılmaz" required />
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold text-[#374151] block mb-1">Telefon *</label>
-                      <input name="phone" type="tel" value={form.phone} onChange={handleFormChange} className={inp} placeholder="05XX XXX XX XX" required />
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold text-[#374151] block mb-1">Kaçıncı sınıf? *</label>
-                      <select name="grade" value={form.grade} onChange={handleFormChange} className={inp} required>
-                        <option value="">Seçiniz</option>
-                        <option value="7. Sınıf">7. Sınıf</option>
-                        <option value="8. Sınıf">8. Sınıf</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold text-[#374151] block mb-1">Mesajınız (opsiyonel)</label>
-                      <textarea name="message" value={form.message} onChange={handleFormChange} className={`${inp} resize-none h-20`} placeholder="Merak ettiklerinizi yazabilirsiniz..." />
-                    </div>
-                    {formError && <p className="text-red-500 text-xs">{formError}</p>}
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="w-full py-4 rounded-2xl bg-[#100481] hover:bg-[#0a0357] text-white font-black text-base transition-all disabled:opacity-60 shadow-[0_6px_20px_rgba(16,4,129,0.25)] hover:-translate-y-0.5"
-                    >
-                      {submitting ? "Gönderiliyor..." : (formContent.submitText || "Gönder, Sizi Arayalım →")}
-                    </button>
-                  </form>
+                  )}
+                </div>
+                {offer.includes?.length > 0 && (
+                  <ul className="space-y-2 mb-8 flex-grow">
+                    {offer.includes.map((item, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm text-white/80">
+                        <span className="w-5 h-5 rounded-full bg-[#22c55e]/20 flex items-center justify-center text-[#22c55e] text-xs font-black flex-shrink-0">✓</span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
                 )}
-              </div>
-            </motion.div>
-          </div>
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={() => navigate(offer.buyLink || "/paket-detay")}
+                    className="w-full py-4 rounded-2xl bg-[#f39c12] hover:bg-[#d35400] text-white font-black text-base transition-all shadow-[0_6px_20px_rgba(243,156,18,0.3)] hover:-translate-y-0.5"
+                  >
+                    {offer.ctaPrimary || "⚡ Yerimi Ayırt"}
+                  </button>
+                  <button
+                    onClick={scrollToForm}
+                    className="w-full py-3.5 rounded-2xl border-2 border-white/30 hover:border-white/60 text-white font-bold text-sm transition-all hover:bg-white/10"
+                  >
+                    {offer.ctaSecondary || "📞 Önce Konuşalım"}
+                  </button>
+                </div>
+              </motion.div>
+
+              {/* Sağ: Form */}
+              <motion.div {...fadeUp} transition={{ delay: 0.1 }}>
+                <div id="lgs-form" ref={formRef} className="bg-white rounded-3xl p-8 border border-white/20">
+                  <h3 className="text-xl font-black text-[#0f172a] mb-1">
+                    {formContent.title || "Hâlâ sorunuz var mı?"}
+                  </h3>
+                  <p className="text-[#64748b] text-sm mb-6">
+                    {formContent.subtitle || "Formu doldurun, sizi arayalım."}
+                  </p>
+                  {submitted ? (
+                    <div className="py-10 text-center">
+                      <div className="text-5xl mb-3">✅</div>
+                      <h4 className="text-lg font-black text-[#0f172a] mb-1">
+                        {formContent.successTitle || "Başvurunuz alındı!"}
+                      </h4>
+                      <p className="text-[#64748b] text-sm">
+                        {formContent.successSubtitle || "En kısa sürede sizi arayacağız."}
+                      </p>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="space-y-3">
+                      <div>
+                        <label className="text-xs font-bold text-[#374151] block mb-1">Ad Soyad *</label>
+                        <input name="name" value={form.name} onChange={handleFormChange} className={inp} placeholder="Ayşe Yılmaz" required />
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-[#374151] block mb-1">Telefon *</label>
+                        <input name="phone" type="tel" value={form.phone} onChange={handleFormChange} className={inp} placeholder="05XX XXX XX XX" required />
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-[#374151] block mb-1">Kaçıncı sınıf? *</label>
+                        <select name="grade" value={form.grade} onChange={handleFormChange} className={inp} required>
+                          <option value="">Seçiniz</option>
+                          <option value="7. Sınıf">7. Sınıf</option>
+                          <option value="8. Sınıf">8. Sınıf</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-[#374151] block mb-1">Mesajınız (opsiyonel)</label>
+                        <textarea name="message" value={form.message} onChange={handleFormChange} className={`${inp} resize-none h-20`} placeholder="Merak ettiklerinizi yazabilirsiniz..." />
+                      </div>
+                      {formError && <p className="text-red-500 text-xs">{formError}</p>}
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="w-full py-4 rounded-2xl bg-[#100481] hover:bg-[#0a0357] text-white font-black text-base transition-all disabled:opacity-60 shadow-[0_6px_20px_rgba(16,4,129,0.25)] hover:-translate-y-0.5"
+                      >
+                        {submitting ? "Gönderiliyor..." : (formContent.submitText || "Gönder, Sizi Arayalım →")}
+                      </button>
+                    </form>
+                  )}
+                </div>
+              </motion.div>
+            </div>
+          )}
         </div>
       </section>
 
