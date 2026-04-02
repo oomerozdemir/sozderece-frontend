@@ -44,6 +44,7 @@ const PreCartAuth = lazy(() => import("./pages/preAuth.jsx"));
 const FaqPage = lazy(() => import("./pages/FaqPage.jsx"));
 const InstructorApplicationPage = lazy(() => import("./pages/InstructorApplicationPage.jsx"));
 const CampRouteHandler = lazy(() => import("./pages/CampRouteHandler"));
+const LgsHazirlikPage = lazy(() => import("./pages/LgsHazirlikPage"));
 
 
 // ÖĞRETMEN: yeni sayfalar/guard
@@ -131,6 +132,7 @@ function App() {
 
             {/* Common */}
             <Route path="/unauthorized" element={<div>Erişim izniniz yok.</div>} />
+            <Route path="/lgs-hazirlik" element={<LgsHazirlikPage />} />
             {/* Dinamik kamp sayfası — slug admin panelinden değiştirilebilir */}
             <Route path="/:campSlug" element={<CampRouteHandler />} />
             <Route path="*" element={<NotFound />} />
