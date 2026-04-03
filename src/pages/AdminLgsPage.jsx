@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "../utils/axios";
+import ImageUpload from "../components/ImageUpload";
 
 const TABS = [
   { key: "applications", label: "📋 Başvurular" },
@@ -114,13 +115,64 @@ function HeroEditor({ content, setContent }) {
         <Field label="Ana CTA Butonu">
           <input value={h.ctaPrimary || ""} onChange={(e) => s("ctaPrimary", e.target.value)} className={inp} />
         </Field>
-        <Field label="İkincil CTA Butonu">
-          <input value={h.ctaSecondary || ""} onChange={(e) => s("ctaSecondary", e.target.value)} className={inp} />
+        <Field label="Navbar CTA Butonu">
+          <input value={h.navbarCta || ""} onChange={(e) => s("navbarCta", e.target.value)} className={inp} />
         </Field>
       </div>
-      <Field label="Navbar CTA Butonu">
-        <input value={h.navbarCta || ""} onChange={(e) => s("navbarCta", e.target.value)} className={inp} />
-      </Field>
+
+      {/* Hero Medya */}
+      <div className="pt-2 border-t border-[#f1f5f9]">
+        <Label>Hero Medya Tipi</Label>
+        <div className="flex gap-2 mb-3">
+          {[{ val: "video", label: "🎬 Video" }, { val: "images", label: "🖼️ 3 Resim" }].map(({ val, label }) => (
+            <button
+              key={val}
+              type="button"
+              onClick={() => s("mediaType", val)}
+              className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${(h.mediaType || "video") === val ? "bg-[#100481] text-white border-[#100481]" : "bg-white text-[#475569] border-[#e2e8f0] hover:border-[#100481]"}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {(h.mediaType || "video") === "video" ? (
+          <Field label="Video URL (YouTube embed)">
+            <input value={h.videoUrl || ""} onChange={(e) => s("videoUrl", e.target.value)} className={inp} placeholder="https://www.youtube.com/embed/..." />
+          </Field>
+        ) : (
+          <div className="space-y-3">
+            <p className="text-xs text-[#9ca3af]">3 resim yan yana gösterilir. Boş bırakılanlar gizlenir.</p>
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="bg-[#f8fafc] rounded-xl p-3 border border-[#e2e8f0] space-y-2">
+                <span className="text-xs font-bold text-[#64748b]">Resim {i + 1}</span>
+                <ImageUpload
+                  value={h.images?.[i]?.url || ""}
+                  onChange={(url) => {
+                    const imgs = [...(h.images || [{}, {}, {}])];
+                    while (imgs.length <= i) imgs.push({});
+                    imgs[i] = { ...imgs[i], url };
+                    s("images", imgs);
+                  }}
+                  placeholder="https://..."
+                  previewClass="h-20 object-cover"
+                />
+                <input
+                  className={inp}
+                  placeholder="Alt metin (opsiyonel)"
+                  value={h.images?.[i]?.alt || ""}
+                  onChange={(e) => {
+                    const imgs = [...(h.images || [{}, {}, {}])];
+                    while (imgs.length <= i) imgs.push({});
+                    imgs[i] = { ...imgs[i], alt: e.target.value };
+                    s("images", imgs);
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

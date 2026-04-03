@@ -159,20 +159,37 @@ export default function LgsHazirlikPage() {
               ))}
             </div>
 
-            <div className="flex flex-wrap justify-center gap-3">
-              <button
-                onClick={scrollToOffer}
-                className="bg-[#f39c12] hover:bg-[#d35400] text-white font-black text-base px-8 py-4 rounded-2xl transition-all shadow-[0_10px_30px_rgba(243,156,18,0.35)] hover:-translate-y-0.5"
-              >
-                {hero.ctaPrimary || "⚡ Yerimi Şimdi Ayırt →"}
-              </button>
-              <button
-                onClick={scrollToForm}
-                className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-base px-8 py-4 rounded-2xl transition-all"
-              >
-                {hero.ctaSecondary || "📞 Önce Konuşalım"}
-              </button>
-            </div>
+            {/* Tek CTA */}
+            <button
+              onClick={scrollToOffer}
+              className="bg-[#f39c12] hover:bg-[#d35400] text-white font-black text-base px-10 py-4 rounded-2xl transition-all shadow-[0_10px_30px_rgba(243,156,18,0.35)] hover:-translate-y-0.5"
+            >
+              {hero.ctaPrimary || "⚡ Yerimi Şimdi Ayırt →"}
+            </button>
+
+            {/* Hero Medya: Video veya 3 Resim */}
+            {(hero.mediaType === "images"
+              ? Array.isArray(hero.images) && hero.images.some((img) => img?.url)
+              : !!hero.videoUrl
+            ) && (
+              <div className="mt-10 max-w-3xl mx-auto w-full">
+                {hero.mediaType === "images" ? (
+                  <div className="grid grid-cols-3 gap-3 max-[640px]:grid-cols-1">
+                    {hero.images.slice(0, 3).map((img, i) =>
+                      img?.url ? (
+                        <div key={i} className="rounded-2xl overflow-hidden border border-white/10 shadow-xl" style={{ aspectRatio: "4/3" }}>
+                          <img src={img.url} alt={img.alt || `Görsel ${i + 1}`} className="w-full h-full object-cover" />
+                        </div>
+                      ) : null
+                    )}
+                  </div>
+                ) : (
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 aspect-video">
+                    <iframe src={hero.videoUrl} title="Tanıtım" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="w-full h-full" />
+                  </div>
+                )}
+              </div>
+            )}
           </motion.div>
         </div>
       </section>
@@ -190,15 +207,57 @@ export default function LgsHazirlikPage() {
               )}
             </motion.div>
             <div className="grid grid-cols-3 gap-4 max-[768px]:grid-cols-1 max-[1024px]:grid-cols-2">
-              {painPoints.items.map((p, i) => (
-                <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }}
-                  className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-md transition-shadow">
-                  <div className="text-3xl mb-3">{p.emoji}</div>
-                  <h3 className="font-bold text-[#0f172a] text-base mb-1">{p.title}</h3>
-                  <p className="text-[#64748b] text-sm leading-relaxed">{p.desc}</p>
-                </motion.div>
-              ))}
+              {painPoints.items.map((p, i) => {
+                const icons = [
+                  /* Çalışıyor ama sonuç alamıyor — grafik/trend */
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+                  /* Telefon / dikkat dağınıklığı */
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>,
+                  /* Ödev takibi — liste/check */
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>,
+                  /* Nasıl hazırlanılır — soru/yol haritası */
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
+                  /* Stres/motivasyon — kalp atışı */
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+                  /* Genel — uyarı */
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
+                ];
+                const iconBgs = [
+                  "bg-[#eff6ff] text-[#1d4ed8]",
+                  "bg-[#fff7ed] text-[#c2410c]",
+                  "bg-[#f0fdf4] text-[#15803d]",
+                  "bg-[#fef2f2] text-[#b91c1c]",
+                  "bg-[#faf5ff] text-[#7c3aed]",
+                  "bg-[#eff6ff] text-[#1d4ed8]",
+                ];
+                return (
+                  <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }}
+                    className="group bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-[0_8px_24px_rgba(16,4,129,0.10)] hover:border-[#100481]/30 transition-all duration-200 flex gap-4 cursor-default">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-200 group-hover:bg-[#100481] group-hover:text-white ${iconBgs[i % iconBgs.length]}`}>
+                      {icons[i % icons.length]}
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-black text-[#0f172a] text-base mb-1 group-hover:text-[#100481] transition-colors duration-200">{p.title}</h3>
+                      <p className="text-[#64748b] text-sm leading-relaxed">{p.desc}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
+
+            {/* Mikro-CTA */}
+            <motion.div {...fadeUp} className="mt-12 text-center">
+              <p className="text-[#475569] text-base max-w-xl mx-auto mb-5 leading-relaxed">
+                Eğer bunlardan en az birini yaşıyorsan, yanlış giden bir şeyler var demektir.{" "}
+                <span className="font-semibold text-[#0f172a]">Gel, sana özel bir çıkış yolu çizelim.</span>
+              </p>
+              <button
+                onClick={scrollToForm}
+                className="inline-flex items-center gap-2 bg-[#100481] hover:bg-[#0a0260] text-white font-bold text-sm px-8 py-3.5 rounded-2xl transition-all shadow-[0_4px_16px_rgba(16,4,129,0.2)] hover:-translate-y-0.5"
+              >
+                Bu Yükü Biz Devralalım → Ücretsiz Veli Görüşmesi Başlat
+              </button>
+            </motion.div>
           </div>
         </section>
       )}
@@ -241,7 +300,7 @@ export default function LgsHazirlikPage() {
                   <div className="grid grid-cols-3 bg-[#100481] text-white text-sm font-bold">
                     <div className="px-5 py-3 col-span-1">Özellik</div>
                     <div className="px-5 py-3 text-center text-[#f39c12]">Sözderece</div>
-                    <div className="px-5 py-3 text-center text-white/60">Yalnız Çalışmak</div>
+                    <div className="px-5 py-3 text-center text-white/60">Dershane / Özel Ders</div>
                   </div>
                   {howItWorks.comparison.map((row, i) => (
                     <div key={i} className={`grid grid-cols-3 text-sm ${i % 2 === 0 ? "bg-white" : "bg-[#f8fafc]"}`}>
@@ -304,16 +363,19 @@ export default function LgsHazirlikPage() {
               <div className="grid grid-cols-2 gap-5 max-[640px]:grid-cols-1">
                 {socialProof.testimonials.map((t, i) => (
                   <motion.div key={i} {...fadeUp} transition={{ delay: i * 0.1 }}
-                    className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm">
-                    <div className="flex gap-0.5 mb-3">
+                    className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm flex flex-col gap-3">
+                    <div className="flex gap-0.5">
                       {Array(5).fill(0).map((_, j) => <span key={j} className="text-[#f39c12]">★</span>)}
                     </div>
-                    <p className="text-[#374151] text-sm leading-relaxed mb-4 italic">"{t.quote}"</p>
-                    <div className="flex items-center gap-3">
-                      <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-xs ${t.isParent ? "bg-[#100481]" : "bg-[#f39c12]"}`}>
-                        {t.isParent ? "V" : "E"}
+                    <p className="text-[#374151] text-sm leading-relaxed italic flex-grow">"{t.quote}"</p>
+                    <div className="flex items-center gap-3 pt-2 border-t border-[#f1f5f9]">
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-sm flex-shrink-0 ${t.isParent ? "bg-[#100481]" : "bg-[#f39c12]"}`}>
+                        {t.author?.[0]?.toUpperCase() || (t.isParent ? "V" : "Ö")}
                       </div>
-                      <span className="text-xs font-bold text-[#64748b]">{t.author}</span>
+                      <div>
+                        <p className="text-xs font-bold text-[#0f172a]">{t.author}</p>
+                        <p className="text-xs text-[#94a3b8]">{t.isParent ? "Veli" : "Öğrenci"}</p>
+                      </div>
                     </div>
                   </motion.div>
                 ))}
@@ -441,11 +503,7 @@ export default function LgsHazirlikPage() {
                     );
                   })}
                 </div>
-                <p className="text-center text-white/40 text-xs mt-4">
-                  <button onClick={scrollToForm} className="underline underline-offset-2 hover:text-white/70 transition-colors">
-                    {offer.ctaSecondary || "📞 Önce Konuşalım"}
-                  </button>
-                </p>
+                
               </motion.div>
 
               {/* Form sağ sütun */}
@@ -477,14 +535,7 @@ export default function LgsHazirlikPage() {
                         <label className="text-xs font-bold text-[#374151] block mb-1">Telefon *</label>
                         <input name="phone" type="tel" value={form.phone} onChange={handleFormChange} className={inp} placeholder="05XX XXX XX XX" required />
                       </div>
-                      <div>
-                        <label className="text-xs font-bold text-[#374151] block mb-1">Kaçıncı sınıf? *</label>
-                        <select name="grade" value={form.grade} onChange={handleFormChange} className={inp} required>
-                          <option value="">Seçiniz</option>
-                          <option value="7. Sınıf">7. Sınıf</option>
-                          <option value="8. Sınıf">8. Sınıf</option>
-                        </select>
-                      </div>
+                     
                       <div>
                         <label className="text-xs font-bold text-[#374151] block mb-1">Mesajınız (opsiyonel)</label>
                         <textarea name="message" value={form.message} onChange={handleFormChange} className={`${inp} resize-none h-16`} placeholder="Merak ettiklerinizi yazabilirsiniz..." />
