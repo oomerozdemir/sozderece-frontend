@@ -312,29 +312,48 @@ function SocialProofEditor({ content, setContent }) {
           <input value={sp.titleAccent || ""} onChange={(e) => set(setContent, "socialProof.titleAccent", e.target.value)} className={inp} />
         </Field>
       </div>
+      <div>
+        <Field label="Bölüm Alt Başlığı (Opsiyonel)">
+          <input value={sp.subtitle || ""} onChange={(e) => set(setContent, "socialProof.subtitle", e.target.value)} className={inp} />
+        </Field>
+      </div>
 
       {/* İstatistikler */}
       <div>
         <div className="flex items-center justify-between mb-3">
           <Label>İstatistikler</Label>
-          <AddBtn onClick={() => arrAdd(setContent, "socialProof.stats", { val: "", label: "" })} label="İstatistik Ekle" />
+          <AddBtn onClick={() => arrAdd(setContent, "socialProof.stats", { icon: "", val: "", label: "", desc: "" })} label="İstatistik Ekle" />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-3">
           {stats.map((s, i) => (
-            <div key={i} className="flex items-center gap-2 bg-[#f8fafc] rounded-xl px-4 py-2.5 border border-[#e2e8f0]">
+            <div key={i} className="flex flex-col gap-2 bg-[#f8fafc] rounded-xl p-3 border border-[#e2e8f0]">
+              <div className="flex items-center gap-2">
+                <input
+                  value={s.icon || ""}
+                  onChange={(e) => arrSet(setContent, "socialProof.stats", i, "icon", e.target.value)}
+                  className={`${inp} w-16 text-center`}
+                  placeholder="İkon"
+                />
+                <input
+                  value={s.val || ""}
+                  onChange={(e) => arrSet(setContent, "socialProof.stats", i, "val", e.target.value)}
+                  className={`${inp} w-24`}
+                  placeholder="Değer"
+                />
+                <input
+                  value={s.label || ""}
+                  onChange={(e) => arrSet(setContent, "socialProof.stats", i, "label", e.target.value)}
+                  className={`${inp} flex-1`}
+                  placeholder="Başlık"
+                />
+                <DelBtn onClick={() => arrDel(setContent, "socialProof.stats", i)} />
+              </div>
               <input
-                value={s.val || ""}
-                onChange={(e) => arrSet(setContent, "socialProof.stats", i, "val", e.target.value)}
-                className={`${inp} w-28`}
-                placeholder="21"
+                value={s.desc || ""}
+                onChange={(e) => arrSet(setContent, "socialProof.stats", i, "desc", e.target.value)}
+                className={`${inp} w-full`}
+                placeholder="Alt açıklama (Opsiyonel)"
               />
-              <input
-                value={s.label || ""}
-                onChange={(e) => arrSet(setContent, "socialProof.stats", i, "label", e.target.value)}
-                className={`${inp} flex-1`}
-                placeholder="Aktif öğrenci"
-              />
-              <DelBtn onClick={() => arrDel(setContent, "socialProof.stats", i)} />
             </div>
           ))}
         </div>
