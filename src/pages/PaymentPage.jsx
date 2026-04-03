@@ -181,7 +181,7 @@ const PaymentPage = () => {
   const handleApplyCoupon = async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) { setCouponMessage("🔒 Giriş yapmanız gerekiyor"); return; }
+      if (!token) { setCouponMessage("Kupon kodu kullanmak için giriş yapmanız gerekiyor."); return; }
       const res = await axios.post("/api/coupon/validate", { code: couponCode }, { headers: { Authorization: `Bearer ${token}` } });
       const data = res.data;
       if (data.validPackages && data.validPackages.length > 0) {
@@ -220,6 +220,11 @@ const PaymentPage = () => {
     if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
 
     try {
+      // Guest kullanıcılar için email'i localStorage'a kaydet (cart sync için)
+      if (!localStorage.getItem("token")) {
+        localStorage.setItem("guestCartEmail", formData.email);
+      }
+
       const response = await axios.post(
         "/api/orders/prepare",
         {
