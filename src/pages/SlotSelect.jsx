@@ -46,20 +46,6 @@ export default function SlotSelect() {
   const params = new URLSearchParams(location.search);
   const useFreeRight = params.get("useFreeRight") === "1"; // ✅ ücretsiz hak modu
 
-  // --- Auth ---
-  useEffect(() => {
-    if (!token || !isTokenValid(token)) {
-      // login sonrası geri dönebilmesi için query'yi koru
-      sessionStorage.setItem("skipSilentLoginOnce", "1");
-      const back = new URLSearchParams({
-        slug, subject, grade, mode, city, district, locationNote, note,
-        qty: String(qty), packageSlug, packageTitle, unitPrice: String(unitPrice), discountRate: String(discountRate),
-        itemType, source,
-      });
-      navigate(`/login?next=/saat-sec?${back.toString()}`, { replace: true });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
 
   // --- Öğretmen bilgisi (fiyat meta'sı için) ---
   useEffect(() => {
@@ -187,6 +173,15 @@ export default function SlotSelect() {
       return;
     }
 
+    let guestEmail = localStorage.getItem("guestCartEmail");
+    if (!token && !guestEmail) {
+      guestEmail = `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}@guest.sozderece.com`;
+      localStorage.setItem("guestCartEmail", guestEmail);
+    }
+    const authHeaders = token && isTokenValid(token) 
+      ? { headers: { Authorization: `Bearer ${token}` } } 
+      : undefined;
+
      // ✅ ÜCRETSİZ HAK MODU: ödeme yok → doğrudan talep + başarı sayfası
     if (useFreeRight) {
       try {
@@ -200,8 +195,9 @@ export default function SlotSelect() {
             packageTitle,                // opsiyonel
             unitPrice: 0,                // ücretsiz
             useFreeRight: true,          // 🔑 backende sinyal
+            email: token ? undefined : guestEmail,
           },
-          { headers: { Authorization: `Bearer ${token}` } }
+          authHeaders
         );
 
      const requestIds = Array.isArray(createRes?.requestIds)
@@ -240,8 +236,9 @@ export default function SlotSelect() {
           packageSlug,
           packageTitle,
           unitPrice,                   // kuruş
+          email: token ? undefined : guestEmail,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        authHeaders
       );
 
       // 1.a) Dönen id'leri normalize et (geriye uyum: tekil id de olabilir)
@@ -274,6 +271,7 @@ export default function SlotSelect() {
         quantity: 1,
         itemType,
         source,
+        email: token ? undefined : guestEmail,
         meta: {
           // çoklu talep desteği
           requestIds: ids,
@@ -289,7 +287,7 @@ export default function SlotSelect() {
           itemType,
           source,
         },
-      }, { headers: { Authorization: `Bearer ${token}` }});
+      }, authHeaders);
 
       // 3) Sepete git
       navigate("/sepet", { replace: true });

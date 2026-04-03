@@ -109,24 +109,13 @@ export default function PreCartAuth() {
         return;
       }
 
-      // 2) token yok/expired → remember cookie'yi SADECE PROBE et (soft=1)
-      try {
-        if (sessionStorage.getItem("skipSilentLoginOnce")) {
-          sessionStorage.removeItem("skipSilentLoginOnce");
-        } else {
-          const res = await axios.get("/api/auth/silent-login?soft=1");
-          //ÖNEMLİ: soft=1'de token dönse bile KULLANMIYORUZ
-          if (res?.data?.authenticated === true) {
-            setHasRemember(true); // Tek tıkla giriş butonunu göstereceğiz
-          }
-        }
-      } catch {
-        // cookie yok/bozuk → OTP adımına geç
+      // 2) Eğer giriş yapılmamışsa, direkt misafir email'i oluşturup sepete ekle
+      let guestEmail = localStorage.getItem("guestCartEmail");
+      if (!guestEmail) {
+        guestEmail = `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}@guest.sozderece.com`;
+        localStorage.setItem("guestCartEmail", guestEmail);
       }
-
-      // 3) OTP email adımına geç
-      localStorage.removeItem("token");
-      setStep("email");
+      await addToCartAndGo(null, guestEmail);
     })();
   }, [slug, pkg, pkgLoaded, navigate]);
 

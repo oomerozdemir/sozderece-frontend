@@ -94,6 +94,7 @@ const PaymentPage = () => {
   const [couponData, setCouponData] = useState(null);
   const [couponMessage, setCouponMessage] = useState("");
   const [errors, setErrors] = useState({});
+  const [registeredEmailError, setRegisteredEmailError] = useState(false);
 
   const parseTL = (val) =>
     parseFloat(String(val || "").replace("₺", "").replace(/[^\d.]/g, "")) || 0;
@@ -176,6 +177,7 @@ const PaymentPage = () => {
     const { name, value, type, checked } = e.target;
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
     setErrors((prev) => ({ ...prev, [name]: "" }));
+    if (name === "email") setRegisteredEmailError(false);
   };
 
   const handleApplyCoupon = async () => {
@@ -260,8 +262,14 @@ const PaymentPage = () => {
     } catch (error) {
       console.error("❌ Ödeme hazırlanırken hata:", error);
       const detailedError = error?.response?.data;
-      if (detailedError?.error) alert(`Sipariş hazırlık hatası: ${detailedError.error}`);
-      else alert("Sipariş hazırlığı sırasında bilinmeyen bir hata oluştu.");
+      if (detailedError?.error === "EMAIL_REGISTERED") {
+        setRegisteredEmailError(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else if (detailedError?.error) {
+        alert(`Sipariş hazırlık hatası: ${detailedError.error}`);
+      } else {
+        alert("Sipariş hazırlığı sırasında bilinmeyen bir hata oluştu.");
+      }
     }
   };
 
@@ -339,8 +347,20 @@ const PaymentPage = () => {
                 }
               </div>
 
-              <input type="email" name="email" value={formData.email} placeholder="E-posta" onChange={handleInputChange} className={`${inputBase}${errors.email ? ` ${errCls}` : ""}`} required />
+              <input type="email" name="email" value={formData.email} placeholder="E-posta" onChange={handleInputChange} className={`${inputBase}${errors.email || registeredEmailError ? ` ${errCls}` : ""}`} required />
               {errors.email && <span className="text-red-500 text-xs mt-0.5 block">{errors.email}</span>}
+              {registeredEmailError && (
+                <div className="flex items-center gap-3 bg-[#fff7ed] border border-[#f39c12] rounded-xl px-4 py-3 text-sm text-[#92400e]">
+                  <svg className="w-4 h-4 shrink-0 text-[#f39c12]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                  </svg>
+                  <span>
+                    Bu e-posta ile kayıtlı bir hesabınız var.{" "}
+                    <a href="/login" className="font-semibold text-[#100481] underline underline-offset-2">Giriş yaparak</a>{" "}
+                    devam edebilirsiniz.
+                  </span>
+                </div>
+              )}
 
               <label className="flex items-center gap-2 text-sm text-[#475569] cursor-pointer">
                 <input type="checkbox" checked={formData.allowEmails} name="allowEmails" onChange={handleInputChange} className="w-4 h-4 accent-[#f35900]" />

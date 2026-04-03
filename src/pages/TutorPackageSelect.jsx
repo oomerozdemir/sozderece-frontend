@@ -170,23 +170,6 @@ export default function TutorPackageSelect() {
   const goSlotSelect = async () => {
     if (!selected) return;
 
-    // Auth check (giriş değilse login’e yönlendir, geri dönüş için query’yi koru)
-    const token = localStorage.getItem("token");
-    if (!token || !isTokenValid(token)) {
-      sessionStorage.setItem("skipSilentLoginOnce", "1");
-      const back = new URLSearchParams({
-        slug, subject, grade, mode, city, district, locationNote, note,
-        qty: String(selected.qty),
-        packageSlug: selected.slug,
-        packageTitle: selected.title,
-        unitPrice: String(selected.unitPrice),        // kuruş
-        discountRate: String(selected.discountRate),  // %
-        itemType: "tutoring",
-        source: "TutorPackage",
-      });
-      navigate(`/login?next=/saat-sec?${back.toString()}`, { replace: true });
-      return;
-    }
 
     // Doğrudan Slot seçime
     const pass = new URLSearchParams({
