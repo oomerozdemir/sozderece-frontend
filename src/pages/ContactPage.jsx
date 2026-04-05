@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import axios from "../utils/axios";
 import { useNavigate } from "react-router-dom";
+import { isValidName, isValidPhone, isValidEmail } from "../utils/validation";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";
 import Navbar from "../components/navbar";
@@ -22,6 +23,10 @@ const IletisimPage = () => {
   const formRef = useRef(null);
 
   const today = new Date().toISOString().split("T")[0];
+  
+  const maxDateObj = new Date();
+  maxDateObj.setMonth(maxDateObj.getMonth() + 2);
+  const maxDate = maxDateObj.toISOString().split("T")[0];
 
   const scrollToForm = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -49,8 +54,11 @@ const IletisimPage = () => {
     try {
       const res = await axios.get(`/api/contact/slots?date=${date}`);
       setBlockedSlots(new Set(res.data.blockedSlots || []));
-    } catch {
-      // fetch başarısız olursa tüm slotlar boş kalır
+      setErrorMsg((prev) => prev.includes("Sistem yoğunluğu") ? "" : prev);
+    } catch (err) {
+      if (err.response?.status === 429) {
+        setErrorMsg("Sistem yoğunluğu: Çok fazla tarih sorguladınız. Lütfen biraz bekleyin.");
+      }
     } finally {
       setSlotsLoading(false);
     }
@@ -104,10 +112,25 @@ const IletisimPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // --- Client-side validasyon (backend ile tutarlı) ---
+    if (!isValidName(formData.name)) {
+      setErrorMsg("Ad Soyad sadece harf içermeli ve en az 2 karakter olmalıdır.");
+      return;
+    }
+    if (!isValidEmail(formData.email)) {
+      setErrorMsg("Geçerli bir e-posta adresi giriniz.");
+      return;
+    }
+    if (!isValidPhone(formData.phone)) {
+      setErrorMsg("Telefon numarası 05XX XXX XX XX formatında olmalıdır.");
+      return;
+    }
     if (!formData.meetingTime) {
       setErrorMsg("Lütfen bir saat seçin.");
       return;
     }
+
     setLoading(true);
     setSuccessMsg("");
     setErrorMsg("");
@@ -131,7 +154,19 @@ const IletisimPage = () => {
         }
       }
     } catch (err) {
-      setErrorMsg("Bir hata oluştu. Lütfen tekrar deneyin.");
+      const status = err.response?.status;
+      if (status === 409) {
+        // Slot doldu (race condition): slotları yenile ve kullanıcıyı bilgilendir
+        setErrorMsg("Bu randevu saati az önce doldu. Lütfen başka bir saat seçin.");
+        fetchBlockedSlots(formData.meetingDate);
+        setFormData((prev) => ({ ...prev, meetingTime: "" }));
+      } else if (status === 429) {
+        setErrorMsg("Çok fazla talep gönderildi. Lütfen 1 saat sonra tekrar deneyin.");
+      } else if (status === 400 && err.response?.data?.message) {
+        setErrorMsg(err.response.data.message);
+      } else {
+        setErrorMsg("Bir hata oluştu. Lütfen tekrar deneyin.");
+      }
     } finally {
       setLoading(false);
     }
@@ -204,17 +239,17 @@ const IletisimPage = () => {
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
                     <label className={labelClass}>Adınız Soyadınız</label>
-                    <input type="text" name="name" value={formData.name} onChange={handleInputChange} required placeholder="Örn: Ahmet Yılmaz" className={inputClass} />
+                    <input type="text" name="name" value={formData.name} onChange={handleInputChange} required placeholder="Örn: Ahmet Yılmaz" maxLength={100} className={inputClass} />
                   </div>
 
                   <div className="mb-3">
                     <label className={labelClass}>E-posta Adresi</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} required placeholder="ornek@gmail.com" className={inputClass} />
+                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} required placeholder="ornek@gmail.com" maxLength={254} className={inputClass} />
                   </div>
 
                   <div className="mb-3">
                     <label className={labelClass}>Telefon Numarası</label>
-                    <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="0555..." className={inputClass} />
+                    <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="05XX XXX XX XX" pattern="^05\d{9}$" maxLength={11} className={inputClass} />
                   </div>
 
                   <div className="mb-3">
@@ -233,7 +268,7 @@ const IletisimPage = () => {
                   {/* TARİH VE SAAT SEÇİMİ */}
                   <div className="mb-3">
                     <label className={labelClass}>Tarih Seçiniz</label>
-                    <input type="date" name="meetingDate" value={formData.meetingDate} onChange={handleInputChange} min={today} required style={{ cursor: "pointer" }} className={inputClass} />
+                    <input type="date" name="meetingDate" value={formData.meetingDate} onChange={handleInputChange} min={today} max={maxDate} required style={{ cursor: "pointer" }} className={inputClass} />
                   </div>
 
                   {/* SAAT SLOT GRID */}
@@ -307,7 +342,7 @@ const IletisimPage = () => {
 
                   <div className="mb-3">
                     <label className={labelClass}>Hedefleriniz / Notunuz</label>
-                    <textarea name="message" rows="3" value={formData.message} onChange={handleInputChange} className={inputClass}></textarea>
+                    <textarea name="message" rows="3" value={formData.message} onChange={handleInputChange} maxLength={1000} className={inputClass}></textarea>
                   </div>
 
                   <button type="submit" className="w-full py-3.5 bg-gradient-to-r from-[#f39c12] to-[#d35400] text-white border-0 rounded-lg font-bold text-[1.1rem] cursor-pointer mt-2.5 shadow-[0_4px_15px_rgba(243,156,18,0.4)]" disabled={loading}>
