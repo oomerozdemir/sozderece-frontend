@@ -81,7 +81,10 @@ export default function AdminCampPage() {
     setContent((prev) => {
       const next = JSON.parse(JSON.stringify(prev));
       let obj = next;
-      for (let i = 0; i < keys.length - 1; i++) obj = obj[keys[i]];
+      for (let i = 0; i < keys.length - 1; i++) {
+        if (!obj[keys[i]] || typeof obj[keys[i]] !== "object") obj[keys[i]] = {};
+        obj = obj[keys[i]];
+      }
       obj[keys[keys.length - 1]] = value;
       return next;
     });
@@ -93,9 +96,13 @@ export default function AdminCampPage() {
       const next = JSON.parse(JSON.stringify(prev));
       const keys = arrPath.split(".");
       let obj = next;
-      for (const k of keys) obj = obj?.[k];
-      if (!obj || !obj[idx]) return prev;
-      obj[idx][key] = value;
+      for (let i = 0; i < keys.length - 1; i++) {
+        if (!obj[keys[i]] || typeof obj[keys[i]] !== "object") obj[keys[i]] = {};
+        obj = obj[keys[i]];
+      }
+      const lastKey = keys[keys.length - 1];
+      if (!Array.isArray(obj[lastKey]) || !obj[lastKey][idx]) return prev;
+      obj[lastKey][idx][key] = value;
       return next;
     });
   };
