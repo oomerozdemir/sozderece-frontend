@@ -14,6 +14,7 @@ const CONTENT_TABS = [
   { key: "howItWorks", label: "🏗 Nasıl Çalışır" },
   { key: "socialProof", label: "⭐ Sosyal Kanıt" },
   { key: "offer", label: "💰 Teklif & Form" },
+  { key: "faq", label: "❓ SSS" },
 ];
 
 const authHeaders = () => {
@@ -601,6 +602,55 @@ function OfferFormEditor({ content, setContent }) {
   );
 }
 
+function FaqEditor({ content, setContent }) {
+  const items = content.faq?.items || [];
+  return (
+    <div className="space-y-4">
+      <p className="text-xs text-[#9ca3af]">
+        Paketin altında gösterilecek SSS bölümü. Soru ve cevapları dilediğiniz gibi düzenleyebilirsiniz.
+      </p>
+      <Field label="Bölüm Başlığı">
+        <input
+          className={inp}
+          placeholder="Sık Sorulan Sorular"
+          value={content.faq?.title || ""}
+          onChange={(e) => set(setContent, "faq.title", e.target.value)}
+        />
+      </Field>
+      <div className="space-y-3">
+        {items.map((item, i) => (
+          <div key={i} className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-4 space-y-2">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs font-black text-[#64748b] uppercase tracking-wide">Soru {i + 1}</span>
+              <DelBtn onClick={() => arrDel(setContent, "faq.items", i)} />
+            </div>
+            <Field label="Soru">
+              <input
+                className={inp}
+                placeholder="Soru metnini girin..."
+                value={item.question || ""}
+                onChange={(e) => arrSet(setContent, "faq.items", i, "question", e.target.value)}
+              />
+            </Field>
+            <Field label="Cevap">
+              <textarea
+                className={`${inp} resize-none h-20`}
+                placeholder="Cevap metnini girin..."
+                value={item.answer || ""}
+                onChange={(e) => arrSet(setContent, "faq.items", i, "answer", e.target.value)}
+              />
+            </Field>
+          </div>
+        ))}
+        <AddBtn
+          onClick={() => arrAdd(setContent, "faq.items", { question: "", answer: "" })}
+          label="Soru Ekle"
+        />
+      </div>
+    </div>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────
 export default function AdminLgsPage() {
   const [tab, setTab] = useState("applications");
@@ -786,6 +836,7 @@ export default function AdminLgsPage() {
                 {contentTab === "howItWorks" && <HowItWorksEditor content={content} setContent={setContent} />}
                 {contentTab === "socialProof" && <SocialProofEditor content={content} setContent={setContent} />}
                 {contentTab === "offer" && <OfferFormEditor content={content} setContent={setContent} />}
+                {contentTab === "faq" && <FaqEditor content={content} setContent={setContent} />}
               </div>
 
               <div className="px-6 pb-6">

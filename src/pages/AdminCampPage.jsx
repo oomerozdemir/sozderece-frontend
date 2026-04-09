@@ -153,6 +153,7 @@ export default function AdminCampPage() {
     { key: "testimonials",  label: "⭐ Yorumlar" },
     { key: "offer",         label: "💰 Teklif" },
     { key: "form",          label: "📝 Form" },
+    { key: "faq",           label: "❓ SSS" },
     { key: "applications",  label: `📋 Başvurular${quotaInfo.total > 0 ? ` (${quotaInfo.total})` : ""}` },
   ];
   const tabCls = (k) => `px-3 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${tab === k ? "bg-[#100481] text-white" : "text-[#64748b] hover:bg-[#f1f5f9]"}`;
@@ -809,6 +810,58 @@ export default function AdminCampPage() {
             </div>
           </div>
         </Card>
+      )}
+
+      {/* ═══ FAQ ═══ */}
+      {tab === "faq" && (
+        <div className="space-y-4">
+          <Card title="❓ Sık Sorulan Sorular">
+            <p className="text-xs text-[#9ca3af] -mt-2">
+              Paketin altında gösterilecek SSS bölümü. Soru ve cevapları dilediğin gibi düzenleyebilirsin.
+            </p>
+            <div>
+              <Label>Bölüm Başlığı</Label>
+              <input
+                className={inp}
+                placeholder="Sık Sorulan Sorular"
+                value={content.faq?.title || ""}
+                onChange={(e) => set("faq.title", e.target.value)}
+              />
+            </div>
+            <div className="space-y-3">
+              {(content.faq?.items || []).map((item, i) => (
+                <div key={i} className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-4 space-y-2">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-black text-[#64748b] uppercase tracking-wide">Soru {i + 1}</span>
+                    <DelBtn onClick={() => arrDel("faq.items", i)} />
+                  </div>
+                  <div>
+                    <Label>Soru</Label>
+                    <input
+                      className={inp}
+                      placeholder="Soru metnini girin..."
+                      value={item.question || ""}
+                      onChange={(e) => arrSet("faq.items", i, "question", e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>Cevap</Label>
+                    <textarea
+                      className={`${inp} resize-none h-20`}
+                      placeholder="Cevap metnini girin..."
+                      value={item.answer || ""}
+                      onChange={(e) => arrSet("faq.items", i, "answer", e.target.value)}
+                    />
+                  </div>
+                </div>
+              ))}
+              <AddBtn
+                onClick={() => arrAdd("faq.items", { question: "", answer: "" })}
+                label="Soru Ekle"
+              />
+            </div>
+          </Card>
+        </div>
       )}
 
       {/* ═══ APPLICATIONS ═══ */}

@@ -5,6 +5,7 @@ import Seo from "../components/Seo";
 import useCampPage from "../hooks/useCampPage";
 import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
+import { motion } from "framer-motion";
 
 // ── Helpers ───────────────────────────────────────────────────
 function daysUntil(dateStr) {
@@ -152,6 +153,84 @@ function BoldText({ text, phrase }) {
   );
 }
 const inpCls = "w-full px-4 py-3 rounded-xl border border-[#e5e7eb] text-sm text-[#0f172a] outline-none focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
+
+function FaqAccordion({ faqData }) {
+  const [open, setOpen] = useState(null);
+  const items = faqData?.items || [];
+  const title = faqData?.title || "Sık Sorulan Sorular";
+  if (!items.length) return null;
+  return (
+    <section className="bg-gradient-to-br from-[#f8fafc] to-[#eff6ff] py-20 px-5">
+      <div className="max-w-3xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-12"
+        >
+          <span className="inline-block bg-[#eff6ff] text-[#100481] text-xs font-black px-4 py-1.5 rounded-full border border-[#bfdbfe] mb-4 uppercase tracking-widest">
+            SSS
+          </span>
+          <h2 className="text-3xl max-[640px]:text-2xl font-black text-[#0f172a] mb-3">{title}</h2>
+          <p className="text-[#64748b] text-sm max-w-xl mx-auto">
+            Aklındaki soruların cevabını burada bul. Yoksa bize ulaş.
+          </p>
+        </motion.div>
+        <div className="space-y-3">
+          {items.map((item, i) => {
+            const isOpen = open === i;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: Math.min(i * 0.07, 0.35) }}
+              >
+                <div
+                  onClick={() => setOpen(isOpen ? null : i)}
+                  className={`relative rounded-2xl border overflow-hidden cursor-pointer transition-all duration-300 ${
+                    isOpen
+                      ? "border-[#100481] shadow-[0_0_0_3px_rgba(16,4,129,0.06),0_8px_24px_rgba(16,4,129,0.08)] bg-white"
+                      : "border-[#e2e8f0] bg-white hover:border-[#100481]/30 hover:shadow-[0_4px_16px_rgba(16,4,129,0.06)]"
+                  }`}
+                >
+                  <div
+                    className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl transition-all duration-300 ${
+                      isOpen ? "bg-[#100481]" : "bg-transparent"
+                    }`}
+                  />
+                  <div className="pl-6 pr-5 py-5">
+                    <div className="flex items-center justify-between gap-4">
+                      <h3 className={`font-black text-base transition-colors duration-200 ${isOpen ? "text-[#100481]" : "text-[#0f172a]"}`}>
+                        {item.question}
+                      </h3>
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xl font-black transition-all duration-300 ${
+                          isOpen ? "bg-[#100481] text-white rotate-45" : "bg-[#f1f5f9] text-[#64748b] rotate-0"
+                        }`}
+                      >
+                        +
+                      </div>
+                    </div>
+                    <div
+                      className={`overflow-hidden transition-all duration-[400ms] ${
+                        isOpen ? "max-h-96 opacity-100 mt-3" : "max-h-0 opacity-0"
+                      }`}
+                    >
+                      <p className="text-[#475569] text-sm leading-relaxed">{item.answer}</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 // ─────────────────────────────────────────────────────────────
 export default function DenemeKampiPage() {
@@ -817,6 +896,8 @@ export default function DenemeKampiPage() {
           )}
         </div>
       </section>
+
+      <FaqAccordion faqData={content.faq} />
 
       <Footer />
     </>
