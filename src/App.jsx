@@ -30,6 +30,7 @@ const AdminCoachPage = lazy(() => import("./pages/AdminCoachPage"));
 const AdminCouponPage = lazy(() => import("./pages/AdminCouponPage"));
 const AdminCountdownPage = lazy(() => import("./pages/AdminCountdownPage"));
 const AdminPopupPage = lazy(() => import("./pages/AdminPopupPage"));
+const AdminEarlyRegistrationPage = lazy(() => import("./pages/AdminEarlyRegistrationPage"));
 const AdminConsultationSlotsPage = lazy(() => import("./pages/AdminConsultationSlotsPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 const PaymentIframePage = lazy(() => import("./pages/PaymentIframePage"));
@@ -128,6 +129,7 @@ function App() {
             <Route path="/admin/refund-requests" element={<RoleRoute allowedRoles={["admin"]}><RefundRequests /></RoleRoute>} />
             <Route path="/admin/countdown" element={<RoleRoute allowedRoles={["admin"]}><AdminCountdownPage /></RoleRoute>} />
             <Route path="/admin/popup" element={<RoleRoute allowedRoles={["admin"]}><AdminPopupPage /></RoleRoute>} />
+            <Route path="/admin/early-registration" element={<RoleRoute allowedRoles={["admin"]}><AdminEarlyRegistrationPage /></RoleRoute>} />
             <Route path="/admin/randevu-slotlari" element={<RoleRoute allowedRoles={["admin"]}><AdminConsultationSlotsPage /></RoleRoute>} />
 
             {/* Common */}

@@ -6,6 +6,8 @@ const inputCls =
   "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
 
 const PACKAGE_TYPES = [
+  { value: "yks", label: "YKS Koçluğu" },
+  { value: "lgs", label: "LGS Koçluğu" },
   { value: "tutoring_only", label: "Özel Ders" },
   { value: "hybrid_light", label: "Hibrit (Hafif)" },
   { value: "coaching_only", label: "Sadece Koçluk" },

@@ -296,6 +296,12 @@ const AdminDashboard = () => {
               ⏳ Geri Sayım
             </Link>
             <Link
+              to="/admin/early-registration"
+              className="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-4 py-2 rounded-xl text-sm font-bold no-underline transition-all"
+            >
+              🎉 Erken Kayıt
+            </Link>
+            <Link
               to="/admin/randevu-slotlari"
               className="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-4 py-2 rounded-xl text-sm font-bold no-underline transition-all"
             >

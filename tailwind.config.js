@@ -10,9 +10,17 @@ module.exports = {
           navy: "#100481",
           "navy-dark": "#00073a",
         },
+        /* ── Yeni marka renk sistemi ── */
+        lime: "#D8FF4F",
+        "deep-purple": "#7340C8",
+        "page-dark": "#0D0A2E",
+        "page-navy": "#1C1B8A",
+        "accent-orange": "#FF6B35",
       },
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
+        fredoka: ["Fredoka", "sans-serif"],
+        nunito: ["Nunito", "sans-serif"],
       },
       keyframes: {
         fadeIn: {
