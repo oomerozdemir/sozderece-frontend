@@ -1123,6 +1123,13 @@ function FaqSection() {
           >
             Bize Ulaşın →
           </a>
+          <p className="font-nunito text-[#0D0A2E]/40 text-xs mt-6">
+            YKS ve LGS hakkında resmi bilgi için{" "}
+            <a href="https://www.osym.gov.tr" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#0D0A2E]/70 transition-colors">ÖSYM</a>
+            {" "}ve{" "}
+            <a href="https://www.meb.gov.tr" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#0D0A2E]/70 transition-colors">MEB</a>
+            {" "}resmi sitelerini ziyaret edebilirsiniz.
+          </p>
         </motion.div>
       </div>
     </section>

@@ -1,12 +1,16 @@
 # https://www.robotstxt.org/robotstxt.html
 
 User-agent: *
-Disallow: /gizlilik-politikasi-kvkk
-Disallow: /iade-ve-cayma-politikasi
-Disallow: /mesafeli-hizmet-sozlesmesi
-Disallow: /q
-Disallow: /src/
+Disallow: /admin/
+Disallow: /coach/dashboard
+Disallow: /student/dashboard
+Disallow: /ogretmen/panel/
+Disallow: /hesabim
+Disallow: /orders
+Disallow: /payment
+Disallow: /sepet
+Disallow: /pre-auth
+Disallow: /talep-basarili
 Allow: /
 
-Sitemap: https://www.sozderecekocluk.com/sitemap.xml
-
+Sitemap: https://sozderecekocluk.com/sitemap.xml

@@ -11,7 +11,7 @@ const MesafeliHizmetSozlesmesi = () => {
       <Seo 
         title="Mesafeli Satış Sözleşmesi" 
         description="Sözderece Koçluk mesafeli satış sözleşmesi. Hizmet kapsamı, ödeme koşulları, tarafların hakları, cayma hakkı ve iade koşulları hakkında yasal bilgilendirme."
-        canonical="/mesafeli-satis-sozlesmesi"
+        canonical="/mesafeli-hizmet-sozlesmesi"
       />
 
       <TopBar />

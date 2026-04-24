@@ -152,7 +152,11 @@ export default App;
 
 
 /*
-paymentPage cartpage buralarda degisebilir tasarim olarak
+Yapılacaklar Listesi:
+Yks-yolculugu navbar yönlendirmesini yap isimlerini de yks 2026 ve lgs 2026 olarak düzenle.
+
+
+tasarım değişiklliklerini ana sayfa ile uyumlu olacak şekilde diğer yerlere de uygula.
 
 
 seo aramalarında nasıl daha iyi konumlanabiliriz

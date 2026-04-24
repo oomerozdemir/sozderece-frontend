@@ -44,18 +44,21 @@ async function generateSitemap() {
   // 2. SABİT SAYFALAR
   // ------------------------------------
   const staticRoutes = [
-    { loc: "/", priority: 1.0, changefreq: "daily" },
-    { loc: "/hakkimizda", priority: 0.8, changefreq: "yearly" },
-    { loc: "/ekibimiz", priority: 0.7, changefreq: "yearly" },
-    { loc: "/paket-detay", priority: 0.9, changefreq: "daily" },
-    { loc: "/sss", priority: 0.6, changefreq: "yearly" },
-    { loc: "/blog", priority: 0.9, changefreq: "weekly" },
-    { loc: "/ogretmenler", priority: 0.9, changefreq: "daily" },
-    { loc: "/iletisim", priority: 0.6, changefreq: "yearly" },
-    // Yasal Sayfalar
-    { loc: "/mesafeli-satis-sozlesmesi", priority: 0.3, changefreq: "yearly" },
-    { loc: "/gizlilik-politikasi", priority: 0.3, changefreq: "yearly" },
-    { loc: "/iade-ve-cayma", priority: 0.3, changefreq: "yearly" },
+    { loc: "/",                           priority: 1.0, changefreq: "daily" },
+    { loc: "/hakkimizda",                 priority: 0.8, changefreq: "yearly" },
+    { loc: "/ekibimiz",                   priority: 0.7, changefreq: "yearly" },
+    { loc: "/paket-detay",                priority: 0.9, changefreq: "daily" },
+    { loc: "/sss",                        priority: 0.7, changefreq: "monthly" },
+    { loc: "/blog",                       priority: 0.9, changefreq: "weekly" },
+    { loc: "/ogretmenler",                priority: 0.9, changefreq: "daily" },
+    { loc: "/ucretsiz-on-gorusme",        priority: 0.8, changefreq: "yearly" },
+    { loc: "/basvuru",                    priority: 0.6, changefreq: "yearly" },
+    { loc: "/lgs-hazirlik",               priority: 0.9, changefreq: "weekly" },
+    { loc: "/deneme-kampi",               priority: 0.9, changefreq: "weekly" },
+    // Yasal Sayfalar — düzeltilmiş URL'ler
+    { loc: "/mesafeli-hizmet-sozlesmesi", priority: 0.3, changefreq: "yearly" },
+    { loc: "/gizlilik-politikasi-kvkk",   priority: 0.3, changefreq: "yearly" },
+    { loc: "/iade-ve-cayma-politikasi",   priority: 0.3, changefreq: "yearly" },
   ];
 
   staticRoutes.forEach(pushUrl);

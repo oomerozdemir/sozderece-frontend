@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import axios from "../utils/axios";
 import Footer from "../components/Footer";
 import useCart from "../hooks/useCart";
+import Seo from "../components/Seo";
 
 const fadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.55 } };
 const inp = "w-full px-4 py-3 rounded-xl border border-[#e5e7eb] text-sm text-[#0f172a] outline-none focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
@@ -192,6 +193,11 @@ export default function LgsHazirlikPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white font-poppins">
+      <Seo
+        title="LGS'ye Hazırlık | Kişisel Öğrenci Koçluğu"
+        description="LGS sürecinde günlük WhatsApp takibi, deneme analizi ve veli raporuyla çocuğunuzun sınava hazırlanmasını sağlıyoruz. Sözderece LGS Koçluğu."
+        canonical="/lgs-hazirlik"
+      />
       {/* ── Navbar ── */}
       <header className="bg-white border-b border-[#f1f5f9] sticky top-0 z-50 shadow-sm">
         <div className="max-w-5xl mx-auto px-5 py-3 flex items-center justify-between">
@@ -730,6 +736,16 @@ export default function LgsHazirlikPage() {
       </section>
 
       <FaqAccordion faqData={content?.faq} />
+
+      <div className="bg-white border-t border-gray-100 py-4 text-center">
+        <p className="text-xs text-gray-400">
+          Resmi LGS sınav takvimi ve duyurular için{" "}
+          <a href="https://www.meb.gov.tr" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600 transition-colors">
+            Milli Eğitim Bakanlığı
+          </a>
+          {" "}sayfasını ziyaret edebilirsiniz.
+        </p>
+      </div>
 
       <Footer />
 

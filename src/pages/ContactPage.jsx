@@ -178,8 +178,9 @@ const IletisimPage = () => {
   return (
     <>
       <Seo
-        title="İletişim & Ücretsiz Ön Görüşme"
-        description="Sözderece Koçluk ile hedeflerine ulaşmak için ilk adımı at."
+        title="Ücretsiz Ön Görüşme"
+        description="Sözderece Koçluk ile hedeflerine ulaşmak için ilk adımı at. Uzman koçlarımızla ücretsiz tanışma görüşmesi planla."
+        canonical="/ucretsiz-on-gorusme"
       />
 
       <TopBar />

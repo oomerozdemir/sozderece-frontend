@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
+import Seo from "../components/Seo";
 
 const inputCls = "w-full py-3 px-4 border-2 border-[#e2e8f0] rounded-lg text-[15px] font-[inherit] transition-all outline-none focus:border-[#100481] focus:shadow-[0_0_0_3px_rgba(16,4,129,0.1)] bg-white max-[480px]:text-sm max-[480px]:py-[10px] max-[480px]:px-[14px]";
 
@@ -182,6 +183,11 @@ const InstructorApplicationPage = () => {
 
   return (
     <>
+      <Seo
+        title="Sözderece'de Koç Başvurusu"
+        description="Üniversite öğrencisi misin? Sözderece Koçluk bünyesinde LGS ve YKS öğrencilerine koçluk yap. Başvuru formu ile hemen başvur."
+        canonical="/basvuru"
+      />
       <Navbar />
 
       <motion.div
