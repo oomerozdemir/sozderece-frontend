@@ -1,277 +1,374 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { FaChevronRight, FaChevronLeft, FaTimes } from "react-icons/fa";
+import React from "react";
+import { motion } from "framer-motion";
 
-const DYNAMIC_TEXTS = [
-  "Sana Özel Detaylı Programlar ve Günlük Takip",
-  "Ön Görüşme Fırsatı",
-  "Derece Öğrencisi Koçlarla Birebir Çalışma",
-  "Seviye Analizi ve Hedef Belirleme",
-  "YKS ve LGS'de Netlerini Zirveye Taşı",
+const WA_LINK = "https://wa.me/905312546701?text=S%C4%B0STEM";
+
+const fadeUp = {
+  initial: { opacity: 0, y: 32 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.55, ease: "easeOut" },
+};
+
+const SOCIAL_PROOF = [
+  {
+    quote: "1. ayda +17 net yaptım. Koçum her gün takip etti, hiç kaçırmadım.",
+    name: "Şevval",
+    role: "ÖĞRENCİ",
+    badge: "+17 NET · 1. AY",
+    avatar: "Ş",
+    avatarBg: "#1C1B8A",
+    year: "TYT-AYT 2024",
+  },
+  {
+    quote: "Çocuğumun motivasyonu çok arttı. Veli raporu sayesinde süreci yakından takip edebildim.",
+    name: "Serpil H.",
+    role: "VELİ",
+    badge: "LGS 2025",
+    avatar: "S",
+    avatarBg: "#7340C8",
+    year: "LGS 2025",
+  },
+  {
+    quote: "Deneme analizleri sayesinde hep aynı hataları yapıyordum fark ettim ve artık yapmıyorum.",
+    name: "Ege K.",
+    role: "ÖĞRENCİ",
+    badge: "+18 NET",
+    avatar: "E",
+    avatarBg: "#FF6B35",
+    year: "TYT 2024",
+  },
+  {
+    quote: "Hedefimi koydu, programa bağladı. Sınava en hazır gittiğim yıl oldu bu.",
+    name: "Mert A.",
+    role: "ÖĞRENCİ",
+    badge: "+22 NET",
+    avatar: "M",
+    avatarBg: "#1C1B8A",
+    year: "AYT 2024",
+  },
+  {
+    quote: "LGS puanı beklentimizin çok üzerinde çıktı. Sistematik çalışma fark yaratıyor.",
+    name: "Ayşe K.",
+    role: "VELİ",
+    badge: "LGS 2024",
+    avatar: "A",
+    avatarBg: "#7340C8",
+    year: "LGS 2024",
+  },
 ];
 
-const CATEGORIES = [
-  {
-    label: "Geri Dönüşler",
-    items: [
-      { src: "/images/geridonus.png", alt: "Sözderece Koçluk Öğrenci Geri Dönüşleri" },
-      { src: "/images/memnuniyet1.png", alt: "YKS ve LGS Koçluk Veli Memnuniyeti" },
-      { src: "/images/memnuniyet2.png", alt: "Online Koçluk Başarı Mesajları" },
-      { src: "/images/memnuniyet3.png", alt: "Öğrenci Koçluğu Tavsiyeleri" },
-    ],
-  },
-  {
-    label: "Program Örnekleri",
-    items: [
-      { src: "/images/ornekProgram.png", alt: "Sana Özel YKS Ders Çalışma Programı Örneği" },
-      { src: "/images/ornekProgram2.png", alt: "Haftalık LGS Ders Programı Taslağı" },
-    ],
-  },
-  {
-    label: "Çalışma Masaları",
-    items: [
-      { src: "/images/ogrencilerinCalismalari.jpg", alt: "YKS Derece Öğrencilerinin Çalışma Masası" },
-    ],
-  },
-];
+const MARQUEE_CARDS = [...SOCIAL_PROOF, ...SOCIAL_PROOF];
 
 export default function HeroSection() {
-  const [index, setIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState(null);
-  const [galleryOpen, setGalleryOpen] = useState(false);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % DYNAMIC_TEXTS.length);
-    }, 3500);
-    return () => clearInterval(timer);
-  }, []);
-
-  const closeModal = () => setSelectedIndex(null);
-
-  const currentItems = CATEGORIES[activeTab].items;
-
-  const showNext = useCallback((e) => {
-    if (e) e.stopPropagation();
-    setSelectedIndex((prev) => (prev + 1) % currentItems.length);
-  }, [currentItems.length]);
-
-  const showPrev = useCallback((e) => {
-    if (e) e.stopPropagation();
-    setSelectedIndex((prev) => (prev - 1 + currentItems.length) % currentItems.length);
-  }, [currentItems.length]);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (selectedIndex === null) return;
-      if (e.key === "ArrowRight") showNext();
-      if (e.key === "ArrowLeft") showPrev();
-      if (e.key === "Escape") closeModal();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedIndex, showNext, showPrev]);
+  const stats = [
+    { value: "500+", label: "Öğrenci" },
+    { value: "%94", label: "Hedef Başarı" },
+    { value: "4.9★", label: "Veli Puanı" },
+  ];
 
   return (
-    <section className="relative bg-gradient-to-br from-[#f8f9fa] to-[#e9ecef] pt-5 pb-0 flex flex-col justify-center gap-[15px] overflow-hidden max-[768px]:pt-10">
+    <section
+      className="relative overflow-hidden"
+      style={{
+        background:
+          "radial-gradient(ellipse 80% 60% at 60% 40%, #3d1a80 0%, #1A0A40 55%, #0d0520 100%)",
+      }}
+    >
+      <style>{`
+        @keyframes heroOrbMove  { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(40px,-30px) scale(1.06)} 66%{transform:translate(-20px,20px) scale(0.96)} }
+        @keyframes heroSparkle  { 0%,100%{opacity:0.15;transform:scale(0.8)} 50%{opacity:1;transform:scale(1.2)} }
+        @keyframes heroFloat1   { 0%,100%{transform:translateY(0px) rotate(0deg)} 50%{transform:translateY(-18px) rotate(6deg)} }
+        @keyframes heroFloat2   { 0%,100%{transform:translateY(0px) rotate(0deg)} 50%{transform:translateY(-12px) rotate(-8deg)} }
+        @keyframes heroFloat3   { 0%,100%{transform:translateY(0px) rotate(0deg)} 50%{transform:translateY(-22px) rotate(4deg)} }
+        @keyframes heroShimmer  { 0%{background-position:200% center} 100%{background-position:-200% center} }
+        @keyframes heroPulse    { 0%{box-shadow:0 8px 28px rgba(255,107,53,0.45),0 0 0 0 rgba(255,107,53,0.5)} 70%{box-shadow:0 8px 28px rgba(255,107,53,0.45),0 0 0 20px rgba(255,107,53,0)} 100%{box-shadow:0 8px 28px rgba(255,107,53,0.45),0 0 0 0 rgba(255,107,53,0)} }
+        @keyframes heroMarquee  { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+      `}</style>
 
-      {/* HERO METIN */}
-      <div className="max-w-[1000px] mx-auto px-5 text-center flex flex-col justify-center items-center z-10 max-[1100px]:px-[30px]">
-        <div>
-          <h1 className="text-[2rem] font-semibold text-[#100481] mb-[5px] tracking-[1px] uppercase max-[1100px]:text-[1.6rem] max-[1100px]:mb-[10px] max-[480px]:text-[1.2rem]">
-            Sözderece Koçluk İle
-          </h1>
+      {/* Orb 1 */}
+      <div style={{
+        position: "absolute", top: -120, right: 80,
+        width: 480, height: 480, borderRadius: "50%",
+        background: "#4a1da0", filter: "blur(90px)", opacity: 0.35,
+        animation: "heroOrbMove 12s ease-in-out infinite",
+        pointerEvents: "none",
+      }} />
+      {/* Orb 2 */}
+      <div style={{
+        position: "absolute", bottom: -80, left: 100,
+        width: 320, height: 320, borderRadius: "50%",
+        background: "#FF6B35", filter: "blur(100px)", opacity: 0.18,
+        animation: "heroOrbMove 16s ease-in-out infinite reverse",
+        pointerEvents: "none",
+      }} />
 
-          <div className="h-[60px] flex items-center justify-center mb-[10px] max-[1100px]:h-auto max-[1100px]:min-h-[70px] max-[1100px]:mb-[15px] max-[768px]:h-auto max-[768px]:min-h-[60px]">
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={index}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -20, opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-[2.5rem] font-extrabold bg-gradient-to-tr from-[#100481] to-[#ff9203] bg-clip-text text-transparent m-0 leading-[1.1] max-[1100px]:text-[2.2rem] max-[1100px]:leading-[1.2] max-[768px]:text-[1.8rem] max-[480px]:text-[1.3rem] max-[480px]:leading-[1.3]"
+      {/* Star dots */}
+      {[[120,90,5,0],[300,220,4,0.5],[80,400,6,1],[500,60,3,0.8],[420,330,5,1.4],[650,180,4,0.3],[180,560,5,1.8],[760,90,3,0.6]].map(([x,y,s,d],i) => (
+        <div key={i} style={{
+          position: "absolute", left: x, top: y,
+          width: s, height: s, borderRadius: "50%",
+          background: "#D8FF4F",
+          animation: `heroSparkle ${2+d}s ease-in-out infinite`,
+          animationDelay: `${d}s`,
+          pointerEvents: "none", zIndex: 0,
+        }} />
+      ))}
+
+      {/* Main content */}
+      <div className="max-w-[1200px] mx-auto px-5 pt-20 pb-10 max-[768px]:pt-14 max-[768px]:pb-8 w-full" style={{ position: "relative", zIndex: 1 }}>
+        <div className="grid grid-cols-[1fr_auto] gap-16 items-center max-[960px]:grid-cols-1">
+
+          {/* Sol — metin */}
+          <div>
+            <motion.div {...fadeUp} className="mb-7">
+              <span style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                background: "rgba(216,255,79,0.12)",
+                border: "1px solid rgba(216,255,79,0.3)",
+                borderRadius: 999, padding: "7px 16px",
+              }}>
+                <span style={{
+                  width: 7, height: 7, borderRadius: "50%",
+                  background: "#D8FF4F", display: "inline-block",
+                  animation: "heroSparkle 1.5s ease-in-out infinite",
+                }} />
+                <span className="font-fredoka text-[#D8FF4F] text-sm font-semibold tracking-[0.1em] uppercase">
+                  LGS & YKS Koçluğu
+                </span>
+              </span>
+            </motion.div>
+
+            <motion.h1
+              {...fadeUp}
+              transition={{ ...fadeUp.transition, delay: 0.1 }}
+              className="font-fredoka text-[72px] max-[900px]:text-[52px] max-[640px]:text-[42px] max-[400px]:text-[34px] leading-[1.05] text-white mb-6"
+              style={{ letterSpacing: "-0.5px", maxWidth: 640 }}
+            >
+              Sınavda değil,{" "}
+              <span style={{
+                background: "linear-gradient(90deg, #D8FF4F, #ffffff, #D8FF4F)",
+                backgroundSize: "200% auto",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                animation: "heroShimmer 3s linear infinite",
+              }}>başarıda</span>{" "}
+              ol.
+            </motion.h1>
+
+            <motion.p
+              {...fadeUp}
+              transition={{ ...fadeUp.transition, delay: 0.15 }}
+              className="font-nunito font-bold text-white/65 text-[19px] max-[640px]:text-base leading-relaxed mb-10"
+              style={{ maxWidth: 520 }}
+            >
+              Kişiye özel koçluk, haftalık takip ve deneme analizleriyle LGS & YKS'ye hazırlan. Sistematik, stressiz, sonuç odaklı.
+            </motion.p>
+
+            <motion.div
+              {...fadeUp}
+              transition={{ ...fadeUp.transition, delay: 0.24 }}
+              className="flex flex-wrap gap-4 mb-14"
+            >
+              <a
+                href={WA_LINK}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 text-white font-fredoka font-bold text-[18px] px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
+                style={{
+                  background: "#FF6B35",
+                  animation: "heroPulse 2.5s ease-out infinite",
+                  letterSpacing: "0.3px",
+                }}
               >
-                {DYNAMIC_TEXTS[index]}
-              </motion.p>
-            </AnimatePresence>
+                Ücretsiz Tanışma Görüşmesi
+              </a>
+              <a
+                href="#nasil-calisir"
+                className="inline-flex items-center gap-2 text-white font-fredoka font-semibold text-[16px] px-7 py-4 rounded-full no-underline transition-all hover:bg-white/10"
+                style={{ border: "1.5px solid rgba(255,255,255,0.25)" }}
+              >
+                Nasıl Çalışır?
+              </a>
+            </motion.div>
+
+            <div className="flex gap-8">
+              {stats.map((s, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
+                >
+                  <div className="font-fredoka font-bold text-[#D8FF4F] text-[28px] leading-none">{s.value}</div>
+                  <div className="font-nunito font-bold text-white/50 text-[13px] mt-1 tracking-wide">{s.label}</div>
+                </motion.div>
+              ))}
+            </div>
           </div>
 
-          <p className="text-[1.1rem] text-[#666] max-w-[600px] mx-auto mb-[25px] leading-[1.5] max-[480px]:text-[0.95rem] max-[480px]:mb-4 max-[480px]:px-2">
-            YKS ve LGS sürecinde kaybolma! Derece öğrencisi koçlarımızla tanış,
-            seviye analizi ve sana özel programlarla netlerini zirveye taşı.
-          </p>
+          {/* Sağ — floating kartlar */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="flex-shrink-0 max-[960px]:hidden"
+          >
+            <div className="relative" style={{ width: 390, height: 440 }}>
 
-          <div className="flex gap-5 justify-center flex-wrap max-[480px]:gap-3">
-            <a
-              href="/ucretsiz-on-gorusme"
-              className="bg-[#f39c12] text-white py-4 px-8 text-[1.1rem] font-bold rounded-[50px] no-underline flex items-center gap-[10px] transition shadow-[0_10px_20px_rgba(243,156,18,0.3)] hover:-translate-y-[3px] hover:shadow-[0_15px_30px_rgba(243,156,18,0.4)] max-[768px]:w-full max-[768px]:justify-center"
-            >
-              Ön Görüşme Al <FaChevronRight />
-            </a>
-            <a
-              href="/paket-detay"
-              className="bg-white text-[#0f2a4a] border-2 border-[#0f2a4a] py-[14px] px-8 text-[1.1rem] font-bold rounded-[50px] no-underline transition hover:bg-[#0f2a4a] hover:text-white max-[768px]:w-full max-[768px]:justify-center"
-            >
-              Paketleri İncele
-            </a>
-          </div>
+              {/* Glow ring */}
+              <div style={{
+                position: "absolute", top: 60, left: 10,
+                width: 380, height: 380, borderRadius: "50%",
+                background: "#4a1da0", filter: "blur(80px)", opacity: 0.28,
+                animation: "heroOrbMove 10s ease-in-out infinite",
+                pointerEvents: "none",
+              }} />
+
+              {/* Ana kart — haftalık plan */}
+              <div style={{
+                position: "absolute", top: 70, left: 40,
+                width: 310,
+                background: "rgba(255,255,255,0.06)",
+                backdropFilter: "blur(20px)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                borderRadius: 28, padding: "28px 24px",
+                animation: "heroFloat1 5s ease-in-out infinite",
+                boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
+              }}>
+                <div className="font-fredoka font-bold text-[#D8FF4F] text-sm tracking-[0.12em] uppercase mb-4">
+                  Bu Haftanın Planı
+                </div>
+                {[
+                  { text: "Mat: Türevler — 2 ders", done: true },
+                  { text: "Fizik: Elektrik — 1 ders", done: true },
+                  { text: "Deneme Analizi — Cuma", done: false },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 mb-3.5">
+                    <div style={{
+                      width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
+                      background: item.done ? "#D8FF4F" : "rgba(255,255,255,0.1)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      {item.done && (
+                        <svg width="11" height="11" viewBox="0 0 12 12">
+                          <polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                      )}
+                    </div>
+                    <span className="font-nunito font-bold text-sm" style={{ color: item.done ? "#fff" : "rgba(255,255,255,0.45)" }}>
+                      {item.text}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Turuncu rozet — net artışı */}
+              <div style={{
+                position: "absolute", top: 0, left: 0,
+                background: "#FF6B35", borderRadius: 20, padding: "16px 22px",
+                animation: "heroFloat2 4s ease-in-out infinite",
+                boxShadow: "0 12px 30px rgba(255,107,53,0.5)",
+              }}>
+                <div className="font-fredoka font-bold text-white text-[28px] leading-none">+47</div>
+                <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">Net artışı</div>
+              </div>
+
+              {/* Sarı rozet — koç */}
+              <div style={{
+                position: "absolute", bottom: 10, right: 0,
+                background: "rgba(216,255,79,0.96)", borderRadius: 18, padding: "14px 20px",
+                animation: "heroFloat3 6s ease-in-out infinite",
+                boxShadow: "0 10px 24px rgba(216,255,79,0.35)",
+              }}>
+                <div className="font-fredoka font-bold text-[#0D0A2E] text-[15px] leading-snug">Koçunla bugün</div>
+                <div className="font-fredoka font-bold text-[#0D0A2E] text-[15px]">görüş 🎯</div>
+              </div>
+
+            </div>
+          </motion.div>
         </div>
       </div>
 
-      {/* --- GALERİ BÖLÜMÜ --- */}
-      <div className="w-full bg-white border-t border-[#eee] mt-5 px-5 md:px-10">
+      {/* Sosyal kanıt marquee şeridi */}
+      <div
+        className="relative w-full overflow-hidden"
+        style={{
+          borderTop: "1px solid rgba(255,255,255,0.08)",
+          background: "rgba(0,0,0,0.25)",
+          paddingTop: 20,
+          paddingBottom: 20,
+        }}
+      >
+        {/* Sol fade */}
+        <div style={{
+          position: "absolute", left: 0, top: 0, bottom: 0, width: 80, zIndex: 2,
+          background: "linear-gradient(to right, rgba(13,5,32,0.95), transparent)",
+          pointerEvents: "none",
+        }} />
+        {/* Sağ fade */}
+        <div style={{
+          position: "absolute", right: 0, top: 0, bottom: 0, width: 80, zIndex: 2,
+          background: "linear-gradient(to left, rgba(13,5,32,0.95), transparent)",
+          pointerEvents: "none",
+        }} />
 
-        {/* AÇMA/KAPAMA BUTONU */}
-        <button
-          onClick={() => setGalleryOpen((prev) => !prev)}
-          className="w-full flex items-center justify-center gap-2 py-5 text-[#0f2a4a] font-semibold text-sm cursor-pointer bg-transparent border-0 hover:text-[#100481] transition-colors"
+        <div
+          style={{
+            display: "flex",
+            gap: 16,
+            animation: "heroMarquee 28s linear infinite",
+            width: "max-content",
+          }}
         >
-          Örnek Çalışmalarımız
-          <motion.span
-            animate={{ rotate: galleryOpen ? 90 : 0 }}
-            transition={{ duration: 0.25 }}
-            className="inline-flex"
-          >
-            <FaChevronRight />
-          </motion.span>
-        </button>
-
-        {/* KATEGORİLİ GALERİ */}
-        <AnimatePresence initial={false}>
-          {galleryOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.35, ease: "easeInOut" }}
-              className="overflow-hidden"
+          {MARQUEE_CARDS.map((item, i) => (
+            <div
+              key={i}
+              style={{
+                flexShrink: 0,
+                width: 280,
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: 16,
+                padding: "16px 18px",
+              }}
             >
-              <div className="pb-8">
-                {/* SEKMELER */}
-                <div className="flex justify-center gap-3 mb-7 flex-wrap">
-                  {CATEGORIES.map((cat, i) => (
-                    <button
-                      key={i}
-                      onClick={() => { setActiveTab(i); setSelectedIndex(null); }}
-                      className={`py-2 px-6 rounded-full font-semibold text-sm transition-all border-2 cursor-pointer ${
-                        activeTab === i
-                          ? "bg-[#100481] text-white border-[#100481] shadow-[0_4px_12px_rgba(16,4,129,0.25)]"
-                          : "bg-white text-[#0f2a4a] border-[#0f2a4a] hover:bg-[#0f2a4a] hover:text-white"
-                      }`}
-                    >
-                      {cat.label}
-                    </button>
-                  ))}
+              {/* Stars */}
+              <div className="flex gap-0.5 mb-2">
+                {[1,2,3,4,5].map(n => (
+                  <svg key={n} width="13" height="13" viewBox="0 0 24 24" fill="#D8FF4F">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                ))}
+              </div>
+              <p className="font-nunito text-white/75 text-[13px] leading-snug mb-3 line-clamp-2">
+                "{item.quote}"
+              </p>
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center font-fredoka font-bold text-white text-sm flex-shrink-0"
+                  style={{ background: item.avatarBg }}
+                >
+                  {item.avatar}
                 </div>
-
-                {/* RESİMLER */}
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeTab}
-                    className="max-w-[1100px] mx-auto"
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -16 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {/* MOBİL: 1 veya 2 sütunlu grid */}
-                    <div className="grid grid-cols-2 gap-3 md:hidden max-[360px]:grid-cols-1">
-                      {currentItems.map((item, i) => (
-                        <motion.div
-                          key={i}
-                          className="rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.1)] cursor-pointer active:scale-95 transition-transform"
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.25, delay: i * 0.06 }}
-                          onClick={() => setSelectedIndex(i)}
-                        >
-                          <img src={item.src} alt={item.alt} loading="lazy" className="w-full h-auto block" />
-                        </motion.div>
-                      ))}
-                    </div>
-
-                    {/* MASAÜSTÜ: grid */}
-                    <div
-                      className="hidden md:grid gap-4"
-                      style={{ gridTemplateColumns: `repeat(${Math.min(currentItems.length, 4)}, minmax(0, 1fr))` }}
-                    >
-                      {currentItems.map((item, i) => (
-                        <motion.div
-                          key={i}
-                          className="rounded-xl overflow-hidden shadow-[0_8px_20px_rgba(0,0,0,0.1)] cursor-zoom-in bg-[#f8f9fa] flex items-center justify-center h-[300px]"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3, delay: i * 0.08 }}
-                          whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
-                          onClick={() => setSelectedIndex(i)}
-                        >
-                          <img src={item.src} alt={item.alt} loading="lazy" className="w-full h-full object-contain" />
-                        </motion.div>
-                      ))}
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
+                <div>
+                  <div className="font-fredoka font-bold text-white text-[13px] leading-none">{item.name}</div>
+                  <div className="font-nunito text-white/45 text-[11px] mt-0.5">{item.role} · {item.year}</div>
+                </div>
+                <div
+                  className="ml-auto font-fredoka font-bold text-[11px] px-2 py-0.5 rounded-full flex-shrink-0"
+                  style={{ background: "rgba(216,255,79,0.15)", color: "#D8FF4F", border: "1px solid rgba(216,255,79,0.3)" }}
+                >
+                  {item.badge}
+                </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
+          ))}
+        </div>
       </div>
-
-      {/* --- SLIDER MODAL --- */}
-      <AnimatePresence>
-        {selectedIndex !== null && (
-          <motion.div
-            className="fixed inset-0 bg-[rgba(0,0,0,0.85)] z-[2000] flex justify-center items-center p-5 backdrop-blur-[5px]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={closeModal}
-          >
-            <button
-              className="absolute top-1/2 -translate-y-1/2 left-[30px] bg-white/[0.15] border border-white/20 text-white w-[50px] h-[50px] rounded-full flex items-center justify-center text-[1.5rem] cursor-pointer z-[2001] transition hover:bg-white/40 hover:scale-110 max-[768px]:w-11 max-[768px]:h-11 max-[768px]:text-[1.2rem] max-[768px]:bg-black/50 max-[768px]:left-[10px]"
-              onClick={showPrev}
-            >
-              <FaChevronLeft />
-            </button>
-
-            <motion.div
-              className="relative max-w-[90%] max-h-[90vh] shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-[10px] overflow-hidden bg-black flex flex-col items-center"
-              onClick={(e) => e.stopPropagation()}
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-            >
-              <button
-                className="absolute top-[15px] right-[15px] bg-white/20 border-0 text-white w-10 h-10 rounded-full text-[1.2rem] cursor-pointer flex items-center justify-center transition hover:bg-white/40 z-10"
-                onClick={closeModal}
-              >
-                <FaTimes />
-              </button>
-              <motion.img
-                key={selectedIndex}
-                src={currentItems[selectedIndex].src}
-                alt={currentItems[selectedIndex].alt}
-                className="w-full h-auto max-h-[85vh] block object-contain max-[768px]:max-h-[70vh]"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3 }}
-              />
-              <div className="absolute bottom-[10px] bg-black/60 text-white py-[5px] px-3 rounded-[20px] text-[0.9rem] font-medium pointer-events-none">
-                {selectedIndex + 1} / {currentItems.length}
-              </div>
-            </motion.div>
-
-            <button
-              className="absolute top-1/2 -translate-y-1/2 right-[30px] bg-white/[0.15] border border-white/20 text-white w-[50px] h-[50px] rounded-full flex items-center justify-center text-[1.5rem] cursor-pointer z-[2001] transition hover:bg-white/40 hover:scale-110 max-[768px]:w-11 max-[768px]:h-11 max-[768px]:text-[1.2rem] max-[768px]:bg-black/50 max-[768px]:right-[10px]"
-              onClick={showNext}
-            >
-              <FaChevronRight />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 }

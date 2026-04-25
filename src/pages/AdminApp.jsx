@@ -4,15 +4,19 @@ import { UserList } from "../components/UserList";
 import { CreateUser } from "../components/CreateUser";
 import { EditUser } from "../components/EditUser";
 import AdminDashboard from "../components/AdminDashboard";
+import Seo from "../components/Seo";
 
 const dataProvider = simpleRestProvider(`${process.env.REACT_APP_API_URL}/api`);
 
 
 const AdminApp = () => {
   return (
-    <Admin dashboard={AdminDashboard} dataProvider={dataProvider}>
-      <Resource name="users" list={UserList} create={CreateUser} edit={EditUser} />
-    </Admin>
+    <>
+      <Seo noindex />
+      <Admin dashboard={AdminDashboard} dataProvider={dataProvider}>
+        <Resource name="users" list={UserList} create={CreateUser} edit={EditUser} />
+      </Admin>
+    </>
   );
 };
 

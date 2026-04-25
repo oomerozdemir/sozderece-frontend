@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
 
 import CountdownPricingBanner from "./CountdownPricingBanner";
 import {
@@ -14,261 +9,93 @@ import {
   isExamPriceActive,
   getExamPrice,
   getExamDaysLeft,
-  getExamDailyCost,
-  getExamSavings,
 } from "../utils/promoUtils";
 
 const WA_LINK = "https://wa.me/905312546701?text=S%C4%B0STEM";
 
-// ─────────────────────────────────────────
-// Fiyat gösterimi
-// ─────────────────────────────────────────
-function PriceBlock({ p, activePlan }) {
-  if (activePlan) {
+const STATIC_FEATURES = [
+  'Hızlı Net Getiren "Banko Konu" Odaklı Planlama',
+  'Takıldığın An Ulaşabileceğin Birebir WhatsApp İletişimi',
+  'Veliyi "Hadi Ders Çalış" Yükünden Kurtaran Düzenli Raporlama',
+  'Evdeki Sınav Kavgalarını Bitiren Profesyonel Takip Sistemi',
+  'Yanlışlarını Doğruya Çeviren Haftalık Branş Denemesi Analizleri',
+  'Sıfırdan Başlayanlara Özel "Masaya Oturma Disiplini" Rutinleri',
+];
+
+function PriceDisplay({ pkg }) {
+  if (!pkg) {
     return (
-      <div className="text-center">
-        {activePlan.oldPriceText && (
-          <div className="font-nunito text-[#94a3b8] text-sm line-through mb-0.5">
-            {activePlan.oldPriceText}
-          </div>
-        )}
-        {activePlan.badge && (
-          <span className="inline-block mb-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#dcfce7] text-[#166534]">
-            {activePlan.badge}
-          </span>
-        )}
-        <div className="font-fredoka text-[#1C1B8A] text-4xl leading-none">
-          {activePlan.priceText || "—"}
-        </div>
-        {activePlan.durationText && (
-          <div className="font-nunito text-[#94a3b8] text-xs mt-1">{activePlan.durationText}</div>
-        )}
+      <div className="font-fredoka font-bold text-[#D8FF4F] text-[52px] leading-none">
+        Görüşme al →
       </div>
     );
   }
 
-  const examActive = isExamPriceActive(p);
-  const promoActive = !examActive && isPromoActive(p);
+  const examActive = isExamPriceActive(pkg);
+  const promoActive = !examActive && isPromoActive(pkg);
 
   if (examActive) {
-    const price = getExamPrice(p);
-    const days = getExamDaysLeft(p);
-    const rate = p.examDiscountRate ?? 5;
-    const dailyCost = getExamDailyCost(p);
-    const savings = getExamSavings(p);
+    const price = getExamPrice(pkg);
+    const days = getExamDaysLeft(pkg);
     return (
-      <div className="text-center">
-        <div className="font-nunito text-[#94a3b8] text-sm line-through mb-0.5">
-          {p.priceText || `${p.price}₺`}
+      <div>
+        <div className="font-nunito font-bold text-sm mb-1" style={{ color: "rgba(216,255,79,0.45)", textDecoration: "line-through" }}>
+          {pkg.priceText || `${pkg.price}₺`}
         </div>
-        <div className="font-fredoka text-[#1C1B8A] text-4xl leading-none">{price}₺</div>
-        <span className="inline-block mt-1.5 bg-[#dbeafe] text-[#1e40af] font-nunito font-bold text-[11px] px-3 py-1 rounded-full">
-          Sınava {days} gün — %{rate} indirimli
+        <div className="flex items-start gap-1">
+          <span className="font-fredoka font-bold text-[22px] mt-3" style={{ color: "rgba(216,255,79,0.75)" }}>₺</span>
+          <span className="font-fredoka font-bold text-[#D8FF4F] leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{price}</span>
+        </div>
+        <span className="inline-block mt-2 font-nunito font-bold text-[12px] px-3 py-1 rounded-full text-[#D8FF4F]" style={{ background: "rgba(216,255,79,0.15)" }}>
+          Sınava {days} gün — indirimli
         </span>
-        {dailyCost && (
-          <p className="font-nunito text-[#94a3b8] text-[11px] mt-1">
-            Günlük <strong>{dailyCost}₺</strong>
-          </p>
-        )}
-        {savings && (
-          <span className="inline-block mt-1 bg-[#dcfce7] text-[#166534] text-[11px] font-bold px-2.5 py-0.5 rounded-full">
-            {savings}₺ tasarruf
-          </span>
-        )}
       </div>
     );
   }
 
   if (promoActive) {
     return (
-      <div className="text-center">
-        <div className="font-nunito text-[#94a3b8] text-sm line-through mb-0.5">
-          {p.priceText || `${p.price}₺`}
+      <div>
+        <div className="font-nunito font-bold text-sm mb-1" style={{ color: "rgba(216,255,79,0.45)", textDecoration: "line-through" }}>
+          {pkg.priceText || `${pkg.price}₺`}
         </div>
-        <div className="font-fredoka text-[#1C1B8A] text-4xl leading-none">{p.promoPrice}₺</div>
-        <span className="inline-block mt-1.5 bg-[#fef9c3] text-[#854d0e] font-nunito font-bold text-[11px] px-3 py-1 rounded-full">
-          {p.promoLabel || `${formatPromoEndDate(p.promoEndDate)} tarihine kadar`}
+        <div className="flex items-start gap-1">
+          <span className="font-fredoka font-bold text-[22px] mt-3" style={{ color: "rgba(216,255,79,0.75)" }}>₺</span>
+          <span className="font-fredoka font-bold text-[#D8FF4F] leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{pkg.promoPrice}</span>
+        </div>
+        <span className="inline-block mt-2 font-nunito font-bold text-[12px] px-3 py-1 rounded-full text-[#D8FF4F]" style={{ background: "rgba(216,255,79,0.15)" }}>
+          {pkg.promoLabel || `${formatPromoEndDate(pkg.promoEndDate)} tarihine kadar`}
         </span>
       </div>
     );
   }
 
+  const priceStr = pkg.priceText || `${pkg.price}₺`;
+  const priceNum = priceStr.replace(/₺/g, "").trim();
   return (
-    <div className="text-center">
-      {p.oldPriceText && (
-        <div className="font-nunito text-[#94a3b8] text-sm line-through mb-0.5">{p.oldPriceText}</div>
-      )}
-      <div className="font-fredoka text-[#1C1B8A] text-4xl leading-none">
-        {p.priceText || `${p.price}₺`}
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────
-// Paket kartı
-// ─────────────────────────────────────────
-function PackageCard({ p, navigate }) {
-  const [activePlanIdx, setActivePlanIdx] = useState(0);
-  const features = Array.isArray(p.features) ? p.features : [];
-  const plans = Array.isArray(p.plans) ? p.plans : [];
-  const hasPlanTabs = plans.length > 1;
-  const activePlan = hasPlanTabs ? plans[activePlanIdx] : null;
-  const isPopular = p.type === "coaching_only";
-
-  return (
-    <div
-      className={`relative bg-white flex flex-col h-full rounded-3xl overflow-hidden transition-all duration-300 ${
-        isPopular
-          ? "border-2 border-[#1C1B8A] shadow-[0_8px_32px_rgba(28,27,138,0.15)]"
-          : "border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:border-[#1C1B8A]/30 hover:shadow-[0_8px_32px_rgba(28,27,138,0.1)]"
-      }`}
-    >
-      {/* Popüler şerit */}
-      {isPopular && (
-        <div className="bg-[#D8FF4F] text-[#0D0A2E] font-nunito font-black text-xs text-center py-2 uppercase tracking-widest">
-          ⭐ En Popüler
+    <div>
+      {pkg.oldPriceText && (
+        <div className="font-nunito font-bold text-sm mb-1" style={{ color: "rgba(216,255,79,0.45)", textDecoration: "line-through" }}>
+          {pkg.oldPriceText}
         </div>
       )}
-
-      <div className="p-7 flex flex-col flex-grow">
-        {/* İsim + alt başlık */}
-        <div className="mb-6">
-          <h3 className="font-fredoka text-[#0D0A2E] text-2xl mb-1 leading-tight">{p.name}</h3>
-          {p.subtitle && (
-            <p className="font-nunito text-[#64748b] text-sm leading-relaxed">{p.subtitle}</p>
-          )}
-        </div>
-
-        {/* Süre sekmeleri */}
-        {hasPlanTabs && (
-          <div className="flex bg-[#f1f5f9] rounded-xl p-1 mb-5 gap-1">
-            {plans.map((plan, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setActivePlanIdx(i)}
-                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
-                  activePlanIdx === i
-                    ? "bg-[#1C1B8A] text-white shadow-sm"
-                    : "text-[#64748b] hover:text-[#0D0A2E]"
-                }`}
-              >
-                {plan.label}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Fiyat */}
-        <div className={`py-5 border-t border-b mb-5 ${isPopular ? "border-[#1C1B8A]/10" : "border-gray-100"}`}>
-          <PriceBlock p={p} activePlan={activePlan} />
-        </div>
-
-        {/* Özellikler */}
-        {features.length > 0 && (
-          <ul className="space-y-2.5 mb-7 flex-grow">
-            {features.map((f, i) => (
-              <li key={i} className="flex items-start gap-2.5">
-                <span
-                  className={`flex-shrink-0 font-black text-base mt-0.5 ${
-                    f.included ? "text-[#1C1B8A]" : "text-gray-200"
-                  }`}
-                >
-                  {f.included ? "✓" : "✗"}
-                </span>
-                <span
-                  className={`font-nunito text-sm leading-relaxed ${
-                    f.included ? "text-[#0D0A2E]/70" : "text-gray-300 line-through"
-                  }`}
-                >
-                  {f.label}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {/* CTA butonları */}
-        <div className="mt-auto flex flex-col gap-2.5">
-          <a
-            href={WA_LINK}
-            target="_blank"
-            rel="noreferrer"
-            className={`block w-full text-center font-nunito font-black text-sm py-3.5 rounded-full no-underline transition-all hover:scale-[1.02] ${
-              isPopular
-                ? "bg-[#D8FF4F] text-[#0D0A2E] shadow-[0_4px_16px_rgba(216,255,79,0.3)] hover:bg-white"
-                : "bg-[#1C1B8A] text-white shadow-[0_4px_16px_rgba(28,27,138,0.2)] hover:bg-[#0D0A2E]"
-            }`}
-          >
-            Hemen Başla →
-          </a>
-          {p.ctaHref && (
-            <button
-              onClick={() => {
-                const href = activePlan?.ctaHref || p.ctaHref;
-                const withPlan = hasPlanTabs
-                  ? `${href}${href.includes("?") ? "&" : "?"}plan=${activePlanIdx}`
-                  : href;
-                navigate(withPlan);
-              }}
-              className={`w-full text-center font-nunito font-bold text-sm py-3 rounded-full transition-all border ${
-                isPopular
-                  ? "border-[#1C1B8A]/20 text-[#1C1B8A] hover:border-[#1C1B8A]/50 hover:bg-[#f0f4ff]"
-                  : "border-gray-200 text-[#64748b] hover:border-gray-400 hover:text-[#0D0A2E]"
-              }`}
-            >
-              Detayları İncele
-            </button>
-          )}
-        </div>
+      <div className="flex items-start gap-1">
+        <span className="font-fredoka font-bold text-[22px] mt-3" style={{ color: "rgba(216,255,79,0.75)" }}>₺</span>
+        <span className="font-fredoka font-bold text-[#D8FF4F] leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{priceNum}</span>
       </div>
     </div>
   );
 }
 
-// ─────────────────────────────────────────
-// Boş sekme kartı
-// ─────────────────────────────────────────
-function EmptyCard({ examType }) {
-  return (
-    <div className="max-w-[520px] mx-auto bg-[#f8fafc] border border-gray-100 rounded-3xl p-12 flex flex-col items-center justify-center text-center gap-5 min-h-[280px]">
-      <div className="text-5xl">{examType === "yks" ? "🎓" : "📚"}</div>
-      <div>
-        <h3 className="font-fredoka text-[#0D0A2E] text-2xl mb-2">
-          {examType === "yks" ? "YKS programı için görüşme talep et." : "LGS programı için görüşme talep et."}
-        </h3>
-        <p className="font-nunito text-[#64748b] text-sm max-w-[300px] mx-auto">
-          İlk görüşmede sana özel ön değerlendirme yapılıyor.
-        </p>
-      </div>
-      <a
-        href={WA_LINK}
-        target="_blank"
-        rel="noreferrer"
-        className="inline-flex items-center gap-2 bg-[#1C1B8A] text-white font-nunito font-black text-sm px-8 py-4 rounded-full no-underline hover:bg-[#0D0A2E] transition-all shadow-[0_6px_20px_rgba(28,27,138,0.2)] hover:scale-105"
-      >
-        Görüşme Talep Et →
-      </a>
-    </div>
-  );
-}
+const popIn = {
+  initial: { opacity: 0, scale: 0.84 },
+  whileInView: { opacity: 1, scale: 1 },
+  viewport: { once: true },
+};
 
-// ─────────────────────────────────────────
-// Ana bileşen
-// ─────────────────────────────────────────
 export default function PricingSection() {
-  const navigate = useNavigate();
   const [tab, setTab] = useState("yks");
   const [packages, setPackages] = useState([]);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 1024);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/api/packages`)
@@ -280,134 +107,280 @@ export default function PricingSection() {
   const yksPackages = packages.filter((p) => p.type !== "lgs");
   const lgsPackages = packages.filter((p) => p.type !== "yks");
   const visible = tab === "yks" ? yksPackages : lgsPackages;
+  const primary = visible[0] || null;
 
-  const gridCls = {
-    0: "",
-    1: "max-w-[420px] mx-auto",
-    2: "grid grid-cols-2 max-w-[820px] mx-auto max-[640px]:grid-cols-1",
-    3: "grid grid-cols-3 max-[900px]:grid-cols-2 max-[580px]:grid-cols-1",
-    4: "grid grid-cols-4 max-[1024px]:grid-cols-2 max-[580px]:grid-cols-1",
-  }[Math.min(visible.length, 4)] || "grid grid-cols-3 max-[900px]:grid-cols-2 max-[580px]:grid-cols-1";
+  const features =
+    primary?.features && primary.features.filter((f) => f.included).length >= 3
+      ? primary.features.filter((f) => f.included).map((f) => f.label).slice(0, 6)
+      : STATIC_FEATURES;
 
   return (
-    <section id="paketler" className="bg-[#f8fafc] py-20 px-5">
-      <div className="max-w-[1200px] mx-auto">
+    <section id="paketler" className="relative overflow-hidden bg-white">
+      <style>{`
+        @keyframes pricingFloat1 { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-14px) rotate(5deg)} }
+        @keyframes pricingFloat2 { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-10px) rotate(-6deg)} }
 
-        {/* Başlık */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-10"
-        >
-          <span className="inline-block font-nunito font-black text-xs text-[#7340C8] uppercase tracking-widest mb-3">
-            Paketlerimiz
-          </span>
-          <h2 className="font-fredoka text-[48px] max-[640px]:text-[36px] text-[#0D0A2E] leading-tight">
-            Sınava göre kişisel program
-          </h2>
-          <p className="font-nunito text-[#64748b] text-base mt-3 max-w-[480px] mx-auto">
-            Her öğrencinin ihtiyacı farklı. Sana özel program ilk görüşmede belirleniyor.
-          </p>
-        </motion.div>
+        .bento-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          grid-template-rows: auto auto;
+          gap: 20px;
+        }
+        .bento-c1 { grid-column: 1; grid-row: 1; }
+        .bento-c2 { grid-column: 2; grid-row: 1 / 3; }
+        .bento-c3 { grid-column: 3; grid-row: 1; }
+        .bento-c4 { grid-column: 1; grid-row: 2; }
+        .bento-c5 { grid-column: 3; grid-row: 2; }
+
+        @media (max-width: 960px) {
+          .bento-grid { grid-template-columns: 1fr 1fr; grid-template-rows: unset; }
+          .bento-c1, .bento-c2, .bento-c3, .bento-c4, .bento-c5 {
+            grid-column: auto; grid-row: auto;
+          }
+          .bento-c2 { grid-column: 1 / -1; }
+        }
+        @media (max-width: 580px) {
+          .bento-grid { grid-template-columns: 1fr; }
+          .bento-c2 { grid-column: auto; }
+          .pricing-header { flex-direction: column !important; gap: 24px !important; }
+          .pricing-section-pad { padding-left: 20px !important; padding-right: 20px !important; }
+        }
+      `}</style>
+
+      {/* Sol dikey şerit */}
+      <div className="absolute left-0 top-0 bottom-0 w-2" style={{ background: "linear-gradient(to bottom, #1C1B8A, #FF6B35)", zIndex: 1 }} />
+
+      {/* Sağ üst dekoratif blok */}
+      <div className="absolute top-0 right-0" style={{ width: 340, height: 340, background: "#ede8fa", borderRadius: "0 0 0 100%", opacity: 0.6, zIndex: 0 }} />
+
+      {/* Sol alt dekoratif daire */}
+      <div className="absolute" style={{ bottom: 0, left: 60, width: 200, height: 200, background: "#fff0ea", borderRadius: "50%", opacity: 0.6, zIndex: 0 }} />
+
+      <div
+        className="mx-auto py-20 relative pricing-section-pad"
+        style={{ maxWidth: 1280, paddingLeft: 60, paddingRight: 60, zIndex: 2 }}
+      >
+        {/* 3 kolonlu başlık */}
+        <div className="pricing-header flex items-start justify-between mb-14 gap-8">
+
+          {/* Sol — başlık */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+          >
+            <div className="font-fredoka font-bold text-[#FF6B35] text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>
+              PAKETLERİMİZ
+            </div>
+            <h2 className="font-fredoka font-bold m-0 leading-[0.95]" style={{ letterSpacing: -1, fontSize: "clamp(40px, 4.5vw, 64px)" }}>
+              <span className="block text-[#1C1B8A]">Kişisel</span>
+              <span className="block" style={{ color: "transparent", WebkitTextStroke: "2.5px #FF6B35" }}>Program.</span>
+            </h2>
+          </motion.div>
+
+          {/* Orta — sekme seçici */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+            className="self-center"
+          >
+            <div className="flex gap-1 rounded-full p-1.5" style={{ background: "#f4f2fa" }}>
+              {[
+                { key: "yks", label: "🎓 YKS" },
+                { key: "lgs", label: "📚 LGS" },
+              ].map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => setTab(t.key)}
+                  className="font-fredoka font-bold text-[17px] px-9 py-3 rounded-full border-none cursor-pointer transition-all duration-200"
+                  style={{
+                    background: tab === t.key ? "#1C1B8A" : "transparent",
+                    color: tab === t.key ? "#D8FF4F" : "#6B6B8A",
+                    boxShadow: tab === t.key ? "0 4px 14px rgba(28,27,138,0.3)" : "none",
+                  }}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Sağ — açıklama */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="self-center"
+          >
+            <p className="font-nunito font-bold text-[#64748b] text-base leading-relaxed m-0" style={{ maxWidth: 280 }}>
+              Her öğrencinin ihtiyacı farklı. Sana özel program{" "}
+              <span className="text-[#FF6B35]">ilk görüşmede</span>{" "}
+              belirleniyor.
+            </p>
+          </motion.div>
+        </div>
 
         {/* Geri sayım banner */}
         <CountdownPricingBanner />
 
-        {/* ── YKS / LGS Sekme ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.45, delay: 0.08 }}
-          className="flex justify-center mb-12"
-        >
-          <div className="inline-flex bg-white border border-gray-200 rounded-2xl p-2 gap-2 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
-            {[
-              { key: "yks", emoji: "🎓", label: "YKS", sub: "Üniversite Sınavı" },
-              { key: "lgs", emoji: "📚", label: "LGS", sub: "Lise Sınavı" },
-            ].map((t) => (
-              <button
-                key={t.key}
-                onClick={() => setTab(t.key)}
-                className={`relative flex items-center gap-4 px-8 py-4 rounded-xl font-nunito transition-all duration-200 max-[480px]:px-5 max-[480px]:py-3 ${
-                  tab === t.key
-                    ? "bg-[#1C1B8A] text-white shadow-[0_4px_16px_rgba(28,27,138,0.35)]"
-                    : "text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0D0A2E]"
-                }`}
-              >
-                <span className="text-3xl max-[480px]:text-2xl leading-none">{t.emoji}</span>
-                <div className="text-left">
-                  <div className="font-black text-lg max-[480px]:text-base leading-tight">{t.label}</div>
-                  <div className={`text-xs font-semibold mt-0.5 ${tab === t.key ? "text-white/60" : "text-[#94a3b8]"}`}>
-                    {t.sub}
-                  </div>
-                </div>
-                {tab === t.key && (
-                  <div className="absolute -bottom-[10px] left-1/2 -translate-x-1/2 w-3 h-3 bg-[#1C1B8A] rotate-45 rounded-sm" />
-                )}
-              </button>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* ── Paket kartları ── */}
+        {/* Bento grid */}
         <AnimatePresence mode="wait">
           <motion.div
             key={tab}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
           >
-            {visible.length === 0 ? (
-              <EmptyCard examType={tab} />
-            ) : isMobile ? (
-              <div className="relative px-1">
-                <Swiper
-                  modules={[Pagination, Navigation]}
-                  pagination={{ clickable: true, dynamicBullets: true }}
-                  spaceBetween={16}
-                  slidesPerView={1.08}
-                  centeredSlides={true}
-                  initialSlide={Math.min(1, visible.length - 1)}
-                  className="pricing-swiper pb-10"
+            <div className="bento-grid">
+
+              {/* Hücre 1 — Fiyat (koyu mor) */}
+              <motion.div
+                {...popIn}
+                transition={{ duration: 0.55, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="bento-c1"
+              >
+                <div
+                  className="rounded-[28px] relative overflow-hidden flex flex-col justify-center h-full"
+                  style={{ background: "#1C1B8A", padding: "44px 40px", boxShadow: "0 16px 40px rgba(28,27,138,0.25)", minHeight: 260 }}
                 >
-                  {visible.map((p) => (
-                    <SwiperSlide key={p.slug} className="h-auto">
-                      <PackageCard p={p} navigate={navigate} />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-              </div>
-            ) : (
-              <div className={`gap-6 ${gridCls}`}>
-                {visible.map((p, i) => (
-                  <PackageCard key={p.slug} p={p} navigate={navigate} />
-                ))}
-              </div>
-            )}
+                  <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#4a1da0", filter: "blur(60px)", opacity: 0.5, top: -60, right: -40 }} />
+                  <div className="font-fredoka font-semibold text-[#D8FF4F] text-[13px] uppercase relative mb-3" style={{ letterSpacing: 3 }}>
+                    {tab === "yks" ? "YKS" : "LGS"} Koçluk Paketi
+                  </div>
+                  <div className="relative">
+                    <PriceDisplay pkg={primary} />
+                  </div>
+                  <div className="font-nunito font-bold text-sm mt-2 relative" style={{ color: "rgba(255,255,255,0.55)" }}>
+                    {primary?.subtitle || "4 Haftalık Program"}
+                  </div>
+                  <div className="mt-3 relative">
+                    <span className="font-fredoka font-semibold text-xs px-3 py-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)", letterSpacing: 0.5 }}>
+                      Kredi kartına taksit imkânı
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Hücre 2 — Özellik pill'leri (çift satır) */}
+              <motion.div
+                {...popIn}
+                transition={{ duration: 0.55, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                className="bento-c2"
+              >
+                <div className="rounded-[28px] h-full" style={{ background: "#f4f2fa", padding: "36px 32px" }}>
+                  <div className="font-fredoka font-bold text-[#1C1B8A] text-base mb-5" style={{ letterSpacing: 0.3 }}>
+                    Pakete Dahil…
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    {features.map((f, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, scale: 0.85 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, delay: 0.25 + i * 0.07, ease: [0.22, 1, 0.36, 1] }}
+                      >
+                        <div
+                          className="inline-flex items-center gap-2 rounded-full font-nunito font-bold text-[13px] leading-snug"
+                          style={{
+                            background: i % 2 === 0 ? "#ede8fa" : "#fff0ea",
+                            color: i % 2 === 0 ? "#1C1B8A" : "#FF6B35",
+                            padding: "10px 18px",
+                          }}
+                        >
+                          <span style={{ opacity: 0.7 }}>✓</span>
+                          {f}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Hücre 3 — CTA (turuncu) */}
+              <motion.div
+                {...popIn}
+                transition={{ duration: 0.55, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="bento-c3"
+              >
+                <div
+                  className="rounded-[28px] flex flex-col justify-between relative overflow-hidden h-full"
+                  style={{ background: "#FF6B35", padding: "40px 32px", boxShadow: "0 16px 40px rgba(255,107,53,0.35)", minHeight: 260 }}
+                >
+                  <div className="absolute rounded-full pointer-events-none" style={{ width: 180, height: 180, background: "rgba(255,255,255,0.1)", bottom: -60, right: -60 }} />
+                  <div>
+                    <div className="font-fredoka font-bold text-white text-[28px] leading-[1.2] mb-3">
+                      Ücretsiz<br />Tanışma<br />Görüşmesi
+                    </div>
+                    <div className="font-nunito font-bold text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
+                      İlk görüşme tamamen ücretsiz. Kota dolmadan yerini al.
+                    </div>
+                  </div>
+                  <a
+                    href={WA_LINK}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block text-center no-underline font-fredoka font-bold text-lg rounded-full mt-7 transition-transform hover:scale-105"
+                    style={{
+                      background: "#ffffff",
+                      color: "#FF6B35",
+                      padding: "16px",
+                      boxShadow: "0 6px 18px rgba(0,0,0,0.15)",
+                      animation: "pricingFloat2 3s ease-in-out infinite",
+                    }}
+                  >
+                    Hemen Başla →
+                  </a>
+                </div>
+              </motion.div>
+
+              {/* Hücre 4 — Erken kayıt (sarı) */}
+              <motion.div
+                {...popIn}
+                transition={{ duration: 0.5, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                className="bento-c4"
+              >
+                <div className="rounded-[28px] flex items-center gap-5 h-full" style={{ background: "#D8FF4F", padding: "28px 32px" }}>
+                  <div className="text-[40px] flex-shrink-0">⚡</div>
+                  <div>
+                    <div className="font-fredoka font-bold text-[#1C1B8A] text-xl">Erken Kayıt Avantajı</div>
+                    <div className="font-nunito font-bold text-sm mt-1" style={{ color: "rgba(28,27,138,0.65)" }}>
+                      Kontenjan dolmadan yerinizi ayırtın
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Hücre 5 — Karşılaştır (mor pastel) */}
+              <motion.div
+                {...popIn}
+                transition={{ duration: 0.5, delay: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                className="bento-c5"
+              >
+                <Link to="/paket-detay" className="no-underline block h-full">
+                  <div className="rounded-[28px] flex items-center justify-between h-full transition-opacity hover:opacity-80" style={{ background: "#ede8fa", padding: "28px 32px" }}>
+                    <div>
+                      <div className="font-fredoka font-bold text-[#1C1B8A] text-lg">Tüm paketleri</div>
+                      <div className="font-fredoka font-bold text-[#1C1B8A] text-lg">karşılaştır</div>
+                    </div>
+                    <div
+                      className="flex items-center justify-center flex-shrink-0 rounded-full"
+                      style={{ width: 44, height: 44, background: "#1C1B8A", animation: "pricingFloat1 3s ease-in-out infinite" }}
+                    >
+                      <span className="text-[#D8FF4F] text-xl">→</span>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+
+            </div>
           </motion.div>
         </AnimatePresence>
-
-        {/* Alt link */}
-        {visible.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="text-center mt-10"
-          >
-            <Link
-              to="/paket-detay"
-              className="font-nunito text-[#64748b] text-sm hover:text-[#1C1B8A] transition-colors no-underline"
-            >
-              Tüm paketleri karşılaştır →
-            </Link>
-          </motion.div>
-        )}
       </div>
     </section>
   );
