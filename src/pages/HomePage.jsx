@@ -21,197 +21,233 @@ const fadeUp = {
 // ══════════════════════════════════════════════
 function HeroSection() {
   const stats = [
-    { value: "+150", label: "Başarılı Öğrenci" },
-    { value: "4.9/5", label: "Memnuniyet" },
-    { value: "7/24", label: "WhatsApp Erişimi" },
+    { value: "500+", label: "Öğrenci" },
+    { value: "%94", label: "Hedef Başarı" },
+    { value: "4.9★", label: "Veli Puanı" },
   ];
 
   return (
-    <section className="relative min-h-screen flex items-center bg-gradient-to-br from-[#0D0A2E] via-[#1C1B8A]/60 to-[#0D0A2E] overflow-hidden">
+    <section
+      className="relative overflow-hidden"
+      style={{
+        background: "radial-gradient(ellipse 80% 60% at 60% 40%, #3d1a80 0%, #1A0A40 55%, #0d0520 100%)",
+      }}
+    >
       <style>{`
-        @keyframes floatBlob1 {
-          0%   { transform: translate(0px, 0px) scale(1); }
-          25%  { transform: translate(40px, -30px) scale(1.08); }
-          50%  { transform: translate(20px, 50px) scale(0.95); }
-          75%  { transform: translate(-30px, 20px) scale(1.05); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-        @keyframes floatBlob2 {
-          0%   { transform: translate(0px, 0px) scale(1); }
-          30%  { transform: translate(-50px, 40px) scale(1.1); }
-          60%  { transform: translate(30px, -20px) scale(0.92); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-        @keyframes floatBlob3 {
-          0%   { transform: translate(0px, 0px) scale(1); }
-          20%  { transform: translate(25px, 35px) scale(1.06); }
-          55%  { transform: translate(-40px, -15px) scale(0.96); }
-          80%  { transform: translate(15px, -40px) scale(1.04); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-        @keyframes floatBlob4 {
-          0%   { transform: translate(0px, 0px) scale(1); }
-          35%  { transform: translate(-20px, -50px) scale(1.07); }
-          70%  { transform: translate(45px, 25px) scale(0.94); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-        @keyframes floatBlob5 {
-          0%   { transform: translate(0px, 0px) scale(1); }
-          40%  { transform: translate(35px, -35px) scale(1.09); }
-          75%  { transform: translate(-25px, 45px) scale(0.97); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
+        @keyframes heroOrbMove { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(40px,-30px) scale(1.06)} 66%{transform:translate(-20px,20px) scale(0.96)} }
+        @keyframes heroSparkle { 0%,100%{opacity:0.15;transform:scale(0.8)} 50%{opacity:1;transform:scale(1.2)} }
+        @keyframes heroFloat1  { 0%,100%{transform:translateY(0px) rotate(0deg)} 50%{transform:translateY(-18px) rotate(6deg)} }
+        @keyframes heroFloat2  { 0%,100%{transform:translateY(0px) rotate(0deg)} 50%{transform:translateY(-12px) rotate(-8deg)} }
+        @keyframes heroFloat3  { 0%,100%{transform:translateY(0px) rotate(0deg)} 50%{transform:translateY(-22px) rotate(4deg)} }
+        @keyframes heroShimmer { 0%{background-position:200% center} 100%{background-position:-200% center} }
+        @keyframes heroPulse   { 0%{box-shadow:0 8px 28px rgba(255,107,53,0.45),0 0 0 0 rgba(255,107,53,0.5)} 70%{box-shadow:0 8px 28px rgba(255,107,53,0.45),0 0 0 20px rgba(255,107,53,0)} 100%{box-shadow:0 8px 28px rgba(255,107,53,0.45),0 0 0 0 rgba(255,107,53,0)} }
       `}</style>
 
-      {/* Animated blobs */}
+      {/* Orb 1 — sağ üst */}
       <div style={{
-        position: "absolute", top: "-100px", left: "-120px",
-        width: "500px", height: "500px", borderRadius: "50%",
-        background: "#7340C8", opacity: 0.13, filter: "blur(80px)",
-        pointerEvents: "none", zIndex: 0, willChange: "transform",
-        animationName: "floatBlob1", animationDuration: "24s",
-        animationTimingFunction: "ease-in-out", animationIterationCount: "infinite",
-        animationDelay: "0s",
+        position: "absolute", top: -120, right: 80,
+        width: 480, height: 480, borderRadius: "50%",
+        background: "#4a1da0", filter: "blur(90px)", opacity: 0.35,
+        animation: "heroOrbMove 12s ease-in-out infinite",
+        pointerEvents: "none",
       }} />
+      {/* Orb 2 — sol alt */}
       <div style={{
-        position: "absolute", bottom: "-80px", right: "-80px",
-        width: "420px", height: "420px", borderRadius: "50%",
-        background: "#1C1B8A", opacity: 0.18, filter: "blur(70px)",
-        pointerEvents: "none", zIndex: 0, willChange: "transform",
-        animationName: "floatBlob2", animationDuration: "30s",
-        animationTimingFunction: "ease-in-out", animationIterationCount: "infinite",
-        animationDelay: "-7s",
-      }} />
-      <div style={{
-        position: "absolute", top: "40%", right: "6%",
-        width: "300px", height: "300px", borderRadius: "50%",
-        background: "#D8FF4F", opacity: 0.07, filter: "blur(90px)",
-        pointerEvents: "none", zIndex: 0, willChange: "transform",
-        animationName: "floatBlob3", animationDuration: "22s",
-        animationTimingFunction: "ease-in-out", animationIterationCount: "infinite",
-        animationDelay: "-4s",
-      }} />
-      <div style={{
-        position: "absolute", top: "20%", left: "35%",
-        width: "360px", height: "360px", borderRadius: "50%",
-        background: "#FF6B35", opacity: 0.06, filter: "blur(100px)",
-        pointerEvents: "none", zIndex: 0, willChange: "transform",
-        animationName: "floatBlob4", animationDuration: "28s",
-        animationTimingFunction: "ease-in-out", animationIterationCount: "infinite",
-        animationDelay: "-12s",
-      }} />
-      <div style={{
-        position: "absolute", bottom: "10%", left: "15%",
-        width: "240px", height: "240px", borderRadius: "50%",
-        background: "#7340C8", opacity: 0.09, filter: "blur(65px)",
-        pointerEvents: "none", zIndex: 0, willChange: "transform",
-        animationName: "floatBlob5", animationDuration: "18s",
-        animationTimingFunction: "ease-in-out", animationIterationCount: "infinite",
-        animationDelay: "-9s",
+        position: "absolute", bottom: -80, left: 100,
+        width: 320, height: 320, borderRadius: "50%",
+        background: "#FF6B35", filter: "blur(100px)", opacity: 0.18,
+        animation: "heroOrbMove 16s ease-in-out infinite reverse",
+        pointerEvents: "none",
       }} />
 
-      <div className="max-w-[1100px] mx-auto px-5 py-24 max-[768px]:py-16 w-full" style={{ position: "relative", zIndex: 1 }}>
-        <div className="grid grid-cols-[1fr_auto] gap-12 items-center max-[900px]:grid-cols-1">
+      {/* Star dots */}
+      {[[120,90,5,0],[300,220,4,0.5],[80,400,6,1],[500,60,3,0.8],[420,330,5,1.4],[650,180,4,0.3],[180,560,5,1.8],[760,90,3,0.6]].map(([x,y,s,d],i) => (
+        <div key={i} style={{
+          position: "absolute", left: x, top: y,
+          width: s, height: s, borderRadius: "50%",
+          background: "#D8FF4F",
+          animation: `heroSparkle ${2+d}s ease-in-out infinite`,
+          animationDelay: `${d}s`,
+          pointerEvents: "none", zIndex: 0,
+        }} />
+      ))}
+
+      <div className="max-w-[1200px] mx-auto px-5 pt-20 pb-16 max-[768px]:pt-14 max-[768px]:pb-12 w-full" style={{ position: "relative", zIndex: 1 }}>
+        <div className="grid grid-cols-[1fr_auto] gap-16 items-center max-[960px]:grid-cols-1">
 
           {/* Sol — metin */}
           <div>
-            <motion.div {...fadeUp} className="mb-6">
-              <span className="inline-flex items-center gap-2 bg-[#FF6B35] text-white font-nunito font-black text-xs px-5 py-2 rounded-full uppercase tracking-widest">
-                YKS · LGS · 2025 | 150+ Başarılı Öğrenci
+            {/* Pill badge */}
+            <motion.div {...fadeUp} className="mb-7">
+              <span style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                background: "rgba(216,255,79,0.12)",
+                border: "1px solid rgba(216,255,79,0.3)",
+                borderRadius: 999, padding: "7px 16px",
+              }}>
+                <span style={{
+                  width: 7, height: 7, borderRadius: "50%",
+                  background: "#D8FF4F", display: "inline-block",
+                  animation: "heroSparkle 1.5s ease-in-out infinite",
+                }} />
+                <span className="font-fredoka text-[#D8FF4F] text-sm font-semibold tracking-[0.1em] uppercase">
+                  LGS & YKS Koçluğu
+                </span>
               </span>
             </motion.div>
 
+            {/* H1 with shimmer word */}
             <motion.h1
               {...fadeUp}
               transition={{ ...fadeUp.transition, delay: 0.1 }}
-              className="font-fredoka text-[68px] max-[900px]:text-[52px] max-[640px]:text-[40px] max-[400px]:text-[34px] leading-[1.1] text-white mb-5 max-w-[700px]"
+              className="font-fredoka text-[72px] max-[900px]:text-[52px] max-[640px]:text-[42px] max-[400px]:text-[34px] leading-[1.05] text-white mb-6"
+              style={{ letterSpacing: "-0.5px", maxWidth: 640 }}
             >
-              Çok çalışıyorsun<br />
-              <span className="text-[#D8FF4F]">ama netlerin artmıyor mu?</span>
+              Sınavda değil,{" "}
+              <span style={{
+                background: "linear-gradient(90deg, #D8FF4F, #ffffff, #D8FF4F)",
+                backgroundSize: "200% auto",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                animation: "heroShimmer 3s linear infinite",
+              }}>başarıda</span>{" "}
+              ol.
             </motion.h1>
 
             <motion.p
               {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: 0.18 }}
-              className="font-nunito text-white/65 text-lg max-[640px]:text-base leading-relaxed max-w-[520px] mb-10"
+              transition={{ ...fadeUp.transition, delay: 0.15 }}
+              className="font-nunito font-bold text-white/65 text-[19px] max-[640px]:text-base leading-relaxed mb-10"
+              style={{ maxWidth: 520 }}
             >
-              Sorun sen değilsin — sorun yöntem. Günlük takip, deneme analizi ve dinamik programla ilk ayda fark hissedeceksin.
+              Kişiye özel koçluk, haftalık takip ve deneme analizleriyle LGS & YKS'ye hazırlan. Sistematik, stressiz, sonuç odaklı.
             </motion.p>
 
+            {/* CTA row */}
             <motion.div
               {...fadeUp}
               transition={{ ...fadeUp.transition, delay: 0.24 }}
-              className="flex flex-wrap gap-3 mb-14"
+              className="flex flex-wrap gap-4 mb-14"
             >
               <a
                 href={WA_LINK}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 bg-[#D8FF4F] text-[#0D0A2E] font-nunito font-black text-base px-8 py-4 rounded-full no-underline transition-all hover:bg-white hover:scale-105 shadow-[0_8px_30px_rgba(216,255,79,0.3)]"
+                className="inline-flex items-center gap-2 text-white font-fredoka font-bold text-[18px] px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
+                style={{
+                  background: "#FF6B35",
+                  animation: "heroPulse 2.5s ease-out infinite",
+                  letterSpacing: "0.3px",
+                }}
               >
-                Ücretsiz Keşif Görüşmesi Başlat →
+                Ücretsiz Tanışma Görüşmesi
               </a>
               <a
                 href="#nasil-calisir"
-                className="inline-flex items-center gap-2 border-2 border-white/25 text-white font-nunito font-bold text-base px-8 py-4 rounded-full no-underline transition-all hover:border-white/60 hover:bg-white/5"
+                className="inline-flex items-center gap-2 text-white font-fredoka font-semibold text-[16px] px-7 py-4 rounded-full no-underline transition-all hover:bg-white/10"
+                style={{ border: "1.5px solid rgba(255,255,255,0.25)" }}
               >
                 Nasıl Çalışır?
               </a>
             </motion.div>
 
-            <div className="grid grid-cols-3 gap-4 max-w-[520px] max-[640px]:grid-cols-3 max-[400px]:grid-cols-1 max-[400px]:max-w-full">
+            {/* Trust stats */}
+            <div className="flex gap-8">
               {stats.map((s, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.3 + i * 0.08 }}
-                  className="bg-white/6 border border-white/10 rounded-2xl px-5 py-4 backdrop-blur-sm"
+                  transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
                 >
-                  <div className="font-fredoka text-[#CBFF1E] text-3xl font-black mb-0.5">{s.value}</div>
-                  <div className="font-nunito text-white/60 text-xs font-bold">{s.label}</div>
+                  <div className="font-fredoka font-bold text-[#D8FF4F] text-[28px] leading-none">{s.value}</div>
+                  <div className="font-nunito font-bold text-white/50 text-[13px] mt-1 tracking-wide">{s.label}</div>
                 </motion.div>
               ))}
             </div>
           </div>
 
-          {/* Sağ — floating badge kartı */}
+          {/* Sağ — floating kartlar */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.92 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="flex-shrink-0 max-[900px]:hidden"
+            className="flex-shrink-0 max-[960px]:hidden"
           >
-            <div className="relative w-[300px] h-[340px]">
-              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#1C1B8A]/80 to-[#7340C8]/50 border border-white/20 backdrop-blur-xl shadow-[0_24px_60px_rgba(28,27,138,0.5)] flex flex-col items-center justify-center gap-4 p-7">
-                <div className="text-6xl">🎓</div>
-                <div className="text-center">
-                  <div className="font-fredoka text-white text-2xl mb-1">Sözderece Koçluk</div>
-                  <div className="font-nunito text-white/50 text-sm">Günlük takip · Gerçek sonuç</div>
+            <div className="relative" style={{ width: 390, height: 480 }}>
+
+              {/* Glow ring */}
+              <div style={{
+                position: "absolute", top: 80, left: 10,
+                width: 380, height: 380, borderRadius: "50%",
+                background: "#4a1da0", filter: "blur(80px)", opacity: 0.28,
+                animation: "heroOrbMove 10s ease-in-out infinite",
+                pointerEvents: "none",
+              }} />
+
+              {/* Ana kart — haftalık plan */}
+              <div style={{
+                position: "absolute", top: 90, left: 40,
+                width: 320,
+                background: "rgba(255,255,255,0.06)",
+                backdropFilter: "blur(20px)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                borderRadius: 28, padding: "32px 28px",
+                animation: "heroFloat1 5s ease-in-out infinite",
+                boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
+              }}>
+                <div className="font-fredoka font-bold text-[#D8FF4F] text-sm tracking-[0.12em] uppercase mb-4">
+                  Bu Haftanın Planı
                 </div>
-                <div className="w-full bg-white/5 rounded-xl p-4 border border-white/10">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-nunito text-white/60 text-xs">Ortalama net artışı</span>
-                    <span className="font-fredoka text-[#D8FF4F] text-sm">+17.5</span>
+                {[
+                  { text: "Mat: Türevler — 2 ders", done: true },
+                  { text: "Fizik: Elektrik — 1 ders", done: true },
+                  { text: "Deneme Analizi — Cuma", done: false },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 mb-3.5">
+                    <div style={{
+                      width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
+                      background: item.done ? "#D8FF4F" : "rgba(255,255,255,0.1)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      {item.done && (
+                        <svg width="11" height="11" viewBox="0 0 12 12">
+                          <polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                      )}
+                    </div>
+                    <span className="font-nunito font-bold text-sm" style={{ color: item.done ? "#fff" : "rgba(255,255,255,0.45)" }}>
+                      {item.text}
+                    </span>
                   </div>
-                  <div className="w-full bg-white/10 rounded-full h-2">
-                    <div className="bg-[#D8FF4F] h-2 rounded-full" style={{ width: "78%" }} />
-                  </div>
-                </div>
+                ))}
               </div>
-              <div className="absolute -bottom-4 -left-8 bg-white rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-2">
-                <span className="text-xl">🎯</span>
-                <div>
-                  <div className="font-nunito font-black text-[#0D0A2E] text-xs">Kişisel Plan</div>
-                  <div className="font-nunito text-[#7340C8] text-[10px]">Her gün güncellenir</div>
-                </div>
+
+              {/* Turuncu rozet — net artışı */}
+              <div style={{
+                position: "absolute", top: 20, left: 0,
+                background: "#FF6B35", borderRadius: 20, padding: "16px 22px",
+                animation: "heroFloat2 4s ease-in-out infinite",
+                boxShadow: "0 12px 30px rgba(255,107,53,0.5)",
+              }}>
+                <div className="font-fredoka font-bold text-white text-[28px] leading-none">+47</div>
+                <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">Net artışı</div>
               </div>
-              <div className="absolute -top-4 -right-4 bg-[#D8FF4F] rounded-2xl shadow-xl px-4 py-3 text-center">
-                <div className="font-fredoka text-[#0D0A2E] text-2xl leading-none">150+</div>
-                <div className="font-nunito text-[#0D0A2E]/60 text-[10px]">Öğrenci</div>
+
+              {/* Sarı rozet — koç */}
+              <div style={{
+                position: "absolute", bottom: 55, right: 0,
+                background: "rgba(216,255,79,0.96)", borderRadius: 18, padding: "14px 20px",
+                animation: "heroFloat3 6s ease-in-out infinite",
+                boxShadow: "0 10px 24px rgba(216,255,79,0.35)",
+              }}>
+                <div className="font-fredoka font-bold text-[#0D0A2E] text-[15px] leading-snug">Koçunla bugün</div>
+                <div className="font-fredoka font-bold text-[#0D0A2E] text-[15px]">görüş 🎯</div>
               </div>
+
             </div>
           </motion.div>
         </div>
