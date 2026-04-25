@@ -159,7 +159,7 @@ function WhyDifferentSection() {
               className="bg-[#f8fafc] border border-gray-100 rounded-2xl p-6 hover:border-[#7340C8]/30 hover:bg-white hover:shadow-[0_4px_16px_rgba(115,64,200,0.08)] transition-all"
             >
               <div className="text-3xl mb-4">{c.icon}</div>
-              <h3 className="font-nunito font-black text-[#0D0A2E] text-base mb-2.5">{c.title}</h3>
+              <h3 className="font-fredoka font-bold text-[#0D0A2E] text-base mb-2.5">{c.title}</h3>
               <p className="font-nunito text-[#64748b] text-sm leading-relaxed">{c.desc}</p>
             </motion.div>
           ))}
@@ -233,7 +233,7 @@ function HowItWorksSection() {
                   <span className="font-fredoka text-[#0D0A2E] text-lg">{s.num}</span>
                 </div>
                 <div className="text-2xl mb-3">{s.icon}</div>
-                <h3 className="font-nunito font-black text-[#0D0A2E] text-base mb-2">{s.title}</h3>
+                <h3 className="font-fredoka font-bold text-[#0D0A2E] text-base mb-2">{s.title}</h3>
                 <p className="font-nunito text-[#64748b] text-sm leading-relaxed">{s.desc}</p>
               </div>
               {i < steps.length - 1 && (
@@ -611,7 +611,7 @@ function FaqSection() {
                   <div className="pl-6 pr-5 py-5">
                     <div className="flex items-center justify-between gap-4">
                       <h3
-                        className={`font-nunito font-black text-base transition-colors duration-200 ${
+                        className={`font-fredoka font-bold text-base transition-colors duration-200 ${
                           isOpen ? "text-[#7340C8]" : "text-[#0D0A2E]"
                         }`}
                       >

@@ -19,7 +19,7 @@ module.exports = {
       },
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
-        fredoka: ["Fredoka", "sans-serif"],
+        fredoka: ["Nunito", "sans-serif"],
         nunito: ["Nunito", "sans-serif"],
       },
       keyframes: {
