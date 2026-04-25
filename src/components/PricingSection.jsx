@@ -245,7 +245,7 @@ export default function PricingSection() {
                 className="bento-c1"
               >
                 <div
-                  className="rounded-[28px] relative overflow-hidden flex flex-col justify-center h-full"
+                  className="rounded-[28px] relative overflow-hidden flex flex-col h-full"
                   style={{ background: "#1C1B8A", padding: "44px 40px", boxShadow: "0 16px 40px rgba(28,27,138,0.25)", minHeight: 260 }}
                 >
                   <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#4a1da0", filter: "blur(60px)", opacity: 0.5, top: -60, right: -40 }} />
@@ -263,6 +263,18 @@ export default function PricingSection() {
                       Kredi kartına taksit imkânı
                     </span>
                   </div>
+                  <Link
+                    to={primary ? `/pre-auth?slug=${encodeURIComponent(primary.slug)}` : "/paket-detay"}
+                    className="block text-center no-underline font-fredoka font-bold text-base rounded-full mt-5 relative transition-transform hover:scale-105"
+                    style={{
+                      background: "#D8FF4F",
+                      color: "#1C1B8A",
+                      padding: "14px",
+                      boxShadow: "0 6px 18px rgba(216,255,79,0.3)",
+                    }}
+                  >
+                    Paketi Satın Al →
+                  </Link>
                 </div>
               </motion.div>
 

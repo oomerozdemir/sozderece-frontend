@@ -153,8 +153,8 @@ export default App;
 
 /*
 Yapılacaklar Listesi:
-Yks-yolculugu navbar yönlendirmesini yap isimlerini de yks 2026 ve lgs 2026 olarak düzenle.
 
+pricing sectiondan direkt satışa yönlendirme yapılacak
 
 tasarım değişiklliklerini ana sayfa ile uyumlu olacak şekilde diğer yerlere de uygula.
 
