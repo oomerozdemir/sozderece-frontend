@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SHOW_OGRETMEN } from "../config/features";
 import useCart from "../hooks/useCart";
+import axios from "../utils/axios";
 import {
   FaShoppingCart,
   FaUser,
@@ -15,10 +16,19 @@ import {
 
 const WA_LINK = "https://wa.me/905312546701?text=S%C4%B0STEM";
 
+const DEFAULT_NAV_LINKS = [
+  { name: "YKS Koçluğu", path: "/deneme-kampi" },
+  { name: "LGS Koçluğu", path: "/lgs-hazirlik" },
+  { name: "Nasıl Çalışır?", path: "/#nasil-calisir" },
+  { name: "Paketler", path: "/paket-detay" },
+  ...(SHOW_OGRETMEN ? [{ name: "Özel Ders", path: "/ogretmenler" }] : []),
+];
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [navLinks, setNavLinks] = useState(DEFAULT_NAV_LINKS);
 
   const [authState, setAuthState] = useState({ isLoggedIn: false, name: "", role: "" });
   const navigate = useNavigate();
@@ -34,6 +44,23 @@ export default function Navbar() {
         role: (localStorage.getItem("userRole") || "").toLowerCase(),
       });
     }
+  }, []);
+
+  useEffect(() => {
+    axios.get("/api/settings/navbar")
+      .then((res) => {
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          setNavLinks(
+            res.data.map((item) => ({
+              name: item.name,
+              path: item.path,
+              isExternal: item.isExternal,
+              openInNew: item.openInNew,
+            }))
+          );
+        }
+      })
+      .catch(() => {}); // fallback: DEFAULT_NAV_LINKS kalır
   }, []);
 
   useEffect(() => {
@@ -57,13 +84,6 @@ export default function Navbar() {
     window.location.reload();
   };
 
-  const navLinks = [
-    { name: "YKS Koçluğu", path: "/deneme-kampi" },
-    { name: "LGS Koçluğu", path: "/lgs-hazirlik" },
-    { name: "Nasıl Çalışır?", path: "/#nasil-calisir" },
-    { name: "Paketler", path: "/paket-detay" },
-    ...(SHOW_OGRETMEN ? [{ name: "Özel Ders", path: "/ogretmenler" }] : []),
-  ];
 
   return (
     <nav
@@ -84,15 +104,27 @@ export default function Navbar() {
 
         {/* MERKEZ LİNKLER — masaüstü */}
         <div className="flex gap-8 max-[960px]:hidden">
-          {navLinks.map((link, i) => (
-            <Link
-              key={i}
-              to={link.path}
-              className="no-underline text-white/80 font-nunito font-bold text-[0.92rem] transition-colors hover:text-[#D8FF4F]"
-            >
-              {link.name}
-            </Link>
-          ))}
+          {navLinks.map((link, i) =>
+            link.isExternal ? (
+              <a
+                key={i}
+                href={link.path}
+                target={link.openInNew ? "_blank" : undefined}
+                rel={link.openInNew ? "noreferrer" : undefined}
+                className="no-underline text-white/80 font-nunito font-bold text-[0.92rem] transition-colors hover:text-[#D8FF4F]"
+              >
+                {link.name}
+              </a>
+            ) : (
+              <Link
+                key={i}
+                to={link.path}
+                className="no-underline text-white/80 font-nunito font-bold text-[0.92rem] transition-colors hover:text-[#D8FF4F]"
+              >
+                {link.name}
+              </Link>
+            )
+          )}
         </div>
 
         {/* SAĞ BUTONLAR — masaüstü */}
@@ -180,16 +212,29 @@ export default function Navbar() {
         }`}
       >
         <div className="flex flex-col p-6 gap-1">
-          {navLinks.map((link, i) => (
-            <Link
-              key={i}
-              to={link.path}
-              onClick={() => setMenuOpen(false)}
-              className="no-underline text-white/80 font-nunito font-bold text-base py-3.5 border-b border-white/8 hover:text-[#D8FF4F] transition-colors"
-            >
-              {link.name}
-            </Link>
-          ))}
+          {navLinks.map((link, i) =>
+            link.isExternal ? (
+              <a
+                key={i}
+                href={link.path}
+                target={link.openInNew ? "_blank" : undefined}
+                rel={link.openInNew ? "noreferrer" : undefined}
+                onClick={() => setMenuOpen(false)}
+                className="no-underline text-white/80 font-nunito font-bold text-base py-3.5 border-b border-white/8 hover:text-[#D8FF4F] transition-colors"
+              >
+                {link.name}
+              </a>
+            ) : (
+              <Link
+                key={i}
+                to={link.path}
+                onClick={() => setMenuOpen(false)}
+                className="no-underline text-white/80 font-nunito font-bold text-base py-3.5 border-b border-white/8 hover:text-[#D8FF4F] transition-colors"
+              >
+                {link.name}
+              </Link>
+            )
+          )}
 
           <div className="my-4 border-t border-white/10" />
 

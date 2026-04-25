@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Seo from "../components/Seo";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
-import { isPromoActive, formatPromoEndDate, isExamPriceActive, getExamPrice, getExamDaysLeft } from "../utils/promoUtils";
+import PricingSection from "../components/PricingSection";
 
 const WA_LINK = "https://wa.me/905312546701?text=S%C4%B0STEM";
 
@@ -221,107 +221,6 @@ function HeroSection() {
 }
 
 // ══════════════════════════════════════════════
-// 2. HİZMET + PAKETLERİ — Exam Toggle
-// ══════════════════════════════════════════════
-function ServiceCardsSection() {
-  const [tab, setTab] = useState("yks");
-  const [packages, setPackages] = useState([]);
-
-  useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/packages`)
-      .then((r) => r.json())
-      .then((data) => { if (data.success) setPackages(data.packages); })
-      .catch(() => {});
-  }, []);
-
-  const yksPackages = packages.filter((p) => p.type === "yks");
-  const lgsPackages = packages.filter((p) => p.type === "lgs");
-  const visible = tab === "yks" ? yksPackages : lgsPackages;
-
-  return (
-    <section id="paketler" className="bg-[#0D0A2E] py-20 px-5 relative overflow-hidden">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-[#7340C8] opacity-[0.06] blur-3xl rounded-full pointer-events-none" />
-
-      <div className="max-w-[1100px] mx-auto relative">
-        <motion.div {...fadeUp} className="text-center mb-10">
-          <span className="inline-block font-nunito font-black text-xs text-[#D8FF4F] uppercase tracking-widest mb-3">
-            Paketlerimiz
-          </span>
-          <h2 className="font-fredoka text-[48px] max-[640px]:text-[36px] text-white leading-tight">
-            Sınava göre kişisel program
-          </h2>
-          <p className="font-nunito text-white/50 text-base mt-3 max-w-[480px] mx-auto">
-            Her öğrencinin ihtiyacı farklı. Sana özel program ilk görüşmede belirleniyor.
-          </p>
-        </motion.div>
-
-        {/* Tab Toggle */}
-        <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.08 }} className="flex justify-center mb-12">
-          <div className="inline-flex bg-white/8 border border-white/10 rounded-full p-1 gap-1">
-            {[
-              { key: "yks", label: "YKS", icon: "🎓" },
-              { key: "lgs", label: "LGS", icon: "📚" },
-            ].map((t) => (
-              <button
-                key={t.key}
-                onClick={() => setTab(t.key)}
-                className={`font-nunito font-black text-sm px-8 py-3 rounded-full transition-all flex items-center gap-2 ${
-                  tab === t.key
-                    ? "bg-[#D8FF4F] text-[#0D0A2E] shadow-[0_4px_12px_rgba(216,255,79,0.3)]"
-                    : "text-white/70 border border-white/20 hover:border-white/40 hover:text-white"
-                }`}
-              >
-                <span>{t.icon}</span> {t.label}
-              </button>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Paket Kartları */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={tab}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.3 }}
-          >
-            {visible.length === 0 ? (
-              <PlaceholderCard examType={tab} />
-            ) : (
-              <div className={`grid gap-6 ${
-                visible.length === 1
-                  ? "max-w-[420px] mx-auto"
-                  : visible.length === 2
-                    ? "grid-cols-2 max-w-[800px] mx-auto max-[640px]:grid-cols-1"
-                    : "grid-cols-3 max-[900px]:grid-cols-2 max-[580px]:grid-cols-1"
-              }`}>
-                {visible.map((pkg, i) => (
-                  <PackagePricingCard
-                    key={pkg.slug}
-                    pkg={pkg}
-                    featured={i === 0 && visible.length > 1}
-                  />
-                ))}
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-
-        <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.15 }} className="text-center mt-10">
-          <Link
-            to="/paket-detay"
-            className="font-nunito text-white/40 text-sm hover:text-white/70 transition-colors no-underline"
-          >
-            Tüm paketleri karşılaştır →
-          </Link>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ══════════════════════════════════════════════
 // 3. NEDEN FARKLI?
 // ══════════════════════════════════════════════
 const whyCards = [
@@ -436,198 +335,18 @@ function EarlyRegistrationBanner() {
   );
 }
 
-// ══════════════════════════════════════════════
-// HOME PRİCİNG SECTİON — YKS / LGS Paketler
-// ══════════════════════════════════════════════
-function PriceDisplay({ pkg }) {
-  const examActive = isExamPriceActive(pkg);
-  const promoActive = !examActive && isPromoActive(pkg);
-
-  if (examActive) {
-    const price = getExamPrice(pkg);
-    const days = getExamDaysLeft(pkg);
-    const rate = pkg.examDiscountRate ?? 5;
-    return (
-      <div className="text-center">
-        <div className="font-nunito text-white/40 text-sm line-through">
-          {pkg.priceText || `${pkg.price}₺`}
-        </div>
-        <div className="font-fredoka text-[#D8FF4F] text-4xl">{price}₺</div>
-        <span className="inline-block mt-1 bg-[#dbeafe]/20 text-[#93c5fd] font-nunito font-bold text-xs px-3 py-1 rounded-full">
-          Sınava {days} gün — %{rate} indirimli
-        </span>
-      </div>
-    );
-  }
-
-  if (promoActive) {
-    return (
-      <div className="text-center">
-        <div className="font-nunito text-white/40 text-sm line-through">
-          {pkg.priceText || `${pkg.price}₺`}
-        </div>
-        <div className="font-fredoka text-[#D8FF4F] text-4xl">{pkg.promoPrice}₺</div>
-        <span className="inline-block mt-1 bg-[#D8FF4F]/15 text-[#D8FF4F] font-nunito font-bold text-xs px-3 py-1 rounded-full">
-          {pkg.promoLabel || `${formatPromoEndDate(pkg.promoEndDate)} tarihine kadar`}
-        </span>
-      </div>
-    );
-  }
-
-  return (
-    <div className="text-center">
-      {pkg.oldPriceText && (
-        <div className="font-nunito text-white/40 text-sm line-through">{pkg.oldPriceText}</div>
-      )}
-      <div className="font-fredoka text-[#D8FF4F] text-4xl">
-        {pkg.priceText || `${pkg.price}₺`}
-      </div>
-    </div>
-  );
-}
-
-function PackagePricingCard({ pkg, featured }) {
-  const features = Array.isArray(pkg.features) ? pkg.features : [];
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.45 }}
-      className={`relative flex flex-col rounded-3xl overflow-hidden transition-all ${
-        featured
-          ? "bg-white border-2 border-[#D8FF4F] shadow-[0_0_40px_rgba(216,255,79,0.15)]"
-          : "bg-white/6 border border-white/12 hover:border-white/25"
-      }`}
-    >
-      {featured && (
-        <div className="bg-[#D8FF4F] text-[#0D0A2E] font-nunito font-black text-xs text-center py-2 uppercase tracking-widest">
-          👍 En Popüler
-        </div>
-      )}
-
-      <div className="p-7 flex flex-col flex-grow">
-        {/* Başlık */}
-        <div className="mb-5">
-          <h3 className={`font-fredoka text-2xl mb-1 ${featured ? "text-[#0D0A2E]" : "text-white"}`}>
-            {pkg.name}
-          </h3>
-          {pkg.subtitle && (
-            <p className={`font-nunito text-sm leading-relaxed ${featured ? "text-[#0D0A2E]/55" : "text-white/50"}`}>
-              {pkg.subtitle}
-            </p>
-          )}
-        </div>
-
-        {/* Fiyat */}
-        <div className={`py-5 border-t border-b mb-5 ${featured ? "border-[#0D0A2E]/10" : "border-white/10"}`}>
-          {featured ? (
-            <div className="text-center">
-              {pkg.oldPriceText && (
-                <div className="font-nunito text-[#0D0A2E]/40 text-sm line-through">{pkg.oldPriceText}</div>
-              )}
-              {isPromoActive(pkg) && (
-                <div className="font-nunito text-[#0D0A2E]/40 text-sm line-through">
-                  {pkg.priceText || `${pkg.price}₺`}
-                </div>
-              )}
-              <div className="font-fredoka text-[#1C1B8A] text-4xl">
-                {isPromoActive(pkg) ? `${pkg.promoPrice}₺` : (isExamPriceActive(pkg) ? `${getExamPrice(pkg)}₺` : (pkg.priceText || `${pkg.price}₺`))}
-              </div>
-              {isPromoActive(pkg) && (
-                <span className="inline-block mt-1 bg-[#D8FF4F] text-[#0D0A2E] font-nunito font-black text-xs px-3 py-1 rounded-full">
-                  {pkg.promoLabel || `${formatPromoEndDate(pkg.promoEndDate)} tarihine kadar`}
-                </span>
-              )}
-            </div>
-          ) : (
-            <PriceDisplay pkg={pkg} />
-          )}
-        </div>
-
-        {/* Özellikler */}
-        {features.length > 0 && (
-          <ul className="space-y-2.5 mb-7 flex-grow">
-            {features.map((f, i) => (
-              <li key={i} className="flex items-start gap-2.5">
-                <span className={`flex-shrink-0 font-black text-base mt-0.5 ${f.included ? (featured ? "text-[#1C1B8A]" : "text-[#D8FF4F]") : "text-white/20"}`}>
-                  {f.included ? "✓" : "✗"}
-                </span>
-                <span className={`font-nunito text-sm leading-relaxed ${f.included ? (featured ? "text-[#0D0A2E]/70" : "text-white/65") : (featured ? "text-[#0D0A2E]/25 line-through" : "text-white/25 line-through")}`}>
-                  {f.label}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {/* CTA */}
-        <div className="mt-auto flex flex-col gap-2.5">
-          <a
-            href={WA_LINK}
-            target="_blank"
-            rel="noreferrer"
-            className={`block w-full text-center font-nunito font-black text-sm py-3.5 rounded-full no-underline transition-all hover:scale-105 ${
-              featured
-                ? "bg-[#1C1B8A] text-white hover:bg-[#0D0A2E] shadow-[0_6px_20px_rgba(28,27,138,0.25)]"
-                : "bg-[#D8FF4F] text-[#0D0A2E] hover:bg-white shadow-[0_6px_20px_rgba(216,255,79,0.2)]"
-            }`}
-          >
-            Hemen Başla →
-          </a>
-          <Link
-            to={`/paket-detay?slug=${pkg.slug}`}
-            className={`block w-full text-center font-nunito font-bold text-sm py-3 rounded-full no-underline transition-all border ${
-              featured
-                ? "border-[#0D0A2E]/20 text-[#0D0A2E]/60 hover:border-[#0D0A2E]/50 hover:text-[#0D0A2E]"
-                : "border-white/15 text-white/50 hover:border-white/40 hover:text-white"
-            }`}
-          >
-            Detayları İncele
-          </Link>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-function PlaceholderCard({ examType }) {
-  return (
-    <div className="max-w-[560px] mx-auto rounded-3xl bg-[#0f0e2a] border border-white/10 p-10 flex flex-col items-center justify-center text-center gap-5 min-h-[300px]">
-      <div className="text-5xl">{examType === "yks" ? "🎓" : "📚"}</div>
-      <div>
-        <h3 className="font-fredoka text-white text-2xl mb-2">
-          {examType === "yks" ? "YKS programı için görüşme talep et." : "LGS programı için görüşme talep et."}
-        </h3>
-        <p className="font-nunito text-white/50 text-sm max-w-[320px] mx-auto">
-          İlk görüşmede sana özel ön değerlendirme yapılıyor.
-        </p>
-      </div>
-      <a
-        href={WA_LINK}
-        target="_blank"
-        rel="noreferrer"
-        className="inline-flex items-center gap-2 bg-[#D8FF4F] text-[#0D0A2E] font-nunito font-black text-base px-8 py-4 rounded-full no-underline hover:bg-white transition-all hover:scale-105 shadow-[0_8px_30px_rgba(216,255,79,0.2)]"
-      >
-        Görüşme Talep Et →
-      </a>
-    </div>
-  );
-}
-
 function WhyDifferentSection() {
   return (
-    <section className="bg-[#080719] py-20 px-5">
+    <section className="bg-white py-20 px-5">
       <div className="max-w-[1100px] mx-auto">
         <motion.div {...fadeUp} className="text-center mb-14">
-          <span className="inline-block font-nunito font-black text-xs text-[#D8FF4F] uppercase tracking-widest mb-3">
+          <span className="inline-block font-nunito font-black text-xs text-[#7340C8] uppercase tracking-widest mb-3">
             Neden Sözderece
           </span>
-          <h2 className="font-fredoka text-[48px] max-[640px]:text-[36px] text-white leading-tight">
+          <h2 className="font-fredoka text-[48px] max-[640px]:text-[36px] text-[#0D0A2E] leading-tight">
             Diğerleri ne yapıyor, biz ne yapıyoruz?
           </h2>
-          <p className="font-nunito text-white/50 text-base mt-4 max-w-[500px] mx-auto">
+          <p className="font-nunito text-[#64748b] text-base mt-4 max-w-[500px] mx-auto">
             Dershane konu anlatır. Koçun görevi evdeki boşluğu kapatmak — her gün, somut olarak.
           </p>
         </motion.div>
@@ -640,11 +359,11 @@ function WhyDifferentSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: i * 0.07 }}
-              className="bg-white/5 border border-white/8 rounded-2xl p-6 hover:border-[#D8FF4F]/40 hover:bg-white/8 transition-all"
+              className="bg-[#f8fafc] border border-gray-100 rounded-2xl p-6 hover:border-[#7340C8]/30 hover:bg-white hover:shadow-[0_4px_16px_rgba(115,64,200,0.08)] transition-all"
             >
               <div className="text-3xl mb-4">{c.icon}</div>
-              <h3 className="font-nunito font-black text-white text-base mb-2.5">{c.title}</h3>
-              <p className="font-nunito text-white/60 text-sm leading-relaxed">{c.desc}</p>
+              <h3 className="font-nunito font-black text-[#0D0A2E] text-base mb-2.5">{c.title}</h3>
+              <p className="font-nunito text-[#64748b] text-sm leading-relaxed">{c.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -687,19 +406,17 @@ function HowItWorksSection() {
   return (
     <section
       id="nasil-calisir"
-      className="bg-[#0D0A2E] py-20 px-5 overflow-hidden relative"
+      className="bg-[#f8fafc] py-20 px-5 overflow-hidden relative"
     >
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#7340C8] opacity-[0.07] blur-3xl rounded-full pointer-events-none" />
-
-      <div className="max-w-[1100px] mx-auto relative">
+      <div className="max-w-[1100px] mx-auto">
         <motion.div {...fadeUp} className="text-center mb-16">
-          <span className="inline-block font-nunito font-black text-xs text-[#D8FF4F] uppercase tracking-widest mb-3">
+          <span className="inline-block font-nunito font-black text-xs text-[#7340C8] uppercase tracking-widest mb-3">
             Süreç
           </span>
-          <h2 className="font-fredoka text-[48px] max-[640px]:text-[36px] text-white leading-tight">
+          <h2 className="font-fredoka text-[48px] max-[640px]:text-[36px] text-[#0D0A2E] leading-tight">
             Nasıl Çalışır?
           </h2>
-          <p className="font-nunito text-white/50 text-base mt-4 max-w-[460px] mx-auto">
+          <p className="font-nunito text-[#64748b] text-base mt-4 max-w-[460px] mx-auto">
             İlk adım 15 dakika. Geri kalanı biz hallederiz.
           </p>
         </motion.div>
@@ -714,16 +431,16 @@ function HowItWorksSection() {
               transition={{ duration: 0.45, delay: i * 0.1 }}
               className="relative"
             >
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/8 hover:border-white/20 transition-all h-full">
+              <div className="bg-white border border-gray-100 rounded-2xl p-6 hover:border-[#7340C8]/30 hover:shadow-[0_4px_16px_rgba(115,64,200,0.08)] transition-all h-full">
                 <div className="w-12 h-12 rounded-full bg-[#D8FF4F] flex items-center justify-center mb-5 shadow-[0_4px_16px_rgba(216,255,79,0.35)]">
                   <span className="font-fredoka text-[#0D0A2E] text-lg">{s.num}</span>
                 </div>
                 <div className="text-2xl mb-3">{s.icon}</div>
-                <h3 className="font-nunito font-black text-white text-base mb-2">{s.title}</h3>
-                <p className="font-nunito text-white/50 text-sm leading-relaxed">{s.desc}</p>
+                <h3 className="font-nunito font-black text-[#0D0A2E] text-base mb-2">{s.title}</h3>
+                <p className="font-nunito text-[#64748b] text-sm leading-relaxed">{s.desc}</p>
               </div>
               {i < steps.length - 1 && (
-                <div className="absolute top-8 -right-4 z-10 text-[#D8FF4F] text-3xl font-black max-[900px]:hidden select-none">
+                <div className="absolute top-8 -right-4 z-10 text-[#1C1B8A]/30 text-3xl font-black max-[900px]:hidden select-none">
                   →
                 </div>
               )}
@@ -740,7 +457,7 @@ function HowItWorksSection() {
             href="https://www.instagram.com/sozderece/"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 border-2 border-white/20 text-white font-nunito font-bold text-sm px-8 py-4 rounded-full no-underline hover:border-white/50 hover:bg-white/5 transition-all"
+            className="inline-flex items-center gap-2 border-2 border-[#0D0A2E]/15 text-[#0D0A2E]/70 font-nunito font-bold text-sm px-8 py-4 rounded-full no-underline hover:border-[#0D0A2E]/40 hover:bg-[#0D0A2E]/5 transition-all"
           >
             @sozderece'ye git →
           </a>
@@ -808,18 +525,17 @@ function TestimonialsSection() {
   const t = testimonials[current];
 
   return (
-    <section className="bg-[#1C1B8A] py-20 px-5 overflow-hidden relative">
-      <div className="absolute top-[-60px] right-[-40px] w-[300px] h-[300px] rounded-full bg-[#D8FF4F] opacity-[0.05] blur-3xl pointer-events-none" />
-      <span className="absolute left-[4%] top-[8%] font-fredoka text-[200px] text-white opacity-[0.03] select-none pointer-events-none leading-none">
+    <section className="bg-white py-20 px-5 overflow-hidden relative">
+      <span className="absolute left-[4%] top-[8%] font-fredoka text-[200px] text-[#1C1B8A] opacity-[0.04] select-none pointer-events-none leading-none">
         "
       </span>
 
       <div className="max-w-[760px] mx-auto relative">
         <motion.div {...fadeUp} className="text-center mb-12">
-          <span className="inline-block font-nunito font-black text-xs text-[#D8FF4F] uppercase tracking-widest mb-3">
+          <span className="inline-block font-nunito font-black text-xs text-[#7340C8] uppercase tracking-widest mb-3">
             Başarı Hikayeleri
           </span>
-          <h2 className="font-fredoka text-[42px] max-[640px]:text-[32px] text-white leading-tight">
+          <h2 className="font-fredoka text-[42px] max-[640px]:text-[32px] text-[#0D0A2E] leading-tight">
             Gerçek öğrenciler, gerçek sonuçlar
           </h2>
         </motion.div>
@@ -831,7 +547,7 @@ function TestimonialsSection() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -40 }}
             transition={{ duration: 0.4 }}
-            className="bg-white rounded-3xl p-8 relative overflow-hidden mb-8"
+            className="bg-[#f8fafc] border border-gray-100 rounded-3xl p-8 relative overflow-hidden mb-8 shadow-[0_4px_24px_rgba(115,64,200,0.08)]"
           >
             <div
               className={`absolute top-6 right-6 ${t.badgeColor} font-nunito font-black text-xs px-4 py-1.5 rounded-full`}
@@ -882,14 +598,14 @@ function TestimonialsSection() {
               key={i}
               onClick={() => setCurrent(i)}
               className={`h-2.5 rounded-full transition-all duration-300 ${
-                i === current ? "bg-[#D8FF4F] w-6" : "bg-white/30 w-2.5"
+                i === current ? "bg-[#1C1B8A] w-6" : "bg-[#1C1B8A]/20 w-2.5"
               }`}
             />
           ))}
         </div>
 
         <div className="text-center">
-          <p className="font-nunito text-white/50 text-sm mb-4">
+          <p className="font-nunito text-[#64748b] text-sm mb-4">
             Sıradaki başarı hikayesi senin olabilir.
           </p>
           <a
@@ -918,21 +634,21 @@ const compRows = [
   { feature: "Bire bir kişiselleştirme", dershane: false, other: "haftalık", sozderece: "günlük" },
 ];
 
-function Cell({ val }) {
-  if (val === true) return <span className="text-[#D8FF4F] font-nunito font-black text-lg">✓</span>;
-  if (val === false) return <span className="text-white/25 font-nunito font-black text-lg">✗</span>;
+function Cell({ val, highlight }) {
+  if (val === true) return <span className={`font-nunito font-black text-lg ${highlight ? "text-[#D8FF4F]" : "text-[#1C1B8A]"}`}>✓</span>;
+  if (val === false) return <span className="text-gray-300 font-nunito font-black text-lg">✗</span>;
   return <span className="text-[#FF6B35] font-nunito font-bold text-sm">{val}</span>;
 }
 
 function ComparisonSection() {
   return (
-    <section className="bg-[#080719] py-20 px-5">
+    <section className="bg-[#f8fafc] py-20 px-5">
       <div className="max-w-[900px] mx-auto">
         <motion.div {...fadeUp} className="text-center mb-12">
-          <span className="inline-block font-nunito font-black text-xs text-[#D8FF4F] uppercase tracking-widest mb-3">
+          <span className="inline-block font-nunito font-black text-xs text-[#7340C8] uppercase tracking-widest mb-3">
             Karşılaştırma
           </span>
-          <h2 className="font-fredoka text-[48px] max-[640px]:text-[36px] text-white leading-tight">
+          <h2 className="font-fredoka text-[48px] max-[640px]:text-[36px] text-[#0D0A2E] leading-tight">
             Her koçluk aynı değil.
           </h2>
         </motion.div>
@@ -940,18 +656,18 @@ function ComparisonSection() {
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.1 }}
-          className="overflow-x-auto rounded-2xl border border-white/10 shadow-[0_4px_40px_rgba(0,0,0,0.4)]"
+          className="overflow-x-auto rounded-2xl border border-gray-200 shadow-[0_4px_24px_rgba(0,0,0,0.06)]"
         >
           <table className="w-full min-w-[540px] border-collapse">
             <thead>
               <tr>
-                <th className="text-left py-4 px-5 font-nunito font-black text-sm text-white/40 uppercase tracking-wide bg-[#0D0A2E] border-b border-white/10 w-[40%]">
+                <th className="text-left py-4 px-5 font-nunito font-black text-sm text-white/50 uppercase tracking-wide bg-[#0D0A2E] border-b border-white/10 w-[40%]">
                   Özellik
                 </th>
-                <th className="text-center py-4 px-4 font-nunito font-black text-sm text-white/40 uppercase tracking-wide bg-[#0D0A2E] border-b border-white/10">
+                <th className="text-center py-4 px-4 font-nunito font-black text-sm text-white/50 uppercase tracking-wide bg-[#0D0A2E] border-b border-white/10">
                   Dershane
                 </th>
-                <th className="text-center py-4 px-4 font-nunito font-black text-sm text-white/40 uppercase tracking-wide bg-[#0D0A2E] border-b border-white/10">
+                <th className="text-center py-4 px-4 font-nunito font-black text-sm text-white/50 uppercase tracking-wide bg-[#0D0A2E] border-b border-white/10">
                   Başka Koçluk
                 </th>
                 <th className="text-center py-4 px-4 font-nunito font-black text-sm text-[#0D0A2E] uppercase tracking-wide bg-[#D8FF4F] border-b border-[#D8FF4F]/80">
@@ -961,18 +677,18 @@ function ComparisonSection() {
             </thead>
             <tbody>
               {compRows.map((row, i) => (
-                <tr key={i} className={i % 2 === 0 ? "bg-[#0D0A2E]" : "bg-[#0f0e2a]"}>
-                  <td className="py-3.5 px-5 font-nunito font-bold text-sm text-white/60 border-b border-white/8">
+                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-[#f8fafc]"}>
+                  <td className="py-3.5 px-5 font-nunito font-bold text-sm text-[#475569] border-b border-gray-100">
                     {row.feature}
                   </td>
-                  <td className="py-3.5 px-4 text-center border-b border-white/8">
-                    <Cell val={row.dershane} />
+                  <td className="py-3.5 px-4 text-center border-b border-gray-100">
+                    <Cell val={row.dershane} highlight={false} />
                   </td>
-                  <td className="py-3.5 px-4 text-center border-b border-white/8">
-                    <Cell val={row.other} />
+                  <td className="py-3.5 px-4 text-center border-b border-gray-100">
+                    <Cell val={row.other} highlight={false} />
                   </td>
-                  <td className="py-3.5 px-4 text-center border-b border-[#D8FF4F]/20 bg-[#D8FF4F]/8">
-                    <Cell val={row.sozderece} />
+                  <td className="py-3.5 px-4 text-center border-b border-[#1C1B8A]/10 bg-[#1C1B8A]/5">
+                    <Cell val={row.sozderece} highlight={true} />
                   </td>
                 </tr>
               ))}
@@ -1057,16 +773,16 @@ function FaqSection() {
   const [open, setOpen] = useState(null);
 
   return (
-    <section className="bg-[#0D0A2E] py-20 px-5">
+    <section className="bg-white py-20 px-5">
       <div className="max-w-[800px] mx-auto">
         <motion.div {...fadeUp} className="text-center mb-12">
-          <span className="inline-block font-nunito font-black text-xs text-[#D8FF4F] uppercase tracking-widest mb-3">
+          <span className="inline-block font-nunito font-black text-xs text-[#7340C8] uppercase tracking-widest mb-3">
             SSS
           </span>
-          <h2 className="font-fredoka text-[48px] max-[640px]:text-[36px] text-white leading-tight">
+          <h2 className="font-fredoka text-[48px] max-[640px]:text-[36px] text-[#0D0A2E] leading-tight">
             Sıkça Sorulan Sorular
           </h2>
-          <p className="font-nunito text-white/40 text-sm mt-3">
+          <p className="font-nunito text-[#94a3b8] text-sm mt-3">
             Cevabını bulamazsan bize ulaş, hemen dönüyoruz.
           </p>
         </motion.div>
@@ -1086,20 +802,20 @@ function FaqSection() {
                   onClick={() => setOpen(isOpen ? null : i)}
                   className={`relative rounded-2xl border overflow-hidden cursor-pointer transition-all duration-300 ${
                     isOpen
-                      ? "border-[#D8FF4F]/40 shadow-[0_0_0_3px_rgba(216,255,79,0.08)] bg-white/8"
-                      : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/8"
+                      ? "border-[#7340C8]/40 shadow-[0_0_0_3px_rgba(115,64,200,0.06)] bg-[#f5f3ff]"
+                      : "border-gray-100 bg-[#f8fafc] hover:border-[#7340C8]/30 hover:bg-white hover:shadow-sm"
                   }`}
                 >
                   <div
                     className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl transition-all duration-300 ${
-                      isOpen ? "bg-[#D8FF4F]" : "bg-transparent"
+                      isOpen ? "bg-[#7340C8]" : "bg-transparent"
                     }`}
                   />
                   <div className="pl-6 pr-5 py-5">
                     <div className="flex items-center justify-between gap-4">
                       <h3
                         className={`font-nunito font-black text-base transition-colors duration-200 ${
-                          isOpen ? "text-[#D8FF4F]" : "text-white"
+                          isOpen ? "text-[#7340C8]" : "text-[#0D0A2E]"
                         }`}
                       >
                         {faq.q}
@@ -1107,8 +823,8 @@ function FaqSection() {
                       <div
                         className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xl font-black transition-all duration-300 ${
                           isOpen
-                            ? "bg-[#D8FF4F] text-[#0D0A2E] rotate-45"
-                            : "bg-white/10 text-white/60 rotate-0"
+                            ? "bg-[#7340C8] text-white rotate-45"
+                            : "bg-gray-100 text-[#64748b] rotate-0"
                         }`}
                       >
                         +
@@ -1119,7 +835,7 @@ function FaqSection() {
                         isOpen ? "max-h-96 opacity-100 mt-3" : "max-h-0 opacity-0"
                       }`}
                     >
-                      <p className="font-nunito text-white/60 text-sm leading-relaxed">
+                      <p className="font-nunito text-[#64748b] text-sm leading-relaxed">
                         {faq.a}
                       </p>
                     </div>
@@ -1135,22 +851,22 @@ function FaqSection() {
           transition={{ ...fadeUp.transition, delay: 0.2 }}
           className="text-center mt-10"
         >
-          <p className="font-nunito text-white/40 text-sm mb-4">
+          <p className="font-nunito text-[#94a3b8] text-sm mb-4">
             Cevabın burada yok mu?
           </p>
           <a
             href={WA_LINK}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 bg-[#D8FF4F] text-[#0D0A2E] font-nunito font-black text-sm px-8 py-4 rounded-full no-underline hover:bg-white transition-all shadow-[0_6px_20px_rgba(216,255,79,0.2)]"
+            className="inline-flex items-center gap-2 bg-[#1C1B8A] text-white font-nunito font-black text-sm px-8 py-4 rounded-full no-underline hover:bg-[#0D0A2E] transition-all shadow-[0_6px_20px_rgba(28,27,138,0.2)]"
           >
             Bize Ulaşın →
           </a>
-          <p className="font-nunito text-white/30 text-xs mt-6">
+          <p className="font-nunito text-[#94a3b8] text-xs mt-6">
             YKS ve LGS hakkında resmi bilgi için{" "}
-            <a href="https://www.osym.gov.tr" target="_blank" rel="noopener noreferrer" className="underline hover:text-white/60 transition-colors">ÖSYM</a>
+            <a href="https://www.osym.gov.tr" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#64748b] transition-colors">ÖSYM</a>
             {" "}ve{" "}
-            <a href="https://www.meb.gov.tr" target="_blank" rel="noopener noreferrer" className="underline hover:text-white/60 transition-colors">MEB</a>
+            <a href="https://www.meb.gov.tr" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#64748b] transition-colors">MEB</a>
             {" "}resmi sitelerini ziyaret edebilirsiniz.
           </p>
         </motion.div>
@@ -1164,8 +880,8 @@ function FaqSection() {
 // ══════════════════════════════════════════════
 function ContactCtaSection() {
   return (
-    <section className="bg-[#0D0A2E] py-16 px-5 border-t border-white/5 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#7340C8]/10 to-transparent pointer-events-none" />
+    <section className="bg-gradient-to-br from-[#1C1B8A] to-[#0D0A2E] py-16 px-5 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-tr from-[#7340C8]/20 to-transparent pointer-events-none" />
       <div className="max-w-[700px] mx-auto text-center relative">
         <motion.div {...fadeUp}>
           <div className="text-5xl mb-5">🎯</div>
@@ -1239,7 +955,7 @@ export default function HomePage() {
 
       <Navbar />
       <HeroSection />
-      <ServiceCardsSection />
+      <PricingSection />
       <EarlyRegistrationBanner />
       <WhyDifferentSection />
       <HowItWorksSection />
