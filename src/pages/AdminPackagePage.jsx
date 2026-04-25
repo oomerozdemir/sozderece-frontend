@@ -6,13 +6,19 @@ const inputCls =
   "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
 
 const PACKAGE_TYPES = [
-  { value: "yks", label: "YKS Koçluğu" },
-  { value: "lgs", label: "LGS Koçluğu" },
-  { value: "tutoring_only", label: "Özel Ders" },
-  { value: "hybrid_light", label: "Hibrit (Hafif)" },
-  { value: "coaching_only", label: "Sadece Koçluk" },
-  { value: "coaching_plus_tutoring", label: "Koçluk + Özel Ders" },
+  { value: "yks",                    label: "🎓 Sadece YKS sekmesinde göster" },
+  { value: "lgs",                    label: "📚 Sadece LGS sekmesinde göster" },
+  { value: "coaching_only",          label: "↕ Her iki sekmede göster" },
+  { value: "tutoring_only",          label: "↕ Her iki sekmede göster (Özel Ders)" },
+  { value: "hybrid_light",           label: "↕ Her iki sekmede göster (Hibrit)" },
+  { value: "coaching_plus_tutoring", label: "↕ Her iki sekmede göster (Koçluk+)" },
 ];
+
+const getTabBadge = (type) => {
+  if (type === "yks") return { label: "🎓 YKS", cls: "bg-[#dbeafe] text-[#1d4ed8]" };
+  if (type === "lgs") return { label: "📚 LGS", cls: "bg-[#dcfce7] text-[#15803d]" };
+  return { label: "↕ YKS + LGS", cls: "bg-[#f5f3ff] text-[#6d28d9]" };
+};
 
 const emptyForm = {
   slug: "",
@@ -250,7 +256,14 @@ const AdminPackagePage = () => {
                     );
                   })()}
                   <span className="text-xs text-[#94a3b8]">Sıra: {pkg.displayOrder}</span>
-                  <span className="text-xs text-[#94a3b8]">Tür: {pkg.type || "—"}</span>
+                  {(() => {
+                    const badge = getTabBadge(pkg.type);
+                    return (
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${badge.cls}`}>
+                        {badge.label}
+                      </span>
+                    );
+                  })()}
                 </div>
                 {Array.isArray(pkg.features) && pkg.features.length > 0 && (
                   <ul className="mt-2 space-y-0.5">
@@ -404,7 +417,7 @@ const AdminPackagePage = () => {
               {/* Tip & Sıra */}
               <div className="grid grid-cols-2 gap-3 max-[560px]:grid-cols-1">
                 <div>
-                  <label className="block text-xs font-bold text-[#475569] mb-1.5">Paket Türü</label>
+                  <label className="block text-xs font-bold text-[#475569] mb-1.5">Ana Sayfa Sekme Ataması</label>
                   <select
                     className={inputCls}
                     value={form.type}
@@ -414,6 +427,9 @@ const AdminPackagePage = () => {
                       <option key={t.value} value={t.value}>{t.label}</option>
                     ))}
                   </select>
+                  <p className="text-[11px] text-[#94a3b8] mt-1">
+                    YKS seçilirse sadece YKS sekmesinde, LGS seçilirse sadece LGS sekmesinde görünür. "Her iki sekme" seçilirse her ikisinde de çıkar.
+                  </p>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-[#475569] mb-1.5">Görüntüleme Sırası</label>
