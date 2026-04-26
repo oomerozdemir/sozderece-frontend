@@ -145,7 +145,7 @@ export default function HeroSection() {
               className="font-fredoka text-[72px] max-[900px]:text-[52px] max-[640px]:text-[42px] max-[400px]:text-[34px] leading-[1.05] text-white mb-6"
               style={{ letterSpacing: "-0.5px", maxWidth: 640 }}
             >
-              Saatlerce Masadasın Ama Netlerin Artmıyor Mu? {" "}
+              Çalışıyorsun Ama Netlerin Artmıyor Mu? {" "}
               <span style={{
                 background: "linear-gradient(90deg, #D8FF4F, #ffffff, #D8FF4F)",
                 backgroundSize: "200% auto",
@@ -154,7 +154,7 @@ export default function HeroSection() {
                 WebkitTextFillColor: "transparent",
                 animation: "heroShimmer 3s linear infinite",
               }}>Sorun Sende Değil.</span>{" "}
-              ol.
+          
             </motion.h1>
 
             <motion.p
