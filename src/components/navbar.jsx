@@ -174,28 +174,28 @@ export default function Navbar() {
           )}
 
           {/* Ana CTA */}
-          <a
-            href={WA_LINK}
+          <Link
+            to="/ucretsiz-on-gorusme"
             target="_blank"
             rel="noreferrer"
             className="bg-[#D8FF4F] text-[#0D0A2E] font-nunito font-black text-sm py-2.5 px-5 rounded-full no-underline transition-all hover:bg-white hover:scale-105 shadow-[0_4px_14px_rgba(216,255,79,0.3)]"
           >
             Ücretsiz Görüşme →
-          </a>
+          </Link>
         </div>
 
         {/* MOBİL HAMBURGER */}
         <div
           className="hidden max-[960px]:flex items-center gap-3"
         >
-          <a
-            href={WA_LINK}
+          <Link
+            to="/ucretsiz-on-gorusme"
             target="_blank"
             rel="noreferrer"
             className="bg-[#D8FF4F] text-[#0D0A2E] font-nunito font-black text-xs py-2 px-4 rounded-full no-underline"
           >
             SİSTEM
-          </a>
+          </Link>
           <button
             className="bg-transparent border-0 text-white text-xl cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}

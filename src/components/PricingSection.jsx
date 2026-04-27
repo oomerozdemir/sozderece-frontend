@@ -355,7 +355,7 @@ export default function PricingSection() {
                     </div>
                   </div>
                   <a
-                    href={WA_LINK}
+                    href="/ucretsiz-on-gorusme"
                     target="_blank"
                     rel="noreferrer"
                     className="block text-center no-underline font-fredoka font-bold text-lg rounded-full mt-7 transition-transform hover:scale-105"
