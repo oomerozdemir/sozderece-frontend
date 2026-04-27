@@ -154,20 +154,15 @@ export default App;
 /*
 Yapılacaklar Listesi:
 
-pricing sectiondan direkt satışa yönlendirme yapılacak
 
 tasarım değişiklliklerini ana sayfa ile uyumlu olacak şekilde diğer yerlere de uygula.
 
 
-seo aramalarında nasıl daha iyi konumlanabiliriz
-
-screamer frog kullanabilirsin ahfres duzgun çalışmıyor gibi
 
 
-sınava kadar olan paket fikri eklenecek
 
 
-googlesearch console da dızıne eklenen sayfaların hata raporlarını ıncele ve duzelt
+
 
 
 *****Seviye tespit araci olusturabiliriz sitede*****

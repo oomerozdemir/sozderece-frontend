@@ -96,18 +96,27 @@ const popIn = {
 export default function PricingSection() {
   const [tab, setTab] = useState("yks");
   const [packages, setPackages] = useState([]);
+  const [earlyReg, setEarlyReg] = useState(null);
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/api/packages`)
       .then((r) => r.json())
       .then((data) => { if (data.success) setPackages(data.packages); })
       .catch(() => {});
+    fetch(`${process.env.REACT_APP_API_URL}/api/settings/early-registration`)
+      .then((r) => r.json())
+      .then((data) => { if (data.enabled) setEarlyReg(data); })
+      .catch(() => {});
   }, []);
 
   const yksPackages = packages.filter((p) => p.type !== "lgs");
   const lgsPackages = packages.filter((p) => p.type !== "yks");
-  const visible = tab === "yks" ? yksPackages : lgsPackages;
+  const visible = tab === "lgs" ? lgsPackages : yksPackages;
   const primary = visible[0] || null;
+
+  const earlyDaysLeft = earlyReg?.endDate
+    ? Math.max(0, Math.ceil((new Date(earlyReg.endDate) - new Date()) / 86400000))
+    : null;
 
   const features =
     primary?.features && primary.features.filter((f) => f.included).length >= 3
@@ -191,15 +200,27 @@ export default function PricingSection() {
               {[
                 { key: "yks", label: "🎓 YKS" },
                 { key: "lgs", label: "📚 LGS" },
+                ...(earlyReg ? [{ key: "erken", label: "⚡ Erken Kayıt" }] : []),
               ].map((t) => (
                 <button
                   key={t.key}
                   onClick={() => setTab(t.key)}
-                  className="font-fredoka font-bold text-[17px] px-9 py-3 rounded-full border-none cursor-pointer transition-all duration-200"
+                  className="font-fredoka font-bold text-[17px] px-7 py-3 rounded-full border-none cursor-pointer transition-all duration-200"
                   style={{
-                    background: tab === t.key ? "#1C1B8A" : "transparent",
-                    color: tab === t.key ? "#D8FF4F" : "#6B6B8A",
-                    boxShadow: tab === t.key ? "0 4px 14px rgba(28,27,138,0.3)" : "none",
+                    background:
+                      tab === t.key
+                        ? t.key === "erken" ? "#D8FF4F" : "#1C1B8A"
+                        : "transparent",
+                    color:
+                      tab === t.key
+                        ? t.key === "erken" ? "#0D0A2E" : "#D8FF4F"
+                        : "#6B6B8A",
+                    boxShadow:
+                      tab === t.key
+                        ? t.key === "erken"
+                          ? "0 4px 14px rgba(216,255,79,0.4)"
+                          : "0 4px 14px rgba(28,27,138,0.3)"
+                        : "none",
                   }}
                 >
                   {t.label}
@@ -357,14 +378,28 @@ export default function PricingSection() {
                 transition={{ duration: 0.5, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 className="bento-c4"
               >
-                <div className="rounded-[28px] flex items-center gap-5 h-full" style={{ background: "#D8FF4F", padding: "28px 32px" }}>
-                  <div className="text-[40px] flex-shrink-0">⚡</div>
-                  <div>
-                    <div className="font-fredoka font-bold text-[#1C1B8A] text-xl">Erken Kayıt Avantajı</div>
-                    <div className="font-nunito font-bold text-sm mt-1" style={{ color: "rgba(28,27,138,0.65)" }}>
-                      Kontenjan dolmadan yerinizi ayırtın
-                    </div>
+                <div className="rounded-[28px] flex flex-col justify-center gap-2 h-full" style={{ background: "#D8FF4F", padding: "28px 32px" }}>
+                  <div className="text-[36px] leading-none">⚡</div>
+                  <div className="font-fredoka font-bold text-[#1C1B8A] text-xl leading-snug">
+                    {tab === "erken" && earlyReg
+                      ? (earlyReg.title || "Erken Kayıt Avantajı")
+                      : "Erken Kayıt Avantajı"}
                   </div>
+                  {tab === "erken" && earlyReg?.discountText && (
+                    <div className="font-fredoka font-bold text-[#0D0A2E] text-2xl leading-none">
+                      {earlyReg.discountText}
+                    </div>
+                  )}
+                  <div className="font-nunito font-bold text-sm" style={{ color: "rgba(28,27,138,0.65)" }}>
+                    {tab === "erken" && earlyReg
+                      ? (earlyReg.subtitle || "Kontenjan dolmadan yerinizi ayırtın")
+                      : "Kontenjan dolmadan yerinizi ayırtın"}
+                  </div>
+                  {tab === "erken" && earlyDaysLeft !== null && (
+                    <div className="font-fredoka font-bold text-sm" style={{ color: "rgba(28,27,138,0.5)" }}>
+                      ⏰ {earlyDaysLeft} gün kaldı
+                    </div>
+                  )}
                 </div>
               </motion.div>
 
