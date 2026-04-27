@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const WA_LINK = "https://wa.me/905312546701?text=S%C4%B0STEM";
@@ -171,10 +172,8 @@ export default function HeroSection() {
               transition={{ ...fadeUp.transition, delay: 0.24 }}
               className="flex flex-wrap gap-4 mb-14"
             >
-              <a
-                href={WA_LINK}
-                target="_blank"
-                rel="noreferrer"
+              <Link
+                to="/ucretsiz-on-gorusme"
                 className="inline-flex items-center gap-2 text-white font-fredoka font-bold text-[18px] px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
                 style={{
                   background: "#FF6B35",
@@ -183,7 +182,7 @@ export default function HeroSection() {
                 }}
               >
                 Ücretsiz Tanışma Görüşmesi
-              </a>
+              </Link>
               <a
                 href="#nasil-calisir"
                 className="inline-flex items-center gap-2 text-white font-fredoka font-semibold text-[16px] px-7 py-4 rounded-full no-underline transition-all hover:bg-white/10"

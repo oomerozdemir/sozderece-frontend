@@ -365,15 +365,13 @@ function WhyDifferentSection() {
           transition={{ ...fadeUp.transition, delay: 0.3 }}
           className="mt-12 flex justify-center"
         >
-          <a
-            href={WA_LINK}
-            target="_blank"
-            rel="noreferrer"
+          <Link
+            to="/ucretsiz-on-gorusme"
             className="inline-flex items-center gap-2 font-fredoka font-bold text-[#0D0A2E] text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
             style={{ background: "#D8FF4F", boxShadow: "0 8px 28px rgba(216,255,79,0.3)" }}
           >
             Ücretsiz Görüşme Al →
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>
@@ -621,15 +619,13 @@ function TestimonialsSection() {
           <p className="font-nunito text-white/40 text-sm mb-4">
             Sıradaki başarı hikayesi senin olabilir.
           </p>
-          <a
-            href={WA_LINK}
-            target="_blank"
-            rel="noreferrer"
+          <Link
+            to="/ucretsiz-on-gorusme"
             className="inline-flex items-center gap-2 font-fredoka font-bold text-[#0D0A2E] text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
             style={{ background: "#D8FF4F", boxShadow: "0 8px 28px rgba(216,255,79,0.25)" }}
           >
             Ücretsiz Görüşme Başlat →
-          </a>
+          </Link>
         </div>
       </div>
     </section>
@@ -750,15 +746,13 @@ function ComparisonSection() {
           transition={{ ...fadeUp.transition, delay: 0.15 }}
           className="text-center mt-8"
         >
-          <a
-            href={WA_LINK}
-            target="_blank"
-            rel="noreferrer"
+          <Link
+            to="/ucretsiz-on-gorusme"
             className="inline-flex items-center gap-2 font-fredoka font-bold text-[#0D0A2E] text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
             style={{ background: "#D8FF4F", boxShadow: "0 6px 20px rgba(216,255,79,0.3)" }}
           >
             Ücretsiz Görüşme Başlat →
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>
@@ -938,10 +932,8 @@ function ContactCtaSection() {
           <p className="font-nunito font-bold text-white/50 text-base mb-10 max-w-[440px] mx-auto">
             15 dakika, sana özel değerlendirme. Taahhüt yok, baskı yok.
           </p>
-          <a
-            href={WA_LINK}
-            target="_blank"
-            rel="noreferrer"
+          <Link
+            to="/ucretsiz-on-gorusme"
             className="inline-flex items-center gap-2 font-fredoka font-bold text-white text-[18px] px-10 py-5 rounded-full no-underline transition-transform hover:scale-105"
             style={{
               background: "#FF6B35",
@@ -950,7 +942,7 @@ function ContactCtaSection() {
             }}
           >
             Ücretsiz Görüşme Başlat →
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>
@@ -979,15 +971,13 @@ function StickyMobileCta() {
           transition={{ duration: 0.3 }}
           className="fixed bottom-0 left-0 right-0 z-[900] px-4 pb-4 hidden max-[960px]:block"
         >
-          <a
-            href={WA_LINK}
-            target="_blank"
-            rel="noreferrer"
+          <Link
+            to="/ucretsiz-on-gorusme"
             className="block w-full font-fredoka font-bold text-[#0D0A2E] text-base py-4 rounded-2xl text-center no-underline shadow-[0_-4px_24px_rgba(216,255,79,0.3)]"
             style={{ background: "#D8FF4F" }}
           >
             Ücretsiz Görüşme Başlat →
-          </a>
+          </Link>
         </motion.div>
       )}
     </AnimatePresence>
