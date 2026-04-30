@@ -54,6 +54,7 @@ const AdminPackagePage = () => {
   const [newFeature, setNewFeature] = useState({ label: "", included: true });
   const emptyPlan = { label: "", priceText: "", durationText: "", oldPriceText: "", unitPrice: "", badge: "", badgeColor: "green" };
   const [newPlan, setNewPlan] = useState(emptyPlan);
+  const [editingPlanIdx, setEditingPlanIdx] = useState(null);
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -642,6 +643,8 @@ const AdminPackagePage = () => {
                               setForm({ ...form, plans: arr });
                             }} className="text-[#7c3aed] text-xs font-bold hover:text-[#4c1d95]">↓</button>
                           )}
+                          <button type="button" onClick={() => { setNewPlan({ ...plan }); setEditingPlanIdx(i); }}
+                            className="text-[#0ea5e9] text-xs font-bold hover:text-[#0284c7] ml-1">✎</button>
                           <button type="button" onClick={() => setForm({ ...form, plans: form.plans.filter((_, idx) => idx !== i) })}
                             className="text-[#ef4444] text-xs font-bold hover:text-[#dc2626] ml-1">×</button>
                         </div>
@@ -650,8 +653,8 @@ const AdminPackagePage = () => {
                   </div>
                 )}
                 {/* Yeni plan ekle */}
-                <div className="bg-white rounded-xl p-3 border border-[#ddd6fe] space-y-2">
-                  <p className="text-[11px] font-bold text-[#475569]">Yeni Plan Ekle</p>
+                <div className={`bg-white rounded-xl p-3 border space-y-2 ${editingPlanIdx !== null ? "border-[#0ea5e9] ring-1 ring-[#0ea5e9]/30" : "border-[#ddd6fe]"}`}>
+                  <p className="text-[11px] font-bold text-[#475569]">{editingPlanIdx !== null ? `Plan Düzenle (#${editingPlanIdx + 1})` : "Yeni Plan Ekle"}</p>
                   <div className="grid grid-cols-2 gap-2 max-[560px]:grid-cols-1">
                     <div>
                       <label className="block text-[10px] font-bold text-[#475569] mb-1">Sekme Adı *</label>
@@ -694,16 +697,33 @@ const AdminPackagePage = () => {
                       </select>
                     </div>
                   </div>
-                  <button type="button"
-                    onClick={() => {
-                      if (!newPlan.label || !newPlan.unitPrice) return;
-                      setForm({ ...form, plans: [...form.plans, { ...newPlan }] });
-                      setNewPlan(emptyPlan);
-                    }}
-                    className="w-full py-2 bg-[#7c3aed] text-white rounded-xl text-xs font-bold hover:bg-[#4c1d95] transition-all"
-                  >
-                    + Plan Ekle
-                  </button>
+                  <div className="flex gap-2">
+                    <button type="button"
+                      onClick={() => {
+                        if (!newPlan.label || !newPlan.unitPrice) return;
+                        if (editingPlanIdx !== null) {
+                          const arr = [...form.plans];
+                          arr[editingPlanIdx] = { ...newPlan };
+                          setForm({ ...form, plans: arr });
+                          setEditingPlanIdx(null);
+                        } else {
+                          setForm({ ...form, plans: [...form.plans, { ...newPlan }] });
+                        }
+                        setNewPlan(emptyPlan);
+                      }}
+                      className="flex-1 py-2 bg-[#7c3aed] text-white rounded-xl text-xs font-bold hover:bg-[#4c1d95] transition-all"
+                    >
+                      {editingPlanIdx !== null ? "✓ Güncelle" : "+ Plan Ekle"}
+                    </button>
+                    {editingPlanIdx !== null && (
+                      <button type="button"
+                        onClick={() => { setNewPlan(emptyPlan); setEditingPlanIdx(null); }}
+                        className="px-4 py-2 bg-[#f1f5f9] text-[#64748b] rounded-xl text-xs font-bold hover:bg-[#e2e8f0] transition-all"
+                      >
+                        İptal
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 
