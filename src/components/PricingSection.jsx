@@ -22,11 +22,31 @@ const STATIC_FEATURES = [
   'Sıfırdan Başlayanlara Özel "Masaya Oturma Disiplini" Rutinleri',
 ];
 
-function PriceDisplay({ pkg }) {
+function PriceDisplay({ pkg, activePlan }) {
   if (!pkg) {
     return (
       <div className="font-fredoka font-bold text-[#D8FF4F] text-[52px] leading-none">
         Görüşme al →
+      </div>
+    );
+  }
+
+  if (activePlan) {
+    const priceStr = (activePlan.priceText || `${activePlan.price}₺`).replace(/₺/g, "").trim();
+    return (
+      <div>
+        {activePlan.oldPriceText && (
+          <div className="font-nunito font-bold text-sm mb-1" style={{ color: "rgba(216,255,79,0.45)", textDecoration: "line-through" }}>
+            {activePlan.oldPriceText}
+          </div>
+        )}
+        <div className="flex items-start gap-1">
+          <span className="font-fredoka font-bold text-[22px] mt-3" style={{ color: "rgba(216,255,79,0.75)" }}>₺</span>
+          <span className="font-fredoka font-bold text-[#D8FF4F] leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{priceStr}</span>
+        </div>
+        {activePlan.durationText && (
+          <div className="font-nunito font-bold text-sm mt-1" style={{ color: "rgba(255,255,255,0.5)" }}>{activePlan.durationText}</div>
+        )}
       </div>
     );
   }
@@ -98,6 +118,7 @@ export default function PricingSection() {
   const [packages, setPackages] = useState([]);
   const [earlyReg, setEarlyReg] = useState(null);
   const [primaryIdx, setPrimaryIdx] = useState(0);
+  const [activePlanIdx, setActivePlanIdx] = useState(0);
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/api/packages`)
@@ -110,12 +131,16 @@ export default function PricingSection() {
       .catch(() => {});
   }, []);
 
-  useEffect(() => { setPrimaryIdx(0); }, [tab]);
+  useEffect(() => { setPrimaryIdx(0); setActivePlanIdx(0); }, [tab]);
 
   const yksPackages = packages.filter((p) => p.type !== "lgs");
   const lgsPackages = packages.filter((p) => p.type !== "yks");
   const visible = tab === "lgs" ? lgsPackages : yksPackages;
   const primary = visible[primaryIdx] ?? null;
+
+  const plans = Array.isArray(primary?.plans) ? primary.plans : [];
+  const hasPlanTabs = plans.length > 1;
+  const activePlan = hasPlanTabs ? plans[activePlanIdx] : null;
 
   const earlyDaysLeft = earlyReg?.endDate
     ? Math.max(0, Math.ceil((new Date(earlyReg.endDate) - new Date()) / 86400000))
@@ -273,29 +298,28 @@ export default function PricingSection() {
                   style={{ background: "#1C1B8A", padding: "44px 40px", boxShadow: "0 16px 40px rgba(28,27,138,0.25)", minHeight: 260 }}
                 >
                   <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#4a1da0", filter: "blur(60px)", opacity: 0.5, top: -60, right: -40 }} />
-                  {visible.length > 1 ? (
+                  <div className="font-fredoka font-semibold text-[#D8FF4F] text-[13px] uppercase relative mb-3" style={{ letterSpacing: 3 }}>
+                    {tab === "yks" ? "YKS" : "LGS"} Koçluk Paketi
+                  </div>
+                  {hasPlanTabs && (
                     <div className="flex gap-1 rounded-full p-1 mb-3 relative" style={{ background: "rgba(255,255,255,0.1)" }}>
-                      {visible.map((pkg, i) => (
+                      {plans.map((plan, i) => (
                         <button
-                          key={pkg.slug}
-                          onClick={() => setPrimaryIdx(i)}
+                          key={i}
+                          onClick={() => setActivePlanIdx(i)}
                           className="font-fredoka font-bold text-[12px] px-4 py-1.5 rounded-full border-none cursor-pointer transition-all duration-200 flex-1 text-center"
                           style={{
-                            background: primaryIdx === i ? "#D8FF4F" : "transparent",
-                            color: primaryIdx === i ? "#1C1B8A" : "rgba(255,255,255,0.65)",
+                            background: activePlanIdx === i ? "#D8FF4F" : "transparent",
+                            color: activePlanIdx === i ? "#1C1B8A" : "rgba(255,255,255,0.65)",
                           }}
                         >
-                          {i === 0 ? "Standart" : "⚡ Erken Kayıt"}
+                          {plan.label}
                         </button>
                       ))}
                     </div>
-                  ) : (
-                    <div className="font-fredoka font-semibold text-[#D8FF4F] text-[13px] uppercase relative mb-3" style={{ letterSpacing: 3 }}>
-                      {tab === "yks" ? "YKS" : "LGS"} Koçluk Paketi
-                    </div>
                   )}
                   <div className="relative">
-                    <PriceDisplay pkg={primary} />
+                    <PriceDisplay pkg={primary} activePlan={activePlan} />
                   </div>
                   <div className="font-nunito font-bold text-sm mt-2 relative" style={{ color: "rgba(255,255,255,0.55)" }}>
                     {primary?.subtitle || "4 Haftalık Program"}
@@ -306,7 +330,11 @@ export default function PricingSection() {
                     </span>
                   </div>
                   <Link
-                    to={primary ? `/pre-auth?slug=${encodeURIComponent(primary.slug)}` : "/paket-detay"}
+                    to={primary
+                      ? hasPlanTabs
+                        ? `/pre-auth?slug=${encodeURIComponent(primary.slug)}&plan=${activePlanIdx}`
+                        : `/pre-auth?slug=${encodeURIComponent(primary.slug)}`
+                      : "/paket-detay"}
                     className="block text-center no-underline font-fredoka font-bold text-base rounded-full mt-5 relative transition-transform hover:scale-105"
                     style={{
                       background: "#D8FF4F",
@@ -315,7 +343,7 @@ export default function PricingSection() {
                       boxShadow: "0 6px 18px rgba(216,255,79,0.3)",
                     }}
                   >
-                    Paketi Satın Al →
+                    {activePlan?.ctaLabel || "Paketi Satın Al →"}
                   </Link>
                 </div>
               </motion.div>
