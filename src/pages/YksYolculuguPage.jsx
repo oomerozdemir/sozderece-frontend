@@ -9,8 +9,8 @@ import Seo from "../components/Seo";
 const fadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.55 } };
 const inp = "w-full px-4 py-3 rounded-xl border border-[#e5e7eb] text-sm text-[#0f172a] outline-none focus:border-[#1C1B8A] focus:ring-2 focus:ring-[#1C1B8A]/10 transition-all bg-white font-nunito";
 
-function daysLeft(lgsDate) {
-  return Math.max(0, Math.ceil((new Date(lgsDate) - new Date()) / (1000 * 60 * 60 * 24)));
+function daysLeft(targetDate) {
+  return Math.max(0, Math.ceil((new Date(targetDate) - new Date()) / (1000 * 60 * 60 * 24)));
 }
 
 function FaqAccordion({ faqData }) {
@@ -54,11 +54,77 @@ function FaqAccordion({ faqData }) {
   );
 }
 
-export default function LgsHazirlikPage() {
+const STATIC_FALLBACK = {
+  yksDate: "2026-06-21",
+  hero: {
+    navbarCta: "Yerimi Ayırt →",
+    titleAccent: "YKS Yolculuğunda Koçun Yanında Olsun.",
+    subtitle: "Günlük plan, anlık takip, deneme analizi — hepsi bir arada.",
+    chip1: "✅ Kişisel Koç",
+    chip2: "📊 Deneme Analizi",
+    ctaPrimary: "⚡ Yerimi Şimdi Ayırt →",
+  },
+  painPoints: {
+    title: "Tanıdık geliyor mu?",
+    items: [
+      { title: "Net sayım artmıyor", desc: "Saatler çalışıyorsun ama denemede aynı yanlışlar tekrar ediyor." },
+      { title: "Program tutmuyor", desc: "Hazırladığın planlar ilk haftada çöküyor, nereye odaklanacağını bilemiyorsun." },
+      { title: "Motivasyon iniyor", desc: "Deneme sonuçları sonra gelen hayal kırıklığı tüm enerjini tüketiyor." },
+      { title: "Nasıl başlayacaksın?", desc: "YKS devi büyük görünüyor, hangi konudan başlayacağını bilemiyorsun." },
+    ],
+  },
+  howItWorks: {
+    steps: [
+      { title: "İlk Görüşme", desc: "Ücretsiz tanışma görüşmesiyle mevcut durumun analiz edilir, hedeflerin netleştirilir." },
+      { title: "Kişisel Plan", desc: "Koçun sana özel haftalık çalışma planı hazırlar. Günlük WhatsApp takibi başlar." },
+      { title: "Deneme Analizi", desc: "Her deneme sonrası 24 saat içinde detaylı analiz — zayıf konular önceliklendirilir." },
+    ],
+    comparisonTitle: "Neden Sözderece?",
+    comparisonCta: "Hemen Kayıt Ol →",
+    comparison: [
+      { label: "Kişisel koç takibi" },
+      { label: "Günlük WhatsApp iletişimi" },
+      { label: "Deneme analizi (24 saat)" },
+      { label: "Veli raporlaması" },
+      { label: "Koç değiştirme hakkı" },
+    ],
+  },
+  socialProof: {
+    title: "Sadece söz değil —",
+    titleAccent: "öğrenciler konuşuyor",
+    stats: [],
+    testimonials: [],
+  },
+  offer: {
+    title: "YKS'ye Kadar Yanındayız",
+    subtitle: "Paketi seç, hemen başla.",
+    price: "2800",
+    priceLabel: "4 Haftalık Program",
+    ctaPrimary: "⚡ Yerimi Ayırt",
+    ctaSecondary: "📞 Önce Konuşalım",
+    includes: [
+      "Günlük WhatsApp koç takibi",
+      "Haftalık deneme analizi",
+      "Veli raporlaması",
+      "Kişisel çalışma planı",
+    ],
+    plans: [],
+  },
+  form: {
+    title: "Sorunuz var mı?",
+    subtitle: "Formu doldurun, sizi arayalım.",
+    submitText: "Gönder, Sizi Arayalım →",
+    successTitle: "Başvurunuz alındı!",
+    successSubtitle: "En kısa sürede sizi arayacağız.",
+  },
+  faq: null,
+};
+
+export default function YksYolculuguPage() {
   const navigate = useNavigate();
   const [content, setContent] = useState(null);
   const { cart, addToCart, removeFromCart } = useCart();
-  const [quota, setQuota] = useState({ remainingQuota: null, maxQuota: 10 });
+  const [quota, setQuota] = useState({ remainingQuota: null });
   const [showSticky, setShowSticky] = useState(false);
   const [stickyHidden, setStickyHidden] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", grade: "", message: "" });
@@ -69,8 +135,8 @@ export default function LgsHazirlikPage() {
   const formRef = useRef(null);
 
   useEffect(() => {
-    axios.get("/api/lgs-content").then((r) => setContent(r.data)).catch(() => {});
-    axios.get("/api/settings/lgs").then((r) => setQuota(r.data)).catch(() => {});
+    axios.get("/api/yks-content").then((r) => setContent(r.data)).catch(() => setContent(STATIC_FALLBACK));
+    axios.get("/api/settings/yks").then((r) => setQuota(r.data)).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -92,8 +158,8 @@ export default function LgsHazirlikPage() {
   const addToCartAndPay = async (plan, planIndex) => {
     const price = parseInt(plan.price);
     if (!price || isNaN(price)) { alert("Bu plan için fiyat bilgisi eksik."); return; }
-    const slug = `lgs-hazirlik-plan-${planIndex}`;
-    const title = plan.label || "LGS Hazırlık";
+    const slug = `yks-yolculugu-plan-${planIndex}`;
+    const title = plan.label || "YKS Koçluk";
     try {
       if (Array.isArray(cart) && cart.length > 0) {
         for (const item of cart) { await removeFromCart(item.slug); }
@@ -114,10 +180,10 @@ export default function LgsHazirlikPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.phone.trim() || !form.grade) { setFormError("Ad soyad, telefon ve sınıf zorunludur."); return; }
+    if (!form.name.trim() || !form.phone.trim()) { setFormError("Ad soyad ve telefon zorunludur."); return; }
     setSubmitting(true);
     try {
-      await axios.post("/api/lgs-application", { ...form, type: "call" });
+      await axios.post("/api/yks-application", { ...form, type: "call" });
       setSubmitted(true);
     } catch (err) {
       setFormError(err?.response?.data?.message || "Bir hata oluştu, tekrar deneyin.");
@@ -134,9 +200,7 @@ export default function LgsHazirlikPage() {
     );
   }
 
-  const days = daysLeft(content.lgsDate || "2026-06-14");
-  const price = content.offer?.price || "2500";
-  const dailyCost = days > 0 ? Math.round(parseInt(price) / days) : parseInt(price);
+  const days = daysLeft(content.yksDate || "2026-06-21");
   const remaining = quota.remainingQuota;
   const hero = content.hero || {};
   const painPoints = content.painPoints || {};
@@ -149,12 +213,16 @@ export default function LgsHazirlikPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <style>{`
-        @keyframes lgsOrb1{0%,100%{transform:translateY(0) translateX(0)}50%{transform:translateY(-18px) translateX(8px)}}
-        @keyframes lgsOrb2{0%,100%{transform:translateY(0) translateX(0)}50%{transform:translateY(12px) translateX(-10px)}}
-        @keyframes lgsShimmer{0%,100%{opacity:1}50%{opacity:0.75}}
+        @keyframes yksOrb1{0%,100%{transform:translateY(0) translateX(0)}50%{transform:translateY(-16px) translateX(10px)}}
+        @keyframes yksOrb2{0%,100%{transform:translateY(0) translateX(0)}50%{transform:translateY(14px) translateX(-12px)}}
+        @keyframes yksShimmer{0%,100%{opacity:1}50%{opacity:0.75}}
       `}</style>
 
-      <Seo title="LGS'ye Hazırlık | Kişisel Öğrenci Koçluğu" description="LGS sürecinde günlük WhatsApp takibi, deneme analizi ve veli raporuyla çocuğunuzun sınava hazırlanmasını sağlıyoruz. Sözderece LGS Koçluğu." canonical="/lgs-hazirlik" />
+      <Seo
+        title="YKS Yolculuğu | Kişisel Öğrenci Koçluğu | Sözderece"
+        description="YKS sürecinde günlük koç takibi, deneme analizi ve kişisel planlamayla hedef üniversitene ulaş. Sözderece YKS Koçluğu."
+        canonical="/yks-yolculugu"
+      />
 
       {/* Navbar */}
       <header className="sticky top-0 z-50 border-b" style={{ background: "rgba(13,10,46,0.94)", backdropFilter: "blur(16px)", borderColor: "rgba(255,255,255,0.08)" }}>
@@ -168,23 +236,23 @@ export default function LgsHazirlikPage() {
 
       {/* ── HERO ── */}
       <section className="relative overflow-hidden py-24 px-5 text-white" style={{ background: "#0D0A2E" }}>
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 500, height: 500, background: "#7340C8", filter: "blur(120px)", opacity: 0.22, top: -120, right: -100, animation: "lgsOrb1 7s ease-in-out infinite" }} />
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 340, height: 340, background: "#1C1B8A", filter: "blur(90px)", opacity: 0.4, bottom: -60, left: -80, animation: "lgsOrb2 9s ease-in-out infinite" }} />
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 220, height: 220, background: "#FF6B35", filter: "blur(80px)", opacity: 0.13, top: "40%", left: "28%" }} />
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 500, height: 500, background: "#1C1B8A", filter: "blur(120px)", opacity: 0.35, top: -120, right: -100, animation: "yksOrb1 7s ease-in-out infinite" }} />
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 360, height: 360, background: "#7340C8", filter: "blur(100px)", opacity: 0.22, bottom: -60, left: -80, animation: "yksOrb2 9s ease-in-out infinite" }} />
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#FF6B35", filter: "blur(80px)", opacity: 0.12, top: "38%", left: "32%" }} />
 
         <div className="max-w-3xl mx-auto text-center relative">
           <motion.div {...fadeUp}>
             <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6 border font-nunito font-bold text-xs" style={{ background: "rgba(216,255,79,0.1)", borderColor: "rgba(216,255,79,0.25)", color: "#D8FF4F" }}>
-              🎯 LGS Öğrencilerine Özel &nbsp;·&nbsp; <span style={{ color: "#FF6B35" }}>{days} gün kaldı</span>
+              🎓 YKS Öğrencilerine Özel &nbsp;·&nbsp; <span style={{ color: "#FF6B35" }}>{days} gün kaldı</span>
             </div>
 
-            <h1 className="font-fredoka font-bold leading-tight mb-4" style={{ fontSize: "clamp(28px,5vw,52px)", animation: "lgsShimmer 4s ease-in-out infinite" }}>
-              Çocuğunuz Masaya Oturmuyor mu?<br />
-              <span style={{ color: "#D8FF4F" }}>{hero.titleAccent || "Kalan Sürede Kontrolü Bize Bırakın."}</span>
+            <h1 className="font-fredoka font-bold leading-tight mb-4" style={{ fontSize: "clamp(28px,5vw,52px)", animation: "yksShimmer 4s ease-in-out infinite" }}>
+              Net Sayın Artmıyor mu?<br />
+              <span style={{ color: "#D8FF4F" }}>{hero.titleAccent || "YKS Yolculuğunda Koçun Yanında Olsun."}</span>
             </h1>
 
             <p className="font-nunito font-bold text-lg mb-8" style={{ color: "rgba(255,255,255,0.6)", fontSize: "clamp(15px,2vw,18px)" }}>
-              {hero.subtitle || "Her gün yanında biri var — koçu, planı, sistemi."}
+              {hero.subtitle || "Günlük plan, anlık takip, deneme analizi — hepsi bir arada."}
             </p>
 
             <div className="flex flex-wrap justify-center gap-2 mb-8">
@@ -233,8 +301,8 @@ export default function LgsHazirlikPage() {
             <div className="grid grid-cols-3 gap-4 max-[768px]:grid-cols-1 max-[1024px]:grid-cols-2">
               {painPoints.items.map((p, i) => {
                 const accents = ["#D8FF4F", "#FF6B35", "#7340C8", "#D8FF4F", "#FF6B35", "#7340C8"];
+                const emojis = ["📉", "📋", "💔", "❓", "📱", "⚠️"];
                 const accent = accents[i % 6];
-                const emojis = ["📉", "📱", "📋", "❓", "💔", "⚠️"];
                 return (
                   <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }}
                     className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-[0_8px_24px_rgba(28,27,138,0.09)] hover:border-[#1C1B8A]/20 transition-all duration-200 flex gap-4">
@@ -252,11 +320,11 @@ export default function LgsHazirlikPage() {
 
             <motion.div {...fadeUp} className="mt-12 text-center">
               <p className="font-nunito font-bold text-[#475569] text-base max-w-xl mx-auto mb-5 leading-relaxed">
-                Eğer bunlardan en az birini yaşıyorsan, yanlış giden bir şeyler var demektir.{" "}
-                <span className="text-[#1C1B8A]">Gel, sana özel bir çıkış yolu çizelim.</span>
+                Bunlardan birini yaşıyorsan, yanlış bir şeyler var demektir.{" "}
+                <span className="text-[#1C1B8A]">Sana özel bir çıkış yolu çizelim.</span>
               </p>
               <button onClick={scrollToForm} className="font-fredoka font-bold text-sm px-8 py-3.5 rounded-full transition-all hover:scale-105 inline-flex items-center gap-2" style={{ background: "#1C1B8A", color: "#D8FF4F", boxShadow: "0 4px 16px rgba(28,27,138,0.25)" }}>
-                Bu Yükü Biz Devralalım → Ücretsiz Veli Görüşmesi
+                Ücretsiz Görüşme Başlat →
               </button>
             </motion.div>
           </div>
@@ -266,15 +334,15 @@ export default function LgsHazirlikPage() {
       {/* ── NASIL ÇALIŞIR ── */}
       {(howItWorks.steps?.length > 0 || howItWorks.comparison?.length > 0) && (
         <section className="py-20 px-5 text-white relative overflow-hidden" style={{ background: "#1C1B8A" }}>
-          <div className="absolute rounded-full pointer-events-none" style={{ width: 320, height: 320, background: "#7340C8", filter: "blur(90px)", opacity: 0.3, top: -60, right: -60 }} />
-          <div className="absolute rounded-full pointer-events-none" style={{ width: 220, height: 220, background: "#0D0A2E", filter: "blur(70px)", opacity: 0.5, bottom: -40, left: -40 }} />
+          <div className="absolute rounded-full pointer-events-none" style={{ width: 320, height: 320, background: "#0D0A2E", filter: "blur(90px)", opacity: 0.5, top: -60, right: -60 }} />
+          <div className="absolute rounded-full pointer-events-none" style={{ width: 240, height: 240, background: "#7340C8", filter: "blur(80px)", opacity: 0.3, bottom: -40, left: -40 }} />
           <div className="max-w-5xl mx-auto relative">
             {howItWorks.steps?.length > 0 && (
               <>
                 <motion.div {...fadeUp} className="text-center mb-12">
                   <div className="font-fredoka font-bold text-[#D8FF4F] text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>NASIL ÇALIŞIR</div>
                   <h2 className="font-fredoka font-bold text-white m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,40px)" }}>
-                    <span style={{ color: "#D8FF4F" }}>Sözderece</span> LGS'de Nasıl Çalışır?
+                    <span style={{ color: "#D8FF4F" }}>Sözderece</span> YKS'de Nasıl Çalışır?
                   </h2>
                 </motion.div>
                 <div className="grid grid-cols-3 gap-6 mb-16 max-[768px]:grid-cols-1">
@@ -327,7 +395,7 @@ export default function LgsHazirlikPage() {
               <div className="font-fredoka font-bold text-[#FF6B35] text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>SOSYAL KANIT</div>
               <h2 className="font-fredoka font-bold text-[#1C1B8A] m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,40px)" }}>
                 {socialProof.title || "Sadece söz değil —"}{" "}
-                <span style={{ color: "#FF6B35" }}>{socialProof.titleAccent || "aileler konuşuyor"}</span>
+                <span style={{ color: "#FF6B35" }}>{socialProof.titleAccent || "öğrenciler konuşuyor"}</span>
               </h2>
             </motion.div>
 
@@ -341,7 +409,7 @@ export default function LgsHazirlikPage() {
                   </motion.div>
                 ))}
                 {remaining !== null && remaining > 0 && (
-                  <motion.div {...fadeUp} transition={{ delay: socialProof.stats.length * 0.1 }}
+                  <motion.div {...fadeUp} transition={{ delay: (socialProof.stats?.length || 0) * 0.1 }}
                     className="rounded-2xl p-6 border text-center shadow-sm" style={{ background: "#0D0A2E", borderColor: "#0D0A2E" }}>
                     <div className="font-fredoka font-bold mb-1" style={{ fontSize: "clamp(28px,3vw,40px)", color: "#D8FF4F" }}>{remaining}</div>
                     <div className="font-nunito font-bold text-sm text-white/50">yer kaldı</div>
@@ -359,7 +427,7 @@ export default function LgsHazirlikPage() {
                     <p className="font-nunito text-[#374151] text-sm leading-relaxed italic flex-grow">"{t.quote}"</p>
                     <div className="flex items-center gap-3 pt-2 border-t border-[#f1f5f9]">
                       <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-fredoka font-bold text-sm flex-shrink-0" style={{ background: t.isParent ? "#1C1B8A" : "#FF6B35" }}>
-                        {t.author?.[0]?.toUpperCase() || (t.isParent ? "V" : "Ö")}
+                        {t.author?.[0]?.toUpperCase() || "Ö"}
                       </div>
                       <div>
                         <p className="font-nunito font-bold text-xs text-[#0f172a]">{t.author}</p>
@@ -375,16 +443,16 @@ export default function LgsHazirlikPage() {
       )}
 
       {/* ── TEKLİF + FORM ── */}
-      <section id="lgs-teklif" ref={offerRef} className="relative py-20 px-5 text-white overflow-hidden" style={{ background: "#0D0A2E" }}>
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 380, height: 380, background: "#7340C8", filter: "blur(110px)", opacity: 0.2, top: -60, right: -60, animation: "lgsOrb1 8s ease-in-out infinite" }} />
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 280, height: 280, background: "#1C1B8A", filter: "blur(80px)", opacity: 0.35, bottom: -40, left: -40, animation: "lgsOrb2 10s ease-in-out infinite" }} />
+      <section id="yks-teklif" ref={offerRef} className="relative py-20 px-5 text-white overflow-hidden" style={{ background: "#0D0A2E" }}>
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 380, height: 380, background: "#1C1B8A", filter: "blur(110px)", opacity: 0.35, top: -60, right: -60, animation: "yksOrb1 8s ease-in-out infinite" }} />
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 280, height: 280, background: "#7340C8", filter: "blur(80px)", opacity: 0.2, bottom: -40, left: -40, animation: "yksOrb2 10s ease-in-out infinite" }} />
         <div className="absolute rounded-full pointer-events-none" style={{ width: 180, height: 180, background: "#FF6B35", filter: "blur(70px)", opacity: 0.1, top: "35%", left: "22%" }} />
 
         <div className="max-w-5xl mx-auto relative">
           <motion.div {...fadeUp} className="text-center mb-8">
             <div className="font-fredoka font-bold text-[#D8FF4F] text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>PAKETLER</div>
             <h2 className="font-fredoka font-bold text-white m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,44px)" }}>
-              {offer.title || "LGS'ye Kadar Yanındayız"}
+              {offer.title || "YKS'ye Kadar Yanındayız"}
             </h2>
             <p className="font-nunito font-bold text-white/45 text-sm mt-2">{offer.subtitle || "Planını seç, hemen başla."}</p>
             {remaining !== null && remaining > 0 && (
@@ -415,7 +483,6 @@ export default function LgsHazirlikPage() {
                             {plan.priceText && <span className="font-nunito text-[#64748b] text-xs">{plan.priceText}</span>}
                           </div>
                           {plan.desc && <p className="font-nunito text-[#64748b] text-xs mt-1">{plan.desc}</p>}
-                          {days > 0 && parseInt(plan.price) > 0 && <p className="font-nunito text-[#64748b] text-xs mt-1">~₺{Math.round(parseInt(plan.price) / days)} / gün</p>}
                         </div>
                         {planIncludes.length > 0 && (
                           <ul className="space-y-1.5 mb-6 flex-grow">
@@ -446,7 +513,6 @@ export default function LgsHazirlikPage() {
                             {plan.priceText && <span className="font-nunito text-white/40 text-xs">{plan.priceText}</span>}
                           </div>
                           {plan.desc && <p className="font-nunito text-white/40 text-xs mt-1">{plan.desc}</p>}
-                          {days > 0 && parseInt(plan.price) > 0 && <p className="font-nunito text-white/28 text-xs mt-1">~₺{Math.round(parseInt(plan.price) / days)} / gün</p>}
                         </div>
                         {planIncludes.length > 0 && (
                           <ul className="space-y-1.5 mb-6 flex-grow">
@@ -468,8 +534,8 @@ export default function LgsHazirlikPage() {
               </motion.div>
 
               <motion.div {...fadeUp} transition={{ delay: 0.1 }} className="w-[340px] max-[900px]:w-full">
-                <div id="lgs-form" ref={formRef} className="bg-white rounded-3xl p-7 border" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
-                  <h3 className="font-fredoka font-bold text-[#1C1B8A] text-xl mb-0.5">{formContent.title || "Hâlâ sorunuz var mı?"}</h3>
+                <div id="yks-form" ref={formRef} className="bg-white rounded-3xl p-7 border" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
+                  <h3 className="font-fredoka font-bold text-[#1C1B8A] text-xl mb-0.5">{formContent.title || "Sorunuz var mı?"}</h3>
                   <p className="font-nunito text-[#64748b] text-xs mb-5">{formContent.subtitle || "Formu doldurun, sizi arayalım."}</p>
                   {submitted ? (
                     <div className="py-8 text-center">
@@ -479,7 +545,7 @@ export default function LgsHazirlikPage() {
                     </div>
                   ) : (
                     <form onSubmit={handleSubmit} className="space-y-2.5">
-                      <div><label className="font-nunito font-bold text-xs text-[#374151] block mb-1">Ad Soyad *</label><input name="name" value={form.name} onChange={handleFormChange} className={inp} placeholder="Ayşe Yılmaz" required /></div>
+                      <div><label className="font-nunito font-bold text-xs text-[#374151] block mb-1">Ad Soyad *</label><input name="name" value={form.name} onChange={handleFormChange} className={inp} placeholder="Ali Yılmaz" required /></div>
                       <div><label className="font-nunito font-bold text-xs text-[#374151] block mb-1">Telefon *</label><input name="phone" type="tel" value={form.phone} onChange={handleFormChange} className={inp} placeholder="05XX XXX XX XX" required /></div>
                       <div>
                         <label className="font-nunito font-bold text-xs text-[#374151] block mb-1">Mesajınız (opsiyonel)</label>
@@ -499,9 +565,8 @@ export default function LgsHazirlikPage() {
             <div className="grid grid-cols-2 gap-8 max-[768px]:grid-cols-1">
               <motion.div {...fadeUp} className="rounded-3xl p-8 flex flex-col border" style={{ background: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.11)", backdropFilter: "blur(8px)" }}>
                 <div className="mb-6">
-                  <div className="font-fredoka font-bold" style={{ fontSize: "clamp(34px,4vw,52px)", color: "#D8FF4F" }}>₺{offer.price || "2.500"}</div>
-                  <p className="font-nunito text-white/40 text-xs mt-1">{offer.priceLabel || "LGS'ye kadar — tek seferlik"}</p>
-                  {days > 0 && <p className="font-nunito text-white/50 text-sm mt-1">~₺{dailyCost} / gün</p>}
+                  <div className="font-fredoka font-bold" style={{ fontSize: "clamp(34px,4vw,52px)", color: "#D8FF4F" }}>₺{offer.price || "2.800"}</div>
+                  <p className="font-nunito text-white/40 text-xs mt-1">{offer.priceLabel || "4 Haftalık Program"}</p>
                 </div>
                 {offer.includes?.length > 0 && (
                   <ul className="space-y-2 mb-8 flex-grow">
@@ -524,8 +589,8 @@ export default function LgsHazirlikPage() {
               </motion.div>
 
               <motion.div {...fadeUp} transition={{ delay: 0.1 }}>
-                <div id="lgs-form" ref={formRef} className="bg-white rounded-3xl p-8 border" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
-                  <h3 className="font-fredoka font-bold text-[#1C1B8A] text-xl mb-1">{formContent.title || "Hâlâ sorunuz var mı?"}</h3>
+                <div id="yks-form" ref={formRef} className="bg-white rounded-3xl p-8 border" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
+                  <h3 className="font-fredoka font-bold text-[#1C1B8A] text-xl mb-1">{formContent.title || "Sorunuz var mı?"}</h3>
                   <p className="font-nunito text-[#64748b] text-sm mb-6">{formContent.subtitle || "Formu doldurun, sizi arayalım."}</p>
                   {submitted ? (
                     <div className="py-10 text-center">
@@ -535,14 +600,17 @@ export default function LgsHazirlikPage() {
                     </div>
                   ) : (
                     <form onSubmit={handleSubmit} className="space-y-3">
-                      <div><label className="font-nunito font-bold text-xs text-[#374151] block mb-1">Ad Soyad *</label><input name="name" value={form.name} onChange={handleFormChange} className={inp} placeholder="Ayşe Yılmaz" required /></div>
+                      <div><label className="font-nunito font-bold text-xs text-[#374151] block mb-1">Ad Soyad *</label><input name="name" value={form.name} onChange={handleFormChange} className={inp} placeholder="Ali Yılmaz" required /></div>
                       <div><label className="font-nunito font-bold text-xs text-[#374151] block mb-1">Telefon *</label><input name="phone" type="tel" value={form.phone} onChange={handleFormChange} className={inp} placeholder="05XX XXX XX XX" required /></div>
                       <div>
-                        <label className="font-nunito font-bold text-xs text-[#374151] block mb-1">Kaçıncı sınıf? *</label>
-                        <select name="grade" value={form.grade} onChange={handleFormChange} className={inp} required>
-                          <option value="">Seçiniz</option>
-                          <option value="7. Sınıf">7. Sınıf</option>
-                          <option value="8. Sınıf">8. Sınıf</option>
+                        <label className="font-nunito font-bold text-xs text-[#374151] block mb-1">Kaçıncı sınıf?</label>
+                        <select name="grade" value={form.grade} onChange={handleFormChange} className={inp}>
+                          <option value="">Seçiniz (opsiyonel)</option>
+                          <option value="9. Sınıf">9. Sınıf</option>
+                          <option value="10. Sınıf">10. Sınıf</option>
+                          <option value="11. Sınıf">11. Sınıf</option>
+                          <option value="12. Sınıf">12. Sınıf</option>
+                          <option value="Mezun">Mezun</option>
                         </select>
                       </div>
                       <div>
@@ -566,9 +634,9 @@ export default function LgsHazirlikPage() {
 
       <div className="py-4 text-center border-t border-[#e2e8f0]">
         <p className="font-nunito text-xs text-[#94a3b8]">
-          Resmi LGS sınav takvimi için{" "}
-          <a href="https://www.meb.gov.tr" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#1C1B8A] transition-colors">
-            Milli Eğitim Bakanlığı
+          Resmi YKS sınav takvimi için{" "}
+          <a href="https://www.osym.gov.tr" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#1C1B8A] transition-colors">
+            ÖSYM Resmi Sitesi
           </a>{" "}
           sayfasını ziyaret edebilirsiniz.
         </p>
@@ -582,7 +650,7 @@ export default function LgsHazirlikPage() {
           <div className="max-w-lg mx-auto flex items-center justify-between gap-4">
             <div className="font-nunito font-bold text-sm text-white flex items-center gap-2">
               {remaining !== null && remaining > 0 && <span style={{ color: "#ef4444" }}>🔥 {remaining} yer kaldı ·</span>}
-              <span className="text-white/45">₺{offer.price || "2.500"} / LGS'ye kadar</span>
+              <span className="text-white/45">{days} gün kaldı — YKS 2026</span>
             </div>
             <button onClick={scrollToOffer} className="font-fredoka font-bold text-sm px-6 py-2.5 rounded-full transition-all hover:scale-105 whitespace-nowrap" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 4px 12px rgba(216,255,79,0.3)" }}>
               {hero.navbarCta || "⚡ Yerimi Ayırt →"}
