@@ -69,7 +69,7 @@ export default function PrivateRoute({ children }) {
   if (!ready) return null; // istersen skeleton koy
 
   if (!ok) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to="/giris-yap" state={{ from: location }} replace />;
   }
 
   return children;

@@ -272,7 +272,7 @@ export default function DenemeKampiPage() {
     } catch (err) {
       const msg = err?.response?.data?.message || "";
       if (err?.response?.status === 401 || msg.toLowerCase().includes("giriş")) {
-        navigate("/login", { state: { next: "/payment" } });
+        navigate("/giris-yap", { state: { next: "/payment" } });
       } else {
         console.error(err);
         alert("Bir hata oluştu, lütfen tekrar deneyin.");

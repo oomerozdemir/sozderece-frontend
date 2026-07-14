@@ -48,6 +48,11 @@ const CampRouteHandler = lazy(() => import("./pages/CampRouteHandler"));
 const LgsHazirlikPage = lazy(() => import("./pages/LgsHazirlikPage"));
 const YksYolculuguPage = lazy(() => import("./pages/YksYolculuguPage"));
 
+// "Hemen Başla" sihirbazı: Alan → Paket → Ödeme (misafir-öncelikli, PrivateRoute yok)
+const CoachingWizardAlan = lazy(() => import("./pages/CoachingWizardAlan.jsx"));
+const CoachingWizardPaket = lazy(() => import("./pages/CoachingWizardPaket.jsx"));
+const CoachingWizardOdeme = lazy(() => import("./pages/CoachingWizardOdeme.jsx"));
+
 
 // ÖĞRETMEN: yeni sayfalar/guard
 const RequireTeacher = lazy(() => import("./components/RequireTeacher.jsx"));
@@ -87,6 +92,12 @@ function App() {
             <Route path="/blog/:slug" element={<BlogDetail />} />
             <Route path="/sepet" element={<CartPage />} />
             <Route path="/paket-detay" element={<PackageDetail />} />
+
+            {/* "Hemen Başla" sihirbazı — misafir-öncelikli, giriş şart değil */}
+            <Route path="/hemen-basla" element={<CoachingWizardAlan />} />
+            <Route path="/hemen-basla/paket" element={<CoachingWizardPaket />} />
+            <Route path="/hemen-basla/odeme" element={<CoachingWizardOdeme />} />
+
             <Route path="/ekibimiz" element={<CoachDetail />} />
             <Route path="/ucretsiz-on-gorusme" element={<ContactPage />} />
             <Route path="/payment-fail" element={<PaymentFailPage />} />
@@ -103,7 +114,9 @@ function App() {
             <Route path="/hesabim" element={<PrivateRoute><AccountPage /></PrivateRoute>} />
             <Route path="/orders" element={<PrivateRoute><OrdersPage /></PrivateRoute>} />
             <Route path="/payment" element={<PrivateRoute><PaymentPage /></PrivateRoute>} />
-            <Route path="/order-success" element={<PrivateRoute><OrderSuccessPage /></PrivateRoute>} />
+            {/* PrivateRoute YOK: misafir bir alıcı ödemeyi bitirdiğinde token'ı olmaz,
+                korumalı olsaydı var olmayan bir /login rotasına düşüp 404 görürdü. */}
+            <Route path="/order-success" element={<OrderSuccessPage />} />
             <Route path="/payment/iframe/:token" element={<PrivateRoute><PaymentIframePage /></PrivateRoute>} />
 
             {/* ÖĞRETMEN: panel (yalnızca teacher rolü) */}

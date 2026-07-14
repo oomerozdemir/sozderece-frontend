@@ -332,8 +332,8 @@ export default function PricingSection() {
                   <Link
                     to={primary
                       ? hasPlanTabs
-                        ? `/pre-auth?slug=${encodeURIComponent(primary.slug)}&plan=${activePlanIdx}`
-                        : `/pre-auth?slug=${encodeURIComponent(primary.slug)}`
+                        ? `/hemen-basla?slug=${encodeURIComponent(primary.slug)}&plan=${activePlanIdx}`
+                        : `/hemen-basla?slug=${encodeURIComponent(primary.slug)}`
                       : "/paket-detay"}
                     className="block text-center no-underline font-fredoka font-bold text-base rounded-full mt-5 relative transition-transform hover:scale-105"
                     style={{

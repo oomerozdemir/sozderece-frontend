@@ -34,7 +34,7 @@ export function getRoleFromToken(token) {
   return (p?.role || "").toLowerCase();
 }
 
-export async function logout({ forgetDevice = true, redirect = "/login" } = {}) {
+export async function logout({ forgetDevice = true, redirect = "/giris-yap" } = {}) {
   try {
     // Backend: remember cookie + DB revoke (logout endpoint'in bunu yapması lazım)
     await axios.post("/api/auth/logout", { forgetDevice });

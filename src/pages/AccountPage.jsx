@@ -227,7 +227,7 @@ const AccountPage = () => {
 
             <li>
               <button
-                onClick={() => { localStorage.clear(); window.location.href = "/login"; }}
+                onClick={() => { localStorage.clear(); window.location.href = "/giris-yap"; }}
                 className={`${menuItemCls} text-[#991b1b]`}
               >
                 <FiLogOut /> Çıkış Yap

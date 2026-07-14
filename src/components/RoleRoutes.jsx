@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { isTokenValid, getRoleFromToken } from "../utils/auth";
 
-export default function RoleRoute({ allowedRoles = [], redirectTo = "/login", children }) {
+export default function RoleRoute({ allowedRoles = [], redirectTo = "/giris-yap", children }) {
   const location = useLocation();
   const token = localStorage.getItem("token");
 

@@ -81,7 +81,7 @@ const PackageDetail = () => {
     if (isSpecialTutoring) {
       navigate("/ogretmenler");
     } else {
-      const href = activePlan?.ctaHref || `/pre-auth?slug=${encodeURIComponent(selected.slug)}`;
+      const href = activePlan?.ctaHref || `/hemen-basla?slug=${encodeURIComponent(selected.slug)}`;
       const withPlan = hasPlanTabs ? `${href}${href.includes("?") ? "&" : "?"}plan=${activePlanIdx}` : href;
       navigate(withPlan);
     }

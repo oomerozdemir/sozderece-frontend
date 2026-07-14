@@ -22,7 +22,7 @@ const ResetPassword = () => {
         confirmPassword,
       });
       setMessage(res.data.message);
-      setTimeout(() => navigate("/login"), 2000);
+      setTimeout(() => navigate("/giris-yap"), 2000);
     } catch (err) {
       setError("Şifre sıfırlama başarısız.");
     }

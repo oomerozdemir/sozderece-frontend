@@ -43,3 +43,39 @@ export function useCountdownSettings() {
 
   return { settings, timeLeft, loading };
 }
+
+// Tamamen client-side, oturuma özel geri sayım. Backend/admin ayarına
+// bağlı değil — sessionStorage'da bir bitiş zamanı ankraj eder, sekme
+// yenilense/adım değişse bile süre sıfırlanmaz. Süre dolunca sadece
+// expired:true döner, hiçbir akışı engellemez.
+export function useSessionCountdown(minutes, storageKey) {
+  const [timeLeft, setTimeLeft] = useState(null);
+
+  useEffect(() => {
+    const key = `wizardCountdown:${storageKey}`;
+    let deadline = Number(sessionStorage.getItem(key));
+    if (!deadline || Number.isNaN(deadline)) {
+      deadline = Date.now() + minutes * 60 * 1000;
+      sessionStorage.setItem(key, String(deadline));
+    }
+
+    const calc = () => {
+      const diff = deadline - Date.now();
+      if (diff <= 0) {
+        setTimeLeft({ minutes: 0, seconds: 0, expired: true });
+        return;
+      }
+      setTimeLeft({
+        minutes: Math.floor(diff / 60000),
+        seconds: Math.floor((diff / 1000) % 60),
+        expired: false,
+      });
+    };
+
+    calc();
+    const interval = setInterval(calc, 1000);
+    return () => clearInterval(interval);
+  }, [minutes, storageKey]);
+
+  return timeLeft;
+}

@@ -3,6 +3,7 @@ import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { isValidEmail, isValidName, isValidPhone, isValidPostalCode, isValidAddress, isValidTcNo } from "../utils/validation";
+import { lineTL, computeCartTotals, computeCouponDiscount, computeFinalCalculations } from "../utils/checkoutPricing";
 import Footer from "../components/Footer";
 
 const user = JSON.parse(localStorage.getItem("user"));
@@ -96,82 +97,20 @@ const PaymentPage = () => {
   const [errors, setErrors] = useState({});
   const [registeredEmailError, setRegisteredEmailError] = useState(false);
 
-  const parseTL = (val) =>
-    parseFloat(String(val || "").replace("₺", "").replace(/[^\d.]/g, "")) || 0;
+  const { tutoringTotal, otherTotal, total, eligibleTutoringTotal } = useMemo(
+    () => computeCartTotals(items),
+    [items]
+  );
 
-  function isTutorPackageItem(it) {
-    const fromFlags =
-      (it?.source === "TutorPackage" && it?.itemType === "tutoring") ||
-      (it?.meta?.source === "TutorPackage" && it?.meta?.itemType === "tutoring");
-    const slug = (it?.slug || "").toLowerCase();
-    const name = (it?.name || it?.title || "").toLowerCase();
-    const slugPattern = /^tek-ders$/.test(slug) || /^paket-\d+$/.test(slug) || /ozel-ders/.test(slug);
-    const namePattern = /özel ders|tutor|ders/.test(name);
-    return fromFlags || slugPattern || namePattern;
-  }
+  const calculatedDiscountValue = useMemo(
+    () => computeCouponDiscount(items, couponData),
+    [couponData, items]
+  );
 
-  function isKdvEligibleTutorPackage(it) {
-    const slug = (it?.slug || "").toLowerCase();
-    const name = (it?.name || it?.title || "").toLowerCase();
-    const hasTPFlags =
-      (it?.source === "TutorPackage" && it?.itemType === "tutoring") ||
-      (it?.meta?.source === "TutorPackage" && it?.meta?.itemType === "tutoring");
-    const slugMatch = /^tek-ders$/.test(slug) || /^paket-(3|6)$/.test(slug) || /^3-ders$/.test(slug) || /^6-ders$/.test(slug);
-    const nameMatch = /(tek\s*ders\b)|(3\s*ders\b)|(6\s*ders\b)/.test(name);
-    return slugMatch || (hasTPFlags && nameMatch);
-  }
-
-  const lineTL = (it) => {
-    if (typeof it?.unitPrice === "number") return it.unitPrice / 100;
-    return parseTL(it?.price) || 0;
-  };
-
-  const { tutoringTotal, otherTotal, total } = useMemo(() => {
-    let t = 0, o = 0;
-    for (const it of items) {
-      const line = lineTL(it);
-      if (isTutorPackageItem(it)) t += line;
-      else o += line;
-    }
-    return { tutoringTotal: t, otherTotal: o, total: t + o };
-  }, [items]);
-
-  const eligibleTutoringTotal = useMemo(() => {
-    let e = 0;
-    for (const it of items) {
-      const line = lineTL(it);
-      if (isKdvEligibleTutorPackage(it)) e += line;
-    }
-    return e;
-  }, [items]);
-
-  const calculatedDiscountValue = useMemo(() => {
-    if (!couponData) return 0;
-    let discountVal = 0;
-    const { type, discountRate, discountAmount, validPackages } = couponData;
-    const isEligible = (item) => {
-      if (validPackages && validPackages.length > 0) return validPackages.includes(item.slug);
-      return true;
-    };
-    if (type === "RATE") {
-      items.forEach(item => {
-        if (isEligible(item)) discountVal += lineTL(item) * (discountRate / 100);
-      });
-    } else if (type === "FIXED") {
-      const eligibleItemsTotal = items.reduce((acc, item) => isEligible(item) ? acc + lineTL(item) : acc, 0);
-      discountVal = Math.min((discountAmount || 0) / 100, eligibleItemsTotal);
-    }
-    return discountVal;
-  }, [couponData, items]);
-
-  const finalCalculations = useMemo(() => {
-    const subTotalAfterDiscount = total - calculatedDiscountValue;
-    const discountRatio = total > 0 ? (subTotalAfterDiscount / total) : 1;
-    const kdvBase = eligibleTutoringTotal * discountRatio;
-    const kdvAmount = kdvBase * 0.20;
-    const payable = subTotalAfterDiscount + kdvAmount;
-    return { kdvAmount, payable: payable > 0 ? payable : 0 };
-  }, [total, calculatedDiscountValue, eligibleTutoringTotal]);
+  const finalCalculations = useMemo(
+    () => computeFinalCalculations(total, calculatedDiscountValue, eligibleTutoringTotal),
+    [total, calculatedDiscountValue, eligibleTutoringTotal]
+  );
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -343,7 +282,7 @@ const PaymentPage = () => {
                 <h2 className="m-0 text-[#f35900] text-xl font-bold">İletişim Bilgileri</h2>
                 {user
                   ? <span className="text-sm text-[#64748b]">{user.name}</span>
-                  : <a href="/login" className="text-sm text-[#f35900] hover:underline">Oturum aç</a>
+                  : <a href="/giris-yap" className="text-sm text-[#f35900] hover:underline">Oturum aç</a>
                 }
               </div>
 
@@ -356,7 +295,7 @@ const PaymentPage = () => {
                   </svg>
                   <span>
                     Bu e-posta ile kayıtlı bir hesabınız var.{" "}
-                    <a href="/login" className="font-semibold text-[#100481] underline underline-offset-2">Giriş yaparak</a>{" "}
+                    <a href="/giris-yap" className="font-semibold text-[#100481] underline underline-offset-2">Giriş yaparak</a>{" "}
                     devam edebilirsiniz.
                   </span>
                 </div>
