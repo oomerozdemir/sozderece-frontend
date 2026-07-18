@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
+import axios from "../utils/axios";
 import CountdownPricingBanner from "./CountdownPricingBanner";
 import {
   isPromoActive,
@@ -121,13 +122,15 @@ export default function PricingSection() {
   const [activePlanIdx, setActivePlanIdx] = useState(0);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/packages`)
-      .then((r) => r.json())
-      .then((data) => { if (data.success) setPackages(data.packages); })
+    // Tek URL kaynağı: paylaşılan axios instance (bkz. utils/axios.js) —
+    // önceden burada process.env.REACT_APP_API_URL ile ham fetch kullanılıyordu,
+    // repo'da bu env var'ı tanımlayan bir .env olmadığından yerel geliştirmede
+    // sessizce başarısız oluyordu.
+    axios.get("/api/packages")
+      .then((r) => { if (r.data.success) setPackages(r.data.packages); })
       .catch(() => {});
-    fetch(`${process.env.REACT_APP_API_URL}/api/settings/early-registration`)
-      .then((r) => r.json())
-      .then((data) => { if (data.enabled) setEarlyReg(data); })
+    axios.get("/api/settings/early-registration")
+      .then((r) => { if (r.data.enabled) setEarlyReg(r.data); })
       .catch(() => {});
   }, []);
 

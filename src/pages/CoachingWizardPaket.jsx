@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import axios from "../utils/axios";
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
@@ -141,10 +142,9 @@ export default function CoachingWizardPaket() {
   }, [alan, navigate]);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/packages`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.success) setPackages(data.packages || []);
+    axios.get("/api/packages")
+      .then((r) => {
+        if (r.data.success) setPackages(r.data.packages || []);
       })
       .catch(() => {})
       .finally(() => setLoaded(true));

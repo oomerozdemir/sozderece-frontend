@@ -188,6 +188,11 @@ const PaymentPage = () => {
 
       const newToken = response.data?.token;
       if (newToken) {
+        // Gerçek ödenen tutarı /order-success'e taşımak için sessionStorage'a
+        // yazılıyor (React Router state, mobildeki tam sayfa PayTR
+        // yönlendirmesinde kaybolur; sessionStorage hayatta kalır).
+        sessionStorage.setItem("lastOrderAmount", String(payable));
+
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         if (isMobile) {
           window.location.href = `https://www.paytr.com/odeme/guvenli/${newToken}`;

@@ -1,6 +1,18 @@
 // src/hooks/useCart.js
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import axios from "../utils/axios";
+
+// useCart bir Context değil — her çağrıldığı yerde bağımsız bir state örneği
+// yaratıyor (ör. Navbar ve CartPage aynı anda iki ayrı örnek kullanıyor).
+// Bir örnekte yapılan değişikliğin diğerlerine (ör. sepet rozetine) yansıması
+// için hafif bir window-event pub/sub kullanılıyor — tam bir Context'e
+// geçiş yapmadan cross-instance senkronu sağlar.
+const CART_CHANGED_EVENT = "sozderece:cart-changed";
+const broadcastCartChanged = () => {
+  try {
+    window.dispatchEvent(new Event(CART_CHANGED_EVENT));
+  } catch {}
+};
 
 const toUiItems = (serverCart) => {
   const items = serverCart?.items || [];
@@ -48,35 +60,48 @@ export default function useCart() {
     }
   }, []);
 
+  // Aynı anda çift istek atılmasını engelleyen kilit (hızlı çift tıklama vb.)
+  // — state yerine ref kullanılıyor çünkü state async/render'a bağlı, bir
+  // önceki isteğin refresh()'i tamamlanmadan ikinci tıklama gelirse state
+  // henüz güncellenmemiş olabiliyor.
+  const addingRef = useRef(false);
+
   // --- DÜZELTME: Aynı ürünü tekrar eklemeyi engelle ---
   const addToCart = useCallback(
     async ({ slug, title, unitPrice, quantity = 1, email, name }) => {
-      
-      // 1. KONTROL: Eğer cart yüklendiyse ve ürün zaten varsa uyarı ver.
-      if (cart && Array.isArray(cart)) {
-        const exists = cart.some((item) => item.slug === slug);
-        if (exists) {
-          alert("Bu paket zaten sepetinizde mevcut.");
-          return; // Backend isteği atma, fonksiyonu bitir.
+      if (addingRef.current) return; // zaten devam eden bir ekleme isteği var
+      addingRef.current = true;
+
+      try {
+        // 1. KONTROL: Eğer cart yüklendiyse ve ürün zaten varsa uyarı ver.
+        if (cart && Array.isArray(cart)) {
+          const exists = cart.some((item) => item.slug === slug);
+          if (exists) {
+            alert("Bu paket zaten sepetinizde mevcut.");
+            return; // Backend isteği atma, fonksiyonu bitir.
+          }
         }
-      }
 
-      const token = localStorage.getItem("token");
-      const emailToUse = email || (!token ? guestEmail() : undefined);
-      await axios.post(
-        "/api/cart/items",
-        { slug, title, unitPrice, quantity, ...(emailToUse ? { email: emailToUse } : {}), ...(name ? { name } : {}) },
-        { headers: authHeaders() }
-      );
-      await refresh();
+        const token = localStorage.getItem("token");
+        const emailToUse = email || (!token ? guestEmail() : undefined);
+        await axios.post(
+          "/api/cart/items",
+          { slug, title, unitPrice, quantity, ...(emailToUse ? { email: emailToUse } : {}), ...(name ? { name } : {}) },
+          { headers: authHeaders() }
+        );
+        await refresh();
+        broadcastCartChanged();
 
-      // ✅ Google Ads - Sepete Ekleme Dönüşümü
-      if (window.gtag) {
-        window.gtag('event', 'conversion', {
-          send_to: 'AW-17399744724/ZH42Cfe1laobENSR7OhA',
-          value: 1.0,
-          currency: 'TRY',
-        });
+        // ✅ Google Ads - Sepete Ekleme Dönüşümü
+        if (window.gtag) {
+          window.gtag('event', 'conversion', {
+            send_to: 'AW-17399744724/ZH42Cfe1laobENSR7OhA',
+            value: 1.0,
+            currency: 'TRY',
+          });
+        }
+      } finally {
+        addingRef.current = false;
       }
     },
     [refresh, cart] // cart bağımlılığı eklendi ki güncel listeyi bilsin
@@ -92,6 +117,7 @@ export default function useCart() {
       { headers: authHeaders() }
     );
     await refresh();
+    broadcastCartChanged();
   }, [refresh]);
 
   const decreaseQuantity = useCallback(async (slug) => {
@@ -103,6 +129,7 @@ export default function useCart() {
       { headers: authHeaders() }
     );
     await refresh();
+    broadcastCartChanged();
   }, [refresh]);
 
   const removeFromCart = useCallback(async (slug) => {
@@ -113,16 +140,26 @@ export default function useCart() {
       data: ge ? { email: ge } : undefined,
     });
     await refresh();
+    broadcastCartChanged();
   }, [refresh]);
 
   const clearCart = useCallback(async () => {
     // İsteğe göre backend toplu temizleme route’u yazılabilir;
     // şimdilik UI’dan temizle (order success’te zaten backend completed:true işaretliyor)
     setCart([]);
+    broadcastCartChanged();
   }, []);
 
   useEffect(() => {
     refresh();
+  }, [refresh]);
+
+  // Başka bir useCart() örneğinde (ör. CartPage) yapılan değişiklikleri
+  // yakalayıp bu örneği (ör. Navbar rozeti) de güncel tutar.
+  useEffect(() => {
+    const onCartChanged = () => refresh();
+    window.addEventListener(CART_CHANGED_EVENT, onCartChanged);
+    return () => window.removeEventListener(CART_CHANGED_EVENT, onCartChanged);
   }, [refresh]);
 
   return {

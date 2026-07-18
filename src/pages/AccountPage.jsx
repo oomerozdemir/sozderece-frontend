@@ -208,7 +208,7 @@ const AccountPage = () => {
               <a href="/" className={menuItemCls}><FiHome /> <span>Ana sayfa</span></a>
             </li>
             <li>
-              <a href="/account" className={`${menuItemCls} bg-[#eef2ff] border-[#e0e7ff]`}><FiUser /> <span>Hesap</span></a>
+              <a href="/hesabim" className={`${menuItemCls} bg-[#eef2ff] border-[#e0e7ff]`}><FiUser /> <span>Hesap</span></a>
             </li>
 
             {roleIsStudent && (

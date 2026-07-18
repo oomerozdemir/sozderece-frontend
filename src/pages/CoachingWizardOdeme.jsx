@@ -137,11 +137,10 @@ export default function CoachingWizardOdeme() {
 
   useEffect(() => {
     if (!slug) return;
-    fetch(`${process.env.REACT_APP_API_URL}/api/packages`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.success) {
-          setPkg(data.packages.find((p) => p.slug === slug) || null);
+    axios.get("/api/packages")
+      .then((r) => {
+        if (r.data.success) {
+          setPkg(r.data.packages.find((p) => p.slug === slug) || null);
         }
       })
       .catch(() => {})
@@ -290,6 +289,10 @@ export default function CoachingWizardOdeme() {
 
       const newToken = response.data?.token;
       if (newToken) {
+        // Gerçek ödenen tutarı /order-success'e taşımak için sessionStorage'a
+        // yazılıyor (mobildeki tam sayfa PayTR yönlendirmesinde hayatta kalır).
+        sessionStorage.setItem("lastOrderAmount", String(payable));
+
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         if (isMobile) {
           window.location.href = `https://www.paytr.com/odeme/guvenli/${newToken}`;

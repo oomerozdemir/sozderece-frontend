@@ -12,31 +12,45 @@ const OrderSuccessPage = () => {
 
   useEffect(() => {
     try {
-      clearCart(); 
+      clearCart();
       console.log("🧹 Sepet temizlendi.");
     } catch (err) {
       console.error("❌ clearCart hatası:", err);
     }
 
-    if (window.fbq) {
-      
-      window.fbq('track', 'Purchase', {
-        value: 2500.00,       
-        currency: 'TRY',      
-        content_name: 'Kocluk Basvuru/Siparis Tamamlandi', 
-        content_type: 'product'
-      });
-      
-      console.log("✅ Meta Pixel 'Purchase' (Satış) olayı gönderildi.");
-    }
+    // Misafir kimliği artık gerçek bir hesaba bağlandı (backend PayTR
+    // callback'inde otomatik oluşturdu) — sonraki tamamen farklı bir misafire
+    // bu e-postanın miras kalmaması için temizleniyor.
+    localStorage.removeItem("guestCartEmail");
 
-    if (window.gtag) {
-      window.gtag("event", "conversion", {
-        send_to: "AW-17399744724/16ynCJSfIaobENSR7OhA",
-        value: 2500.0,       
-        currency: "TRY",
-        transaction_id: Date.now() 
-      });
+    // Gerçek ödenen tutar PaymentPage/CoachingWizardOdeme tarafından ödeme
+    // tetiklenmeden hemen önce sessionStorage'a yazılıyor. Bulunamazsa sabit
+    // bir tutar UYDURMAK yerine dönüşüm olayı hiç gönderilmiyor.
+    const rawAmount = sessionStorage.getItem("lastOrderAmount");
+    const amount = rawAmount ? parseFloat(rawAmount) : null;
+    sessionStorage.removeItem("lastOrderAmount");
+
+    if (amount && !isNaN(amount)) {
+      if (window.fbq) {
+        window.fbq('track', 'Purchase', {
+          value: amount,
+          currency: 'TRY',
+          content_name: 'Kocluk Basvuru/Siparis Tamamlandi',
+          content_type: 'product'
+        });
+        console.log("✅ Meta Pixel 'Purchase' (Satış) olayı gönderildi.");
+      }
+
+      if (window.gtag) {
+        window.gtag("event", "conversion", {
+          send_to: "AW-17399744724/16ynCJSfIaobENSR7OhA",
+          value: amount,
+          currency: "TRY",
+          transaction_id: Date.now()
+        });
+      }
+    } else {
+      console.warn("⚠️ Gerçek sipariş tutarı bulunamadı, dönüşüm olayı gönderilmedi.");
     }
 
     if (window.self !== window.top) {

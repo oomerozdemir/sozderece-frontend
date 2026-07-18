@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "../utils/axios";
 import Seo from "../components/Seo";
 import { Helmet } from "react-helmet";
 
@@ -47,10 +48,9 @@ const PackageDetail = () => {
   const [activePlanIdx, setActivePlanIdx] = useState(0);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/packages`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.success) setPackages(data.packages);
+    axios.get("/api/packages")
+      .then((r) => {
+        if (r.data.success) setPackages(r.data.packages);
       })
       .catch((err) => console.error("Paketler yüklenemedi:", err));
   }, []);

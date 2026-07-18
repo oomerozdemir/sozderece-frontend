@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "../utils/axios";
 import Seo from "../components/Seo";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
@@ -214,9 +215,8 @@ function EarlyRegistrationBanner() {
   const [settings, setSettings] = useState(null);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/settings/early-registration`)
-      .then((r) => r.json())
-      .then(setSettings)
+    axios.get("/api/settings/early-registration")
+      .then((r) => setSettings(r.data))
       .catch(() => {});
   }, []);
 

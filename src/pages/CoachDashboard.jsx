@@ -51,8 +51,8 @@ const CoachDashboard = () => {
                   {latestOrder ? (
                     <div className="mt-3 bg-gray-50 border-l-4 border-green-500 px-4 py-2 rounded-md">
                       <p className="my-2 text-sm text-slate-600"><strong className="text-slate-900">📦 Paket:</strong> {latestOrder.package}</p>
-                      <p className="my-2 text-sm text-slate-600"><strong className="text-slate-900">🟢 Başlangıç:</strong> {new Date(latestOrder.startDate).toLocaleDateString("tr-TR")}</p>
-                      <p className="my-2 text-sm text-slate-600"><strong className="text-slate-900">📆 Bitiş:</strong> {new Date(latestOrder.endDate).toLocaleDateString("tr-TR")}</p>
+                      <p className="my-2 text-sm text-slate-600"><strong className="text-slate-900">🟢 Başlangıç:</strong> {latestOrder.startDate ? new Date(latestOrder.startDate).toLocaleDateString("tr-TR") : "—"}</p>
+                      <p className="my-2 text-sm text-slate-600"><strong className="text-slate-900">📆 Bitiş:</strong> {latestOrder.endDate ? new Date(latestOrder.endDate).toLocaleDateString("tr-TR") : "—"}</p>
                       <p className="my-2 text-sm text-slate-600"><strong className="text-slate-900">🔄 Durum:</strong> {latestOrder.status}</p>
                     </div>
                   ) : (
