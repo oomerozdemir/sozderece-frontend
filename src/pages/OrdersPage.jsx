@@ -5,7 +5,6 @@ import trLocale from "date-fns/locale/tr";
 import RefundModal from "../components/RefundModal";
 import TopBar from "../components/TopBar";
 import Navbar from "../components/navbar";
-import { useNavigate } from "react-router-dom"; // ✅ eklendi
 
 const badgeBase = "inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-semibold w-max bg-[#f3f4f6] text-[#374151] border border-[#e5e7eb]";
 const refundBtnBase = "inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg border-0 bg-[#ffe69c] text-[#5a3e00] font-semibold cursor-pointer no-underline transition hover:brightness-[0.98] active:translate-y-px";
@@ -16,15 +15,10 @@ const OrdersPage = () => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  // ✅ Ücretsiz haklar için state
-  const [freeRights, setFreeRights] = useState({ items: [], remaining: 0 });
-
   // Abonelikler
   const [subscriptions, setSubscriptions] = useState([]);
   const [subsLoading, setSubsLoading] = useState(true);
   const [cancellingId, setCancellingId] = useState(null);
-
-  const navigate = useNavigate(); // ✅ eklendi
 
   // Siparişleri çek
   useEffect(() => {
@@ -44,20 +38,6 @@ const OrdersPage = () => {
     fetchOrders();
   }, []);
 
-  // ✅ Ücretsiz hakları çek
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await axios.get("/api/v1/ogrenci/free-rights", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        setFreeRights(data || { items: [], remaining: 0 });
-      } catch (e) {
-        console.warn("free-rights fetch failed", e);
-        setFreeRights({ items: [], remaining: 0 });
-      }
-    })();
-  }, []);
 
   // Abonelikleri çek
   useEffect(() => {
@@ -145,12 +125,6 @@ const OrdersPage = () => {
     }
   };
 
-  // ✅ "Bu paketle ders seç" butonu
-  const goSelectWithPackage = (pkgSlug) => {
-    const qs = new URLSearchParams({ useFreeRight: "1", pkg: pkgSlug });
-    navigate(`/ogretmenler?${qs.toString()}`);
-  };
-
   return (
     <>
       <TopBar />
@@ -200,46 +174,6 @@ const OrdersPage = () => {
 
               <section className="bg-white p-[22px] rounded-[14px] shadow-[0_6px_24px_rgba(2,6,23,0.06)] border border-[#e5e7eb] mb-[18px]">
                 <h2>📦 Siparişlerim</h2>
-
-                {/* ✅ Ücretsiz ders hakları özeti */}
-                <div className="mb-4">
-                  {freeRights.remaining > 0 ? (
-                    <div className={`${badgeBase} bg-[rgba(22,163,74,0.08)] text-[#16a34a] border-[rgba(22,163,74,0.2)] inline-block mb-2`}>
-                      🎁 Kalan ücretsiz ders hakkın: <strong>{freeRights.remaining}</strong>
-                    </div>
-                  ) : (
-                    <div className="text-[#6b7280] text-xs mb-2">
-                      🎁 Şu an ücretsiz ders hakkın bulunmuyor.
-                    </div>
-                  )}
-
-                  {/* Paket bazında liste + CTA */}
-                  {freeRights.items?.length > 0 && (
-                    <ul className="list-none p-0 m-0 flex flex-col gap-[14px] mt-2">
-                      {freeRights.items.map((i) => (
-                        <li key={i.packageSlug} className="bg-white border border-[#e5e7eb] rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-[14px] flex flex-col gap-2.5">
-                          <div className="flex justify-between items-center gap-3">
-                            <div>
-                              <div className="font-semibold">{i.packageSlug}</div>
-                              <div className="text-[#6b7280] text-xs">
-                                Dönem: {i.period} • Toplam: {i.total} • Kullanılan: {i.used} • Kalan: {i.remaining}
-                              </div>
-                            </div>
-                            {i.remaining > 0 && (
-                              <button
-                                onClick={() => goSelectWithPackage(i.packageSlug)}
-                                className={refundBtnBase}
-                                title="Bu paketle ücretsiz ders saati seç"
-                              >
-                                ➕ Bu paketle ders seç
-                              </button>
-                            )}
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
 
                 {loading ? (
                   <p>🔄 Siparişler yükleniyor...</p>
