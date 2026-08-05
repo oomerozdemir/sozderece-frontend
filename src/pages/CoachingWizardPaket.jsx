@@ -178,18 +178,9 @@ export default function CoachingWizardPaket() {
   const goNext = () => {
     if (!selected) return;
 
-    // Aylık abonelik planı seçildiyse ayrı bir akışa (gerçek giriş + kart
-    // saklama) yönlenir — normal tek-seferlik Ödeme adımına değil. Bu akış
-    // her zaman bir plan index'ine ihtiyaç duyar (tek plan olsa da).
-    if (effectivePlan?.billingCycle === "monthly") {
-      const subParams = new URLSearchParams();
-      if (alan) subParams.set("alan", alan);
-      subParams.set("slug", selected.slug);
-      subParams.set("plan", String(hasPlanTabs ? activePlanIdx : 0));
-      navigate(`/abone-ol?${subParams.toString()}`);
-      return;
-    }
-
+    // Tek seferlik mi yoksa aylık abonelik mi olacağı artık Ödeme adımında,
+    // kart bilgisi girilmeden önce müşterinin kendisi tarafından seçiliyor
+    // (bkz. CoachingWizardOdeme.jsx) — burada sadece plan index'i taşınıyor.
     const params = new URLSearchParams();
     if (alan) params.set("alan", alan);
     params.set("slug", selected.slug);
@@ -285,7 +276,8 @@ export default function CoachingWizardPaket() {
 
               {effectivePlan?.billingCycle === "monthly" && (
                 <p className="font-nunito text-xs text-[#64748b] mt-4 bg-[#fff7ed] border border-[#fed7aa] rounded-xl px-3 py-2.5">
-                  🔁 Bu bir <strong>aylık abonelik</strong>tir — her ay otomatik olarak yenilenir. Dilediğin zaman
+                  🔁 Bu plan <strong>aylık abonelik</strong> olarak da alınabilir — ödeme adımında tek seferlik mi
+                  yoksa otomatik yenilenen aylık abonelik mi istediğini seçeceksin. Aboneliği dilediğin zaman
                   "Siparişlerim" sayfasından tek tıkla iptal edebilirsin.
                 </p>
               )}
@@ -296,7 +288,7 @@ export default function CoachingWizardPaket() {
                 className="w-full mt-7 py-4 rounded-full font-fredoka font-bold text-base transition-transform hover:scale-[1.02]"
                 style={{ background: "#FF6B35", color: "white" }}
               >
-                {effectivePlan?.billingCycle === "monthly" ? "Aboneliği Başlat →" : "Bu paketle devam et →"}
+                Bu paketle devam et →
               </button>
             </div>
 

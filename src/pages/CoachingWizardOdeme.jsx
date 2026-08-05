@@ -125,6 +125,14 @@ export default function CoachingWizardOdeme() {
   const [couponData, setCouponData] = useState(null);
   const [couponMessage, setCouponMessage] = useState("");
 
+  // Tek seferlik mi yoksa aylık abonelik mi olacağını müşteri, kart
+  // bilgilerini girmeden ÖNCE burada kendisi seçiyor. Sadece admin panelden
+  // "aylık abonelik" olarak işaretlenmiş planlarda gösteriliyor — fiyatı
+  // aylık tekrar çekime uygun olmayan (ör. sınava kadar toplu) planlarda bu
+  // seçenek hiç çıkmıyor, yanlışlıkla yanlış tutarda otomatik çekim riskini
+  // engelliyor.
+  const [billingChoice, setBillingChoice] = useState("once");
+
   // Deep-link koruması: Alan/Paket adımları atlanarak buraya gelinemez.
   useEffect(() => {
     if (!slug || !alan) {
@@ -163,6 +171,15 @@ export default function CoachingWizardOdeme() {
 
   const plans = Array.isArray(pkg?.plans) ? pkg.plans : [];
   const activePlan = planIndex !== null && plans[planIndex] ? plans[planIndex] : null;
+  const monthlyEligible = activePlan?.billingCycle === "monthly";
+
+  const chooseMonthly = () => {
+    const subParams = new URLSearchParams();
+    if (alan) subParams.set("alan", alan);
+    subParams.set("slug", slug);
+    subParams.set("plan", String(planIndex ?? 0));
+    navigate(`/abone-ol?${subParams.toString()}`);
+  };
 
   const cart = useMemo(() => {
     if (!pkg) return [];
@@ -381,6 +398,36 @@ export default function CoachingWizardOdeme() {
                   değiştir
                 </button>
               </div>
+
+              {/* Ödeme şekli: tek seferlik mi aylık abonelik mi — kart bilgisi
+                  girilmeden ÖNCE burada seçiliyor. */}
+              {monthlyEligible && (
+                <div className="bg-white p-5 rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#f1f5f9]">
+                  <p className="font-nunito text-sm font-bold text-[#0f172a] mb-3">Ödeme Şekli</p>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setBillingChoice("once")}
+                      className={`flex-1 py-3 px-3 rounded-xl border text-sm font-bold transition-colors ${
+                        billingChoice === "once" ? "bg-[#f35900] border-[#f35900] text-white" : "bg-white border-[#e2e8f0] text-[#64748b]"
+                      }`}
+                    >
+                      💳 Tek Seferlik
+                    </button>
+                    <button
+                      type="button"
+                      onClick={chooseMonthly}
+                      className="flex-1 py-3 px-3 rounded-xl border text-sm font-bold transition-colors bg-white border-[#e2e8f0] text-[#64748b] hover:border-[#f35900]"
+                    >
+                      🔁 Aylık Abonelik
+                    </button>
+                  </div>
+                  <p className="font-nunito text-xs text-[#94a3b8] mt-2">
+                    Aylık abonelik seçersen ayrı bir adımda giriş yapman ve otomatik yenilemeyi onaylaman istenecek —
+                    dilediğin zaman "Siparişlerim" sayfasından tek tıkla iptal edebilirsin.
+                  </p>
+                </div>
+              )}
 
               {/* ① Öğrenci Bilgileri */}
               <div className="bg-white p-7 rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#f1f5f9]">
