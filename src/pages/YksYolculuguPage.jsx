@@ -9,10 +9,6 @@ import Seo from "../components/Seo";
 const fadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.55 } };
 const inp = "w-full px-4 py-3 rounded-xl border border-[#e5e7eb] text-sm text-[#0f172a] outline-none focus:border-[#1C1B8A] focus:ring-2 focus:ring-[#1C1B8A]/10 transition-all bg-white font-nunito";
 
-function daysLeft(targetDate) {
-  return Math.max(0, Math.ceil((new Date(targetDate) - new Date()) / (1000 * 60 * 60 * 24)));
-}
-
 function FaqAccordion({ faqData }) {
   const [open, setOpen] = useState(null);
   const items = faqData?.items || [];
@@ -55,7 +51,6 @@ function FaqAccordion({ faqData }) {
 }
 
 const STATIC_FALLBACK = {
-  yksDate: "2026-06-21",
   hero: {
     navbarCta: "Yerimi Ayırt →",
     titleAccent: "YKS Yolculuğunda Koçun Yanında Olsun.",
@@ -200,7 +195,6 @@ export default function YksYolculuguPage() {
     );
   }
 
-  const days = daysLeft(content.yksDate || "2026-06-21");
   const remaining = quota.remainingQuota;
   const hero = content.hero || {};
   const painPoints = content.painPoints || {};
@@ -243,7 +237,7 @@ export default function YksYolculuguPage() {
         <div className="max-w-3xl mx-auto text-center relative">
           <motion.div {...fadeUp}>
             <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6 border font-nunito font-bold text-xs" style={{ background: "rgba(216,255,79,0.1)", borderColor: "rgba(216,255,79,0.25)", color: "#D8FF4F" }}>
-              🎓 YKS Öğrencilerine Özel &nbsp;·&nbsp; <span style={{ color: "#FF6B35" }}>{days} gün kaldı</span>
+              🎓 2027 YKS Öğrencilerine Özel
             </div>
 
             <h1 className="font-fredoka font-bold leading-tight mb-4" style={{ fontSize: "clamp(28px,5vw,52px)", animation: "yksShimmer 4s ease-in-out infinite" }}>
@@ -650,7 +644,7 @@ export default function YksYolculuguPage() {
           <div className="max-w-lg mx-auto flex items-center justify-between gap-4">
             <div className="font-nunito font-bold text-sm text-white flex items-center gap-2">
               {remaining !== null && remaining > 0 && <span style={{ color: "#ef4444" }}>🔥 {remaining} yer kaldı ·</span>}
-              <span className="text-white/45">{days} gün kaldı — YKS 2026</span>
+              <span className="text-white/45">2027 YKS'ye hazırlanıyoruz</span>
             </div>
             <button onClick={scrollToOffer} className="font-fredoka font-bold text-sm px-6 py-2.5 rounded-full transition-all hover:scale-105 whitespace-nowrap" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 4px 12px rgba(216,255,79,0.3)" }}>
               {hero.navbarCta || "⚡ Yerimi Ayırt →"}

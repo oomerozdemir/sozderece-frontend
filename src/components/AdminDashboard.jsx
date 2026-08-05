@@ -18,6 +18,7 @@ import AdminCampPage from "../pages/AdminCampPage";
 import AdminPaymentSettings from "../pages/AdminPaymentSettings";
 import AdminLgsPage from "../pages/AdminLgsPage";
 import AdminNavbarPage from "../pages/AdminNavbarPage";
+import AdminSubscriptionsPage from "../pages/AdminSubscriptionsPage";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -243,6 +244,7 @@ const AdminDashboard = () => {
     { key: "teacher-approvals",  label: "🧑‍🏫 Öğretmen Onayları" },
     { key: "teacher-requests",   label: "📋 Talep Özeti" },
     { key: "orders",             label: "📦 Siparişler" },
+    { key: "subscriptions",      label: "🔁 Abonelikler" },
     { key: "users",              label: "👥 Kullanıcılar" },
     { key: "camp",               label: "🏕 Deneme Kampı" },
     { key: "payment-settings",   label: "💳 Ödeme Sayfası" },
@@ -341,6 +343,7 @@ const AdminDashboard = () => {
         {view === "payment-settings"  && <AdminPaymentSettings />}
         {view === "lgs"               && <AdminLgsPage />}
         {view === "navbar"            && <AdminNavbarPage />}
+        {view === "subscriptions"     && <AdminSubscriptionsPage />}
 
         {/* ══════════════════════════ GENEL BAKIŞ ══════════════════════════ */}
         {view === "dashboard" && (

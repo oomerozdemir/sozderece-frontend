@@ -99,7 +99,7 @@ function HeroEditor({ content, setContent }) {
   return (
     <div className="space-y-4">
       <Field label="LGS Tarihi (YYYY-MM-DD)">
-        <input type="date" value={content.lgsDate || "2026-06-14"} onChange={(e) => set(setContent, "lgsDate", e.target.value)} className={inp} />
+        <input type="date" value={content.lgsDate || "2027-06-12"} onChange={(e) => set(setContent, "lgsDate", e.target.value)} className={inp} />
       </Field>
       <Field label="Alt Başlık">
         <input value={h.subtitle || ""} onChange={(e) => s("subtitle", e.target.value)} className={inp} placeholder="Her gün yanında biri var..." />

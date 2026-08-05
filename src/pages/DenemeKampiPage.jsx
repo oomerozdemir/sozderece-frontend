@@ -8,47 +8,11 @@ import axios from "../utils/axios";
 import { motion } from "framer-motion";
 
 // ── Helpers ───────────────────────────────────────────────────
-function daysUntil(dateStr) {
-  if (!dateStr) return 0;
-  const diff = new Date(dateStr) - new Date();
-  return Math.max(0, Math.ceil(diff / 86400000));
-}
-
-function useCountdown(targetDate) {
-  const calc = () => {
-    const diff = new Date(targetDate) - new Date();
-    if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    return {
-      days: Math.floor(diff / 86400000),
-      hours: Math.floor((diff % 86400000) / 3600000),
-      minutes: Math.floor((diff % 3600000) / 60000),
-      seconds: Math.floor((diff % 60000) / 1000),
-    };
-  };
-  const [time, setTime] = useState(calc);
-  useEffect(() => {
-    const t = setInterval(() => setTime(calc()), 1000);
-    return () => clearInterval(t);
-  }, [targetDate]);
-  return time;
-}
-
 // Highlight a phrase in a string with orange color
 function HighlightedText({ text, phrase }) {
   if (!phrase || !text.includes(phrase)) return <>{text}</>;
   const [before, after] = text.split(phrase);
   return <>{before}<span className="text-[#f39c12]">{phrase}</span>{after}</>;
-}
-
-function CountdownBox({ value, label }) {
-  return (
-    <div className="flex flex-col items-center">
-      <div className="bg-white/10 backdrop-blur rounded-xl w-16 h-16 flex items-center justify-center text-2xl font-black text-white border border-white/20">
-        {String(value).padStart(2, "0")}
-      </div>
-      <span className="text-white/60 text-xs mt-1 font-semibold uppercase tracking-wide">{label}</span>
-    </div>
-  );
 }
 
 function Skeleton() {
@@ -279,7 +243,6 @@ export default function DenemeKampiPage() {
       }
     }
   };
-  const countdown = useCountdown(content?.offer?.yksDate || "2026-06-15");
 
   const handleSubmit = async (type = "free") => {
     setFormError("");
@@ -318,7 +281,6 @@ export default function DenemeKampiPage() {
   const { hero, painPoints, camp, testimonials, offer, form: formCfg = {} } = content;
   const quota = content._quota || {};
   const remainingQuota = quota.remainingQuota ?? offer?.maxQuota ?? 10;
-  const daysLeft = daysUntil(offer?.yksDate);
   const plans = Array.isArray(offer?.plans) ? offer.plans : [];
   const currentPlan = plans[activePlan] || null;
 
@@ -338,12 +300,10 @@ export default function DenemeKampiPage() {
 
         <div className="max-w-3xl mx-auto relative text-center">
           {/* Urgency bar */}
-          {daysLeft > 0 && (
-            <div className="inline-flex items-center gap-2 bg-[#f39c12]/20 border border-[#f39c12]/40 rounded-full px-4 py-1.5 text-sm font-bold mb-5 backdrop-blur">
-              ⏳ YKS'ye <span className="text-[#f39c12] font-black">{daysLeft} gün</span> kaldı —&nbsp;
-              <span className="text-[#f39c12]">{hero.highlightPhrase || "Sözderece ile"}</span> kontrol sende!
-            </div>
-          )}
+          <div className="inline-flex items-center gap-2 bg-[#f39c12]/20 border border-[#f39c12]/40 rounded-full px-4 py-1.5 text-sm font-bold mb-5 backdrop-blur">
+            ⏳ 2027 YKS'ye hazırlanıyoruz —&nbsp;
+            <span className="text-[#f39c12]">{hero.highlightPhrase || "Sözderece ile"}</span> kontrol sende!
+          </div>
 
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-bold mb-5 backdrop-blur">
             🏕 {content.name || "Deneme Kampı"}
@@ -661,12 +621,10 @@ export default function DenemeKampiPage() {
           <div className="text-center mb-6">
             <h2 className="text-3xl max-[768px]:text-2xl font-black mb-3">{offer.title}</h2>
 
-            {/* Countdown */}
-            <div className="flex justify-center gap-3 mb-5">
-              <CountdownBox value={countdown.days} label="Gün" />
-              <CountdownBox value={countdown.hours} label="Saat" />
-              <CountdownBox value={countdown.minutes} label="Dakika" />
-              <CountdownBox value={countdown.seconds} label="Saniye" />
+            <div className="flex justify-center mb-5">
+              <span className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-bold backdrop-blur">
+                🎯 2027 YKS'ye hazırlanıyoruz
+              </span>
             </div>
 
             {remainingQuota > 0 && remainingQuota <= offer.maxQuota && (

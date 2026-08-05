@@ -100,7 +100,7 @@ const Footer = () => {
 
         {/* Alt Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-white/8">
-          <p className="text-white/30 text-xs">© 2026 Sözderece Koçluk — Tüm hakları saklıdır.</p>
+          <p className="text-white/30 text-xs">© {new Date().getFullYear()} Sözderece Koçluk — Tüm hakları saklıdır.</p>
           <div className="flex items-center gap-1.5 text-white/30 text-xs">
             <a href="https://www.instagram.com/sozderece/" target="_blank" rel="noreferrer" className="no-underline text-white/30 hover:text-[#D8FF4F] transition-colors">@sozderece</a>
           </div>

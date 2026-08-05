@@ -134,7 +134,11 @@ export default function LgsHazirlikPage() {
     );
   }
 
-  const days = daysLeft(content.lgsDate || "2026-06-14");
+  // 2027 LGS tarihi MEB tarafından henüz resmi olarak açıklanmadı — bu tahmini
+  // tarih SADECE "~₺X/gün" fiyat vurgusu için kullanılıyor, sayfada kesin bir
+  // "X gün kaldı" iddiası olarak GÖSTERİLMİYOR. Resmi tarih açıklanınca admin
+  // panelden (content.lgsDate) güncellenmeli.
+  const days = daysLeft(content.lgsDate || "2027-06-12");
   const price = content.offer?.price || "2500";
   const dailyCost = days > 0 ? Math.round(parseInt(price) / days) : parseInt(price);
   const remaining = quota.remainingQuota;
@@ -175,7 +179,7 @@ export default function LgsHazirlikPage() {
         <div className="max-w-3xl mx-auto text-center relative">
           <motion.div {...fadeUp}>
             <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6 border font-nunito font-bold text-xs" style={{ background: "rgba(216,255,79,0.1)", borderColor: "rgba(216,255,79,0.25)", color: "#D8FF4F" }}>
-              🎯 LGS Öğrencilerine Özel &nbsp;·&nbsp; <span style={{ color: "#FF6B35" }}>{days} gün kaldı</span>
+              🎯 2027 LGS Öğrencilerine Özel
             </div>
 
             <h1 className="font-fredoka font-bold leading-tight mb-4" style={{ fontSize: "clamp(28px,5vw,52px)", animation: "lgsShimmer 4s ease-in-out infinite" }}>

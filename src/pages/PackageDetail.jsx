@@ -34,7 +34,7 @@ const getPriceValidUntil = () => {
   return date.toISOString().split("T")[0];
 };
 
-const defaultSlug = "kocluk-2026";
+const defaultSlug = "yks-kocluk-paketi";
 
 const PackageDetail = () => {
   const navigate = useNavigate();

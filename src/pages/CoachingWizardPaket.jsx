@@ -161,6 +161,8 @@ export default function CoachingWizardPaket() {
   const plans = Array.isArray(selected?.plans) ? selected.plans : [];
   const hasPlanTabs = plans.length > 1;
   const activePlan = hasPlanTabs ? plans[Math.min(activePlanIdx, plans.length - 1)] : null;
+  // Sekme gösterilmese bile (tek plan varsa) billingCycle kontrolü için kullanılır.
+  const effectivePlan = activePlan || (plans.length === 1 ? plans[0] : null);
 
   const features = (Array.isArray(selected?.features) ? selected.features : [])
     .map((f) => (typeof f === "string" ? { label: f, included: true } : f))
@@ -175,6 +177,19 @@ export default function CoachingWizardPaket() {
 
   const goNext = () => {
     if (!selected) return;
+
+    // Aylık abonelik planı seçildiyse ayrı bir akışa (gerçek giriş + kart
+    // saklama) yönlenir — normal tek-seferlik Ödeme adımına değil. Bu akış
+    // her zaman bir plan index'ine ihtiyaç duyar (tek plan olsa da).
+    if (effectivePlan?.billingCycle === "monthly") {
+      const subParams = new URLSearchParams();
+      if (alan) subParams.set("alan", alan);
+      subParams.set("slug", selected.slug);
+      subParams.set("plan", String(hasPlanTabs ? activePlanIdx : 0));
+      navigate(`/abone-ol?${subParams.toString()}`);
+      return;
+    }
+
     const params = new URLSearchParams();
     if (alan) params.set("alan", alan);
     params.set("slug", selected.slug);
@@ -245,7 +260,7 @@ export default function CoachingWizardPaket() {
                         color: activePlanIdx === i ? "#D8FF4F" : "#1C1B8A",
                       }}
                     >
-                      {plan.label}
+                      {plan.billingCycle === "monthly" ? `🔁 ${plan.label}` : plan.label}
                     </button>
                   ))}
                 </div>
@@ -268,13 +283,20 @@ export default function CoachingWizardPaket() {
                 </div>
               )}
 
+              {effectivePlan?.billingCycle === "monthly" && (
+                <p className="font-nunito text-xs text-[#64748b] mt-4 bg-[#fff7ed] border border-[#fed7aa] rounded-xl px-3 py-2.5">
+                  🔁 Bu bir <strong>aylık abonelik</strong>tir — her ay otomatik olarak yenilenir. Dilediğin zaman
+                  "Siparişlerim" sayfasından tek tıkla iptal edebilirsin.
+                </p>
+              )}
+
               <button
                 type="button"
                 onClick={goNext}
                 className="w-full mt-7 py-4 rounded-full font-fredoka font-bold text-base transition-transform hover:scale-[1.02]"
                 style={{ background: "#FF6B35", color: "white" }}
               >
-                Bu paketle devam et →
+                {effectivePlan?.billingCycle === "monthly" ? "Aboneliği Başlat →" : "Bu paketle devam et →"}
               </button>
             </div>
 

@@ -195,7 +195,7 @@ const IletisimPage = () => {
 
               {/* SOL TARAF */}
               <div className="text-white max-[960px]:text-center">
-                <span className="bg-[rgba(243,156,18,0.2)] text-[#f39c12] py-1.5 px-3.5 rounded-[20px] text-[0.85rem] font-bold inline-block mb-[15px] border border-[rgba(243,156,18,0.4)]">🚀 YKS/LGS 2026 Hazırlık</span>
+                <span className="bg-[rgba(243,156,18,0.2)] text-[#f39c12] py-1.5 px-3.5 rounded-[20px] text-[0.85rem] font-bold inline-block mb-[15px] border border-[rgba(243,156,18,0.4)]">🚀 YKS/LGS 2027 Hazırlık</span>
                 <h1 className="text-[2.8rem] leading-[1.2] font-extrabold mb-5 max-[960px]:text-[1.8rem] max-[960px]:mb-2.5">Hedeflerine Ulaşmak İçin<br /><span className="text-[#f39c12]">İlk Adımı At</span></h1>
                 <p className="text-[1.1rem] text-gray-300 leading-[1.6] mb-[30px] max-w-[95%] max-[960px]:text-base max-[960px]:mb-[15px]">
                   YKS/LGS sınav sürecinde yalnız değilsin. Formu doldur, derece öğrencisi koçlarımız

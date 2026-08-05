@@ -19,6 +19,11 @@ const OrdersPage = () => {
   // ✅ Ücretsiz haklar için state
   const [freeRights, setFreeRights] = useState({ items: [], remaining: 0 });
 
+  // Abonelikler
+  const [subscriptions, setSubscriptions] = useState([]);
+  const [subsLoading, setSubsLoading] = useState(true);
+  const [cancellingId, setCancellingId] = useState(null);
+
   const navigate = useNavigate(); // ✅ eklendi
 
   // Siparişleri çek
@@ -53,6 +58,45 @@ const OrdersPage = () => {
       }
     })();
   }, []);
+
+  // Abonelikleri çek
+  useEffect(() => {
+    (async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const { data } = await axios.get("/api/subscriptions/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setSubscriptions(data?.subscriptions || []);
+      } catch (e) {
+        console.warn("subscriptions fetch failed", e);
+        setSubscriptions([]);
+      } finally {
+        setSubsLoading(false);
+      }
+    })();
+  }, []);
+
+  const subscriptionStatusMeta = (sub) => {
+    if (sub.status === "cancelled") return { label: "İptal Edildi", variant: "bg-[rgba(55,65,81,0.08)] text-[#374151] border-[rgba(55,65,81,0.2)]" };
+    if (sub.status === "past_due") return { label: "Ödeme Bekleniyor", variant: "bg-[rgba(217,119,6,0.10)] text-[#d97706] border-[rgba(217,119,6,0.25)]" };
+    if (sub.cancelAtPeriodEnd) return { label: "Dönem Sonunda Duracak", variant: "bg-[rgba(217,119,6,0.10)] text-[#d97706] border-[rgba(217,119,6,0.25)]" };
+    return { label: "Aktif", variant: "bg-[rgba(22,163,74,0.08)] text-[#16a34a] border-[rgba(22,163,74,0.2)]" };
+  };
+
+  const handleCancelSubscription = async (id) => {
+    if (!window.confirm("Aboneliğini iptal etmek istediğine emin misin? Mevcut ödediğin dönem sonuna kadar erişimin devam eder, bir sonraki ay tekrar çekim yapılmaz.")) return;
+    setCancellingId(id);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(`/api/subscriptions/${id}/cancel`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      setSubscriptions((prev) => prev.map((s) => (s.id === id ? { ...s, cancelAtPeriodEnd: true } : s)));
+    } catch (e) {
+      alert(e?.response?.data?.message || "Abonelik iptal edilemedi.");
+    } finally {
+      setCancellingId(null);
+    }
+  };
 
   const formatDate = (dateStr) => {
     try {
@@ -115,6 +159,45 @@ const OrdersPage = () => {
         <div className="w-full max-w-[780px] mx-auto">
           <div>
             <main className="max-w-[860px] w-full mx-auto">
+              {!subsLoading && subscriptions.length > 0 && (
+                <section className="bg-white p-[22px] rounded-[14px] shadow-[0_6px_24px_rgba(2,6,23,0.06)] border border-[#e5e7eb] mb-[18px]">
+                  <h2>🔁 Aboneliklerim</h2>
+                  <ul className="list-none p-0 m-0 flex flex-col gap-[14px]">
+                    {subscriptions.map((sub) => {
+                      const { label, variant } = subscriptionStatusMeta(sub);
+                      const canCancel = sub.status !== "cancelled" && !sub.cancelAtPeriodEnd;
+                      return (
+                        <li key={sub.id} className="bg-white border border-[#e5e7eb] rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-[14px] flex flex-col gap-2.5 max-[480px]:p-3">
+                          <h3 className="m-0 mb-1.5 text-base leading-tight text-[#111827]"><strong>{sub.planLabel}</strong></h3>
+                          <p className="m-0 text-[#6b7280] text-sm">💳 <strong>Aylık Tutar:</strong> ₺{(sub.amount / 100).toFixed(2)}</p>
+                          {sub.cardLast4 && (
+                            <p className="m-0 text-[#6b7280] text-sm mt-1">💳 <strong>Kart:</strong> •••• {sub.cardLast4}</p>
+                          )}
+                          {sub.status !== "cancelled" && (
+                            <p className="m-0 text-[#6b7280] text-sm mt-1">
+                              🗓️ <strong>{sub.cancelAtPeriodEnd ? "Erişim Sonu" : "Sonraki Çekim"}:</strong> {formatDate(sub.cancelAtPeriodEnd ? sub.currentPeriodEnd : sub.nextBillingDate)}
+                            </p>
+                          )}
+                          <span className={`${badgeBase} ${variant}`}>{label}</span>
+                          {canCancel && (
+                            <button
+                              onClick={() => handleCancelSubscription(sub.id)}
+                              disabled={cancellingId === sub.id}
+                              className={refundBtnBase}
+                            >
+                              {cancellingId === sub.id ? "İptal ediliyor..." : "🛑 Aboneliği İptal Et"}
+                            </button>
+                          )}
+                          {sub.cancelAtPeriodEnd && sub.status !== "cancelled" && (
+                            <p className="refund-waiting">ℹ️ Bu abonelik dönem sonunda otomatik olarak duracak, tekrar çekim yapılmayacak.</p>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+              )}
+
               <section className="bg-white p-[22px] rounded-[14px] shadow-[0_6px_24px_rgba(2,6,23,0.06)] border border-[#e5e7eb] mb-[18px]">
                 <h2>📦 Siparişlerim</h2>
 

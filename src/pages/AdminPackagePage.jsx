@@ -52,7 +52,7 @@ const AdminPackagePage = () => {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [newFeature, setNewFeature] = useState({ label: "", included: true });
-  const emptyPlan = { label: "", priceText: "", durationText: "", oldPriceText: "", unitPrice: "", badge: "", badgeColor: "green" };
+  const emptyPlan = { label: "", priceText: "", durationText: "", oldPriceText: "", unitPrice: "", badge: "", badgeColor: "green", billingCycle: "once" };
   const [newPlan, setNewPlan] = useState(emptyPlan);
   const [editingPlanIdx, setEditingPlanIdx] = useState(null);
   const [message, setMessage] = useState(null);
@@ -339,7 +339,7 @@ const AdminPackagePage = () => {
                   <label className="block text-xs font-bold text-[#475569] mb-1.5">Slug *</label>
                   <input
                     className={inputCls}
-                    placeholder="kocluk-paketi-2026"
+                    placeholder="kocluk-paketi-2027"
                     value={form.slug}
                     onChange={(e) => setForm({ ...form, slug: e.target.value })}
                   />
@@ -627,6 +627,9 @@ const AdminPackagePage = () => {
                           <span className="text-[#64748b] ml-2">{plan.priceText}{plan.durationText}</span>
                           {plan.oldPriceText && <span className="text-[#94a3b8] line-through ml-2">{plan.oldPriceText}</span>}
                           {plan.badge && <span className="ml-2 bg-[#dcfce7] text-[#166534] text-[10px] font-bold px-1.5 py-0.5 rounded-full">{plan.badge}</span>}
+                          {plan.billingCycle === "monthly" && (
+                            <span className="ml-2 bg-[#fef3c7] text-[#92400e] text-[10px] font-bold px-1.5 py-0.5 rounded-full">🔁 Aylık Abonelik</span>
+                          )}
                         </div>
                         <div className="flex gap-1 flex-shrink-0">
                           {i > 0 && (
@@ -696,7 +699,20 @@ const AdminPackagePage = () => {
                         <option value="red">Kırmızı</option>
                       </select>
                     </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#475569] mb-1">Ödeme Tipi</label>
+                      <select className={inputCls} value={newPlan.billingCycle || "once"}
+                        onChange={(e) => setNewPlan({ ...newPlan, billingCycle: e.target.value })}>
+                        <option value="once">Tek Seferlik</option>
+                        <option value="monthly">🔁 Aylık Abonelik (otomatik yenilenir)</option>
+                      </select>
+                    </div>
                   </div>
+                  {newPlan.billingCycle === "monthly" && (
+                    <p className="text-[11px] text-[#92400e] bg-[#fffbeb] border border-[#fde68a] rounded-lg px-2.5 py-1.5">
+                      ⚠️ Aylık abonelik altyapısı henüz canlı değil (PayTR tekrarlayan ödeme entegrasyonu bekleniyor). Bu seçenek şimdilik sadece hazırlık amaçlı — canlıya alınmadan müşteriye gösterilmemeli.
+                    </p>
+                  )}
                   <div className="flex gap-2">
                     <button type="button"
                       onClick={() => {
