@@ -710,7 +710,10 @@ const AdminPackagePage = () => {
                   </div>
                   {newPlan.billingCycle === "monthly" && (
                     <p className="text-[11px] text-[#92400e] bg-[#fffbeb] border border-[#fde68a] rounded-lg px-2.5 py-1.5">
-                      ⚠️ Aylık abonelik altyapısı henüz canlı değil (PayTR tekrarlayan ödeme entegrasyonu bekleniyor). Bu seçenek şimdilik sadece hazırlık amaçlı — canlıya alınmadan müşteriye gösterilmemeli.
+                      ⚠️ Buradaki "Unit Price" tutarı, müşteri aboneliği seçtiğinde <strong>her ay</strong> otomatik olarak
+                      kartından çekilecek. Bu planı sadece aylık bir tutarı temsil ediyorsa işaretleyin — "sınava kadar
+                      toplu" gibi çok aylık/tek seferlik fiyatlanmış bir planı aylık abonelik yaparsanız müşteriden
+                      yanlışlıkla her ay o toplu tutar çekilir.
                     </p>
                   )}
                   <div className="flex gap-2">
