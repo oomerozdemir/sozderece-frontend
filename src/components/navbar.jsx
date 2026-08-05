@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SHOW_OGRETMEN } from "../config/features";
 import useCart from "../hooks/useCart";
@@ -31,20 +31,43 @@ export default function Navbar() {
   const [navLinks, setNavLinks] = useState(DEFAULT_NAV_LINKS);
 
   const [authState, setAuthState] = useState({ isLoggedIn: false, name: "", role: "" });
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const { cart } = useCart() || { cart: [] };
   const cartCount = cart ? cart.length : 0;
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      setAuthState({
-        isLoggedIn: true,
-        name: localStorage.getItem("userName") || "Kullanıcı",
-        role: (localStorage.getItem("userRole") || "").toLowerCase(),
-      });
-    }
+    if (!token) return;
+
+    // Giriş akışlarının çoğu (OTP, misafir-sonrası, öğretmen vb.) tek bir
+    // JSON nesnesi olarak "user" anahtarına yazıyor — sadece klasik
+    // e-posta/şifre girişi ayrıca düz "userName"/"userRole" anahtarları
+    // yazıyor. İkisini de kontrol ediyoruz, aksi halde çoğu giriş
+    // yönteminde isim boş kalıp sabit "Kullanıcı" metnine düşülüyordu.
+    let storedUser = null;
+    try {
+      storedUser = JSON.parse(localStorage.getItem("user") || "null");
+    } catch {}
+
+    const name = storedUser?.name || localStorage.getItem("userName") || storedUser?.email?.split("@")[0] || "Hesabım";
+    const role = (storedUser?.role || localStorage.getItem("userRole") || "").toLowerCase();
+    setAuthState({ isLoggedIn: true, name, role });
   }, []);
+
+  // Dropdown'ı dışarı tıklanınca kapat — hover tabanlı (onMouseEnter/Leave)
+  // versiyon, buton ile menü arasındaki küçük boşlukta imleç menüden
+  // "çıkmış" sayıldığı için menü kendi kendine kapanıyordu.
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [dropdownOpen]);
 
   useEffect(() => {
     axios.get("/api/settings/navbar")
@@ -141,21 +164,21 @@ export default function Navbar() {
 
           {/* Kullanıcı */}
           {authState.isLoggedIn ? (
-            <div
-              className="relative flex items-center"
-              onMouseEnter={() => setDropdownOpen(true)}
-              onMouseLeave={() => setDropdownOpen(false)}
-            >
-              <button className="bg-transparent border-0 text-white/80 font-nunito font-bold cursor-pointer flex items-center gap-1.5 text-sm hover:text-[#D8FF4F] transition-colors">
+            <div className="relative flex items-center" ref={dropdownRef}>
+              <button
+                type="button"
+                onClick={() => setDropdownOpen((v) => !v)}
+                className="bg-transparent border-0 text-white/80 font-nunito font-bold cursor-pointer flex items-center gap-1.5 text-sm hover:text-[#D8FF4F] transition-colors"
+              >
                 <FaUser className="text-xs" />
                 <span className="max-w-[90px] truncate">{authState.name}</span>
               </button>
               {dropdownOpen && (
                 <div className="absolute top-full right-0 mt-2 bg-[#1C1B8A] border border-white/10 w-[200px] rounded-xl shadow-2xl py-2 flex flex-col z-[1001] animate-slide-down">
-                  <Link to={getDashboardPath()} className="flex items-center gap-2.5 py-2.5 px-4 no-underline text-white/80 text-sm font-nunito font-bold hover:bg-white/10 hover:text-[#D8FF4F] transition-colors">
+                  <Link to={getDashboardPath()} onClick={() => setDropdownOpen(false)} className="flex items-center gap-2.5 py-2.5 px-4 no-underline text-white/80 text-sm font-nunito font-bold hover:bg-white/10 hover:text-[#D8FF4F] transition-colors">
                     <FaTachometerAlt className="text-xs" /> Panelim
                   </Link>
-                  <Link to="/hesabim" className="flex items-center gap-2.5 py-2.5 px-4 no-underline text-white/80 text-sm font-nunito font-bold hover:bg-white/10 hover:text-[#D8FF4F] transition-colors">
+                  <Link to="/hesabim" onClick={() => setDropdownOpen(false)} className="flex items-center gap-2.5 py-2.5 px-4 no-underline text-white/80 text-sm font-nunito font-bold hover:bg-white/10 hover:text-[#D8FF4F] transition-colors">
                     <FaCog className="text-xs" /> Hesabım
                   </Link>
                   <button
