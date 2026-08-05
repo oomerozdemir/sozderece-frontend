@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "../utils/axios";
 import {
@@ -95,7 +95,11 @@ export default function CoachingWizardOdeme() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [pkg, setPkg] = useState(null);
   const [pkgLoaded, setPkgLoaded] = useState(false);
-  const [paytrToken, setPaytrToken] = useState(null);
+  const [payTrFields, setPayTrFields] = useState(null);
+  const [payTrEndpoint, setPayTrEndpoint] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const formRef = useRef(null);
+  const [cardData, setCardData] = useState({ cc_owner: "", card_number: "", expiry_month: "", expiry_year: "", cvv: "" });
 
   const [openSection, setOpenSection] = useState("student");
   const [studentDone, setStudentDone] = useState(false);
@@ -147,17 +151,15 @@ export default function CoachingWizardOdeme() {
       .finally(() => setPkgLoaded(true));
   }, [slug]);
 
-  // PayTR postMessage dinleyicisi (PaymentPage.jsx ile birebir aynı sözleşme)
+  // PayTR alanları hazır olunca gizli formu native DOM submit ile PayTR'ye
+  // gönderir — tarayıcı PayTR'nin 3D Secure sayfasına tam sayfa yönlenir,
+  // işlem bitince merchant_ok_url/fail_url'e geri döner (bkz. SubscriptionStart.jsx
+  // ile aynı desen).
   useEffect(() => {
-    const handleMessage = (event) => {
-      if (event.origin !== "https://www.paytr.com") return;
-      if (event.data === "PAYMENT_SUCCESS") {
-        navigate("/order-success");
-      }
-    };
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, [navigate]);
+    if (payTrFields && formRef.current) {
+      formRef.current.submit();
+    }
+  }, [payTrFields]);
 
   const plans = Array.isArray(pkg?.plans) ? pkg.plans : [];
   const activePlan = planIndex !== null && plans[planIndex] ? plans[planIndex] : null;
@@ -258,6 +260,9 @@ export default function CoachingWizardOdeme() {
       return;
     }
     if (!isAgreed) newErrors.agreement = "Devam etmeden önce sözleşmeyi onaylamalısın.";
+    if (!cardData.cc_owner || !cardData.card_number || !cardData.expiry_month || !cardData.expiry_year || !cardData.cvv) {
+      newErrors.card = "Tüm kart bilgilerini doldurun.";
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -266,6 +271,7 @@ export default function CoachingWizardOdeme() {
       return;
     }
 
+    setSubmitting(true);
     try {
       if (!localStorage.getItem("token")) {
         localStorage.setItem("guestCartEmail", formData.email);
@@ -287,21 +293,16 @@ export default function CoachingWizardOdeme() {
         },
       });
 
-      const newToken = response.data?.token;
-      if (newToken) {
+      if (response.data?.fields) {
         // Gerçek ödenen tutarı /order-success'e taşımak için sessionStorage'a
-        // yazılıyor (mobildeki tam sayfa PayTR yönlendirmesinde hayatta kalır).
+        // yazılıyor (PayTR'nin tam sayfa yönlendirmesinde hayatta kalır).
         sessionStorage.setItem("lastOrderAmount", String(payable));
-
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        if (isMobile) {
-          window.location.href = `https://www.paytr.com/odeme/guvenli/${newToken}`;
-        } else {
-          setPaytrToken(newToken);
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }
+        setPayTrEndpoint(response.data.paytrEndpoint);
+        setPayTrFields(response.data.fields);
+        // Form gönderimi payTrFields useEffect'inde otomatik tetiklenecek
       } else {
         alert("Ödeme başlatılamadı.");
+        setSubmitting(false);
       }
     } catch (error) {
       const detailedError = error?.response?.data;
@@ -310,6 +311,7 @@ export default function CoachingWizardOdeme() {
       } else {
         alert("Sipariş hazırlığı sırasında bilinmeyen bir hata oluştu.");
       }
+      setSubmitting(false);
     }
   };
 
@@ -342,24 +344,22 @@ export default function CoachingWizardOdeme() {
       <WizardStepBar currentStep={3} steps={WIZARD_STEPS} />
 
       <main className="flex-1">
-        {paytrToken ? (
-          <div className="max-w-2xl mx-auto px-4 py-8">
-            <div className="bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] overflow-hidden">
-              <div className="bg-gradient-to-r from-[#100481] to-[#1a05b3] px-6 py-4 flex items-center gap-3">
-                <svg className="w-5 h-5 text-[#a7f3d0]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-                <span className="text-white font-bold text-sm">Güvenli Ödeme Sayfası — PayTR</span>
-              </div>
-              <iframe
-                src={`https://www.paytr.com/odeme/guvenli/${paytrToken}`}
-                id="paytriframe"
-                title="Ödeme Sayfası"
-                allowFullScreen
-                scrolling="yes"
-                style={{ width: "100%", height: "700px", border: "none", display: "block" }}
-              />
-            </div>
+        {payTrFields ? (
+          <div className="max-w-md mx-auto px-4 py-24 text-center">
+            <div className="inline-block w-10 h-10 border-4 border-[#f1f5f9] border-t-[#f35900] rounded-full animate-spin mb-4" />
+            <p className="text-[#64748b] font-nunito">PayTR güvenli ödeme sayfasına yönlendiriliyorsunuz…</p>
+            {/* Bu form doğrudan PayTR'ye POST eder — action PayTR'nin kendi
+                endpoint'i. Kart alanları BİZİM sunucumuza hiç gitmiyor. */}
+            <form ref={formRef} action={payTrEndpoint || undefined} method="post" style={{ display: "none" }}>
+              {Object.entries(payTrFields).map(([key, value]) => (
+                <input key={key} type="hidden" name={key} value={value} />
+              ))}
+              <input type="hidden" name="cc_owner" value={cardData.cc_owner} />
+              <input type="hidden" name="card_number" value={cardData.card_number} />
+              <input type="hidden" name="expiry_month" value={cardData.expiry_month} />
+              <input type="hidden" name="expiry_year" value={cardData.expiry_year} />
+              <input type="hidden" name="cvv" value={cardData.cvv} />
+            </form>
           </div>
         ) : !pkgLoaded ? (
           <p className="text-center text-[#64748b] font-nunito py-16">Yükleniyor…</p>
@@ -486,6 +486,62 @@ export default function CoachingWizardOdeme() {
 
                 {openSection === "payment" && addressDone && (
                   <div className="flex flex-col gap-4 mt-5">
+                    <p className="text-xs text-[#94a3b8] -mt-1">
+                      Kart bilgilerin doğrudan PayTR'nin güvenli sistemine iletilir, sunucumuzda hiç saklanmaz.
+                    </p>
+                    <input
+                      type="text"
+                      autoComplete="cc-name"
+                      placeholder="Kart Üzerindeki İsim"
+                      value={cardData.cc_owner}
+                      onChange={(e) => setCardData({ ...cardData, cc_owner: e.target.value })}
+                      className={inputBase}
+                    />
+                    <input
+                      type="text"
+                      autoComplete="cc-number"
+                      inputMode="numeric"
+                      placeholder="Kart Numarası"
+                      value={cardData.card_number}
+                      onChange={(e) => setCardData({ ...cardData, card_number: e.target.value.replace(/\D/g, "") })}
+                      className={inputBase}
+                    />
+                    <div className="flex gap-3">
+                      <select
+                        autoComplete="cc-exp-month"
+                        value={cardData.expiry_month}
+                        onChange={(e) => setCardData({ ...cardData, expiry_month: e.target.value })}
+                        className={`${inputBase} flex-1`}
+                      >
+                        <option value="">Ay</option>
+                        {Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0")).map((m) => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </select>
+                      <select
+                        autoComplete="cc-exp-year"
+                        value={cardData.expiry_year}
+                        onChange={(e) => setCardData({ ...cardData, expiry_year: e.target.value })}
+                        className={`${inputBase} flex-1`}
+                      >
+                        <option value="">Yıl</option>
+                        {Array.from({ length: 12 }, (_, i) => String(new Date().getFullYear() % 100 + i)).map((y) => (
+                          <option key={y} value={y}>{y}</option>
+                        ))}
+                      </select>
+                      <input
+                        type="text"
+                        autoComplete="cc-csc"
+                        inputMode="numeric"
+                        placeholder="CVV"
+                        value={cardData.cvv}
+                        onChange={(e) => setCardData({ ...cardData, cvv: e.target.value.replace(/\D/g, "") })}
+                        className={`${inputBase} flex-1`}
+                        maxLength={4}
+                      />
+                    </div>
+                    {errors.card && <span className="text-red-500 text-xs">{errors.card}</span>}
+
                     <label className="flex items-start gap-2 text-sm text-[#475569] cursor-pointer">
                       <input type="checkbox" checked={isAgreed} onChange={() => setIsAgreed(!isAgreed)} className="w-4 h-4 mt-0.5 accent-[#f35900]" />
                       <span>
@@ -499,9 +555,10 @@ export default function CoachingWizardOdeme() {
 
                     <button
                       type="submit"
-                      className="mt-1 py-4 bg-[#f35900] hover:bg-[#d44e00] text-white text-lg font-bold rounded-2xl cursor-pointer w-full transition-colors shadow-[0_4px_16px_rgba(243,89,0,0.3)]"
+                      disabled={submitting}
+                      className="mt-1 py-4 bg-[#f35900] hover:bg-[#d44e00] text-white text-lg font-bold rounded-2xl cursor-pointer w-full transition-colors shadow-[0_4px_16px_rgba(243,89,0,0.3)] disabled:opacity-60"
                     >
-                      {settings.ctaButtonText || "Güvenli Ödemeye Geç"}
+                      {submitting ? "Hazırlanıyor…" : (settings.ctaButtonText || "Güvenli Ödemeye Geç")}
                     </button>
 
                     <div className="flex items-center justify-center gap-3 flex-wrap">
