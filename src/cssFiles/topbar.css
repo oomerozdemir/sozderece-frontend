@@ -1,0 +1,77 @@
+/* TopBar.jsx — sitenin en üstündeki iletişim/sosyal medya şeridi */
+.top-bar {
+  background-color: var(--brand-b, #100481);
+  color: #ffffff;
+  font-size: 0.85rem;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.top-bar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.top-bar-left {
+  display: flex;
+  gap: 20px;
+}
+
+.tb-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #e0e0e0;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.tb-item:hover {
+  color: var(--action-color, #f39c12);
+}
+
+.tb-item .icon {
+  font-size: 0.9rem;
+  color: var(--action-color, #ffffff);
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.follow-text {
+  font-weight: 500;
+  color: #bbb;
+  font-size: 0.8rem;
+  display: block;
+}
+
+.social-icons {
+  display: flex;
+  gap: 12px;
+}
+
+.social-icons a {
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.social-icons a:hover {
+  color: var(--action-color, #f39c12);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .top-bar {
+    display: none;
+  }
+}

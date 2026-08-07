@@ -1,0 +1,11 @@
+/* BlogDetail.jsx — dangerouslySetInnerHTML ile basılan blog gövdesi içeriği */
+.blog-detail-content h2 { font-size: 1.6rem; margin: 32px 0 16px; color: #1e1e1e; }
+.blog-detail-content p { font-size: 1.05rem; color: #333; margin: 18px 0; }
+.blog-detail-content ul, .blog-detail-content ol { margin: 20px 0; padding-left: 24px; }
+.blog-detail-content li { margin-bottom: 12px; line-height: 1.7; }
+.blog-detail-content a { color: #fbbf24; text-decoration: none; border-bottom: 1.5px solid rgba(251,191,36,0); transition: border-color 0.3s ease, color 0.3s ease; }
+.blog-detail-content a:hover { border-bottom-color: rgba(251,191,36,1); }
+@media (max-width: 768px) {
+  .blog-detail-content h2 { font-size: 1rem; }
+  .blog-detail-content p { font-size: 0.9rem; }
+}
