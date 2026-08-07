@@ -43,9 +43,9 @@ export default function AdminCountdownPage() {
         title,
         subtitle,
       });
-      setMessage({ text: "✅ Ayarlar başarıyla kaydedildi.", type: "success" });
+      setMessage({ text: "Ayarlar başarıyla kaydedildi.", type: "success" });
     } catch (err) {
-      setMessage({ text: "❌ Ayarlar kaydedilemedi.", type: "error" });
+      setMessage({ text: "Ayarlar kaydedilemedi.", type: "error" });
     } finally {
       setSaving(false);
     }

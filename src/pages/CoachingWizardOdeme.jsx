@@ -221,7 +221,7 @@ export default function CoachingWizardOdeme() {
       if (data.validPackages && data.validPackages.length > 0) {
         const hasValidItem = cart.some((item) => data.validPackages.includes(item.slug));
         if (!hasValidItem) {
-          setCouponMessage("❌ Bu kupon seçtiğin paket için geçerli değildir.");
+          setCouponMessage("Bu kupon seçtiğin paket için geçerli değildir.");
           setCouponData(null);
           return;
         }
@@ -233,10 +233,10 @@ export default function CoachingWizardOdeme() {
         discountAmount: data.discountAmount || 0,
         validPackages: data.validPackages || [],
       });
-      setCouponMessage("✅ Kupon başarıyla uygulandı");
+      setCouponMessage("Kupon başarıyla uygulandı");
     } catch (err) {
       setCouponData(null);
-      setCouponMessage(err.response?.data?.error || "❌ Kupon doğrulanamadı");
+      setCouponMessage(err.response?.data?.error || "Kupon doğrulanamadı");
     }
   };
 

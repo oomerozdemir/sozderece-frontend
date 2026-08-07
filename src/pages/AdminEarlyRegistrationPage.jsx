@@ -54,9 +54,9 @@ export default function AdminEarlyRegistrationPage() {
         ctaText,
         note,
       });
-      setMessage({ text: "✅ Ayarlar başarıyla kaydedildi.", type: "success" });
+      setMessage({ text: "Ayarlar başarıyla kaydedildi.", type: "success" });
     } catch {
-      setMessage({ text: "❌ Ayarlar kaydedilemedi.", type: "error" });
+      setMessage({ text: "Ayarlar kaydedilemedi.", type: "error" });
     } finally {
       setSaving(false);
     }

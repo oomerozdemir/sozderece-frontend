@@ -55,7 +55,7 @@ const STATIC_FALLBACK = {
     navbarCta: "Yerimi Ayırt →",
     titleAccent: "YKS Yolculuğunda Koçun Yanında Olsun.",
     subtitle: "Günlük plan, anlık takip, deneme analizi — hepsi bir arada.",
-    chip1: "✅ Kişisel Koç",
+    chip1: "Kişisel Koç",
     chip2: "📊 Deneme Analizi",
     ctaPrimary: "⚡ Yerimi Şimdi Ayırt →",
   },
@@ -295,7 +295,7 @@ export default function YksYolculuguPage() {
             <div className="grid grid-cols-3 gap-4 max-[768px]:grid-cols-1 max-[1024px]:grid-cols-2">
               {painPoints.items.map((p, i) => {
                 const accents = ["#D8FF4F", "#FF6B35", "#7340C8", "#D8FF4F", "#FF6B35", "#7340C8"];
-                const emojis = ["📉", "📋", "💔", "❓", "📱", "⚠️"];
+                const emojis = ["📉", "📋", "💔", "❓", "📱", ""];
                 const accent = accents[i % 6];
                 return (
                   <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }}

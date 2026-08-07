@@ -41,9 +41,9 @@ export default function AdminPopupPage() {
         description,
         delaySeconds: Number(delaySeconds),
       });
-      setMessage({ text: "✅ Popup ayarları başarıyla kaydedildi.", type: "success" });
+      setMessage({ text: "Popup ayarları başarıyla kaydedildi.", type: "success" });
     } catch {
-      setMessage({ text: "❌ Ayarlar kaydedilemedi.", type: "error" });
+      setMessage({ text: "Ayarlar kaydedilemedi.", type: "error" });
     } finally {
       setSaving(false);
     }

@@ -34,7 +34,7 @@ export default function AdminNavbarPage() {
       const res = await axios.get("/api/admin/navbar", auth());
       setItems(res.data);
     } catch {
-      flash("❌ Navbar öğeleri alınamadı.", "error");
+      flash("Navbar öğeleri alınamadı.", "error");
     } finally {
       setLoading(false);
     }
@@ -69,7 +69,7 @@ export default function AdminNavbarPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name.trim() || !form.path.trim()) {
-      flash("❌ İsim ve yol zorunludur.", "error");
+      flash("İsim ve yol zorunludur.", "error");
       return;
     }
     setSaving(true);
@@ -77,15 +77,15 @@ export default function AdminNavbarPage() {
       if (editing) {
         const res = await axios.put(`/api/admin/navbar/${editing.id}`, form, auth());
         setItems((prev) => prev.map((i) => (i.id === editing.id ? res.data : i)));
-        flash("✅ Bağlantı güncellendi.");
+        flash("Bağlantı güncellendi.");
       } else {
         const res = await axios.post("/api/admin/navbar", { ...form, order: items.length }, auth());
         setItems((prev) => [...prev, res.data]);
-        flash("✅ Bağlantı eklendi.");
+        flash("Bağlantı eklendi.");
       }
       closeForm();
     } catch {
-      flash("❌ Kaydedilemedi.", "error");
+      flash("Kaydedilemedi.", "error");
     } finally {
       setSaving(false);
     }
@@ -96,9 +96,9 @@ export default function AdminNavbarPage() {
     try {
       await axios.delete(`/api/admin/navbar/${item.id}`, auth());
       setItems((prev) => prev.filter((i) => i.id !== item.id));
-      flash("✅ Bağlantı silindi.");
+      flash("Bağlantı silindi.");
     } catch {
-      flash("❌ Silinemedi.", "error");
+      flash("Silinemedi.", "error");
     }
   };
 
@@ -111,7 +111,7 @@ export default function AdminNavbarPage() {
       );
       setItems((prev) => prev.map((i) => (i.id === item.id ? res.data : i)));
     } catch {
-      flash("❌ Görünürlük değiştirilemedi.", "error");
+      flash("Görünürlük değiştirilemedi.", "error");
     }
   };
 
@@ -129,7 +129,7 @@ export default function AdminNavbarPage() {
         auth()
       );
     } catch {
-      flash("❌ Sıralama kaydedilemedi.", "error");
+      flash("Sıralama kaydedilemedi.", "error");
       fetchItems(); // geri al
     }
   };

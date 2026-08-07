@@ -20,7 +20,7 @@ const PaymentIframePage = () => {
       if (event.origin !== "https://www.paytr.com") return;
 
       if (event.data === "PAYMENT_SUCCESS") {
-        console.log("✅ Ödeme başarılı, yönlendiriliyor");
+        console.log("Ödeme başarılı, yönlendiriliyor");
         navigate("/order-success");
       }
     };

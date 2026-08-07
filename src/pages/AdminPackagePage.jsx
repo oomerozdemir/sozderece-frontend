@@ -120,7 +120,7 @@ const AdminPackagePage = () => {
 
   const handleSave = async () => {
     if (!form.slug || !form.name) {
-      showMsg("❌ Slug ve isim zorunludur.");
+      showMsg("Slug ve isim zorunludur.");
       return;
     }
     setLoading(true);
@@ -129,18 +129,18 @@ const AdminPackagePage = () => {
         await axios.put(`/api/admin/packages/${editingPkg.id}`, form, {
           headers: { Authorization: `Bearer ${token()}` },
         });
-        showMsg("✅ Paket güncellendi.");
+        showMsg("Paket güncellendi.");
       } else {
         await axios.post("/api/admin/packages", form, {
           headers: { Authorization: `Bearer ${token()}` },
         });
-        showMsg("✅ Paket oluşturuldu.");
+        showMsg("Paket oluşturuldu.");
       }
       setShowForm(false);
       fetchPackages();
     } catch (err) {
       console.error(err);
-      showMsg("❌ İşlem başarısız.");
+      showMsg("İşlem başarısız.");
     } finally {
       setLoading(false);
     }
@@ -151,11 +151,11 @@ const AdminPackagePage = () => {
       await axios.patch(`/api/admin/packages/${pkg.id}/toggle-visibility`, {}, {
         headers: { Authorization: `Bearer ${token()}` },
       });
-      showMsg(`✅ "${pkg.name}" ${pkg.hidden ? "vitrinde gösteriliyor" : "vitrinden kaldırıldı"}.`);
+      showMsg(`"${pkg.name}" ${pkg.hidden ? "vitrinde gösteriliyor" : "vitrinden kaldırıldı"}.`);
       fetchPackages();
     } catch (err) {
       console.error(err);
-      showMsg("❌ Görünürlük değiştirilemedi.");
+      showMsg("Görünürlük değiştirilemedi.");
     }
   };
 
@@ -165,11 +165,11 @@ const AdminPackagePage = () => {
       await axios.delete(`/api/admin/packages/${pkg.id}`, {
         headers: { Authorization: `Bearer ${token()}` },
       });
-      showMsg("✅ Paket silindi.");
+      showMsg("Paket silindi.");
       fetchPackages();
     } catch (err) {
       console.error(err);
-      showMsg("❌ Paket silinemedi.");
+      showMsg("Paket silinemedi.");
     }
   };
 

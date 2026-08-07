@@ -15,7 +15,7 @@ const OrderSuccessPage = () => {
       clearCart();
       console.log("🧹 Sepet temizlendi.");
     } catch (err) {
-      console.error("❌ clearCart hatası:", err);
+      console.error("clearCart hatası:", err);
     }
 
     // Misafir kimliği artık gerçek bir hesaba bağlandı (backend PayTR
@@ -38,7 +38,7 @@ const OrderSuccessPage = () => {
           content_name: 'Kocluk Basvuru/Siparis Tamamlandi',
           content_type: 'product'
         });
-        console.log("✅ Meta Pixel 'Purchase' (Satış) olayı gönderildi.");
+        console.log("Meta Pixel 'Purchase' (Satış) olayı gönderildi.");
       }
 
       if (window.gtag) {
@@ -50,7 +50,7 @@ const OrderSuccessPage = () => {
         });
       }
     } else {
-      console.warn("⚠️ Gerçek sipariş tutarı bulunamadı, dönüşüm olayı gönderilmedi.");
+      console.warn("Gerçek sipariş tutarı bulunamadı, dönüşüm olayı gönderilmedi.");
     }
 
     if (window.self !== window.top) {

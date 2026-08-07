@@ -139,11 +139,11 @@ const AdminDashboard = () => {
       const updatedUser = { ...editingUser, assignedCoach: assignedCoachData };
       setUsers((prev) => prev.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
       setSelectedUser(null);
-      setMessage("✅ Kullanıcı başarıyla güncellendi.");
+      setMessage("Kullanıcı başarıyla güncellendi.");
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
       console.error("Kullanıcı güncellenemedi:", error);
-      setMessage("❌ Güncelleme sırasında hata oluştu.");
+      setMessage("Güncelleme sırasında hata oluştu.");
       setTimeout(() => setMessage(null), 3000);
     }
   };
@@ -155,11 +155,11 @@ const AdminDashboard = () => {
       await axios.delete(`/api/admin/users/${selectedUser.id}`, { headers: { Authorization: `Bearer ${token}` } });
       setUsers((prev) => prev.filter((u) => u.id !== selectedUser.id));
       setSelectedUser(null);
-      setMessage("✅ Kullanıcı silindi.");
+      setMessage("Kullanıcı silindi.");
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
       console.error("Kullanıcı silinemedi:", error);
-      setMessage("❌ Kullanıcı silinemedi.");
+      setMessage("Kullanıcı silinemedi.");
       setTimeout(() => setMessage(null), 3000);
     }
   };
@@ -239,18 +239,18 @@ const AdminDashboard = () => {
   }, [orders]);
 
   const TABS = [
-    { key: "dashboard",          label: "📊 Genel Bakış" },
-    { key: "coaches",            label: "👨‍🏫 Koçlar" },
-    { key: "packages",           label: "🛒 Paketler" },
-    { key: "teacher-approvals",  label: "🧑‍🏫 Öğretmen Onayları" },
-    { key: "teacher-requests",   label: "📋 Talep Özeti" },
-    { key: "orders",             label: "📦 Siparişler" },
-    { key: "subscriptions",      label: "🔁 Abonelikler" },
-    { key: "users",              label: "👥 Kullanıcılar" },
-    { key: "camp",               label: "🏕 Deneme Kampı" },
-    { key: "payment-settings",   label: "💳 Ödeme Sayfası" },
-    { key: "lgs",                label: "📚 LGS Başvuruları" },
-    { key: "navbar",             label: "🔗 Navbar" },
+    { key: "dashboard",          label: "Genel Bakış" },
+    { key: "coaches",            label: "Koçlar" },
+    { key: "packages",           label: "Paketler" },
+    { key: "teacher-approvals",  label: "Öğretmen Onayları" },
+    { key: "teacher-requests",   label: "Talep Özeti" },
+    { key: "orders",             label: "Siparişler" },
+    { key: "subscriptions",      label: "Abonelikler" },
+    { key: "users",              label: "Kullanıcılar" },
+    { key: "camp",               label: "Deneme Kampı" },
+    { key: "payment-settings",   label: "Ödeme Sayfası" },
+    { key: "lgs",                label: "LGS Başvuruları" },
+    { key: "navbar",             label: "Navbar" },
   ];
 
   const tabCls = (key) =>
@@ -617,11 +617,11 @@ const AdminDashboard = () => {
                         const res = await axios.post("/api/admin/users", newUser, { headers: { Authorization: `Bearer ${token}` } });
                         setUsers([...users, res.data]);
                         setNewUser({ name: "", email: "", password: "", role: "student" });
-                        setMessage("✅ Yeni kullanıcı oluşturuldu.");
+                        setMessage("Yeni kullanıcı oluşturuldu.");
                         setTimeout(() => setMessage(null), 3000);
                       } catch (err) {
                         console.error(err);
-                        setMessage("❌ Kullanıcı oluşturulamadı.");
+                        setMessage("Kullanıcı oluşturulamadı.");
                         setTimeout(() => setMessage(null), 3000);
                       }
                     }}

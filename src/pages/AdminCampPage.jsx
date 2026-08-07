@@ -313,7 +313,7 @@ export default function AdminCampPage() {
           <div className="grid grid-cols-2 gap-3 max-[500px]:grid-cols-1">
             <div>
               <Label>Chip 1 Metni</Label>
-              <input className={inp} placeholder="✅ Sınava Kadar Takip" value={content.hero?.chip1 || ""} onChange={(e) => set("hero.chip1", e.target.value)} />
+              <input className={inp} placeholder="Sınava Kadar Takip" value={content.hero?.chip1 || ""} onChange={(e) => set("hero.chip1", e.target.value)} />
             </div>
             <div>
               <Label>Chip 2 Metni</Label>

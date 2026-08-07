@@ -67,7 +67,7 @@ const AdminCouponPage = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setMessage("✅ Kupon başarıyla oluşturuldu.");
+      setMessage("Kupon başarıyla oluşturuldu.");
       
       // Formu temizle
       setCode("");
@@ -80,7 +80,7 @@ const AdminCouponPage = () => {
       
       fetchCoupons();
     } catch (err) {
-      setMessage(err.response?.data?.error || "❌ Bir hata oluştu.");
+      setMessage(err.response?.data?.error || "Bir hata oluştu.");
     }
   };
 
@@ -93,7 +93,7 @@ const AdminCouponPage = () => {
       });
       fetchCoupons();
     } catch (err) {
-      alert("❌ Kupon silinemedi.");
+      alert("Kupon silinemedi.");
     }
   };
 
@@ -215,7 +215,7 @@ const AdminCouponPage = () => {
         </button>
 
         {message && (
-          <div className={`p-3 rounded text-center ${message.includes("✅") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+          <div className={`p-3 rounded text-center ${message.includes("") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
             {message}
           </div>
         )}

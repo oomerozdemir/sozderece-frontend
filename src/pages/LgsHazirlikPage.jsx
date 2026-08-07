@@ -238,7 +238,7 @@ export default function LgsHazirlikPage() {
               {painPoints.items.map((p, i) => {
                 const accents = ["#D8FF4F", "#FF6B35", "#7340C8", "#D8FF4F", "#FF6B35", "#7340C8"];
                 const accent = accents[i % 6];
-                const emojis = ["📉", "📱", "📋", "❓", "💔", "⚠️"];
+                const emojis = ["📉", "📱", "📋", "❓", "💔", ""];
                 return (
                   <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }}
                     className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-[0_8px_24px_rgba(28,27,138,0.09)] hover:border-page-navy/20 transition-all duration-200 flex gap-4">

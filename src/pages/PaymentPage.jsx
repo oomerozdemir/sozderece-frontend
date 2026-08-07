@@ -127,13 +127,13 @@ const PaymentPage = () => {
       const data = res.data;
       if (data.validPackages && data.validPackages.length > 0) {
         const hasValidItem = items.some(item => data.validPackages.includes(item.slug));
-        if (!hasValidItem) { setCouponMessage("❌ Bu kupon sepetinizdeki ürünler için geçerli değildir."); setCouponData(null); return; }
+        if (!hasValidItem) { setCouponMessage("Bu kupon sepetinizdeki ürünler için geçerli değildir."); setCouponData(null); return; }
       }
       setCouponData({ code: data.code, type: data.type || "RATE", discountRate: data.discountRate || 0, discountAmount: data.discountAmount || 0, validPackages: data.validPackages || [] });
-      setCouponMessage("✅ Kupon başarıyla uygulandı");
+      setCouponMessage("Kupon başarıyla uygulandı");
     } catch (err) {
       setCouponData(null);
-      setCouponMessage(err.response?.data?.error || "❌ Kupon doğrulanamadı");
+      setCouponMessage(err.response?.data?.error || "Kupon doğrulanamadı");
     }
   };
 
@@ -202,7 +202,7 @@ const PaymentPage = () => {
         setSubmitting(false);
       }
     } catch (error) {
-      console.error("❌ Ödeme hazırlanırken hata:", error);
+      console.error("Ödeme hazırlanırken hata:", error);
       const detailedError = error?.response?.data;
       if (detailedError?.error === "EMAIL_REGISTERED") {
         setRegisteredEmailError(true);

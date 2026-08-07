@@ -51,11 +51,11 @@ const AdminSubscriptionsPage = () => {
       await axios.put(`/api/admin/subscriptions/${sub.id}/cancel`, {}, {
         headers: { Authorization: `Bearer ${token()}` },
       });
-      showMsg("✅ Abonelik iptal edildi.");
+      showMsg("Abonelik iptal edildi.");
       fetchSubscriptions();
     } catch (err) {
       console.error(err);
-      showMsg("❌ Abonelik iptal edilemedi.");
+      showMsg("Abonelik iptal edilemedi.");
     } finally {
       setCancellingId(null);
     }

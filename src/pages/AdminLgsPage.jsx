@@ -845,7 +845,7 @@ export default function AdminLgsPage() {
                   disabled={contentSaving}
                   className="px-6 py-2.5 rounded-xl bg-brand-navy hover:bg-[#0a0357] text-white font-bold text-sm transition-colors disabled:opacity-60"
                 >
-                  {contentSaving ? "Kaydediliyor..." : contentSaved ? "✅ Kaydedildi" : "💾 İçeriği Kaydet"}
+                  {contentSaving ? "Kaydediliyor..." : contentSaved ? "Kaydedildi" : "💾 İçeriği Kaydet"}
                 </button>
               </div>
             </>
@@ -880,7 +880,7 @@ export default function AdminLgsPage() {
             disabled={saving}
             className="px-5 py-2.5 rounded-xl bg-brand-navy hover:bg-[#0a0357] text-white font-bold text-sm transition-colors disabled:opacity-60"
           >
-            {saving ? "Kaydediliyor..." : saved ? "✅ Kaydedildi" : "💾 Kaydet"}
+            {saving ? "Kaydediliyor..." : saved ? "Kaydedildi" : "💾 Kaydet"}
           </button>
         </div>
       )}

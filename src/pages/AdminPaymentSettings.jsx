@@ -24,7 +24,7 @@ const DEFAULT = {
 const TABS = [
   { key: "general", label: "⚙️ Genel" },
   { key: "social", label: "👥 Sosyal Kanıt" },
-  { key: "includes", label: "✅ Dahil Olanlar" },
+  { key: "includes", label: "Dahil Olanlar" },
   { key: "trust", label: "🛡️ Güven" },
 ];
 
@@ -100,7 +100,7 @@ export default function AdminPaymentSettings() {
           disabled={saving}
           className="px-5 py-2.5 rounded-xl bg-[#f35900] hover:bg-[#d44e00] text-white font-bold text-sm transition-colors disabled:opacity-60 shadow-[0_4px_12px_rgba(243,89,0,0.3)]"
         >
-          {saving ? "Kaydediliyor..." : saved ? "✅ Kaydedildi" : "💾 Kaydet"}
+          {saving ? "Kaydediliyor..." : saved ? "Kaydedildi" : "💾 Kaydet"}
         </button>
       </div>
 
@@ -217,7 +217,7 @@ export default function AdminPaymentSettings() {
 
       {/* ── DAHİL OLANLAR ── */}
       {tab === "includes" && (
-        <Card title="✅ Dahil Olanlar Listesi">
+        <Card title="Dahil Olanlar Listesi">
           <p className="text-xs text-[#64748b]">Sepet özeti bölümünde "Dahil Olanlar" başlığı altında gösterilir.</p>
           {(settings.includes || []).map((item, i) => (
             <div key={i} className="flex gap-2 items-center">
