@@ -189,7 +189,7 @@ const IletisimPage = () => {
       <div className="bg-[#f8f9fa] min-h-screen max-[960px]:pb-[70px]">
 
         {/* HERO SECTION */}
-        <div className="bg-[#100481] pt-[50px] pb-[80px] relative max-[960px]:pt-5 max-[960px]:pb-10">
+        <div className="bg-brand-navy pt-[50px] pb-[80px] relative max-[960px]:pt-5 max-[960px]:pb-10">
           <div className="max-w-[1200px] mx-auto px-5">
             <div className="grid grid-cols-[1.2fr_1fr] gap-[60px] items-start max-[960px]:grid-cols-1 max-[960px]:gap-[30px]">
 
@@ -224,7 +224,7 @@ const IletisimPage = () => {
                 <div className="mt-5 pt-5 border-t border-[rgba(255,255,255,0.1)] max-[960px]:hidden">
                   <p className="text-[0.9rem] text-gray-400 mb-2.5">Veya bize ulaşın:</p>
                   <div className="flex gap-[15px]">
-                    <a href="tel:05312546701" className="flex items-center gap-2.5 py-3 px-6 rounded-lg font-semibold no-underline transition-all cursor-pointer bg-transparent border-2 border-white text-white hover:bg-white hover:text-[#100481]"><FaPhoneAlt /> 0 531 254 67 01</a>
+                    <a href="tel:05312546701" className="flex items-center gap-2.5 py-3 px-6 rounded-lg font-semibold no-underline transition-all cursor-pointer bg-transparent border-2 border-white text-white hover:bg-white hover:text-brand-navy"><FaPhoneAlt /> 0 531 254 67 01</a>
                     <button onClick={() => navigate('/paket-detay')} className="flex items-center gap-2.5 py-3 px-6 rounded-lg font-semibold transition-all cursor-pointer bg-[rgba(255,255,255,0.1)] text-[#f39c12] border-0 hover:bg-[rgba(255,255,255,0.2)] hover:text-white">Paketleri İncele</button>
                   </div>
                 </div>
@@ -289,7 +289,7 @@ const IletisimPage = () => {
                         <div className="flex gap-3 mb-2 text-[0.75rem] text-gray-500">
                           <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-[#e8f5e9] border border-[#4caf50]"></span>Boş</span>
                           <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-[#fde8e8] border border-[#e57373]"></span>Dolu</span>
-                          <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-[#100481] border border-[#100481]"></span>Seçili</span>
+                          <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-brand-navy border border-brand-navy"></span>Seçili</span>
                         </div>
 
                         {/* Gruplara göre slotlar */}
@@ -313,10 +313,10 @@ const IletisimPage = () => {
                                     onClick={() => !dolu && setFormData((prev) => ({ ...prev, meetingTime: slot }))}
                                     className={`py-1.5 px-1 rounded-md text-[0.72rem] font-medium border transition-all text-center leading-tight
                                       ${secili
-                                        ? "bg-[#100481] text-white border-[#100481] shadow-md"
+                                        ? "bg-brand-navy text-white border-brand-navy shadow-md"
                                         : dolu
                                         ? "bg-[#fde8e8] text-[#c62828] border-[#e57373] cursor-not-allowed opacity-70"
-                                        : "bg-[#e8f5e9] text-[#2e7d32] border-[#4caf50] hover:bg-[#100481] hover:text-white hover:border-[#100481] cursor-pointer"
+                                        : "bg-[#e8f5e9] text-[#2e7d32] border-[#4caf50] hover:bg-brand-navy hover:text-white hover:border-brand-navy cursor-pointer"
                                       }`}
                                   >
                                     {slot.replace(" - ", "–")}
@@ -330,7 +330,7 @@ const IletisimPage = () => {
 
                         {/* Seçilen saati göster */}
                         {formData.meetingTime && (
-                          <div className="mt-1 text-[0.8rem] text-[#100481] font-semibold">
+                          <div className="mt-1 text-[0.8rem] text-brand-navy font-semibold">
                             ✓ Seçilen saat: {formData.meetingTime}
                           </div>
                         )}

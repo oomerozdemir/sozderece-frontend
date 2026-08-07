@@ -116,7 +116,7 @@ function BoldText({ text, phrase }) {
     </>
   );
 }
-const inpCls = "w-full px-4 py-3 rounded-xl border border-[#e5e7eb] text-sm text-[#0f172a] outline-none focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
+const inpCls = "w-full px-4 py-3 rounded-xl border border-[#e5e7eb] text-sm text-[#0f172a] outline-none focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/10 transition-all bg-white";
 
 function FaqAccordion({ faqData }) {
   const [open, setOpen] = useState(null);
@@ -133,7 +133,7 @@ function FaqAccordion({ faqData }) {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <span className="inline-block bg-[#eff6ff] text-[#100481] text-xs font-black px-4 py-1.5 rounded-full border border-[#bfdbfe] mb-4 uppercase tracking-widest">
+          <span className="inline-block bg-[#eff6ff] text-brand-navy text-xs font-black px-4 py-1.5 rounded-full border border-[#bfdbfe] mb-4 uppercase tracking-widest">
             SSS
           </span>
           <h2 className="text-3xl max-[640px]:text-2xl font-black text-[#0f172a] mb-3">{title}</h2>
@@ -156,23 +156,23 @@ function FaqAccordion({ faqData }) {
                   onClick={() => setOpen(isOpen ? null : i)}
                   className={`relative rounded-2xl border overflow-hidden cursor-pointer transition-all duration-300 ${
                     isOpen
-                      ? "border-[#100481] shadow-[0_0_0_3px_rgba(16,4,129,0.06),0_8px_24px_rgba(16,4,129,0.08)] bg-white"
-                      : "border-[#e2e8f0] bg-white hover:border-[#100481]/30 hover:shadow-[0_4px_16px_rgba(16,4,129,0.06)]"
+                      ? "border-brand-navy shadow-[0_0_0_3px_rgba(16,4,129,0.06),0_8px_24px_rgba(16,4,129,0.08)] bg-white"
+                      : "border-[#e2e8f0] bg-white hover:border-brand-navy/30 hover:shadow-[0_4px_16px_rgba(16,4,129,0.06)]"
                   }`}
                 >
                   <div
                     className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl transition-all duration-300 ${
-                      isOpen ? "bg-[#100481]" : "bg-transparent"
+                      isOpen ? "bg-brand-navy" : "bg-transparent"
                     }`}
                   />
                   <div className="pl-6 pr-5 py-5">
                     <div className="flex items-center justify-between gap-4">
-                      <h3 className={`font-black text-base transition-colors duration-200 ${isOpen ? "text-[#100481]" : "text-[#0f172a]"}`}>
+                      <h3 className={`font-black text-base transition-colors duration-200 ${isOpen ? "text-brand-navy" : "text-[#0f172a]"}`}>
                         {item.question}
                       </h3>
                       <div
                         className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xl font-black transition-all duration-300 ${
-                          isOpen ? "bg-[#100481] text-white rotate-45" : "bg-[#f1f5f9] text-[#64748b] rotate-0"
+                          isOpen ? "bg-brand-navy text-white rotate-45" : "bg-[#f1f5f9] text-[#64748b] rotate-0"
                         }`}
                       >
                         +
@@ -294,9 +294,9 @@ export default function DenemeKampiPage() {
       />
 
       {/* ══════════ HERO ══════════ */}
-      <section className="relative bg-gradient-to-br from-[#100481] to-[#0a0a1a] text-white pt-16 pb-20 px-5 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-brand-navy to-[#0a0a1a] text-white pt-16 pb-20 px-5 overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#f39c12]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#100481]/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-navy/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 pointer-events-none" />
 
         <div className="max-w-3xl mx-auto relative text-center">
           {/* Urgency bar */}
@@ -353,7 +353,7 @@ export default function DenemeKampiPage() {
             <div className="flex items-center justify-center gap-2 mt-4">
               <div className="flex -space-x-2">
                 {(hero.socialProofAvatars || ["#3b82f6","#10b981","#f59e0b","#ef4444","#8b5cf6"]).slice(0, 5).map((color, i) => (
-                  <div key={i} className="w-8 h-8 rounded-full border-2 border-[#100481] flex items-center justify-center text-white text-xs font-black" style={{ backgroundColor: color }}>
+                  <div key={i} className="w-8 h-8 rounded-full border-2 border-brand-navy flex items-center justify-center text-white text-xs font-black" style={{ backgroundColor: color }}>
                     {String.fromCharCode(65 + i)}
                   </div>
                 ))}
@@ -423,13 +423,13 @@ export default function DenemeKampiPage() {
               return (
                 <div
                   key={i}
-                  className="group bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-[0_8px_24px_rgba(16,4,129,0.10)] hover:border-[#100481]/30 transition-all duration-200 flex gap-4 cursor-default"
+                  className="group bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-[0_8px_24px_rgba(16,4,129,0.10)] hover:border-brand-navy/30 transition-all duration-200 flex gap-4 cursor-default"
                 >
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 transition-colors duration-200 group-hover:bg-[#100481] group-hover:text-white ${iconBgs[i % iconBgs.length]}`}>
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 transition-colors duration-200 group-hover:bg-brand-navy group-hover:text-white ${iconBgs[i % iconBgs.length]}`}>
                     {item.icon}
                   </div>
                   <div className="min-w-0">
-                    <h3 className="font-black text-[#0f172a] mb-1.5 text-base leading-snug group-hover:text-[#100481] transition-colors duration-200">{item.title}</h3>
+                    <h3 className="font-black text-[#0f172a] mb-1.5 text-base leading-snug group-hover:text-brand-navy transition-colors duration-200">{item.title}</h3>
                     <p className="text-[#64748b] text-sm leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
@@ -445,7 +445,7 @@ export default function DenemeKampiPage() {
             </p>
             <button
               onClick={scrollToForm}
-              className="inline-flex items-center gap-2 bg-[#100481] hover:bg-[#0a0260] text-white font-bold text-sm px-7 py-3.5 rounded-2xl transition-all shadow-[0_4px_16px_rgba(16,4,129,0.2)] hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 bg-brand-navy hover:bg-[#0a0260] text-white font-bold text-sm px-7 py-3.5 rounded-2xl transition-all shadow-[0_4px_16px_rgba(16,4,129,0.2)] hover:-translate-y-0.5"
             >
               Sorunumu Çözmek İçin Ücretsiz Danış →
             </button>
@@ -464,8 +464,8 @@ export default function DenemeKampiPage() {
             {camp.weeks.map((w, i) => (
               <div key={i} className="relative bg-[#f0f4ff] rounded-2xl border border-[#c7d2fe] overflow-hidden flex flex-col">
                 <div className="px-6 pt-8 pb-5">
-                  <div className="absolute top-4 left-5 bg-[#100481] text-white text-xs font-black px-3 py-1 rounded-full">{w.week}</div>
-                  <h3 className="font-black text-[#100481] mb-2 text-base">{w.title}</h3>
+                  <div className="absolute top-4 left-5 bg-brand-navy text-white text-xs font-black px-3 py-1 rounded-full">{w.week}</div>
+                  <h3 className="font-black text-brand-navy mb-2 text-base">{w.title}</h3>
                   <p className="text-[#475569] text-sm leading-relaxed">{w.desc}</p>
                 </div>
                 {w.imageUrl && (
@@ -491,13 +491,13 @@ export default function DenemeKampiPage() {
               <thead>
                 <tr className="text-sm">
                   <th className="text-left px-5 py-4 font-bold bg-[#0f172a] text-white rounded-tl-2xl">Özellik</th>
-                  <th className="px-4 py-4 font-bold bg-[#100481] text-white relative">
+                  <th className="px-4 py-4 font-bold bg-brand-navy text-white relative">
                     <span className="relative z-10 flex flex-col items-center gap-0.5">
                       <span className="text-[#f39c12]">★</span>
                       Sözderece
                     </span>
                     {/* glow altı */}
-                    <span className="absolute inset-0 bg-[#100481] shadow-[0_0_24px_rgba(16,4,129,0.5)]" />
+                    <span className="absolute inset-0 bg-brand-navy shadow-[0_0_24px_rgba(16,4,129,0.5)]" />
                   </th>
                   <th className="px-4 py-4 font-bold bg-[#0f172a] text-white/70">Dershane</th>
                   <th className="px-4 py-4 font-bold bg-[#0f172a] text-white/70 rounded-tr-2xl">Tekli Öğretmen</th>
@@ -507,7 +507,7 @@ export default function DenemeKampiPage() {
                 {camp.comparison.map((row, i) => (
                   <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-[#f8fafc]"}>
                     <td className="px-5 py-3 text-sm font-semibold text-[#374151]">{row.feature}</td>
-                    <td className="px-4 py-3 text-center bg-[#eff6ff] border-x-2 border-[#100481]/20 font-bold">
+                    <td className="px-4 py-3 text-center bg-[#eff6ff] border-x-2 border-brand-navy/20 font-bold">
                       {row.sozderece ? <Check /> : <Cross />}
                     </td>
                     <td className="px-4 py-3 text-center">{row.dershane ? <Check /> : <Cross />}</td>
@@ -518,7 +518,7 @@ export default function DenemeKampiPage() {
               <tfoot>
                 <tr>
                   <td className="rounded-bl-2xl bg-white" />
-                  <td className="bg-[#eff6ff] border-x-2 border-b-2 border-[#100481]/20 rounded-b-xl py-1" />
+                  <td className="bg-[#eff6ff] border-x-2 border-b-2 border-brand-navy/20 rounded-b-xl py-1" />
                   <td className="bg-white" />
                   <td className="bg-white rounded-br-2xl" />
                 </tr>
@@ -565,7 +565,7 @@ export default function DenemeKampiPage() {
           <div className="grid grid-cols-3 gap-5 mb-12 max-[640px]:grid-cols-1">
             {testimonials.stats.map((s, i) => (
               <div key={i} className="bg-white rounded-2xl p-6 border border-[#e2e8f0] text-center shadow-sm">
-                <div className="text-3xl font-black text-[#100481]">{s.number}</div>
+                <div className="text-3xl font-black text-brand-navy">{s.number}</div>
                 <div className="text-[#64748b] text-sm mt-1">{s.label}</div>
               </div>
             ))}
@@ -576,7 +576,7 @@ export default function DenemeKampiPage() {
             {testimonials.items.map((t, i) => (
               <div key={i} className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm flex flex-col gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#eff6ff] rounded-full flex items-center justify-center font-black text-[#100481] text-sm flex-shrink-0">
+                  <div className="w-10 h-10 bg-[#eff6ff] rounded-full flex items-center justify-center font-black text-brand-navy text-sm flex-shrink-0">
                     {t.name?.[0] || "?"}
                   </div>
                   <span className="font-black text-[#0f172a] text-sm">{t.name}</span>
@@ -611,7 +611,7 @@ export default function DenemeKampiPage() {
       </section>
 
       {/* ══════════ OFFER + COUNTDOWN ══════════ */}
-      <section id="teklif" ref={offerRef} className="relative bg-gradient-to-br from-[#100481] to-[#0a0a1a] py-20 px-5 text-white overflow-hidden">
+      <section id="teklif" ref={offerRef} className="relative bg-gradient-to-br from-brand-navy to-[#0a0a1a] py-20 px-5 text-white overflow-hidden">
         {/* Decorative blobs */}
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#f39c12]/5 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-white/3 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3 pointer-events-none" />
@@ -650,12 +650,12 @@ export default function DenemeKampiPage() {
                       </div>
                     )}
                     <div className="pt-2 mb-5">
-                      <p className="text-[#100481] font-black text-sm uppercase tracking-widest mb-3">{plan.label}</p>
+                      <p className="text-brand-navy font-black text-sm uppercase tracking-widest mb-3">{plan.label}</p>
                       {plan.oldPrice && (
                         <p className="line-through text-[#9ca3af] text-base">{plan.oldPrice}₺</p>
                       )}
                       <div className="flex items-baseline gap-1.5">
-                        <span className="text-5xl font-black text-[#100481]">{plan.price}₺</span>
+                        <span className="text-5xl font-black text-brand-navy">{plan.price}₺</span>
                         <span className="text-[#64748b] text-sm font-semibold">{plan.priceText}</span>
                       </div>
                       {plan.desc && <p className="text-[#64748b] text-sm mt-1.5">{plan.desc}</p>}
@@ -757,7 +757,7 @@ export default function DenemeKampiPage() {
                     {coach.image ? (
                       <img src={coach.image} alt={coach.name} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-2xl font-black text-[#100481]">{coach.name?.[0] || "K"}</span>
+                      <span className="text-2xl font-black text-brand-navy">{coach.name?.[0] || "K"}</span>
                     )}
                   </div>
                   <h3 className="font-black text-[#0f172a] text-base mb-1">{coach.name}</h3>
@@ -790,7 +790,7 @@ export default function DenemeKampiPage() {
               <div className="text-5xl mb-4">🎉</div>
               <h3 className="text-xl font-black text-[#0f172a] mb-2">{formCfg.successTitle || "Başvurun Alındı!"}</h3>
               <p className="text-[#64748b] mb-6">{formCfg.successText || "En kısa sürede seninle iletişime geçeceğiz."}</p>
-              <button onClick={() => navigate("/")} className="text-[#100481] font-bold text-sm hover:underline">Ana sayfaya dön</button>
+              <button onClick={() => navigate("/")} className="text-brand-navy font-bold text-sm hover:underline">Ana sayfaya dön</button>
             </div>
           ) : (
             <div className="bg-white rounded-2xl p-8 border border-[#e2e8f0] shadow-sm">
@@ -833,7 +833,7 @@ export default function DenemeKampiPage() {
                   type="button"
                   disabled={submitting}
                   onClick={() => handleSubmit("free")}
-                  className="flex flex-col items-center justify-center gap-1 py-4 rounded-xl border-2 border-[#100481] text-[#100481] font-black text-sm transition-all hover:bg-[#eff6ff] disabled:opacity-50"
+                  className="flex flex-col items-center justify-center gap-1 py-4 rounded-xl border-2 border-brand-navy text-brand-navy font-black text-sm transition-all hover:bg-[#eff6ff] disabled:opacity-50"
                 >
                   <span>{formCfg.freeButtonText || "🆓 Ücretsiz Görüşme"}</span>
                   <span className="text-xs font-normal text-[#64748b]">{formCfg.freeButtonSub || "Tanışalım, ihtiyacını anlayalım"}</span>

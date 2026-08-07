@@ -58,7 +58,7 @@ export default function AdminPopupPage() {
   }
 
   const inputCls =
-    "w-full border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
+    "w-full border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/10 transition-all bg-white";
 
   return (
     <div className="min-h-screen bg-[#f1f5f9] py-10 px-4">
@@ -211,7 +211,7 @@ export default function AdminPopupPage() {
             <button
               type="submit"
               disabled={saving}
-              className="w-full bg-[#100481] text-white font-bold py-3 rounded-xl hover:bg-[#1d4ed8] transition disabled:opacity-60"
+              className="w-full bg-brand-navy text-white font-bold py-3 rounded-xl hover:bg-[#1d4ed8] transition disabled:opacity-60"
             >
               {saving ? "Kaydediliyor..." : "Kaydet"}
             </button>
@@ -226,7 +226,7 @@ function PopupPreview({ title, couponCode, discountText, description }) {
   return (
     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-[340px] overflow-hidden">
       {/* Üst renkli şerit */}
-      <div className="bg-gradient-to-r from-[#100481] to-[#7c3aed] px-5 py-4 text-white text-center">
+      <div className="bg-gradient-to-r from-brand-navy to-[#7c3aed] px-5 py-4 text-white text-center">
         <p className="text-base font-black">{title || "🎉 İlk Siparişe Özel Fırsat!"}</p>
       </div>
       <div className="px-5 py-5 text-center space-y-3">
@@ -237,7 +237,7 @@ function PopupPreview({ title, couponCode, discountText, description }) {
           </div>
         )}
         <div className="bg-[#f1f5f9] rounded-xl px-4 py-3 border border-[#e2e8f0] flex items-center justify-between gap-2">
-          <span className="font-mono font-black text-[#100481] text-sm tracking-widest">{couponCode}</span>
+          <span className="font-mono font-black text-brand-navy text-sm tracking-widest">{couponCode}</span>
           <span className="text-xs text-[#64748b] bg-white border border-[#e5e7eb] px-2 py-1 rounded-lg">Kopyala</span>
         </div>
         {description && (

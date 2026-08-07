@@ -120,7 +120,7 @@ export default function Navbar() {
 
         {/* LOGO */}
         <Link to="/" className="no-underline flex items-center gap-2">
-          <span className="font-fredoka text-[#D8FF4F] text-2xl max-[960px]:text-xl tracking-wide select-none">
+          <span className="font-fredoka text-lime text-2xl max-[960px]:text-xl tracking-wide select-none">
             SÖZDERECE
           </span>
         </Link>
@@ -134,7 +134,7 @@ export default function Navbar() {
                 href={link.path}
                 target={link.openInNew ? "_blank" : undefined}
                 rel={link.openInNew ? "noreferrer" : undefined}
-                className="no-underline text-white/80 font-nunito font-bold text-[0.92rem] transition-colors hover:text-[#D8FF4F]"
+                className="no-underline text-white/80 font-nunito font-bold text-[0.92rem] transition-colors hover:text-lime"
               >
                 {link.name}
               </a>
@@ -142,7 +142,7 @@ export default function Navbar() {
               <Link
                 key={i}
                 to={link.path}
-                className="no-underline text-white/80 font-nunito font-bold text-[0.92rem] transition-colors hover:text-[#D8FF4F]"
+                className="no-underline text-white/80 font-nunito font-bold text-[0.92rem] transition-colors hover:text-lime"
               >
                 {link.name}
               </Link>
@@ -153,10 +153,10 @@ export default function Navbar() {
         {/* SAĞ BUTONLAR — masaüstü */}
         <div className="flex items-center gap-4 max-[960px]:hidden">
           {/* Sepet */}
-          <Link to="/sepet" className="text-white/70 text-lg relative hover:text-[#D8FF4F] transition-colors" aria-label="Sepet">
+          <Link to="/sepet" className="text-white/70 text-lg relative hover:text-lime transition-colors" aria-label="Sepet">
             <FaShoppingCart />
             {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-[#FF6B35] text-white text-[0.65rem] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+              <span className="absolute -top-2 -right-2 bg-accent-orange text-white text-[0.65rem] w-4 h-4 rounded-full flex items-center justify-center font-bold">
                 {cartCount}
               </span>
             )}
@@ -168,22 +168,22 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setDropdownOpen((v) => !v)}
-                className="bg-transparent border-0 text-white/80 font-nunito font-bold cursor-pointer flex items-center gap-1.5 text-sm hover:text-[#D8FF4F] transition-colors"
+                className="bg-transparent border-0 text-white/80 font-nunito font-bold cursor-pointer flex items-center gap-1.5 text-sm hover:text-lime transition-colors"
               >
                 <FaUser className="text-xs" />
                 <span className="max-w-[90px] truncate">{authState.name}</span>
               </button>
               {dropdownOpen && (
-                <div className="absolute top-full right-0 mt-2 bg-[#1C1B8A] border border-white/10 w-[200px] rounded-xl shadow-2xl py-2 flex flex-col z-[1001] animate-slide-down">
-                  <Link to={getDashboardPath()} onClick={() => setDropdownOpen(false)} className="flex items-center gap-2.5 py-2.5 px-4 no-underline text-white/80 text-sm font-nunito font-bold hover:bg-white/10 hover:text-[#D8FF4F] transition-colors">
+                <div className="absolute top-full right-0 mt-2 bg-page-navy border border-white/10 w-[200px] rounded-xl shadow-2xl py-2 flex flex-col z-[1001] animate-slide-down">
+                  <Link to={getDashboardPath()} onClick={() => setDropdownOpen(false)} className="flex items-center gap-2.5 py-2.5 px-4 no-underline text-white/80 text-sm font-nunito font-bold hover:bg-white/10 hover:text-lime transition-colors">
                     <FaTachometerAlt className="text-xs" /> Panelim
                   </Link>
-                  <Link to="/hesabim" onClick={() => setDropdownOpen(false)} className="flex items-center gap-2.5 py-2.5 px-4 no-underline text-white/80 text-sm font-nunito font-bold hover:bg-white/10 hover:text-[#D8FF4F] transition-colors">
+                  <Link to="/hesabim" onClick={() => setDropdownOpen(false)} className="flex items-center gap-2.5 py-2.5 px-4 no-underline text-white/80 text-sm font-nunito font-bold hover:bg-white/10 hover:text-lime transition-colors">
                     <FaCog className="text-xs" /> Hesabım
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-2.5 py-2.5 px-4 text-[#FF6B35] text-sm font-nunito font-bold bg-transparent border-0 border-t border-white/10 mt-1 w-full text-left cursor-pointer hover:bg-white/10 transition-colors"
+                    className="flex items-center gap-2.5 py-2.5 px-4 text-accent-orange text-sm font-nunito font-bold bg-transparent border-0 border-t border-white/10 mt-1 w-full text-left cursor-pointer hover:bg-white/10 transition-colors"
                   >
                     <FaSignOutAlt className="text-xs" /> Çıkış Yap
                   </button>
@@ -191,7 +191,7 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            <Link to="/giris-yap" className="no-underline text-white/70 font-nunito font-bold text-sm hover:text-[#D8FF4F] transition-colors">
+            <Link to="/giris-yap" className="no-underline text-white/70 font-nunito font-bold text-sm hover:text-lime transition-colors">
               Giriş Yap
             </Link>
           )}
@@ -201,7 +201,7 @@ export default function Navbar() {
             to="/ucretsiz-on-gorusme"
             target="_blank"
             rel="noreferrer"
-            className="bg-[#D8FF4F] text-[#0D0A2E] font-nunito font-black text-sm py-2.5 px-5 rounded-full no-underline transition-all hover:bg-white hover:scale-105 shadow-[0_4px_14px_rgba(216,255,79,0.3)]"
+            className="bg-lime text-page-dark font-nunito font-black text-sm py-2.5 px-5 rounded-full no-underline transition-all hover:bg-white hover:scale-105 shadow-[0_4px_14px_rgba(216,255,79,0.3)]"
           >
             Ücretsiz Görüşme →
           </Link>
@@ -215,7 +215,7 @@ export default function Navbar() {
             to="/ucretsiz-on-gorusme"
             target="_blank"
             rel="noreferrer"
-            className="bg-[#D8FF4F] text-[#0D0A2E] font-nunito font-black text-xs py-2 px-4 rounded-full no-underline"
+            className="bg-lime text-page-dark font-nunito font-black text-xs py-2 px-4 rounded-full no-underline"
           >
             SİSTEM
           </Link>
@@ -230,7 +230,7 @@ export default function Navbar() {
 
       {/* MOBİL MENÜ */}
       <div
-        className={`fixed top-14 left-0 w-full h-[calc(100vh-56px)] bg-[#0D0A2E] z-[999] transition-transform duration-300 ease-in-out overflow-y-auto border-t border-white/10 ${
+        className={`fixed top-14 left-0 w-full h-[calc(100vh-56px)] bg-page-dark z-[999] transition-transform duration-300 ease-in-out overflow-y-auto border-t border-white/10 ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -243,7 +243,7 @@ export default function Navbar() {
                 target={link.openInNew ? "_blank" : undefined}
                 rel={link.openInNew ? "noreferrer" : undefined}
                 onClick={() => setMenuOpen(false)}
-                className="no-underline text-white/80 font-nunito font-bold text-base py-3.5 border-b border-white/8 hover:text-[#D8FF4F] transition-colors"
+                className="no-underline text-white/80 font-nunito font-bold text-base py-3.5 border-b border-white/8 hover:text-lime transition-colors"
               >
                 {link.name}
               </a>
@@ -252,7 +252,7 @@ export default function Navbar() {
                 key={i}
                 to={link.path}
                 onClick={() => setMenuOpen(false)}
-                className="no-underline text-white/80 font-nunito font-bold text-base py-3.5 border-b border-white/8 hover:text-[#D8FF4F] transition-colors"
+                className="no-underline text-white/80 font-nunito font-bold text-base py-3.5 border-b border-white/8 hover:text-lime transition-colors"
               >
                 {link.name}
               </Link>
@@ -265,7 +265,7 @@ export default function Navbar() {
           <Link
             to="/sepet"
             onClick={() => setMenuOpen(false)}
-            className="no-underline text-white/70 font-nunito font-bold text-base py-3 flex items-center gap-2 hover:text-[#D8FF4F] transition-colors"
+            className="no-underline text-white/70 font-nunito font-bold text-base py-3 flex items-center gap-2 hover:text-lime transition-colors"
           >
             <FaShoppingCart /> Sepetim {cartCount > 0 && `(${cartCount})`}
           </Link>
@@ -273,15 +273,15 @@ export default function Navbar() {
           {authState.isLoggedIn ? (
             <>
               <div className="text-white/50 text-sm font-nunito py-2">Merhaba, {authState.name}</div>
-              <Link to={getDashboardPath()} onClick={() => setMenuOpen(false)} className="no-underline text-white/80 font-nunito font-bold text-base py-3 flex items-center gap-2 hover:text-[#D8FF4F] transition-colors">
+              <Link to={getDashboardPath()} onClick={() => setMenuOpen(false)} className="no-underline text-white/80 font-nunito font-bold text-base py-3 flex items-center gap-2 hover:text-lime transition-colors">
                 <FaTachometerAlt /> Panelim
               </Link>
-              <Link to="/hesabim" onClick={() => setMenuOpen(false)} className="no-underline text-white/80 font-nunito font-bold text-base py-3 flex items-center gap-2 hover:text-[#D8FF4F] transition-colors">
+              <Link to="/hesabim" onClick={() => setMenuOpen(false)} className="no-underline text-white/80 font-nunito font-bold text-base py-3 flex items-center gap-2 hover:text-lime transition-colors">
                 <FaCog /> Hesabım
               </Link>
               <button
                 onClick={() => { handleLogout(); setMenuOpen(false); }}
-                className="bg-transparent border-0 text-[#FF6B35] font-nunito font-bold text-base py-3 flex items-center gap-2 cursor-pointer w-full text-left"
+                className="bg-transparent border-0 text-accent-orange font-nunito font-bold text-base py-3 flex items-center gap-2 cursor-pointer w-full text-left"
               >
                 <FaSignOutAlt /> Çıkış Yap
               </button>
@@ -290,7 +290,7 @@ export default function Navbar() {
             <Link
               to="/giris-yap"
               onClick={() => setMenuOpen(false)}
-              className="no-underline text-white/80 font-nunito font-bold text-base py-3 hover:text-[#D8FF4F] transition-colors"
+              className="no-underline text-white/80 font-nunito font-bold text-base py-3 hover:text-lime transition-colors"
             >
               Giriş Yap
             </Link>
@@ -301,7 +301,7 @@ export default function Navbar() {
               href={WA_LINK}
               target="_blank"
               rel="noreferrer"
-              className="block w-full bg-[#D8FF4F] text-[#0D0A2E] font-nunito font-black text-base py-4 rounded-2xl text-center no-underline shadow-[0_4px_20px_rgba(216,255,79,0.25)]"
+              className="block w-full bg-lime text-page-dark font-nunito font-black text-base py-4 rounded-2xl text-center no-underline shadow-[0_4px_20px_rgba(216,255,79,0.25)]"
             >
               DM'ye SİSTEM Yaz →
             </a>
@@ -309,7 +309,7 @@ export default function Navbar() {
               href="https://www.instagram.com/sozderece/"
               target="_blank"
               rel="noreferrer"
-              className="mt-3 flex items-center justify-center gap-2 text-white/50 font-nunito text-sm no-underline hover:text-[#D8FF4F] transition-colors"
+              className="mt-3 flex items-center justify-center gap-2 text-white/50 font-nunito text-sm no-underline hover:text-lime transition-colors"
             >
               <FaInstagram /> @sozderece
             </a>

@@ -4,7 +4,7 @@ import EmojiPicker from "@emoji-mart/react";
 import emojiData from "@emoji-mart/data";
 import ImageUpload from "../components/ImageUpload";
 
-const inp = "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] placeholder:text-[#9ca3af] focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
+const inp = "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] placeholder:text-[#9ca3af] focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/10 transition-all bg-white";
 const Label = ({ children }) => <label className="block text-xs font-semibold text-[#374151] mb-1">{children}</label>;
 const Card = ({ title, children }) => (
   <div className="bg-white rounded-2xl p-5 border border-[#f1f5f9] shadow-sm space-y-4">
@@ -31,7 +31,7 @@ function EmojiField({ value, onChange }) {
     <div className="relative">
       <div className="flex gap-2">
         <button type="button" onClick={() => setOpen((p) => !p)}
-          className="w-12 h-10 rounded-xl border border-[#e5e7eb] bg-white text-2xl flex items-center justify-center hover:border-[#100481] transition-all">
+          className="w-12 h-10 rounded-xl border border-[#e5e7eb] bg-white text-2xl flex items-center justify-center hover:border-brand-navy transition-all">
           {value || "😊"}
         </button>
         <input className={inp} placeholder="Emoji seç" value={value} onChange={(e) => onChange(e.target.value)} />
@@ -163,7 +163,7 @@ export default function AdminCampPage() {
     { key: "faq",           label: "❓ SSS" },
     { key: "applications",  label: `📋 Başvurular${quotaInfo.total > 0 ? ` (${quotaInfo.total})` : ""}` },
   ];
-  const tabCls = (k) => `px-3 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${tab === k ? "bg-[#100481] text-white" : "text-[#64748b] hover:bg-[#f1f5f9]"}`;
+  const tabCls = (k) => `px-3 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${tab === k ? "bg-brand-navy text-white" : "text-[#64748b] hover:bg-[#f1f5f9]"}`;
 
   return (
     <div className="space-y-5">
@@ -180,7 +180,7 @@ export default function AdminCampPage() {
           </a>
           {tab !== "applications" && (
             <button onClick={save} disabled={saving}
-              className="px-5 py-2 bg-[#100481] text-white rounded-xl text-sm font-bold hover:bg-[#0a0260] transition-all disabled:opacity-50">
+              className="px-5 py-2 bg-brand-navy text-white rounded-xl text-sm font-bold hover:bg-[#0a0260] transition-all disabled:opacity-50">
               {saving ? "Kaydediliyor..." : "💾 Kaydet"}
             </button>
           )}
@@ -202,7 +202,7 @@ export default function AdminCampPage() {
       {tab === "general" && (
         <Card title="⚙️ Genel Ayarlar">
           <label className="flex items-center gap-3 cursor-pointer">
-            <input type="checkbox" checked={!!content.isActive} onChange={(e) => set("isActive", e.target.checked)} className="w-5 h-5 accent-[#100481]" />
+            <input type="checkbox" checked={!!content.isActive} onChange={(e) => set("isActive", e.target.checked)} className="w-5 h-5 accent-brand-navy" />
             <div>
               <span className="font-bold text-[#0f172a] text-sm">Kampanya Aktif</span>
               <p className="text-xs text-[#64748b]">Kapalıysa "Kamp şu an aktif değil" mesajı gösterilir.</p>
@@ -219,7 +219,7 @@ export default function AdminCampPage() {
               <div className="flex">
                 <span className="px-3 py-2.5 bg-[#f1f5f9] border border-r-0 border-[#e5e7eb] rounded-l-xl text-xs text-[#64748b] whitespace-nowrap flex items-center">sozderecekocluk.com/</span>
                 <input
-                  className="flex-1 px-3 py-2.5 rounded-r-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] placeholder:text-[#9ca3af] focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white"
+                  className="flex-1 px-3 py-2.5 rounded-r-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] placeholder:text-[#9ca3af] focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/10 transition-all bg-white"
                   placeholder="deneme-kampi"
                   value={content.slug || ""}
                   onChange={(e) => set("slug", e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))}
@@ -261,7 +261,7 @@ export default function AdminCampPage() {
                   key={val}
                   type="button"
                   onClick={() => set("hero.mediaType", val)}
-                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${(content.hero?.mediaType || "video") === val ? "bg-[#100481] text-white border-[#100481]" : "bg-white text-[#475569] border-[#e5e7eb] hover:border-[#100481]"}`}
+                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${(content.hero?.mediaType || "video") === val ? "bg-brand-navy text-white border-brand-navy" : "bg-white text-[#475569] border-[#e5e7eb] hover:border-brand-navy"}`}
                 >
                   {label}
                 </button>
@@ -486,7 +486,7 @@ export default function AdminCampPage() {
                       </td>
                       {["sozderece", "dershane", "tekli"].map((col) => (
                         <td key={col} className="px-2 py-2 text-center">
-                          <input type="checkbox" checked={!!row[col]} onChange={(e) => arrSet("camp.comparison", i, col, e.target.checked)} className="w-4 h-4 accent-[#100481]" />
+                          <input type="checkbox" checked={!!row[col]} onChange={(e) => arrSet("camp.comparison", i, col, e.target.checked)} className="w-4 h-4 accent-brand-navy" />
                         </td>
                       ))}
                       <td className="px-2 py-2"><DelBtn onClick={() => arrDel("camp.comparison", i)} /></td>
@@ -575,7 +575,7 @@ export default function AdminCampPage() {
                 type="checkbox"
                 checked={!!content.testimonials?.promoVideo?.visible}
                 onChange={(e) => set("testimonials.promoVideo.visible", e.target.checked)}
-                className="w-5 h-5 accent-[#100481]"
+                className="w-5 h-5 accent-brand-navy"
               />
               <span className="text-sm font-bold text-[#0f172a]">Videoyu göster</span>
             </label>
@@ -876,7 +876,7 @@ export default function AdminCampPage() {
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-4 max-[500px]:grid-cols-1">
             <div className="bg-white rounded-2xl p-5 border border-[#f1f5f9] shadow-sm text-center">
-              <div className="text-2xl font-black text-[#100481]">{quotaInfo.total}</div>
+              <div className="text-2xl font-black text-brand-navy">{quotaInfo.total}</div>
               <div className="text-xs text-[#64748b] mt-1">Toplam Başvuru</div>
             </div>
             <div className="bg-white rounded-2xl p-5 border border-[#f1f5f9] shadow-sm text-center">

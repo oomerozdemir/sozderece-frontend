@@ -15,7 +15,7 @@ export default function ImageUpload({ value, onChange, placeholder = "https://..
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
 
-  const inp = "w-full border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-[#100481] bg-white";
+  const inp = "w-full border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-brand-navy bg-white";
 
   const handleFile = async (e) => {
     const file = e.target.files?.[0];
@@ -56,7 +56,7 @@ export default function ImageUpload({ value, onChange, placeholder = "https://..
           type="button"
           onClick={() => fileRef.current?.click()}
           disabled={uploading}
-          className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] hover:bg-[#eff6ff] hover:border-[#100481] text-xs font-bold text-[#475569] hover:text-[#100481] transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+          className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] hover:bg-[#eff6ff] hover:border-brand-navy text-xs font-bold text-[#475569] hover:text-brand-navy transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
         >
           {uploading ? (
             <>

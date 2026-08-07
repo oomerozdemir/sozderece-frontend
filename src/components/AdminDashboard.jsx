@@ -67,7 +67,7 @@ const getOrderMeta = (order) => {
   return STATUS_META.active;
 };
 
-const inputCls = "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
+const inputCls = "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/10 transition-all bg-white";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -255,7 +255,7 @@ const AdminDashboard = () => {
 
   const tabCls = (key) =>
     view === key
-      ? "px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-[#100481] text-white shadow-[0_4px_12px_rgba(16,4,129,0.25)] transition-all"
+      ? "px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-brand-navy text-white shadow-[0_4px_12px_rgba(16,4,129,0.25)] transition-all"
       : "px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold text-[#475569] hover:bg-[#f1f5f9] transition-all";
 
   return (
@@ -269,7 +269,7 @@ const AdminDashboard = () => {
       )}
 
       {/* ── Header ── */}
-      <div className="bg-gradient-to-r from-[#100481] to-[#2563eb] text-white px-8 py-6 shadow-lg">
+      <div className="bg-gradient-to-r from-brand-navy to-[#2563eb] text-white px-8 py-6 shadow-lg">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-4 flex-wrap">
           <div>
             <h1 className="text-2xl font-black tracking-tight">🛠 Admin Kontrol Paneli</h1>
@@ -509,7 +509,7 @@ const AdminDashboard = () => {
                             <label className="text-xs font-bold text-[#475569]">📅 Bitiş Tarihi:</label>
                             <input
                               type="date"
-                              className="px-3 py-1.5 border border-[#e5e7eb] rounded-xl text-sm outline-none focus:border-[#100481] transition-all"
+                              className="px-3 py-1.5 border border-[#e5e7eb] rounded-xl text-sm outline-none focus:border-brand-navy transition-all"
                               value={order.endDate ? new Date(order.endDate).toISOString().split("T")[0] : ""}
                               onChange={(e) => handleOrderUpdate(order.id, e.target.value)}
                             />
@@ -569,11 +569,11 @@ const AdminDashboard = () => {
                 {users.map((user) => (
                   <div
                     key={user.id}
-                    className="group border border-[#e5e7eb] rounded-2xl p-4 cursor-pointer hover:border-[#100481] hover:shadow-[0_4px_16px_rgba(16,4,129,0.12)] transition-all bg-white"
+                    className="group border border-[#e5e7eb] rounded-2xl p-4 cursor-pointer hover:border-brand-navy hover:shadow-[0_4px_16px_rgba(16,4,129,0.12)] transition-all bg-white"
                     onClick={() => { setSelectedUser(user); setEditingUser({ ...user, assignedCoachId: user.assignedCoach?.id || null }); }}
                   >
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#100481] to-[#2563eb] flex items-center justify-center text-white font-black text-base flex-shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-navy to-[#2563eb] flex items-center justify-center text-white font-black text-base flex-shrink-0">
                         {(user.name || "?")[0].toUpperCase()}
                       </div>
                       <div className="min-w-0">
@@ -610,7 +610,7 @@ const AdminDashboard = () => {
                 </select>
                 <div className="col-span-2 max-[640px]:col-span-1">
                   <button
-                    className="w-full py-3 bg-gradient-to-r from-[#100481] to-[#2563eb] text-white rounded-xl font-black text-sm hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(16,4,129,0.3)] transition-all"
+                    className="w-full py-3 bg-gradient-to-r from-brand-navy to-[#2563eb] text-white rounded-xl font-black text-sm hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(16,4,129,0.3)] transition-all"
                     onClick={async () => {
                       try {
                         const token = localStorage.getItem("token");
@@ -642,7 +642,7 @@ const AdminDashboard = () => {
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92%] max-w-[520px] max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.25)] z-[1001]">
             {/* Modal Header */}
             <div className="flex items-center gap-3 p-5 border-b border-[#f1f5f9] sticky top-0 bg-white rounded-t-2xl z-10">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#100481] to-[#2563eb] flex items-center justify-center text-white font-black text-base flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-navy to-[#2563eb] flex items-center justify-center text-white font-black text-base flex-shrink-0">
                 {(editingUser?.name || "?")[0].toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">

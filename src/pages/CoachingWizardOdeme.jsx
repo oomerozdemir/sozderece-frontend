@@ -395,7 +395,7 @@ export default function CoachingWizardOdeme() {
             <form className="flex-[2] flex flex-col gap-4" onSubmit={handleSubmit}>
               <div className="flex items-center justify-between bg-white rounded-2xl px-5 py-3 border border-[#f1f5f9]">
                 <span className="font-nunito text-sm text-[#64748b]">Alan seçimin:</span>
-                <span className="font-fredoka font-bold text-sm text-[#1C1B8A]">{alan}</span>
+                <span className="font-fredoka font-bold text-sm text-page-navy">{alan}</span>
                 <button type="button" onClick={goEditAlan} className="text-xs text-[#f35900] underline">
                   değiştir
                 </button>
@@ -622,7 +622,7 @@ export default function CoachingWizardOdeme() {
 
             {/* ── Sağ: Sipariş özeti ── */}
             <div className="flex-1 flex flex-col gap-4 max-[768px]:w-full">
-              <div className="bg-gradient-to-br from-[#100481] to-[#1a05b3] rounded-2xl p-5 text-white">
+              <div className="bg-gradient-to-br from-brand-navy to-[#1a05b3] rounded-2xl p-5 text-white">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="flex -space-x-2">
                     {(settings.avatars || []).map((av, i) => (

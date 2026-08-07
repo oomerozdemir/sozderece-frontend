@@ -150,7 +150,7 @@ const AboutComp = () => {
       </div>
 
       {/* === CTA === */}
-      <section className="bg-gradient-to-br from-[#00073a] to-[#1e3a8a] py-[80px] px-5 text-white text-center max-[768px]:py-11 max-[768px]:px-4">
+      <section className="bg-gradient-to-br from-brand-navy-dark to-[#1e3a8a] py-[80px] px-5 text-white text-center max-[768px]:py-11 max-[768px]:px-4">
         <div className="max-w-[1200px] mx-auto w-full flex flex-col items-center gap-5 max-[768px]:gap-3 max-[768px]:items-center max-[768px]:text-center">
           <div>
             <h2 className="text-[2.2rem] mb-[10px] text-white max-[768px]:text-[1rem] max-[768px]:mb-2">Hedeflerinize birlikte ulaşalım</h2>

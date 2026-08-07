@@ -74,7 +74,7 @@ const arrDel = (setter, arrPath, index) =>
   });
 
 // ── Shared UI components ──────────────────────────────────────
-const inp = "w-full border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-[#100481] bg-white";
+const inp = "w-full border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-brand-navy bg-white";
 const Label = ({ children }) => <p className="text-xs font-bold text-[#374151] mb-1">{children}</p>;
 const Field = ({ label, children }) => (
   <div>
@@ -130,7 +130,7 @@ function HeroEditor({ content, setContent }) {
               key={val}
               type="button"
               onClick={() => s("mediaType", val)}
-              className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${(h.mediaType || "video") === val ? "bg-[#100481] text-white border-[#100481]" : "bg-white text-[#475569] border-[#e2e8f0] hover:border-[#100481]"}`}
+              className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${(h.mediaType || "video") === val ? "bg-brand-navy text-white border-brand-navy" : "bg-white text-[#475569] border-[#e2e8f0] hover:border-brand-navy"}`}
             >
               {label}
             </button>
@@ -247,7 +247,7 @@ function HowItWorksEditor({ content, setContent }) {
           {steps.map((s, i) => (
             <div key={i} className="bg-[#f8fafc] rounded-xl p-4 border border-[#e2e8f0] space-y-2">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-black text-[#100481] bg-[#eff6ff] px-2 py-1 rounded-lg min-w-[28px] text-center">{i + 1}</span>
+                <span className="text-xs font-black text-brand-navy bg-[#eff6ff] px-2 py-1 rounded-lg min-w-[28px] text-center">{i + 1}</span>
                 <input
                   value={s.title || ""}
                   onChange={(e) => arrSet(setContent, "howItWorks.steps", i, "title", e.target.value)}
@@ -720,12 +720,12 @@ export default function AdminLgsPage() {
 
   const tabCls = (key) =>
     tab === key
-      ? "px-3 py-2 rounded-xl text-xs font-bold bg-[#100481] text-white shadow transition-all"
+      ? "px-3 py-2 rounded-xl text-xs font-bold bg-brand-navy text-white shadow transition-all"
       : "px-3 py-2 rounded-xl text-xs font-semibold text-[#475569] hover:bg-[#f1f5f9] transition-all";
 
   const ctabCls = (key) =>
     contentTab === key
-      ? "px-3 py-1.5 rounded-lg text-xs font-bold bg-[#100481] text-white transition-all"
+      ? "px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-navy text-white transition-all"
       : "px-3 py-1.5 rounded-lg text-xs font-semibold text-[#475569] hover:bg-[#f1f5f9] transition-all";
 
   return (
@@ -796,7 +796,7 @@ export default function AdminLgsPage() {
                       <td className="px-4 py-3 text-[#94a3b8] text-xs">{app.id}</td>
                       <td className="px-4 py-3 font-semibold text-[#0f172a]">{app.name}</td>
                       <td className="px-4 py-3 text-[#475569]">
-                        <a href={`tel:${app.phone}`} className="hover:text-[#100481]">{app.phone}</a>
+                        <a href={`tel:${app.phone}`} className="hover:text-brand-navy">{app.phone}</a>
                       </td>
                       <td className="px-4 py-3">
                         <span className="bg-[#eff6ff] text-[#1d4ed8] text-xs font-bold px-2 py-0.5 rounded-full">{app.grade}</span>
@@ -843,7 +843,7 @@ export default function AdminLgsPage() {
                 <button
                   onClick={handleSaveContent}
                   disabled={contentSaving}
-                  className="px-6 py-2.5 rounded-xl bg-[#100481] hover:bg-[#0a0357] text-white font-bold text-sm transition-colors disabled:opacity-60"
+                  className="px-6 py-2.5 rounded-xl bg-brand-navy hover:bg-[#0a0357] text-white font-bold text-sm transition-colors disabled:opacity-60"
                 >
                   {contentSaving ? "Kaydediliyor..." : contentSaved ? "✅ Kaydedildi" : "💾 İçeriği Kaydet"}
                 </button>
@@ -867,7 +867,7 @@ export default function AdminLgsPage() {
               max={100}
               value={maxQuota}
               onChange={(e) => setMaxQuota(parseInt(e.target.value) || 10)}
-              className="w-full border border-[#e2e8f0] rounded-xl px-3 py-2.5 text-sm text-[#0f172a] focus:outline-none focus:border-[#100481]"
+              className="w-full border border-[#e2e8f0] rounded-xl px-3 py-2.5 text-sm text-[#0f172a] focus:outline-none focus:border-brand-navy"
             />
             {data && (
               <p className="text-xs text-[#64748b] mt-2">
@@ -878,7 +878,7 @@ export default function AdminLgsPage() {
           <button
             onClick={handleSaveQuota}
             disabled={saving}
-            className="px-5 py-2.5 rounded-xl bg-[#100481] hover:bg-[#0a0357] text-white font-bold text-sm transition-colors disabled:opacity-60"
+            className="px-5 py-2.5 rounded-xl bg-brand-navy hover:bg-[#0a0357] text-white font-bold text-sm transition-colors disabled:opacity-60"
           >
             {saving ? "Kaydediliyor..." : saved ? "✅ Kaydedildi" : "💾 Kaydet"}
           </button>

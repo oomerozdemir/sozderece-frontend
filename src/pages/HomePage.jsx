@@ -229,43 +229,43 @@ function EarlyRegistrationBanner() {
   if (daysLeft !== null && daysLeft <= 0) return null;
 
   return (
-    <motion.section {...fadeUp} className="bg-[#D8FF4F] py-14 px-5 relative overflow-hidden">
-      <div className="absolute top-[-60px] right-[-40px] w-[260px] h-[260px] rounded-full bg-[#0D0A2E] opacity-[0.06] pointer-events-none" />
-      <div className="absolute bottom-[-50px] left-[-30px] w-[200px] h-[200px] rounded-full bg-[#1C1B8A] opacity-[0.06] pointer-events-none" />
+    <motion.section {...fadeUp} className="bg-lime py-14 px-5 relative overflow-hidden">
+      <div className="absolute top-[-60px] right-[-40px] w-[260px] h-[260px] rounded-full bg-page-dark opacity-[0.06] pointer-events-none" />
+      <div className="absolute bottom-[-50px] left-[-30px] w-[200px] h-[200px] rounded-full bg-page-navy opacity-[0.06] pointer-events-none" />
 
       <div className="max-w-[900px] mx-auto relative">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
           <div className="text-center lg:text-left">
             {settings.badge && (
               <span
-                className="inline-block bg-[#0D0A2E] text-[#D8FF4F] font-fredoka font-bold text-xs px-4 py-1.5 rounded-full uppercase mb-4"
+                className="inline-block bg-page-dark text-lime font-fredoka font-bold text-xs px-4 py-1.5 rounded-full uppercase mb-4"
                 style={{ letterSpacing: 3 }}
               >
                 {settings.badge}
               </span>
             )}
             <h2
-              className="font-fredoka font-bold m-0 text-[#0D0A2E] leading-[0.95]"
+              className="font-fredoka font-bold m-0 text-page-dark leading-[0.95]"
               style={{ fontSize: "clamp(32px, 3.5vw, 44px)", letterSpacing: -1 }}
             >
               {settings.title || "Erken Kayıt Fırsatını Kaçırma!"}
             </h2>
-            <p className="font-nunito text-[#0D0A2E]/65 text-base mt-3 max-w-[500px]">
+            <p className="font-nunito text-page-dark/65 text-base mt-3 max-w-[500px]">
               {settings.subtitle}
             </p>
             <div className="flex flex-wrap items-center gap-3 mt-4 justify-center lg:justify-start">
               {settings.discountText && (
-                <span className="bg-[#0D0A2E] text-[#D8FF4F] font-fredoka font-bold text-sm px-5 py-2 rounded-full">
+                <span className="bg-page-dark text-lime font-fredoka font-bold text-sm px-5 py-2 rounded-full">
                   {settings.discountText}
                 </span>
               )}
               {daysLeft !== null && (
-                <span className="bg-white/60 text-[#0D0A2E] font-fredoka font-bold text-sm px-5 py-2 rounded-full">
+                <span className="bg-white/60 text-page-dark font-fredoka font-bold text-sm px-5 py-2 rounded-full">
                   ⏳ {daysLeft} gün kaldı
                 </span>
               )}
               {settings.note && (
-                <span className="font-nunito text-[#0D0A2E]/60 text-sm">{settings.note}</span>
+                <span className="font-nunito text-page-dark/60 text-sm">{settings.note}</span>
               )}
             </div>
           </div>
@@ -274,7 +274,7 @@ function EarlyRegistrationBanner() {
               href={WA_LINK}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 bg-[#0D0A2E] text-[#D8FF4F] font-fredoka font-bold text-base px-9 py-4 rounded-full no-underline hover:bg-[#1C1B8A] transition-all shadow-[0_8px_30px_rgba(13,10,46,0.2)] hover:scale-105 whitespace-nowrap"
+              className="inline-flex items-center gap-2 bg-page-dark text-lime font-fredoka font-bold text-base px-9 py-4 rounded-full no-underline hover:bg-page-navy transition-all shadow-[0_8px_30px_rgba(13,10,46,0.2)] hover:scale-105 whitespace-nowrap"
             >
               {settings.ctaText || "Hemen Kaydol →"}
             </a>
@@ -311,7 +311,7 @@ function WhyDifferentSection() {
       <div className="max-w-[1200px] mx-auto relative" style={{ zIndex: 1 }}>
         <motion.div {...fadeUp} className="mb-14">
           <div
-            className="font-fredoka font-bold text-[#FF6B35] text-[12px] uppercase mb-4"
+            className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-4"
             style={{ letterSpacing: 4 }}
           >
             NEDEN SÖZDERECE
@@ -367,7 +367,7 @@ function WhyDifferentSection() {
         >
           <Link
             to="/ucretsiz-on-gorusme"
-            className="inline-flex items-center gap-2 font-fredoka font-bold text-[#0D0A2E] text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
+            className="inline-flex items-center gap-2 font-fredoka font-bold text-page-dark text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
             style={{ background: "#D8FF4F", boxShadow: "0 8px 28px rgba(216,255,79,0.3)" }}
           >
             Ücretsiz Görüşme Al →
@@ -395,7 +395,7 @@ function HowItWorksSection() {
       <div className="max-w-[1100px] mx-auto relative" style={{ zIndex: 1 }}>
         <motion.div {...fadeUp} className="text-center mb-16">
           <div
-            className="font-fredoka font-bold text-[#FF6B35] text-[12px] uppercase mb-4"
+            className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-4"
             style={{ letterSpacing: 4 }}
           >
             SÜREÇ
@@ -404,7 +404,7 @@ function HowItWorksSection() {
             className="font-fredoka font-bold m-0 leading-[0.95]"
             style={{ fontSize: "clamp(36px, 4vw, 56px)", letterSpacing: -1 }}
           >
-            <span className="text-[#0D0A2E]">İlk adım </span>
+            <span className="text-page-dark">İlk adım </span>
             <span style={{ color: "transparent", WebkitTextStroke: "2.5px #1C1B8A" }}>15 dakika.</span>
           </h2>
           <p className="font-nunito text-[#64748b] text-base mt-4 max-w-[460px] mx-auto">
@@ -445,7 +445,7 @@ function HowItWorksSection() {
                   {s.num}
                 </div>
                 <div className="text-2xl mb-3">{s.icon}</div>
-                <h3 className="font-fredoka font-bold text-[#0D0A2E] text-base mb-2">{s.title}</h3>
+                <h3 className="font-fredoka font-bold text-page-dark text-base mb-2">{s.title}</h3>
                 <p className="font-nunito text-[#64748b] text-sm leading-relaxed">{s.desc}</p>
               </div>
             </motion.div>
@@ -510,7 +510,7 @@ function TestimonialsSection() {
       <div className="max-w-[720px] mx-auto relative" style={{ zIndex: 1 }}>
         <motion.div {...fadeUp} className="text-center mb-12">
           <div
-            className="font-fredoka font-bold text-[#FF6B35] text-[12px] uppercase mb-4"
+            className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-4"
             style={{ letterSpacing: 4 }}
           >
             BAŞARI HİKAYELERİ
@@ -570,7 +570,7 @@ function TestimonialsSection() {
                   <div className="font-fredoka font-bold text-white text-xl">{t.before}</div>
                 </div>
                 <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-fredoka font-bold text-[#0D0A2E]"
+                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-fredoka font-bold text-page-dark"
                   style={{ background: "#D8FF4F" }}
                 >
                   →
@@ -579,8 +579,8 @@ function TestimonialsSection() {
                   className="flex-1 rounded-2xl px-4 py-3 text-center"
                   style={{ background: "rgba(216,255,79,0.12)", border: "1px solid rgba(216,255,79,0.25)" }}
                 >
-                  <div className="font-fredoka font-bold text-[#D8FF4F]/60 text-[10px] uppercase tracking-wide mb-1">Sonra</div>
-                  <div className="font-fredoka font-bold text-[#D8FF4F] text-xl">{t.after}</div>
+                  <div className="font-fredoka font-bold text-lime/60 text-[10px] uppercase tracking-wide mb-1">Sonra</div>
+                  <div className="font-fredoka font-bold text-lime text-xl">{t.after}</div>
                 </div>
               </div>
             )}
@@ -621,7 +621,7 @@ function TestimonialsSection() {
           </p>
           <Link
             to="/ucretsiz-on-gorusme"
-            className="inline-flex items-center gap-2 font-fredoka font-bold text-[#0D0A2E] text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
+            className="inline-flex items-center gap-2 font-fredoka font-bold text-page-dark text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
             style={{ background: "#D8FF4F", boxShadow: "0 8px 28px rgba(216,255,79,0.25)" }}
           >
             Ücretsiz Görüşme Başlat →
@@ -671,7 +671,7 @@ function ComparisonSection() {
       <div className="max-w-[900px] mx-auto">
         <motion.div {...fadeUp} className="text-center mb-12">
           <div
-            className="font-fredoka font-bold text-[#FF6B35] text-[12px] uppercase mb-4"
+            className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-4"
             style={{ letterSpacing: 4 }}
           >
             KARŞILAŞTIRMA
@@ -680,7 +680,7 @@ function ComparisonSection() {
             className="font-fredoka font-bold m-0 leading-[0.95]"
             style={{ fontSize: "clamp(36px, 4vw, 56px)", letterSpacing: -1 }}
           >
-            <span className="text-[#0D0A2E]">Her koçluk </span>
+            <span className="text-page-dark">Her koçluk </span>
             <span style={{ color: "transparent", WebkitTextStroke: "2.5px #FF6B35" }}>aynı değil.</span>
           </h2>
         </motion.div>
@@ -713,7 +713,7 @@ function ComparisonSection() {
                   Başka Koçluk
                 </th>
                 <th
-                  className="text-center py-5 px-4 font-fredoka font-bold text-sm uppercase text-[#0D0A2E]"
+                  className="text-center py-5 px-4 font-fredoka font-bold text-sm uppercase text-page-dark"
                   style={{ background: "#D8FF4F", letterSpacing: 2 }}
                 >
                   Sözderece ✦
@@ -748,7 +748,7 @@ function ComparisonSection() {
         >
           <Link
             to="/ucretsiz-on-gorusme"
-            className="inline-flex items-center gap-2 font-fredoka font-bold text-[#0D0A2E] text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
+            className="inline-flex items-center gap-2 font-fredoka font-bold text-page-dark text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
             style={{ background: "#D8FF4F", boxShadow: "0 6px 20px rgba(216,255,79,0.3)" }}
           >
             Ücretsiz Görüşme Başlat →
@@ -770,7 +770,7 @@ function FaqSection() {
       <div className="max-w-[800px] mx-auto">
         <motion.div {...fadeUp} className="text-center mb-12">
           <div
-            className="font-fredoka font-bold text-[#FF6B35] text-[12px] uppercase mb-4"
+            className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-4"
             style={{ letterSpacing: 4 }}
           >
             SSS
@@ -779,7 +779,7 @@ function FaqSection() {
             className="font-fredoka font-bold m-0 leading-[0.95]"
             style={{ fontSize: "clamp(36px, 4vw, 56px)", letterSpacing: -1 }}
           >
-            <span className="text-[#0D0A2E]">Aklındaki </span>
+            <span className="text-page-dark">Aklındaki </span>
             <span style={{ color: "transparent", WebkitTextStroke: "2.5px #7340C8" }}>sorular.</span>
           </h2>
           <p className="font-nunito text-[#94a3b8] text-sm mt-4">
@@ -861,7 +861,7 @@ function FaqSection() {
             href={WA_LINK}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 font-fredoka font-bold text-[#D8FF4F] text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
+            className="inline-flex items-center gap-2 font-fredoka font-bold text-lime text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
             style={{ background: "#1C1B8A", boxShadow: "0 6px 20px rgba(28,27,138,0.25)" }}
           >
             Bize Ulaşın →
@@ -907,7 +907,7 @@ function ContactCtaSection() {
       <div className="max-w-[680px] mx-auto text-center relative" style={{ zIndex: 1 }}>
         <motion.div {...fadeUp}>
           <div
-            className="font-fredoka font-bold text-[#FF6B35] text-[12px] uppercase mb-6"
+            className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-6"
             style={{ letterSpacing: 4 }}
           >
             BAŞLA
@@ -973,7 +973,7 @@ function StickyMobileCta() {
         >
           <Link
             to="/ucretsiz-on-gorusme"
-            className="block w-full font-fredoka font-bold text-[#0D0A2E] text-base py-4 rounded-2xl text-center no-underline shadow-[0_-4px_24px_rgba(216,255,79,0.3)]"
+            className="block w-full font-fredoka font-bold text-page-dark text-base py-4 rounded-2xl text-center no-underline shadow-[0_-4px_24px_rgba(216,255,79,0.3)]"
             style={{ background: "#D8FF4F" }}
           >
             Ücretsiz Görüşme Başlat →

@@ -3,7 +3,7 @@ import axios from "../utils/axios";
 import { getExamDaysLeft, getExamPrice } from "../utils/promoUtils";
 
 const inputCls =
-  "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
+  "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/10 transition-all bg-white";
 
 const PACKAGE_TYPES = [
   { value: "yks",                    label: "🎓 Sadece YKS sekmesinde göster" },
@@ -205,7 +205,7 @@ const AdminPackagePage = () => {
         </div>
         <button
           onClick={openCreate}
-          className="px-4 py-2 bg-gradient-to-r from-[#100481] to-[#2563eb] text-white rounded-xl text-sm font-bold hover:shadow-[0_6px_16px_rgba(16,4,129,0.3)] hover:-translate-y-0.5 transition-all"
+          className="px-4 py-2 bg-gradient-to-r from-brand-navy to-[#2563eb] text-white rounded-xl text-sm font-bold hover:shadow-[0_6px_16px_rgba(16,4,129,0.3)] hover:-translate-y-0.5 transition-all"
         >
           ➕ Yeni Paket
         </button>
@@ -244,7 +244,7 @@ const AdminPackagePage = () => {
                 </div>
                 <p className="text-xs text-[#64748b] mb-2">{pkg.subtitle || pkg.description}</p>
                 <div className="flex items-center gap-4 flex-wrap">
-                  <span className="text-sm font-black text-[#100481]">{pkg.priceText || `${pkg.price}₺`}</span>
+                  <span className="text-sm font-black text-brand-navy">{pkg.priceText || `${pkg.price}₺`}</span>
                   {pkg.oldPriceText && (
                     <span className="text-xs text-[#94a3b8] line-through">{pkg.oldPriceText}</span>
                   )}
@@ -634,7 +634,7 @@ const AdminPackagePage = () => {
                   id="hidden-toggle"
                   checked={form.hidden}
                   onChange={(e) => setForm({ ...form, hidden: e.target.checked })}
-                  className="w-4 h-4 accent-[#100481]"
+                  className="w-4 h-4 accent-brand-navy"
                 />
                 <label htmlFor="hidden-toggle" className="text-sm font-semibold text-[#475569] cursor-pointer">
                   Vitrinde gizle (müşteriler göremez)
@@ -815,7 +815,7 @@ const AdminPackagePage = () => {
                   </select>
                   <button
                     onClick={addFeature}
-                    className="px-3 py-2 bg-[#100481] text-white rounded-xl text-xs font-bold hover:bg-[#1d4ed8] transition-all"
+                    className="px-3 py-2 bg-brand-navy text-white rounded-xl text-xs font-bold hover:bg-[#1d4ed8] transition-all"
                   >
                     Ekle
                   </button>
@@ -828,7 +828,7 @@ const AdminPackagePage = () => {
               <button
                 onClick={handleSave}
                 disabled={loading}
-                className="flex-1 py-2.5 bg-gradient-to-r from-[#100481] to-[#2563eb] text-white rounded-xl text-sm font-black hover:shadow-[0_6px_16px_rgba(16,4,129,0.3)] hover:-translate-y-0.5 transition-all disabled:opacity-50"
+                className="flex-1 py-2.5 bg-gradient-to-r from-brand-navy to-[#2563eb] text-white rounded-xl text-sm font-black hover:shadow-[0_6px_16px_rgba(16,4,129,0.3)] hover:-translate-y-0.5 transition-all disabled:opacity-50"
               >
                 {loading ? "Kaydediliyor..." : editingPkg ? "💾 Güncelle" : "➕ Oluştur"}
               </button>

@@ -26,7 +26,7 @@ const STATIC_FEATURES = [
 function PriceDisplay({ pkg, activePlan }) {
   if (!pkg) {
     return (
-      <div className="font-fredoka font-bold text-[#D8FF4F] text-[52px] leading-none">
+      <div className="font-fredoka font-bold text-lime text-[52px] leading-none">
         Görüşme al →
       </div>
     );
@@ -43,7 +43,7 @@ function PriceDisplay({ pkg, activePlan }) {
         )}
         <div className="flex items-start gap-1">
           <span className="font-fredoka font-bold text-[22px] mt-3" style={{ color: "rgba(216,255,79,0.75)" }}>₺</span>
-          <span className="font-fredoka font-bold text-[#D8FF4F] leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{priceStr}</span>
+          <span className="font-fredoka font-bold text-lime leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{priceStr}</span>
         </div>
         {activePlan.durationText && (
           <div className="font-nunito font-bold text-sm mt-1" style={{ color: "rgba(255,255,255,0.5)" }}>{activePlan.durationText}</div>
@@ -65,9 +65,9 @@ function PriceDisplay({ pkg, activePlan }) {
         </div>
         <div className="flex items-start gap-1">
           <span className="font-fredoka font-bold text-[22px] mt-3" style={{ color: "rgba(216,255,79,0.75)" }}>₺</span>
-          <span className="font-fredoka font-bold text-[#D8FF4F] leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{price}</span>
+          <span className="font-fredoka font-bold text-lime leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{price}</span>
         </div>
-        <span className="inline-block mt-2 font-nunito font-bold text-[12px] px-3 py-1 rounded-full text-[#D8FF4F]" style={{ background: "rgba(216,255,79,0.15)" }}>
+        <span className="inline-block mt-2 font-nunito font-bold text-[12px] px-3 py-1 rounded-full text-lime" style={{ background: "rgba(216,255,79,0.15)" }}>
           Sınava {days} gün — indirimli
         </span>
       </div>
@@ -82,9 +82,9 @@ function PriceDisplay({ pkg, activePlan }) {
         </div>
         <div className="flex items-start gap-1">
           <span className="font-fredoka font-bold text-[22px] mt-3" style={{ color: "rgba(216,255,79,0.75)" }}>₺</span>
-          <span className="font-fredoka font-bold text-[#D8FF4F] leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{pkg.promoPrice}</span>
+          <span className="font-fredoka font-bold text-lime leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{pkg.promoPrice}</span>
         </div>
-        <span className="inline-block mt-2 font-nunito font-bold text-[12px] px-3 py-1 rounded-full text-[#D8FF4F]" style={{ background: "rgba(216,255,79,0.15)" }}>
+        <span className="inline-block mt-2 font-nunito font-bold text-[12px] px-3 py-1 rounded-full text-lime" style={{ background: "rgba(216,255,79,0.15)" }}>
           {pkg.promoLabel || `${formatPromoEndDate(pkg.promoEndDate)} tarihine kadar`}
         </span>
       </div>
@@ -102,7 +102,7 @@ function PriceDisplay({ pkg, activePlan }) {
       )}
       <div className="flex items-start gap-1">
         <span className="font-fredoka font-bold text-[22px] mt-3" style={{ color: "rgba(216,255,79,0.75)" }}>₺</span>
-        <span className="font-fredoka font-bold text-[#D8FF4F] leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{priceNum}</span>
+        <span className="font-fredoka font-bold text-lime leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{priceNum}</span>
       </div>
     </div>
   );
@@ -210,11 +210,11 @@ export default function PricingSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.55 }}
           >
-            <div className="font-fredoka font-bold text-[#FF6B35] text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>
+            <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>
               PAKETLERİMİZ
             </div>
             <h2 className="font-fredoka font-bold m-0 leading-[0.95]" style={{ letterSpacing: -1, fontSize: "clamp(40px, 4.5vw, 64px)" }}>
-              <span className="block text-[#1C1B8A]">Kişisel</span>
+              <span className="block text-page-navy">Kişisel</span>
               <span className="block" style={{ color: "transparent", WebkitTextStroke: "2.5px #FF6B35" }}>Program.</span>
             </h2>
           </motion.div>
@@ -270,7 +270,7 @@ export default function PricingSection() {
           >
             <p className="font-nunito font-bold text-[#64748b] text-base leading-relaxed m-0" style={{ maxWidth: 280 }}>
               Her öğrencinin ihtiyacı farklı. Sana özel program{" "}
-              <span className="text-[#FF6B35]">ilk görüşmede</span>{" "}
+              <span className="text-accent-orange">ilk görüşmede</span>{" "}
               belirleniyor.
             </p>
           </motion.div>
@@ -301,7 +301,7 @@ export default function PricingSection() {
                   style={{ background: "#1C1B8A", padding: "44px 40px", boxShadow: "0 16px 40px rgba(28,27,138,0.25)", minHeight: 260 }}
                 >
                   <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#4a1da0", filter: "blur(60px)", opacity: 0.5, top: -60, right: -40 }} />
-                  <div className="font-fredoka font-semibold text-[#D8FF4F] text-[13px] uppercase relative mb-3" style={{ letterSpacing: 3 }}>
+                  <div className="font-fredoka font-semibold text-lime text-[13px] uppercase relative mb-3" style={{ letterSpacing: 3 }}>
                     {tab === "yks" ? "YKS" : "LGS"} Koçluk Paketi
                   </div>
                   {hasPlanTabs && (
@@ -358,7 +358,7 @@ export default function PricingSection() {
                 className="bento-c2"
               >
                 <div className="rounded-[28px] h-full" style={{ background: "#f4f2fa", padding: "36px 32px" }}>
-                  <div className="font-fredoka font-bold text-[#1C1B8A] text-base mb-5" style={{ letterSpacing: 0.3 }}>
+                  <div className="font-fredoka font-bold text-page-navy text-base mb-5" style={{ letterSpacing: 0.3 }}>
                     Pakete Dahil…
                   </div>
                   <div className="flex flex-col gap-3">
@@ -432,13 +432,13 @@ export default function PricingSection() {
               >
                 <div className="rounded-[28px] flex flex-col justify-center gap-2 h-full" style={{ background: "#D8FF4F", padding: "28px 32px" }}>
                   <div className="text-[36px] leading-none">⚡</div>
-                  <div className="font-fredoka font-bold text-[#1C1B8A] text-xl leading-snug">
+                  <div className="font-fredoka font-bold text-page-navy text-xl leading-snug">
                     {tab === "erken" && earlyReg
                       ? (earlyReg.title || "Erken Kayıt Avantajı")
                       : "Erken Kayıt Avantajı"}
                   </div>
                   {tab === "erken" && earlyReg?.discountText && (
-                    <div className="font-fredoka font-bold text-[#0D0A2E] text-2xl leading-none">
+                    <div className="font-fredoka font-bold text-page-dark text-2xl leading-none">
                       {earlyReg.discountText}
                     </div>
                   )}
@@ -464,14 +464,14 @@ export default function PricingSection() {
                 <Link to="/paket-detay" className="no-underline block h-full">
                   <div className="rounded-[28px] flex items-center justify-between h-full transition-opacity hover:opacity-80" style={{ background: "#ede8fa", padding: "28px 32px" }}>
                     <div>
-                      <div className="font-fredoka font-bold text-[#1C1B8A] text-lg">Tüm paketleri</div>
-                      <div className="font-fredoka font-bold text-[#1C1B8A] text-lg">karşılaştır</div>
+                      <div className="font-fredoka font-bold text-page-navy text-lg">Tüm paketleri</div>
+                      <div className="font-fredoka font-bold text-page-navy text-lg">karşılaştır</div>
                     </div>
                     <div
                       className="flex items-center justify-center flex-shrink-0 rounded-full"
                       style={{ width: 44, height: 44, background: "#1C1B8A", animation: "pricingFloat1 3s ease-in-out infinite" }}
                     >
-                      <span className="text-[#D8FF4F] text-xl">→</span>
+                      <span className="text-lime text-xl">→</span>
                     </div>
                   </div>
                 </Link>

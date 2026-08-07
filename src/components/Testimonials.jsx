@@ -46,7 +46,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="bg-[#100481] py-[80px] px-5 relative overflow-hidden testimonials-section">
+    <section className="bg-brand-navy py-[80px] px-5 relative overflow-hidden testimonials-section">
       <div className="max-w-[1200px] mx-auto relative z-[2]">
 
         {/* Başlık Alanı */}

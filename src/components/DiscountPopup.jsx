@@ -57,7 +57,7 @@ export default function DiscountPopup() {
         </button>
 
         {/* Üst gradient başlık */}
-        <div className="bg-gradient-to-br from-[#100481] via-[#2563eb] to-[#7c3aed] px-6 pt-8 pb-6 text-white text-center">
+        <div className="bg-gradient-to-br from-brand-navy via-[#2563eb] to-[#7c3aed] px-6 pt-8 pb-6 text-white text-center">
           <div className="text-4xl mb-2">🎁</div>
           <h3 className="text-lg font-black leading-tight">
             {settings.title || "İlk Siparişe Özel Fırsat!"}
@@ -79,16 +79,16 @@ export default function DiscountPopup() {
             </p>
             <button
               onClick={handleCopy}
-              className="w-full flex items-center justify-between gap-3 bg-[#f1f5f9] hover:bg-[#e2e8f0] border-2 border-dashed border-[#100481]/30 hover:border-[#100481]/60 rounded-2xl px-4 py-3 transition-all group"
+              className="w-full flex items-center justify-between gap-3 bg-[#f1f5f9] hover:bg-[#e2e8f0] border-2 border-dashed border-brand-navy/30 hover:border-brand-navy/60 rounded-2xl px-4 py-3 transition-all group"
             >
-              <span className="font-mono font-black text-[#100481] text-base tracking-widest">
+              <span className="font-mono font-black text-brand-navy text-base tracking-widest">
                 {settings.couponCode}
               </span>
               <span
                 className={`text-xs font-bold px-3 py-1 rounded-xl transition-all flex-shrink-0 ${
                   copied
                     ? "bg-[#10b981] text-white"
-                    : "bg-[#100481] text-white group-hover:bg-[#1d4ed8]"
+                    : "bg-brand-navy text-white group-hover:bg-[#1d4ed8]"
                 }`}
               >
                 {copied ? "✓ Kopyalandı" : "Kopyala"}
@@ -106,7 +106,7 @@ export default function DiscountPopup() {
           {/* CTA */}
           <button
             onClick={handleClose}
-            className="w-full py-3 bg-gradient-to-r from-[#100481] to-[#2563eb] text-white font-bold rounded-2xl hover:opacity-90 transition-all text-sm shadow-[0_4px_16px_rgba(16,4,129,0.3)]"
+            className="w-full py-3 bg-gradient-to-r from-brand-navy to-[#2563eb] text-white font-bold rounded-2xl hover:opacity-90 transition-all text-sm shadow-[0_4px_16px_rgba(16,4,129,0.3)]"
           >
             Hemen Kullan 
           </button>

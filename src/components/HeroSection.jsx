@@ -134,7 +134,7 @@ export default function HeroSection() {
                   background: "#D8FF4F", display: "inline-block",
                   animation: "heroSparkle 1.5s ease-in-out infinite",
                 }} />
-                <span className="font-fredoka text-[#D8FF4F] text-sm font-semibold tracking-[0.1em] uppercase">
+                <span className="font-fredoka text-lime text-sm font-semibold tracking-[0.1em] uppercase">
                   LGS & YKS Koçluğu
                 </span>
               </span>
@@ -201,7 +201,7 @@ export default function HeroSection() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
                 >
-                  <div className="font-fredoka font-bold text-[#D8FF4F] text-[28px] leading-none">{s.value}</div>
+                  <div className="font-fredoka font-bold text-lime text-[28px] leading-none">{s.value}</div>
                   <div className="font-nunito font-bold text-white/50 text-[13px] mt-1 tracking-wide">{s.label}</div>
                 </motion.div>
               ))}
@@ -238,7 +238,7 @@ export default function HeroSection() {
                 animation: "heroFloat1 5s ease-in-out infinite",
                 boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
               }}>
-                <div className="font-fredoka font-bold text-[#D8FF4F] text-sm tracking-[0.12em] uppercase mb-4">
+                <div className="font-fredoka font-bold text-lime text-sm tracking-[0.12em] uppercase mb-4">
                   Bu Haftanın Planı
                 </div>
                 {[
@@ -283,8 +283,8 @@ export default function HeroSection() {
                 animation: "heroFloat3 6s ease-in-out infinite",
                 boxShadow: "0 10px 24px rgba(216,255,79,0.35)",
               }}>
-                <div className="font-fredoka font-bold text-[#0D0A2E] text-[15px] leading-snug">Koçunla bugün</div>
-                <div className="font-fredoka font-bold text-[#0D0A2E] text-[15px]">görüş 🎯</div>
+                <div className="font-fredoka font-bold text-page-dark text-[15px] leading-snug">Koçunla bugün</div>
+                <div className="font-fredoka font-bold text-page-dark text-[15px]">görüş 🎯</div>
               </div>
 
             </div>

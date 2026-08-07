@@ -13,10 +13,10 @@ export default function WizardUrgencyBanner({ storageKey = "hemen-basla", minute
   return (
     <div className="bg-white border-b border-[#f1f5f9]">
       <div className="max-w-[1200px] mx-auto px-5 py-2.5 flex items-center justify-center gap-2 text-center flex-wrap">
-        <span className="font-fredoka font-bold text-sm text-[#1C1B8A]">
+        <span className="font-fredoka font-bold text-sm text-page-navy">
           ⏱ Bu fiyat için kalan süre:
         </span>
-        <span className="font-fredoka font-bold text-sm text-[#FF6B35] tabular-nums">
+        <span className="font-fredoka font-bold text-sm text-accent-orange tabular-nums">
           {pad(timeLeft.minutes)}:{pad(timeLeft.seconds)}
         </span>
         <span className="text-[#64748b] text-xs font-nunito">

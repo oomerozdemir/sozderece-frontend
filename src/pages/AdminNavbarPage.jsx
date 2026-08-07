@@ -10,7 +10,7 @@ const empty = {
 };
 
 const inputCls =
-  "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm focus:border-[#100481] focus:ring-2 focus:ring-[#100481]/10 transition-all bg-white";
+  "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/10 transition-all bg-white";
 
 const token = () => localStorage.getItem("token");
 const auth = () => ({ headers: { Authorization: `Bearer ${token()}` } });
@@ -160,15 +160,15 @@ export default function AdminNavbarPage() {
         <h2 className="text-base font-black text-[#0f172a]">🔗 Navbar Bağlantıları</h2>
         <button
           onClick={openNew}
-          className="px-4 py-2 bg-[#100481] text-white rounded-xl text-sm font-bold hover:bg-[#1d4ed8] transition-all"
+          className="px-4 py-2 bg-brand-navy text-white rounded-xl text-sm font-bold hover:bg-[#1d4ed8] transition-all"
         >
           + Yeni Bağlantı
         </button>
       </div>
 
       {/* Canlı Önizleme */}
-      <div className="bg-[#0D0A2E] rounded-2xl px-6 py-4 flex items-center gap-6 overflow-x-auto border border-white/10">
-        <span className="font-fredoka text-[#D8FF4F] text-xl tracking-wide select-none flex-shrink-0">
+      <div className="bg-page-dark rounded-2xl px-6 py-4 flex items-center gap-6 overflow-x-auto border border-white/10">
+        <span className="font-fredoka text-lime text-xl tracking-wide select-none flex-shrink-0">
           SÖZDERECE
         </span>
         {items
@@ -181,7 +181,7 @@ export default function AdminNavbarPage() {
               {item.name}
             </span>
           ))}
-        <span className="ml-auto bg-[#D8FF4F] text-[#0D0A2E] font-black text-xs py-1.5 px-4 rounded-full flex-shrink-0">
+        <span className="ml-auto bg-lime text-page-dark font-black text-xs py-1.5 px-4 rounded-full flex-shrink-0">
           Ücretsiz Görüşme →
         </span>
       </div>
@@ -340,7 +340,7 @@ export default function AdminNavbarPage() {
                       type="button"
                       onClick={() => setForm({ ...form, [key]: !form[key] })}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 flex-shrink-0 ${
-                        form[key] ? "bg-[#100481]" : "bg-gray-300"
+                        form[key] ? "bg-brand-navy" : "bg-gray-300"
                       }`}
                     >
                       <span
@@ -358,7 +358,7 @@ export default function AdminNavbarPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 py-2.5 bg-gradient-to-r from-[#100481] to-[#2563eb] text-white rounded-xl text-sm font-black hover:shadow-[0_6px_16px_rgba(16,4,129,0.3)] hover:-translate-y-0.5 transition-all disabled:opacity-60"
+                  className="flex-1 py-2.5 bg-gradient-to-r from-brand-navy to-[#2563eb] text-white rounded-xl text-sm font-black hover:shadow-[0_6px_16px_rgba(16,4,129,0.3)] hover:-translate-y-0.5 transition-all disabled:opacity-60"
                 >
                   {saving ? "Kaydediliyor..." : editing ? "💾 Güncelle" : "➕ Ekle"}
                 </button>

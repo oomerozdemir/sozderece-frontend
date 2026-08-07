@@ -5,7 +5,7 @@ import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
 import Seo from "../components/Seo";
 
-const inputCls = "w-full py-3 px-4 border-2 border-[#e2e8f0] rounded-lg text-[15px] font-[inherit] transition-all outline-none focus:border-[#100481] focus:shadow-[0_0_0_3px_rgba(16,4,129,0.1)] bg-white max-[480px]:text-sm max-[480px]:py-[10px] max-[480px]:px-[14px]";
+const inputCls = "w-full py-3 px-4 border-2 border-[#e2e8f0] rounded-lg text-[15px] font-[inherit] transition-all outline-none focus:border-brand-navy focus:shadow-[0_0_0_3px_rgba(16,4,129,0.1)] bg-white max-[480px]:text-sm max-[480px]:py-[10px] max-[480px]:px-[14px]";
 
 const InstructorApplicationPage = () => {
   // Form state
@@ -198,7 +198,7 @@ const InstructorApplicationPage = () => {
       >
         <div className="max-w-[800px] mx-auto bg-white rounded-2xl shadow-[0_4px_24px_rgba(16,4,129,0.08)] overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-br from-[#100481] to-[#FF6B35] py-10 px-[30px] text-center text-white max-[768px]:py-[30px] max-[768px]:px-5">
+          <div className="bg-gradient-to-br from-brand-navy to-accent-orange py-10 px-[30px] text-center text-white max-[768px]:py-[30px] max-[768px]:px-5">
             <h1 className="text-[32px] font-bold m-0 mb-3 max-[768px]:text-2xl max-[480px]:text-xl">🎓 Öğrenci Koçu Başvuru Formu</h1>
             <p className="text-base m-0 opacity-[0.95] leading-[1.6] max-[768px]:text-sm">
               Sözderece ailesine katılmak için başvuru formunu doldurun.
@@ -220,7 +220,7 @@ const InstructorApplicationPage = () => {
 
               {/* Personal Information */}
               <div className="p-6 bg-[#f8fafc] rounded-xl border border-[#e2e8f0] max-[768px]:p-5">
-                <h2 className="text-xl text-[#100481] m-0 mb-5 pb-3 border-b-2 border-[#FF6B35] font-semibold max-[768px]:text-lg">Kişisel Bilgiler</h2>
+                <h2 className="text-xl text-brand-navy m-0 mb-5 pb-3 border-b-2 border-accent-orange font-semibold max-[768px]:text-lg">Kişisel Bilgiler</h2>
 
                 <div className="grid grid-cols-2 gap-4 max-[768px]:grid-cols-1 max-[768px]:gap-0">
                   <div className="mb-5 last:mb-0">
@@ -305,13 +305,13 @@ const InstructorApplicationPage = () => {
 
               {/* Category Selection */}
               <div className="p-6 bg-[#f8fafc] rounded-xl border border-[#e2e8f0] max-[768px]:p-5">
-                <h2 className="text-xl text-[#100481] m-0 mb-5 pb-3 border-b-2 border-[#FF6B35] font-semibold max-[768px]:text-lg">Kategori Seçimi <span className="text-[#ef4444] ml-1">*</span></h2>
+                <h2 className="text-xl text-brand-navy m-0 mb-5 pb-3 border-b-2 border-accent-orange font-semibold max-[768px]:text-lg">Kategori Seçimi <span className="text-[#ef4444] ml-1">*</span></h2>
 
                 <div className="flex flex-col gap-3">
                   {categories.map((cat) => (
                     <div
                       key={cat.value}
-                      className="flex items-center py-[14px] px-[18px] bg-white border-2 border-[#e2e8f0] rounded-lg cursor-pointer transition hover:border-[#100481] hover:bg-[#f8fafc] max-[768px]:py-3 max-[768px]:px-[14px]"
+                      className="flex items-center py-[14px] px-[18px] bg-white border-2 border-[#e2e8f0] rounded-lg cursor-pointer transition hover:border-brand-navy hover:bg-[#f8fafc] max-[768px]:py-3 max-[768px]:px-[14px]"
                       onClick={() =>
                         setFormData((prev) => ({ ...prev, category: cat.value }))
                       }
@@ -323,11 +323,11 @@ const InstructorApplicationPage = () => {
                         value={cat.value}
                         checked={formData.category === cat.value}
                         onChange={handleChange}
-                        className="peer w-5 h-5 mr-3 cursor-pointer accent-[#100481]"
+                        className="peer w-5 h-5 mr-3 cursor-pointer accent-brand-navy"
                       />
                       <label
                         htmlFor={cat.value}
-                        className={`m-0 cursor-pointer font-medium flex-1 transition-colors ${formData.category === cat.value ? "text-[#100481] font-semibold" : "text-[#475569]"}`}
+                        className={`m-0 cursor-pointer font-medium flex-1 transition-colors ${formData.category === cat.value ? "text-brand-navy font-semibold" : "text-[#475569]"}`}
                       >
                         {cat.label}
                       </label>
@@ -388,7 +388,7 @@ const InstructorApplicationPage = () => {
 
               {/* Additional Information */}
               <div className="p-6 bg-[#f8fafc] rounded-xl border border-[#e2e8f0] max-[768px]:p-5">
-                <h2 className="text-xl text-[#100481] m-0 mb-5 pb-3 border-b-2 border-[#FF6B35] font-semibold max-[768px]:text-lg">Ek Bilgiler</h2>
+                <h2 className="text-xl text-brand-navy m-0 mb-5 pb-3 border-b-2 border-accent-orange font-semibold max-[768px]:text-lg">Ek Bilgiler</h2>
 
                 <div className="mb-5 last:mb-0">
                   <label htmlFor="message" className="block font-semibold text-[#334155] mb-2 text-sm">Mesajınız</label>
@@ -408,7 +408,7 @@ const InstructorApplicationPage = () => {
                   <label className="block font-semibold text-[#334155] mb-2 text-sm">CV Yükle (Opsiyonel)</label>
                   <div className="relative">
                     <div
-                      className={`border-2 border-dashed rounded-xl py-8 px-6 text-center transition cursor-pointer max-[480px]:py-6 max-[480px]:px-4 ${cvFile ? "border-[#10b981] bg-[#ecfdf5]" : "border-[#cbd5e1] bg-white hover:border-[#100481] hover:bg-[#f8fafc]"}`}
+                      className={`border-2 border-dashed rounded-xl py-8 px-6 text-center transition cursor-pointer max-[480px]:py-6 max-[480px]:px-4 ${cvFile ? "border-[#10b981] bg-[#ecfdf5]" : "border-[#cbd5e1] bg-white hover:border-brand-navy hover:bg-[#f8fafc]"}`}
                       onClick={() => document.getElementById("cv-upload").click()}
                     >
                       <div className={`text-5xl mb-3 max-[480px]:text-[36px] ${cvFile ? "text-[#10b981]" : "text-[#94a3b8]"}`}>
@@ -448,7 +448,7 @@ const InstructorApplicationPage = () => {
               <div className="mt-8 text-center">
                 <button
                   type="submit"
-                  className="bg-gradient-to-br from-[#100481] to-[#FF6B35] text-white border-0 py-4 px-12 text-base font-semibold rounded-lg cursor-pointer transition shadow-[0_4px_12px_rgba(16,4,129,0.2)] inline-flex items-center gap-2.5 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(16,4,129,0.3)] disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none max-[768px]:w-full max-[768px]:justify-center max-[768px]:py-[14px] max-[768px]:px-6"
+                  className="bg-gradient-to-br from-brand-navy to-accent-orange text-white border-0 py-4 px-12 text-base font-semibold rounded-lg cursor-pointer transition shadow-[0_4px_12px_rgba(16,4,129,0.2)] inline-flex items-center gap-2.5 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(16,4,129,0.3)] disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none max-[768px]:w-full max-[768px]:justify-center max-[768px]:py-[14px] max-[768px]:px-6"
                   disabled={loading}
                 >
                   {loading && (
@@ -474,13 +474,13 @@ const InstructorApplicationPage = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="text-[64px] mb-4">✅</div>
-              <h2 className="text-[24px] text-[#100481] m-0 mb-3 max-[768px]:text-xl">Başvurunuz Alındı!</h2>
+              <h2 className="text-[24px] text-brand-navy m-0 mb-3 max-[768px]:text-xl">Başvurunuz Alındı!</h2>
               <p className="text-base text-[#64748b] leading-[1.6] m-0 mb-6 max-[768px]:text-sm">
                 Teşekkür ederiz! Başvurunuz başarıyla iletildi. Ekibimiz en kısa
                 sürede değerlendirip size dönüş yapacaktır.
               </p>
               <button
-                className="bg-[#100481] text-white border-0 py-3 px-8 rounded-lg text-[15px] font-semibold cursor-pointer transition hover:bg-[#0a0351]"
+                className="bg-brand-navy text-white border-0 py-3 px-8 rounded-lg text-[15px] font-semibold cursor-pointer transition hover:bg-[#0a0351]"
                 onClick={() => setShowSuccess(false)}
               >
                 Kapat

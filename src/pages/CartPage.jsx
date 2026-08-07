@@ -97,7 +97,7 @@ const CartPage = () => {
 
       <div className="max-w-[900px] mx-10 my-10 bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] px-[50px] max-[768px]:mx-2.5 max-[768px]:my-5 max-[768px]:px-5 max-[768px]:rounded-lg">
         <StepIndicator currentStep={1} />
-        <h2 className="text-[3rem] text-center mb-5 py-5 border-b border-[#e65e04] text-[#e45e04] font-normal max-[768px]:text-[2rem] max-[768px]:mb-4">Sepet</h2>
+        <h2 className="text-[3rem] text-center mb-5 py-5 border-b border-[#e65e04] text-brand-orange font-normal max-[768px]:text-[2rem] max-[768px]:mb-4">Sepet</h2>
 
         {loading && <div>Sepet yükleniyor…</div>}
         {error && !loading && <div>{error}</div>}
@@ -106,7 +106,7 @@ const CartPage = () => {
           <div className="text-center py-10">
             <p>Sepetiniz boş.</p>
             <button
-              className="mt-3 bg-[#e45e04] text-white py-2.5 px-[18px] text-base border-0 rounded-lg cursor-pointer transition-colors hover:bg-[#c94d03] max-[768px]:w-full"
+              className="mt-3 bg-brand-orange text-white py-2.5 px-[18px] text-base border-0 rounded-lg cursor-pointer transition-colors hover:bg-[#c94d03] max-[768px]:w-full"
               onClick={() => navigate("/paket-detay")}
             >
               Paketlere Göz At

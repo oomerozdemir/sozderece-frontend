@@ -61,7 +61,7 @@ export default function InfoSection() {
           </a>
           <a
             href="/hakkimizda"
-            className="py-2.5 px-5 rounded-lg no-underline font-bold flex items-center gap-2.5 transition-all duration-300 text-[1.2rem] hover:-translate-y-0.5 bg-white text-[#00073a] border border-[rgb(3,2,110)] hover:bg-orange-500 hover:text-white max-[768px]:justify-center"
+            className="py-2.5 px-5 rounded-lg no-underline font-bold flex items-center gap-2.5 transition-all duration-300 text-[1.2rem] hover:-translate-y-0.5 bg-white text-brand-navy-dark border border-[rgb(3,2,110)] hover:bg-orange-500 hover:text-white max-[768px]:justify-center"
           >
             Daha Fazla Bilgi
           </a>

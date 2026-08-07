@@ -296,7 +296,7 @@ const PaymentPage = () => {
                   </svg>
                   <span>
                     Bu e-posta ile kayıtlı bir hesabınız var.{" "}
-                    <a href="/giris-yap" className="font-semibold text-[#100481] underline underline-offset-2">Giriş yaparak</a>{" "}
+                    <a href="/giris-yap" className="font-semibold text-brand-navy underline underline-offset-2">Giriş yaparak</a>{" "}
                     devam edebilirsiniz.
                   </span>
                 </div>
@@ -444,7 +444,7 @@ const PaymentPage = () => {
             <div className="flex-1 flex flex-col gap-4 max-[768px]:w-full">
 
               {/* Sosyal kanıt */}
-              <div className="bg-gradient-to-br from-[#100481] to-[#1a05b3] rounded-2xl p-5 text-white">
+              <div className="bg-gradient-to-br from-brand-navy to-[#1a05b3] rounded-2xl p-5 text-white">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="flex -space-x-2">
                     {(settings.avatars || []).map((av, i) => (

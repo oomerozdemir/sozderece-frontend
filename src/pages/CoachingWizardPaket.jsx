@@ -30,9 +30,9 @@ function PackagePrice({ pkg, activePlan }) {
           </div>
         )}
         <div className="flex items-start gap-1">
-          <span className="font-fredoka font-bold text-[22px] mt-2 text-[#FF6B35]">₺</span>
+          <span className="font-fredoka font-bold text-[22px] mt-2 text-accent-orange">₺</span>
           <span
-            className="font-fredoka font-bold text-[#1C1B8A] leading-none"
+            className="font-fredoka font-bold text-page-navy leading-none"
             style={{ fontSize: "clamp(48px,5vw,64px)", letterSpacing: -2 }}
           >
             {priceStr}
@@ -58,16 +58,16 @@ function PackagePrice({ pkg, activePlan }) {
           {pkg.priceText || `${pkg.price}₺`}
         </div>
         <div className="flex items-start gap-1">
-          <span className="font-fredoka font-bold text-[22px] mt-2 text-[#FF6B35]">₺</span>
+          <span className="font-fredoka font-bold text-[22px] mt-2 text-accent-orange">₺</span>
           <span
-            className="font-fredoka font-bold text-[#1C1B8A] leading-none"
+            className="font-fredoka font-bold text-page-navy leading-none"
             style={{ fontSize: "clamp(48px,5vw,64px)", letterSpacing: -2 }}
           >
             {price}
           </span>
         </div>
         <span
-          className="inline-block mt-2 font-fredoka font-bold text-[12px] px-3 py-1 rounded-full text-[#1C1B8A]"
+          className="inline-block mt-2 font-fredoka font-bold text-[12px] px-3 py-1 rounded-full text-page-navy"
           style={{ background: "rgba(28,27,138,0.08)" }}
         >
           Sınava {days} gün kaldı — %{rate} indirimli
@@ -83,16 +83,16 @@ function PackagePrice({ pkg, activePlan }) {
           {pkg.priceText || `${pkg.price}₺`}
         </div>
         <div className="flex items-start gap-1">
-          <span className="font-fredoka font-bold text-[22px] mt-2 text-[#FF6B35]">₺</span>
+          <span className="font-fredoka font-bold text-[22px] mt-2 text-accent-orange">₺</span>
           <span
-            className="font-fredoka font-bold text-[#1C1B8A] leading-none"
+            className="font-fredoka font-bold text-page-navy leading-none"
             style={{ fontSize: "clamp(48px,5vw,64px)", letterSpacing: -2 }}
           >
             {pkg.promoPrice}
           </span>
         </div>
         <span
-          className="inline-block mt-2 font-fredoka font-bold text-[12px] px-3 py-1 rounded-full text-[#1C1B8A]"
+          className="inline-block mt-2 font-fredoka font-bold text-[12px] px-3 py-1 rounded-full text-page-navy"
           style={{ background: "rgba(28,27,138,0.08)" }}
         >
           {pkg.promoLabel || `${formatPromoEndDate(pkg.promoEndDate)} tarihine kadar`}
@@ -109,9 +109,9 @@ function PackagePrice({ pkg, activePlan }) {
         <div className="font-nunito font-bold text-sm mb-1 text-[#94a3b8] line-through">{pkg.oldPriceText}</div>
       )}
       <div className="flex items-start gap-1">
-        <span className="font-fredoka font-bold text-[22px] mt-2 text-[#FF6B35]">₺</span>
+        <span className="font-fredoka font-bold text-[22px] mt-2 text-accent-orange">₺</span>
         <span
-          className="font-fredoka font-bold text-[#1C1B8A] leading-none"
+          className="font-fredoka font-bold text-page-navy leading-none"
           style={{ fontSize: "clamp(48px,5vw,64px)", letterSpacing: -2 }}
         >
           {priceNum}
@@ -205,17 +205,17 @@ export default function CoachingWizardPaket() {
         <button
           type="button"
           onClick={goBack}
-          className="font-nunito text-[#64748b] text-sm mb-6 bg-transparent border-none cursor-pointer hover:text-[#1C1B8A]"
+          className="font-nunito text-[#64748b] text-sm mb-6 bg-transparent border-none cursor-pointer hover:text-page-navy"
         >
           ← Alanı değiştir {alan && `(${alan})`}
         </button>
 
         <div className="text-center mb-8">
-          <div className="font-fredoka font-bold text-[#FF6B35] text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>
+          <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>
             ADIM 2/3
           </div>
           <h1
-            className="font-fredoka font-bold text-[#1C1B8A] leading-[0.95]"
+            className="font-fredoka font-bold text-page-navy leading-[0.95]"
             style={{ fontSize: "clamp(26px, 3.5vw, 38px)", letterSpacing: -1 }}
           >
             Sana uygun paketi seç
@@ -230,7 +230,7 @@ export default function CoachingWizardPaket() {
             <button
               type="button"
               onClick={() => navigate("/paket-detay")}
-              className="font-fredoka font-bold text-[#1C1B8A] underline"
+              className="font-fredoka font-bold text-page-navy underline"
             >
               Tüm paketlere göz at →
             </button>
@@ -240,7 +240,7 @@ export default function CoachingWizardPaket() {
         {selected && (
           <>
             <div className="rounded-[28px] border-2 border-[#f4f2fa] bg-[#f8f9fc] p-8">
-              <div className="font-fredoka font-semibold text-[#1C1B8A] text-[13px] uppercase mb-3" style={{ letterSpacing: 2 }}>
+              <div className="font-fredoka font-semibold text-page-navy text-[13px] uppercase mb-3" style={{ letterSpacing: 2 }}>
                 {selected.name}
               </div>
 
@@ -273,7 +273,7 @@ export default function CoachingWizardPaket() {
                 <div className="flex flex-col gap-2 mt-6">
                   {features.map((f, i) => (
                     <div key={i} className="flex items-start gap-2 font-nunito text-sm text-[#374151]">
-                      <span className="text-[#FF6B35] font-bold">✓</span>
+                      <span className="text-accent-orange font-bold">✓</span>
                       {f.label}
                     </div>
                   ))}
@@ -303,7 +303,7 @@ export default function CoachingWizardPaket() {
                 <button
                   type="button"
                   onClick={() => navigate("/paket-detay")}
-                  className="font-nunito text-[#64748b] text-sm underline underline-offset-2 hover:text-[#1C1B8A] bg-transparent border-none cursor-pointer"
+                  className="font-nunito text-[#64748b] text-sm underline underline-offset-2 hover:text-page-navy bg-transparent border-none cursor-pointer"
                 >
                   Farklı bir paket mi arıyorsun? Tüm paketlere göz at →
                 </button>
