@@ -44,6 +44,7 @@ const emptyForm = {
   examDate: "",
   examDiscountRate: "5",
   plans: [],
+  billingCycle: "once",
 };
 
 const AdminPackagePage = () => {
@@ -112,6 +113,7 @@ const AdminPackagePage = () => {
       examDate: pkg.examDate ? pkg.examDate.slice(0, 10) : "",
       examDiscountRate: pkg.examDiscountRate ?? "5",
       plans: Array.isArray(pkg.plans) ? pkg.plans : [],
+      billingCycle: pkg.billingCycle || "once",
     });
     setShowForm(true);
   };
@@ -234,6 +236,11 @@ const AdminPackagePage = () => {
                   >
                     {pkg.hidden ? "Gizli" : "Vitrinde"}
                   </span>
+                  {(!Array.isArray(pkg.plans) || pkg.plans.length === 0) && pkg.billingCycle === "monthly" && (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#fef3c7] text-[#92400e]">
+                      🔁 Aylık Abonelik
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs text-[#64748b] mb-2">{pkg.subtitle || pkg.description}</p>
                 <div className="flex items-center gap-4 flex-wrap">
@@ -413,7 +420,30 @@ const AdminPackagePage = () => {
                     onChange={(e) => setForm({ ...form, oldPriceText: e.target.value })}
                   />
                 </div>
+                <div>
+                  <label className="block text-xs font-bold text-[#475569] mb-1.5">Ödeme Tipi</label>
+                  <select
+                    className={inputCls}
+                    value={form.billingCycle || "once"}
+                    onChange={(e) => setForm({ ...form, billingCycle: e.target.value })}
+                  >
+                    <option value="once">Tek Seferlik</option>
+                    <option value="monthly">🔁 Aylık Abonelik (otomatik yenilenir)</option>
+                  </select>
+                  {form.plans?.length > 0 && (
+                    <p className="text-[10px] text-[#94a3b8] mt-1">
+                      Aşağıda süre planı eklediyseniz, her planın kendi Ödeme Tipi'i bunun yerine geçerli olur — bu
+                      alan sadece süre planı olmayan (tek fiyatlı) paketler için kullanılır.
+                    </p>
+                  )}
+                </div>
               </div>
+              {form.billingCycle === "monthly" && (
+                <p className="text-[11px] text-[#92400e] bg-[#fffbeb] border border-[#fde68a] rounded-lg px-2.5 py-1.5">
+                  ⚠️ Yukarıdaki "Unit Price" tutarı, müşteri bu paketi aldığında <strong>her ay</strong> otomatik
+                  olarak kartından çekilecek.
+                </p>
+              )}
 
               {/* Tip & Sıra */}
               <div className="grid grid-cols-2 gap-3 max-[560px]:grid-cols-1">

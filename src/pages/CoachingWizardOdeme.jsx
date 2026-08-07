@@ -171,13 +171,15 @@ export default function CoachingWizardOdeme() {
 
   const plans = Array.isArray(pkg?.plans) ? pkg.plans : [];
   const activePlan = planIndex !== null && plans[planIndex] ? plans[planIndex] : null;
-  const monthlyEligible = activePlan?.billingCycle === "monthly";
+  // Süre planı (sekmeli) seçiliyse o planın billingCycle'ı; paketin hiç süre
+  // planı yoksa (tek fiyatlı paket) paketin kendi billingCycle'ı kullanılır.
+  const monthlyEligible = activePlan ? activePlan.billingCycle === "monthly" : pkg?.billingCycle === "monthly";
 
   const chooseMonthly = () => {
     const subParams = new URLSearchParams();
     if (alan) subParams.set("alan", alan);
     subParams.set("slug", slug);
-    subParams.set("plan", String(planIndex ?? 0));
+    if (planIndex !== null) subParams.set("plan", String(planIndex));
     navigate(`/abone-ol?${subParams.toString()}`);
   };
 

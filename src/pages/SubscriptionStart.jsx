@@ -67,7 +67,7 @@ export default function SubscriptionStart() {
   const formRef = useRef(null);
 
   useEffect(() => {
-    if (!slug || planIndex === null) {
+    if (!slug) {
       navigate("/hemen-basla", { replace: true });
       return;
     }
@@ -78,7 +78,7 @@ export default function SubscriptionStart() {
       })
       .catch(() => {})
       .finally(() => setPkgLoaded(true));
-  }, [slug, planIndex, navigate]);
+  }, [slug, navigate]);
 
   useEffect(() => {
     try {
@@ -94,14 +94,19 @@ export default function SubscriptionStart() {
     }
   }, [payTrFields]);
 
-  if (!slug || planIndex === null) return null;
+  if (!slug) return null;
 
   if (!authenticated) {
     return <SubscriptionAuthGate onAuthenticated={() => setAuthenticated(true)} />;
   }
 
   const plans = Array.isArray(pkg?.plans) ? pkg.plans : [];
-  const plan = plans[parseInt(planIndex)];
+  const hasPlanIndex = planIndex !== null && plans[parseInt(planIndex)];
+  // Süre planı (sekmeli) yoksa paketin kendi billingCycle/unitPrice'ı
+  // "sanal bir plan" gibi kullanılıyor.
+  const plan = hasPlanIndex
+    ? plans[parseInt(planIndex)]
+    : (pkg ? { label: pkg.name, unitPrice: pkg.unitPrice, billingCycle: pkg.billingCycle, priceText: pkg.priceText } : null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -134,7 +139,7 @@ export default function SubscriptionStart() {
       const token = localStorage.getItem("token");
       const res = await axios.post(
         "/api/subscriptions/start",
-        { slug, planIndex: parseInt(planIndex), billingInfo: formData, consentAccepted: true },
+        { slug, planIndex: hasPlanIndex ? parseInt(planIndex) : null, billingInfo: formData, consentAccepted: true },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setPayTrEndpoint(res.data.paytrEndpoint);
@@ -172,7 +177,7 @@ export default function SubscriptionStart() {
       <main className="flex-1 max-w-[560px] mx-auto px-5 py-10 w-full">
         <div className="bg-white rounded-2xl border border-[#e2e8f0] shadow-[0_2px_12px_rgba(0,0,0,0.05)] p-6 mb-5">
           <p className="text-xs font-black text-[#0f172a] uppercase tracking-wide mb-1">🔁 Aylık Abonelik</p>
-          <h1 className="text-lg font-bold text-[#0f172a]">{pkg.name} — {plan.label}</h1>
+          <h1 className="text-lg font-bold text-[#0f172a]">{hasPlanIndex ? `${pkg.name} — ${plan.label}` : pkg.name}</h1>
           <p className="text-2xl font-black text-[#f35900] mt-1">{plan.priceText || `${(plan.unitPrice / 100).toFixed(2)} TL`} <span className="text-sm font-semibold text-[#64748b]">/ ay</span></p>
           <p className="text-xs text-[#94a3b8] mt-2">
             Her ay otomatik olarak yenilenir. "Siparişlerim" sayfasından dilediğin zaman tek tıkla iptal edebilirsin —

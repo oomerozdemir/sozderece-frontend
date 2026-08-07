@@ -162,7 +162,13 @@ export default function CoachingWizardPaket() {
   const hasPlanTabs = plans.length > 1;
   const activePlan = hasPlanTabs ? plans[Math.min(activePlanIdx, plans.length - 1)] : null;
   // Sekme gösterilmese bile (tek plan varsa) billingCycle kontrolü için kullanılır.
-  const effectivePlan = activePlan || (plans.length === 1 ? plans[0] : null);
+  // Süre planı (sekmeli) hiç yoksa paketin kendi billingCycle/unitPrice'ı
+  // "sanal bir plan" gibi kullanılıyor — admin panelde "normal paket ekleme"
+  // formundaki Ödeme Tipi seçimi buraya karşılık geliyor.
+  const effectivePlan =
+    activePlan ||
+    (plans.length === 1 ? plans[0] : null) ||
+    (plans.length === 0 && selected ? { label: selected.name, billingCycle: selected.billingCycle, unitPrice: selected.unitPrice } : null);
 
   const features = (Array.isArray(selected?.features) ? selected.features : [])
     .map((f) => (typeof f === "string" ? { label: f, included: true } : f))
