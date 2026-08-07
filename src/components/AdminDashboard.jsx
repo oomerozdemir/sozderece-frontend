@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "../utils/axios";
 import { Link } from "react-router-dom";
+import Button from "./ui/Button";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -389,14 +390,11 @@ const AdminDashboard = () => {
                     className="border-0 outline-none bg-transparent text-sm min-w-[180px]"
                   />
                 </div>
-                <button
-                  onClick={handleSendReminders}
-                  className="px-4 py-2 bg-[#ecfdf5] text-[#065f46] border border-[#a7f3d0] rounded-xl text-sm font-bold hover:bg-[#d1fae5] transition-all"
-                >
-                  ✉️ Hatırlatma Gönder
-                </button>
-                <button
-                  className="px-4 py-2 bg-[#100481] text-white rounded-xl text-sm font-bold hover:bg-[#1d4ed8] transition-all"
+                <Button onClick={handleSendReminders} variant="success">
+                  Hatırlatma Gönder
+                </Button>
+                <Button
+                  variant="secondary"
                   onClick={() => {
                     const token = localStorage.getItem("token");
                     fetch("/api/admin/orders/export", { headers: { Authorization: `Bearer ${token}` } })
@@ -410,8 +408,8 @@ const AdminDashboard = () => {
                       .catch(() => alert("CSV indirilemedi."));
                   }}
                 >
-                  📁 CSV İndir
-                </button>
+                  CSV İndir
+                </Button>
               </div>
             </div>
 
@@ -492,8 +490,8 @@ const AdminDashboard = () => {
                                   />
                                 ))}
                                 <div className="col-span-2 flex gap-2 max-[640px]:col-span-1">
-                                  <button onClick={() => handleBillingUpdate(order.id)} className="flex-1 py-2 bg-[#100481] text-white rounded-xl text-sm font-bold hover:bg-[#1d4ed8] transition-all">Kaydet</button>
-                                  <button onClick={() => setEditingBilling(null)} className="flex-1 py-2 bg-[#f1f5f9] text-[#475569] rounded-xl text-sm font-bold hover:bg-[#e2e8f0] transition-all">İptal</button>
+                                  <Button onClick={() => handleBillingUpdate(order.id)} variant="secondary" size="sm" className="flex-1">Kaydet</Button>
+                                  <Button onClick={() => setEditingBilling(null)} variant="neutral" size="sm" className="flex-1">İptal</Button>
                                 </div>
                               </div>
                             ) : (
@@ -520,7 +518,7 @@ const AdminDashboard = () => {
                           {/* Actions */}
                           <div className="flex flex-wrap gap-2">
                             {["pending", "pending_payment"].includes(order.status) && (
-                              <button
+                              <Button
                                 onClick={async () => {
                                   const token = localStorage.getItem("token");
                                   try {
@@ -534,19 +532,20 @@ const AdminDashboard = () => {
                                     alert("Durum sorgusu başarısız."); console.error(err);
                                   }
                                 }}
-                                className="px-3 py-1.5 bg-[#eff6ff] text-[#1d4ed8] border border-[#bfdbfe] rounded-xl text-xs font-bold hover:bg-[#dbeafe] transition-all"
+                                variant="info"
+                                size="sm"
                               >
-                                🔄 Ödeme Durumunu Sorgula
-                              </button>
+                                Ödeme Durumunu Sorgula
+                              </Button>
                             )}
                             {order.status === "refund_requested" && (
-                              <button onClick={() => handleApproveRefund(order.id)} className="px-3 py-1.5 bg-[#ecfdf5] text-[#065f46] border border-[#a7f3d0] rounded-xl text-xs font-bold hover:bg-[#d1fae5] transition-all">
-                                ✅ İadeyi Onayla
-                              </button>
+                              <Button onClick={() => handleApproveRefund(order.id)} variant="success" size="sm">
+                                İadeyi Onayla
+                              </Button>
                             )}
-                            <button onClick={() => handleDeleteOrder(order.id)} className="px-3 py-1.5 bg-[#fef2f2] text-[#991b1b] border border-[#fecaca] rounded-xl text-xs font-bold hover:bg-[#fee2e2] transition-all ml-auto">
-                              🗑 Siparişi Sil
-                            </button>
+                            <Button onClick={() => handleDeleteOrder(order.id)} variant="danger" size="sm" className="ml-auto">
+                              Siparişi Sil
+                            </Button>
                           </div>
                         </div>
                       </details>
@@ -714,15 +713,15 @@ const AdminDashboard = () => {
 
             {/* Modal Footer */}
             <div className="flex gap-2 p-5 border-t border-[#f1f5f9] sticky bottom-0 bg-white rounded-b-2xl">
-              <button className="flex-1 py-2.5 bg-gradient-to-r from-[#100481] to-[#2563eb] text-white rounded-xl text-sm font-black hover:shadow-[0_6px_16px_rgba(16,4,129,0.3)] hover:-translate-y-0.5 transition-all" onClick={handleUserUpdate}>
-                💾 Güncelle
-              </button>
-              <button className="flex-1 py-2.5 bg-[#fef2f2] text-[#991b1b] border border-[#fecaca] rounded-xl text-sm font-bold hover:bg-[#fee2e2] transition-all" onClick={handleUserDelete}>
-                🗑 Sil
-              </button>
-              <button className="py-2.5 px-4 bg-[#f1f5f9] text-[#475569] rounded-xl text-sm font-bold hover:bg-[#e2e8f0] transition-all" onClick={() => setSelectedUser(null)}>
+              <Button onClick={handleUserUpdate} variant="secondary" className="flex-1">
+                Güncelle
+              </Button>
+              <Button onClick={handleUserDelete} variant="danger" className="flex-1">
+                Sil
+              </Button>
+              <Button onClick={() => setSelectedUser(null)} variant="neutral">
                 Kapat
-              </button>
+              </Button>
             </div>
           </div>
         </>
