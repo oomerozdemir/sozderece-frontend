@@ -20,6 +20,7 @@ const SOCIAL_PROOF = [
     avatar: "Ş",
     avatarBg: "#1C1B8A",
     year: "TYT-AYT 2024",
+    stars: 5,
   },
   {
     quote: "Çocuğumun motivasyonu çok arttı. Veli raporu sayesinde süreci yakından takip edebildim.",
@@ -29,6 +30,7 @@ const SOCIAL_PROOF = [
     avatar: "S",
     avatarBg: "#7340C8",
     year: "LGS 2025",
+    stars: 4,
   },
   {
     quote: "Deneme analizleri sayesinde hep aynı hataları yapıyordum fark ettim ve artık yapmıyorum.",
@@ -38,6 +40,7 @@ const SOCIAL_PROOF = [
     avatar: "E",
     avatarBg: "#FF6B35",
     year: "TYT 2024",
+    stars: 5,
   },
   {
     quote: "Hedefimi koydu, programa bağladı. Sınava en hazır gittiğim yıl oldu bu.",
@@ -47,6 +50,7 @@ const SOCIAL_PROOF = [
     avatar: "M",
     avatarBg: "#1C1B8A",
     year: "AYT 2024",
+    stars: 5,
   },
   {
     quote: "LGS puanı beklentimizin çok üzerinde çıktı. Sistematik çalışma fark yaratıyor.",
@@ -56,6 +60,7 @@ const SOCIAL_PROOF = [
     avatar: "A",
     avatarBg: "#7340C8",
     year: "LGS 2024",
+    stars: 4,
   },
 ];
 
@@ -70,7 +75,7 @@ export default function HeroSection() {
 
   return (
     <section
-      className="relative overflow-hidden"
+      className="relative overflow-hidden mx-3 sm:mx-6 lg:mx-10 mt-3 rounded-[32px] max-[640px]:rounded-[22px]"
       style={{
         background:
           "radial-gradient(ellipse 80% 60% at 60% 40%, #3d1a80 0%, #1A0A40 55%, #0d0520 100%)",
@@ -117,7 +122,7 @@ export default function HeroSection() {
       ))}
 
       {/* Main content */}
-      <div className="max-w-[1200px] mx-auto px-5 pt-20 pb-10 max-[768px]:pt-14 max-[768px]:pb-8 w-full" style={{ position: "relative", zIndex: 1 }}>
+      <div className="max-w-[1200px] mx-auto px-5 pt-16 pb-6 max-[768px]:pt-12 max-[768px]:pb-5 w-full" style={{ position: "relative", zIndex: 1 }}>
         <div className="grid grid-cols-[1fr_auto] gap-16 items-center max-[960px]:grid-cols-1">
 
           {/* Sol — metin */}
@@ -298,8 +303,8 @@ export default function HeroSection() {
         style={{
           borderTop: "1px solid rgba(255,255,255,0.08)",
           background: "rgba(0,0,0,0.25)",
-          paddingTop: 20,
-          paddingBottom: 20,
+          paddingTop: 16,
+          paddingBottom: 14,
         }}
       >
         {/* Sol fade */}
@@ -338,7 +343,7 @@ export default function HeroSection() {
               {/* Stars */}
               <div className="flex gap-0.5 mb-2">
                 {[1,2,3,4,5].map(n => (
-                  <svg key={n} width="13" height="13" viewBox="0 0 24 24" fill="#D8FF4F">
+                  <svg key={n} width="13" height="13" viewBox="0 0 24 24" fill={n <= (item.stars || 5) ? item.avatarBg : "rgba(255,255,255,0.15)"}>
                     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                   </svg>
                 ))}

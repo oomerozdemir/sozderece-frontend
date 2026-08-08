@@ -119,6 +119,7 @@ const testimonials = [
     year: "TYT-AYT 2024",
     before: "65 NET",
     after: "82 NET",
+    stars: 5,
   },
   {
     quote:
@@ -132,6 +133,7 @@ const testimonials = [
     year: "8. Sınıf Velisi",
     before: null,
     after: null,
+    stars: 4,
   },
   {
     quote:
@@ -145,6 +147,7 @@ const testimonials = [
     year: "TYT 2025",
     before: "78 NET",
     after: "96 NET",
+    stars: 5,
   },
 ];
 
@@ -594,7 +597,13 @@ function TestimonialsSection() {
               </div>
               <div>
                 <p className="font-fredoka font-bold text-white text-sm m-0">{t.name}</p>
-                <p className="font-nunito text-white/40 text-xs m-0">{t.role} · {t.year} ★★★★★</p>
+                <p className="font-nunito text-white/40 text-xs m-0 flex items-center gap-1.5 mt-0.5">
+                  <span>{t.role} · {t.year}</span>
+                  <span style={{ color: t.badgeColor, letterSpacing: 1 }}>
+                    {"★".repeat(t.stars || 5)}
+                    <span style={{ opacity: 0.25 }}>{"★".repeat(5 - (t.stars || 5))}</span>
+                  </span>
+                </p>
               </div>
             </div>
           </motion.div>
@@ -998,8 +1007,8 @@ export default function HomePage() {
 
       <Navbar />
       <HeroSection />
-      <PricingSection />
       <EarlyRegistrationBanner />
+      <PricingSection />
       <WhyDifferentSection />
       <HowItWorksSection />
       <TestimonialsSection />

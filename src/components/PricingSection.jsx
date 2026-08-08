@@ -207,8 +207,8 @@ export default function PricingSection() {
         className="mx-auto py-20 relative pricing-section-pad"
         style={{ maxWidth: 1280, paddingLeft: 60, paddingRight: 60, zIndex: 2 }}
       >
-        {/* 3 kolonlu başlık */}
-        <div className="pricing-header flex items-start justify-between mb-14 gap-8">
+        {/* Başlık */}
+        <div className="pricing-header flex items-start justify-between mb-10 gap-8">
 
           {/* Sol — başlık */}
           <motion.div
@@ -224,47 +224,6 @@ export default function PricingSection() {
               <span className="block text-page-navy">Kişisel</span>
               <span className="block" style={{ color: "transparent", WebkitTextStroke: "2.5px #FF6B35" }}>Program.</span>
             </h2>
-          </motion.div>
-
-          {/* Orta — sekme seçici */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            className="self-center"
-          >
-            <div className="flex gap-1 rounded-full p-1.5" style={{ background: "#f4f2fa" }}>
-              {[
-                { key: "yks", label: "🎓 YKS" },
-                { key: "lgs", label: "📚 LGS" },
-                ...(earlyReg ? [{ key: "erken", label: "⚡ Erken Kayıt" }] : []),
-              ].map((t) => (
-                <button
-                  key={t.key}
-                  onClick={() => setTab(t.key)}
-                  className="font-fredoka font-bold text-[17px] px-7 py-3 rounded-full border-none cursor-pointer transition-all duration-200"
-                  style={{
-                    background:
-                      tab === t.key
-                        ? t.key === "erken" ? "#D8FF4F" : "#1C1B8A"
-                        : "transparent",
-                    color:
-                      tab === t.key
-                        ? t.key === "erken" ? "#0D0A2E" : "#D8FF4F"
-                        : "#6B6B8A",
-                    boxShadow:
-                      tab === t.key
-                        ? t.key === "erken"
-                          ? "0 4px 14px rgba(216,255,79,0.4)"
-                          : "0 4px 14px rgba(28,27,138,0.3)"
-                        : "none",
-                  }}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
           </motion.div>
 
           {/* Sağ — açıklama */}
@@ -283,41 +242,49 @@ export default function PricingSection() {
           </motion.div>
         </div>
 
-        {/* Tanıtım videosu */}
-        {videoEmbedUrl && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55 }}
-            className="flex justify-center mb-14"
-          >
-            <div className="w-full" style={{ maxWidth: 760 }}>
-              <div
-                className="relative rounded-[28px] overflow-hidden"
-                style={{
-                  boxShadow: "0 20px 50px rgba(28,27,138,0.2)",
-                  border: "6px solid #1C1B8A",
-                }}
-              >
-                <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#D8FF4F", filter: "blur(70px)", opacity: 0.35, top: -60, left: -40, zIndex: 0 }} />
-                <div className="aspect-video relative" style={{ zIndex: 1 }}>
-                  <iframe
-                    src={videoEmbedUrl}
-                    title="Program Tanıtımı"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full"
-                    style={{ border: 0, display: "block" }}
-                  />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
         {/* Geri sayım banner */}
         <CountdownPricingBanner />
+
+        {/* Sekme seçici — paketlerin tam üstünde */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="flex justify-center mb-8"
+        >
+          <div className="flex gap-1 rounded-full p-1.5" style={{ background: "#f4f2fa" }}>
+            {[
+              { key: "yks", label: "YKS" },
+              { key: "lgs", label: "LGS" },
+              ...(earlyReg ? [{ key: "erken", label: "Erken Kayıt" }] : []),
+            ].map((t) => (
+              <button
+                key={t.key}
+                onClick={() => setTab(t.key)}
+                className="font-fredoka font-bold text-[17px] px-7 py-3 rounded-full border-none cursor-pointer transition-all duration-200"
+                style={{
+                  background:
+                    tab === t.key
+                      ? t.key === "erken" ? "#D8FF4F" : "#1C1B8A"
+                      : "transparent",
+                  color:
+                    tab === t.key
+                      ? t.key === "erken" ? "#0D0A2E" : "#D8FF4F"
+                      : "#6B6B8A",
+                  boxShadow:
+                    tab === t.key
+                      ? t.key === "erken"
+                        ? "0 4px 14px rgba(216,255,79,0.4)"
+                        : "0 4px 14px rgba(28,27,138,0.3)"
+                      : "none",
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </motion.div>
 
         {/* Bento grid */}
         <AnimatePresence mode="wait">
@@ -520,6 +487,39 @@ export default function PricingSection() {
             </div>
           </motion.div>
         </AnimatePresence>
+
+        {/* Tanıtım videosu */}
+        {videoEmbedUrl && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+            className="flex justify-center mt-14"
+          >
+            <div className="w-full" style={{ maxWidth: 760 }}>
+              <div
+                className="relative rounded-[28px] overflow-hidden"
+                style={{
+                  boxShadow: "0 20px 50px rgba(28,27,138,0.2)",
+                  border: "6px solid #1C1B8A",
+                }}
+              >
+                <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#D8FF4F", filter: "blur(70px)", opacity: 0.35, top: -60, left: -40, zIndex: 0 }} />
+                <div className="aspect-video relative" style={{ zIndex: 1 }}>
+                  <iframe
+                    src={videoEmbedUrl}
+                    title="Program Tanıtımı"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                    style={{ border: 0, display: "block" }}
+                  />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </div>
     </section>
   );
