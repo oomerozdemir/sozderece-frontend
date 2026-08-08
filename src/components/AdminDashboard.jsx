@@ -23,6 +23,8 @@ import AdminSubscriptionsPage from "../pages/AdminSubscriptionsPage";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
+const MONTH_LABELS = ["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"];
+
 const ROLE_META = {
   admin:   { label: "Admin",    bg: "bg-[#fef2f2]", text: "text-[#991b1b]",  dot: "bg-[#ef4444]" },
   coach:   { label: "Koç",      bg: "bg-[#ecfdf5]", text: "text-[#065f46]",  dot: "bg-[#10b981]" },
@@ -79,12 +81,45 @@ const AdminDashboard = () => {
   const [message, setMessage] = useState(null);
   const [newUser, setNewUser] = useState({ name: "", email: "", password: "", role: "student" });
   const [searchTerm, setSearchTerm] = useState("");
-  const filteredOrders = orders.filter((order) =>
-    order.userName?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const [orderStatusFilter, setOrderStatusFilter] = useState("all");
+  const [orderPage, setOrderPage] = useState(1);
+  const ORDERS_PER_PAGE = 10;
+  const filteredOrders = orders.filter((order) => {
+    const term = searchTerm.trim().toLowerCase();
+    const matchesSearch =
+      !term ||
+      order.userName?.toLowerCase().includes(term) ||
+      order.userEmail?.toLowerCase().includes(term) ||
+      order.billingInfo?.email?.toLowerCase().includes(term) ||
+      order.merchantOid?.toLowerCase().includes(term) ||
+      order.package?.toLowerCase().includes(term);
+    const matchesStatus = orderStatusFilter === "all" || order.status === orderStatusFilter;
+    return matchesSearch && matchesStatus;
+  });
+  const orderTotalPages = Math.max(1, Math.ceil(filteredOrders.length / ORDERS_PER_PAGE));
+  const pagedOrders = filteredOrders.slice((orderPage - 1) * ORDERS_PER_PAGE, orderPage * ORDERS_PER_PAGE);
+
+  const [userSearchTerm, setUserSearchTerm] = useState("");
+  const [userRoleFilter, setUserRoleFilter] = useState("all");
+  const [userPage, setUserPage] = useState(1);
+  const USERS_PER_PAGE = 12;
+  const filteredUsers = users.filter((user) => {
+    const term = userSearchTerm.trim().toLowerCase();
+    const matchesSearch = !term || user.name?.toLowerCase().includes(term) || user.email?.toLowerCase().includes(term);
+    const matchesRole = userRoleFilter === "all" || user.role === userRoleFilter;
+    return matchesSearch && matchesRole;
+  });
+  const userTotalPages = Math.max(1, Math.ceil(filteredUsers.length / USERS_PER_PAGE));
+  const pagedUsers = filteredUsers.slice((userPage - 1) * USERS_PER_PAGE, userPage * USERS_PER_PAGE);
+
   const [editingBilling, setEditingBilling] = useState(null);
   const [updatedBillingInfo, setUpdatedBillingInfo] = useState({});
   const [view, setView] = useState("dashboard");
+
+  // Arama/filtre değişince sayfalamayı başa al — aksi halde filtrelenmiş
+  // listede olmayan bir sayfada kalıp boş görünüm gösterebilir.
+  useEffect(() => { setOrderPage(1); }, [searchTerm, orderStatusFilter]);
+  useEffect(() => { setUserPage(1); }, [userSearchTerm, userRoleFilter]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -232,14 +267,37 @@ const AdminDashboard = () => {
     const packageCounts = {};
     orders.forEach((o) => { const p = o.package || "Bilinmiyor"; packageCounts[p] = (packageCounts[p] || 0) + 1; });
     const mostPopularPackage = Object.entries(packageCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "Veri yok";
-    return { totalOrders, ordersThisMonth, mostPopularPackage };
+    // Sadece "paid" durumundaki siparişler gerçek ciroyu temsil ediyor —
+    // iade edilenler status="refunded"a geçtiği için burada zaten hariç.
+    const paidOrders = orders.filter((o) => o.status === "paid");
+    const totalRevenue = paidOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
+    const revenueThisMonth = paidOrders
+      .filter((o) => {
+        const d = new Date(o.createdAt);
+        return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+      })
+      .reduce((sum, o) => sum + (o.totalPrice || 0), 0);
+    return { totalOrders, ordersThisMonth, mostPopularPackage, totalRevenue, revenueThisMonth };
   }, [orders]);
 
   const monthlyOrderData = useMemo(() => {
-    const counts = new Array(12).fill(0);
-    orders.forEach((o) => { counts[new Date(o.createdAt).getMonth()]++; });
+    // Önceden tüm yılların aynı ayını (ör. Ağustos 2025 + Ağustos 2026) tek
+    // sütunda topluyordu. Artık son 12 ayı yıl+ay bazında, kayan bir
+    // pencerede gösteriyor.
+    const now = new Date();
+    const months = Array.from({ length: 12 }, (_, i) => {
+      const d = new Date(now.getFullYear(), now.getMonth() - (11 - i), 1);
+      return { year: d.getFullYear(), month: d.getMonth() };
+    });
+    const counts = months.map(
+      ({ year, month }) =>
+        orders.filter((o) => {
+          const d = new Date(o.createdAt);
+          return d.getFullYear() === year && d.getMonth() === month;
+        }).length
+    );
     return {
-      labels: ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"],
+      labels: months.map(({ year, month }) => `${MONTH_LABELS[month]} '${String(year).slice(2)}`),
       datasets: [{ label: "Aylık Sipariş Sayısı", data: counts, backgroundColor: "#100481", borderRadius: 6 }],
     };
   }, [orders]);
@@ -360,6 +418,8 @@ const AdminDashboard = () => {
               <h2 className="text-base font-black text-[#0f172a] mb-4">📈 Sipariş Raporu</h2>
               <div className="space-y-3">
                 {[
+                  { label: "Toplam Ciro",        value: `₺${orderStats.totalRevenue.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
+                  { label: "Bu Ayki Ciro",       value: `₺${orderStats.revenueThisMonth.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
                   { label: "Toplam Sipariş",     value: orderStats.totalOrders },
                   { label: "Bu Ayki Sipariş",    value: orderStats.ordersThisMonth },
                   { label: "En Popüler Paket",   value: orderStats.mostPopularPackage },
@@ -390,12 +450,24 @@ const AdminDashboard = () => {
                   <span className="text-[#94a3b8] text-sm">🔍</span>
                   <input
                     type="text"
-                    placeholder="Kullanıcı adına göre filtrele..."
+                    placeholder="İsim, e-posta, paket ya da sipariş no..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="border-0 outline-none bg-transparent text-sm min-w-[180px]"
+                    className="border-0 outline-none bg-transparent text-sm min-w-[200px]"
                   />
                 </div>
+                <select
+                  value={orderStatusFilter}
+                  onChange={(e) => setOrderStatusFilter(e.target.value)}
+                  className="bg-[#f8fafc] border border-[#e5e7eb] rounded-xl px-3 py-2.5 text-sm outline-none"
+                >
+                  <option value="all">Tüm Durumlar</option>
+                  <option value="paid">Ödendi / Aktif</option>
+                  <option value="pending">Ödeme Bekliyor</option>
+                  <option value="refund_requested">İade Talep Edildi</option>
+                  <option value="refunded">İade Edildi</option>
+                  <option value="failed">Başarısız</option>
+                </select>
                 <Button onClick={handleSendReminders} variant="success">
                   Hatırlatma Gönder
                 </Button>
@@ -424,7 +496,7 @@ const AdminDashboard = () => {
               <div className="p-10 text-center text-[#94a3b8] text-sm">Sipariş bulunamadı.</div>
             ) : (
               <ul className="divide-y divide-[#f1f5f9]">
-                {filteredOrders.map((order) => {
+                {pagedOrders.map((order) => {
                   const meta = getOrderMeta(order);
                   return (
                     <li key={order.id}>
@@ -562,6 +634,13 @@ const AdminDashboard = () => {
                 })}
               </ul>
             )}
+            {filteredOrders.length > 0 && orderTotalPages > 1 && (
+              <div className="p-4 border-t border-[#f1f5f9] flex items-center justify-center gap-1.5 flex-wrap">
+                <Button disabled={orderPage === 1} onClick={() => setOrderPage((p) => p - 1)} variant="neutral" size="sm">‹ Önceki</Button>
+                <span className="text-xs text-[#64748b] px-2">Sayfa {orderPage} / {orderTotalPages}</span>
+                <Button disabled={orderPage === orderTotalPages} onClick={() => setOrderPage((p) => p + 1)} variant="neutral" size="sm">Sonraki ›</Button>
+              </div>
+            )}
           </div>
         )}
 
@@ -570,11 +649,33 @@ const AdminDashboard = () => {
           <div className="space-y-6">
             {/* User Grid */}
             <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#f1f5f9] overflow-hidden">
-              <div className="p-5 border-b border-[#f1f5f9]">
-                <h2 className="text-base font-black text-[#0f172a]">👥 Kayıtlı Kullanıcılar ({users.length})</h2>
+              <div className="p-5 border-b border-[#f1f5f9] flex flex-wrap items-center justify-between gap-3">
+                <h2 className="text-base font-black text-[#0f172a]">👥 Kayıtlı Kullanıcılar ({filteredUsers.length})</h2>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <div className="flex items-center gap-2 bg-[#f8fafc] border border-[#e5e7eb] rounded-xl px-3 py-2">
+                    <span className="text-[#94a3b8] text-sm">🔍</span>
+                    <input
+                      type="text"
+                      placeholder="İsim veya e-posta..."
+                      value={userSearchTerm}
+                      onChange={(e) => setUserSearchTerm(e.target.value)}
+                      className="border-0 outline-none bg-transparent text-sm min-w-[180px]"
+                    />
+                  </div>
+                  <select
+                    value={userRoleFilter}
+                    onChange={(e) => setUserRoleFilter(e.target.value)}
+                    className="bg-[#f8fafc] border border-[#e5e7eb] rounded-xl px-3 py-2.5 text-sm outline-none"
+                  >
+                    <option value="all">Tüm Roller</option>
+                    <option value="student">Öğrenci</option>
+                    <option value="coach">Koç</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
               </div>
               <div className="p-5 grid grid-cols-3 gap-4 max-[900px]:grid-cols-2 max-[560px]:grid-cols-1">
-                {users.map((user) => (
+                {pagedUsers.map((user) => (
                   <div
                     key={user.id}
                     className="group border border-[#e5e7eb] rounded-2xl p-4 cursor-pointer hover:border-brand-navy hover:shadow-[0_4px_16px_rgba(16,4,129,0.12)] transition-all bg-white"
@@ -601,6 +702,13 @@ const AdminDashboard = () => {
                   </div>
                 ))}
               </div>
+              {filteredUsers.length > 0 && userTotalPages > 1 && (
+                <div className="p-4 border-t border-[#f1f5f9] flex items-center justify-center gap-1.5 flex-wrap">
+                  <Button disabled={userPage === 1} onClick={() => setUserPage((p) => p - 1)} variant="neutral" size="sm">‹ Önceki</Button>
+                  <span className="text-xs text-[#64748b] px-2">Sayfa {userPage} / {userTotalPages}</span>
+                  <Button disabled={userPage === userTotalPages} onClick={() => setUserPage((p) => p + 1)} variant="neutral" size="sm">Sonraki ›</Button>
+                </div>
+              )}
             </div>
 
             {/* New User Form */}

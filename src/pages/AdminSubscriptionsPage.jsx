@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
+import Button from "../components/ui/Button";
 
 const STATUS_META = {
   active: { label: "Aktif", cls: "bg-[#ecfdf5] text-[#065f46] border-[#a7f3d0]" },
   past_due: { label: "Ödeme Bekleniyor", cls: "bg-[#fff7ed] text-[#9a3412] border-[#fed7aa]" },
   cancelled: { label: "İptal Edildi", cls: "bg-[#f8fafc] text-[#475569] border-[#e2e8f0]" },
+};
+
+const CHARGE_STATUS_META = {
+  success: { label: "Başarılı", cls: "text-[#065f46]" },
+  failed: { label: "Başarısız", cls: "text-[#991b1b]" },
+  pending: { label: "Bekliyor", cls: "text-[#9a3412]" },
 };
 
 const getMeta = (sub) => {
@@ -117,15 +124,37 @@ const AdminSubscriptionsPage = () => {
                         {" "}<span title={sub.consentText || ""}>(itiraz savunması için)</span>
                       </p>
                     )}
+                    {sub.charges?.length > 0 && (
+                      <details className="mt-2">
+                        <summary className="text-[11px] font-bold text-[#2563eb] cursor-pointer hover:text-[#1d4ed8] list-none">
+                          Son Denemeler ({sub.charges.length})
+                        </summary>
+                        <ul className="mt-1.5 space-y-1">
+                          {sub.charges.map((c) => {
+                            const cm = CHARGE_STATUS_META[c.status] || { label: c.status, cls: "text-[#475569]" };
+                            return (
+                              <li key={c.id} className="text-[11px] text-[#64748b] flex flex-wrap items-center gap-1.5">
+                                <span className={`font-bold ${cm.cls}`}>{cm.label}</span>
+                                <span>· {new Date(c.attemptedAt).toLocaleString("tr-TR")}</span>
+                                <span>· {c.attemptNumber}. deneme</span>
+                                {c.failReason && <span>· {c.failReason}</span>}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </details>
+                    )}
                   </div>
                   {sub.status !== "cancelled" && (
-                    <button
+                    <Button
                       onClick={() => handleCancel(sub)}
                       disabled={cancellingId === sub.id}
-                      className="px-3 py-1.5 bg-[#fef2f2] text-[#991b1b] border border-[#fecaca] rounded-xl text-xs font-bold hover:bg-[#fee2e2] transition-all disabled:opacity-50 flex-shrink-0"
+                      variant="danger"
+                      size="sm"
+                      className="flex-shrink-0"
                     >
-                      {cancellingId === sub.id ? "İptal ediliyor..." : "🛑 Hemen İptal Et"}
-                    </button>
+                      {cancellingId === sub.id ? "İptal ediliyor..." : "Hemen İptal Et"}
+                    </Button>
                   )}
                 </div>
               );
