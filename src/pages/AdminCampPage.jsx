@@ -25,6 +25,14 @@ const DelBtn = ({ onClick }) => (
   </button>
 );
 
+const LEAD_STATUS_META = {
+  new:        { label: "Yeni",        bg: "bg-[#eff6ff]", text: "text-[#1d4ed8]" },
+  contacted:  { label: "Arandı",      bg: "bg-[#fef9c3]", text: "text-[#854d0e]" },
+  converted:  { label: "Kayıt Oldu",  bg: "bg-[#ecfdf5]", text: "text-[#065f46]" },
+  "no-show":  { label: "Ulaşılamadı", bg: "bg-[#fef2f2]", text: "text-[#991b1b]" },
+};
+const LEAD_STATUS_OPTIONS = ["new", "contacted", "converted", "no-show"];
+
 function EmojiField({ value, onChange }) {
   const [open, setOpen] = useState(false);
   return (
@@ -54,6 +62,8 @@ export default function AdminCampPage() {
   const [appsLoading, setAppsLoading] = useState(true);
   const [quotaInfo, setQuotaInfo] = useState({ total: 0, maxQuota: 10, remainingQuota: 10 });
   const [tab, setTab] = useState("general");
+  const [appSearch, setAppSearch] = useState("");
+  const [updatingId, setUpdatingId] = useState(null);
 
   const token = localStorage.getItem("token");
   const authH = { headers: { Authorization: `Bearer ${token}` } };
@@ -64,6 +74,35 @@ export default function AdminCampPage() {
       .then((r) => { setApplications(r.data.applications || []); setQuotaInfo({ total: r.data.total, maxQuota: r.data.maxQuota, remainingQuota: r.data.remainingQuota }); })
       .catch(() => {}).finally(() => setAppsLoading(false));
   }, []);
+
+  const filteredApplications = applications.filter((a) => {
+    const term = appSearch.trim().toLowerCase();
+    if (!term) return true;
+    return `${a.firstName} ${a.lastName}`.toLowerCase().includes(term) || a.phone?.toLowerCase().includes(term);
+  });
+
+  const handleStatusChange = async (id, status) => {
+    setUpdatingId(id);
+    try {
+      await axios.put(`/api/admin/camp-applications/${id}/status`, { status }, authH);
+      setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));
+    } catch {
+      alert("Durum güncellenemedi.");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleDeleteApplication = async (id) => {
+    if (!window.confirm("Bu başvuruyu silmek istediğine emin misin?")) return;
+    try {
+      await axios.delete(`/api/admin/camp-applications/${id}`, authH);
+      setApplications((prev) => prev.filter((a) => a.id !== id));
+      setQuotaInfo((prev) => ({ ...prev, total: prev.total - 1, remainingQuota: prev.remainingQuota + 1 }));
+    } catch {
+      alert("Başvuru silinemedi.");
+    }
+  };
 
   const save = async () => {
     setSaving(true); setMsg(null);
@@ -888,15 +927,24 @@ export default function AdminCampPage() {
               <div className="text-xs text-[#64748b] mt-1">Ücretli Başvuru</div>
             </div>
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-between items-center flex-wrap gap-2">
+            <input
+              type="text"
+              value={appSearch}
+              onChange={(e) => setAppSearch(e.target.value)}
+              placeholder="İsim veya telefon ara..."
+              className="px-3 py-2 rounded-xl border border-[#e5e7eb] outline-none text-xs focus:border-brand-navy bg-white"
+            />
             <button onClick={handleExport} className="px-4 py-2 text-sm font-bold bg-white border border-[#e5e7eb] rounded-xl hover:bg-[#f8fafc] transition-all text-[#374151]">
               📥 CSV İndir
             </button>
           </div>
           {appsLoading ? (
             <div className="text-center py-10 text-[#64748b] text-sm">Yükleniyor...</div>
-          ) : applications.length === 0 ? (
-            <div className="text-center py-10 text-[#64748b] text-sm">Henüz başvuru yok.</div>
+          ) : filteredApplications.length === 0 ? (
+            <div className="text-center py-10 text-[#64748b] text-sm">
+              {applications.length ? "Aramayla eşleşen kayıt yok." : "Henüz başvuru yok."}
+            </div>
           ) : (
             <div className="bg-white rounded-2xl border border-[#f1f5f9] shadow-sm overflow-x-auto">
               <table className="w-full min-w-[640px] text-sm">
@@ -909,10 +957,12 @@ export default function AdminCampPage() {
                     <th className="px-4 py-3 text-left">Sınıf</th>
                     <th className="px-4 py-3 text-left">Tür</th>
                     <th className="px-4 py-3 text-left">Tarih</th>
+                    <th className="px-4 py-3 text-left">Durum</th>
+                    <th className="px-4 py-3 text-left"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {applications.map((a, i) => (
+                  {filteredApplications.map((a, i) => (
                     <tr key={a.id} className={i % 2 === 0 ? "" : "bg-[#f8fafc]"}>
                       <td className="px-4 py-3 text-[#9ca3af]">{a.id}</td>
                       <td className="px-4 py-3 font-semibold text-[#0f172a]">{a.firstName} {a.lastName}</td>
@@ -925,6 +975,21 @@ export default function AdminCampPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-[#9ca3af] text-xs">{new Date(a.createdAt).toLocaleDateString("tr-TR")}</td>
+                      <td className="px-4 py-3">
+                        <select
+                          value={a.status || "new"}
+                          disabled={updatingId === a.id}
+                          onChange={(e) => handleStatusChange(a.id, e.target.value)}
+                          className={`px-2 py-1 rounded-lg text-xs font-bold border-0 outline-none disabled:opacity-50 ${LEAD_STATUS_META[a.status || "new"]?.bg} ${LEAD_STATUS_META[a.status || "new"]?.text}`}
+                        >
+                          {LEAD_STATUS_OPTIONS.map((s) => (
+                            <option key={s} value={s}>{LEAD_STATUS_META[s].label}</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="px-4 py-3">
+                        <DelBtn onClick={() => handleDeleteApplication(a.id)} />
+                      </td>
                     </tr>
                   ))}
                 </tbody>

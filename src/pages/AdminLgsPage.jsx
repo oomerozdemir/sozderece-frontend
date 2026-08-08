@@ -1,6 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "../utils/axios";
 import ImageUpload from "../components/ImageUpload";
+import Button from "../components/ui/Button";
+
+const LEAD_STATUS_META = {
+  new:        { label: "Yeni",        bg: "bg-[#eff6ff]", text: "text-[#1d4ed8]" },
+  contacted:  { label: "Arandı",      bg: "bg-[#fef9c3]", text: "text-[#854d0e]" },
+  converted:  { label: "Kayıt Oldu",  bg: "bg-[#ecfdf5]", text: "text-[#065f46]" },
+  "no-show":  { label: "Ulaşılamadı", bg: "bg-[#fef2f2]", text: "text-[#991b1b]" },
+};
+const LEAD_STATUS_OPTIONS = ["new", "contacted", "converted", "no-show"];
 
 const TABS = [
   { key: "applications", label: "📋 Başvurular" },
@@ -663,6 +672,8 @@ export default function AdminLgsPage() {
   const [content, setContent] = useState(null);
   const [contentSaving, setContentSaving] = useState(false);
   const [contentSaved, setContentSaved] = useState(false);
+  const [appSearch, setAppSearch] = useState("");
+  const [updatingId, setUpdatingId] = useState(null);
 
   const load = () => {
     setLoading(true);
@@ -689,6 +700,42 @@ export default function AdminLgsPage() {
   const handleExport = () => {
     const token = localStorage.getItem("token");
     window.open(`/api/admin/lgs-applications/export?token=${token}`, "_blank");
+  };
+
+  const filteredApplications = useMemo(() => {
+    const list = data?.applications || [];
+    const term = appSearch.trim().toLowerCase();
+    if (!term) return list;
+    return list.filter((a) => a.name?.toLowerCase().includes(term) || a.phone?.toLowerCase().includes(term));
+  }, [data, appSearch]);
+
+  const handleStatusChange = async (id, status) => {
+    setUpdatingId(id);
+    try {
+      await axios.put(`/api/admin/lgs-applications/${id}/status`, { status }, { headers: authHeaders() });
+      setData((prev) => ({
+        ...prev,
+        applications: prev.applications.map((a) => (a.id === id ? { ...a, status } : a)),
+      }));
+    } catch {
+      alert("Durum güncellenemedi.");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleDeleteApplication = async (id) => {
+    if (!window.confirm("Bu başvuruyu silmek istediğine emin misin?")) return;
+    try {
+      await axios.delete(`/api/admin/lgs-applications/${id}`, { headers: authHeaders() });
+      setData((prev) => ({
+        ...prev,
+        applications: prev.applications.filter((a) => a.id !== id),
+        total: prev.total - 1,
+      }));
+    } catch {
+      alert("Başvuru silinemedi.");
+    }
   };
 
   const handleSaveQuota = async () => {
@@ -761,22 +808,33 @@ export default function AdminLgsPage() {
       {/* ── BAŞVURULAR ── */}
       {tab === "applications" && (
         <div className="bg-white rounded-2xl border border-[#f1f5f9] shadow-[0_2px_8px_rgba(0,0,0,0.05)] overflow-hidden">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[#f1f5f9]">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[#f1f5f9] flex-wrap gap-2">
             <p className="text-sm font-bold text-[#0f172a]">
-              {data ? `${data.total} başvuru` : "Yükleniyor..."}
+              {data ? `${filteredApplications.length} / ${data.total} başvuru` : "Yükleniyor..."}
             </p>
-            <button
-              onClick={handleExport}
-              className="text-xs font-bold bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:text-[#0f172a] px-3 py-1.5 rounded-lg transition-colors"
-            >
-              ⬇ CSV İndir
-            </button>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={appSearch}
+                onChange={(e) => setAppSearch(e.target.value)}
+                placeholder="İsim veya telefon ara..."
+                className="px-3 py-1.5 rounded-lg border border-[#e2e8f0] outline-none text-xs focus:border-brand-navy"
+              />
+              <button
+                onClick={handleExport}
+                className="text-xs font-bold bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:text-[#0f172a] px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+              >
+                ⬇ CSV İndir
+              </button>
+            </div>
           </div>
 
           {loading ? (
             <div className="py-12 text-center text-[#94a3b8] text-sm">Yükleniyor...</div>
-          ) : !data?.applications?.length ? (
-            <div className="py-12 text-center text-[#94a3b8] text-sm">Henüz başvuru yok.</div>
+          ) : !filteredApplications.length ? (
+            <div className="py-12 text-center text-[#94a3b8] text-sm">
+              {data?.applications?.length ? "Aramayla eşleşen kayıt yok." : "Henüz başvuru yok."}
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -788,10 +846,12 @@ export default function AdminLgsPage() {
                     <th className="px-4 py-3 text-left">Sınıf</th>
                     <th className="px-4 py-3 text-left">Mesaj</th>
                     <th className="px-4 py-3 text-left">Tarih</th>
+                    <th className="px-4 py-3 text-left">Durum</th>
+                    <th className="px-4 py-3 text-left"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {data.applications.map((app, i) => (
+                  {filteredApplications.map((app, i) => (
                     <tr key={app.id} className={`border-t border-[#f1f5f9] ${i % 2 === 0 ? "bg-white" : "bg-[#f8fafc]"} hover:bg-[#eff6ff] transition-colors`}>
                       <td className="px-4 py-3 text-[#94a3b8] text-xs">{app.id}</td>
                       <td className="px-4 py-3 font-semibold text-[#0f172a]">{app.name}</td>
@@ -804,6 +864,21 @@ export default function AdminLgsPage() {
                       <td className="px-4 py-3 text-[#64748b] max-w-[200px] truncate">{app.message || "—"}</td>
                       <td className="px-4 py-3 text-[#94a3b8] text-xs whitespace-nowrap">
                         {new Date(app.createdAt).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })}
+                      </td>
+                      <td className="px-4 py-3">
+                        <select
+                          value={app.status || "new"}
+                          disabled={updatingId === app.id}
+                          onChange={(e) => handleStatusChange(app.id, e.target.value)}
+                          className={`px-2 py-1 rounded-lg text-xs font-bold border-0 outline-none disabled:opacity-50 ${LEAD_STATUS_META[app.status || "new"]?.bg} ${LEAD_STATUS_META[app.status || "new"]?.text}`}
+                        >
+                          {LEAD_STATUS_OPTIONS.map((s) => (
+                            <option key={s} value={s}>{LEAD_STATUS_META[s].label}</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="px-4 py-3">
+                        <Button onClick={() => handleDeleteApplication(app.id)} variant="danger" size="sm">Sil</Button>
                       </td>
                     </tr>
                   ))}
