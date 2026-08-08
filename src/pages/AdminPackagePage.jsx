@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
 import { getExamDaysLeft, getExamPrice } from "../utils/promoUtils";
+import { toYouTubeEmbed } from "../utils/youtube";
 
 const inputCls =
   "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/10 transition-all bg-white";
@@ -47,6 +48,8 @@ const emptyForm = {
   billingCycle: "once",
 };
 
+const emptyVideoSettings = { enabled: false, videoUrl: "" };
+
 const AdminPackagePage = () => {
   const [packages, setPackages] = useState([]);
   const [editingPkg, setEditingPkg] = useState(null);
@@ -58,6 +61,8 @@ const AdminPackagePage = () => {
   const [editingPlanIdx, setEditingPlanIdx] = useState(null);
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [videoSettings, setVideoSettings] = useState(emptyVideoSettings);
+  const [videoSaving, setVideoSaving] = useState(false);
 
   const token = () => localStorage.getItem("token");
 
@@ -72,9 +77,34 @@ const AdminPackagePage = () => {
     }
   };
 
+  const fetchVideoSettings = async () => {
+    try {
+      const res = await axios.get("/api/settings/pricing-video");
+      setVideoSettings({ enabled: !!res.data.enabled, videoUrl: res.data.videoUrl || "" });
+    } catch (err) {
+      console.error("Video ayarları alınamadı:", err);
+    }
+  };
+
   useEffect(() => {
     fetchPackages();
+    fetchVideoSettings();
   }, []);
+
+  const handleSaveVideoSettings = async () => {
+    setVideoSaving(true);
+    try {
+      await axios.put("/api/admin/settings/pricing-video", videoSettings, {
+        headers: { Authorization: `Bearer ${token()}` },
+      });
+      showMsg("Video ayarları kaydedildi.");
+    } catch (err) {
+      console.error(err);
+      showMsg("Video ayarları kaydedilemedi.");
+    } finally {
+      setVideoSaving(false);
+    }
+  };
 
   const showMsg = (msg) => {
     setMessage(msg);
@@ -209,6 +239,62 @@ const AdminPackagePage = () => {
         >
           ➕ Yeni Paket
         </button>
+      </div>
+
+      {/* Paketler Bölümü Videosu */}
+      <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#f1f5f9] p-5 space-y-4">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <h3 className="text-sm font-black text-[#0f172a]">🎬 Paketler Bölümü Videosu</h3>
+            <p className="text-xs text-[#64748b] mt-0.5">Ana sayfada paketlerin üstünde gösterilen tanıtım videosu</p>
+          </div>
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={videoSettings.enabled}
+              onChange={(e) => setVideoSettings({ ...videoSettings, enabled: e.target.checked })}
+              className="w-4 h-4 accent-brand-navy"
+            />
+            <span className="text-xs font-bold text-[#475569]">Ana sayfada göster</span>
+          </label>
+        </div>
+
+        <div className="grid grid-cols-[1fr_auto] gap-3 items-end max-[560px]:grid-cols-1">
+          <div>
+            <label className="block text-xs font-bold text-[#475569] mb-1.5">YouTube Video Linki</label>
+            <input
+              className={inputCls}
+              placeholder="https://www.youtube.com/watch?v=..."
+              value={videoSettings.videoUrl}
+              onChange={(e) => setVideoSettings({ ...videoSettings, videoUrl: e.target.value })}
+            />
+            <p className="text-[11px] text-[#94a3b8] mt-1">
+              YouTube'dan kopyaladığınız normal video linkini (izleme, kısa veya paylaşım linki) direkt yapıştırabilirsiniz — otomatik uygun formata çevrilir.
+            </p>
+          </div>
+          <button
+            onClick={handleSaveVideoSettings}
+            disabled={videoSaving}
+            className="h-[42px] px-5 bg-gradient-to-r from-brand-navy to-[#2563eb] text-white rounded-xl text-sm font-bold hover:shadow-[0_6px_16px_rgba(16,4,129,0.3)] transition-all disabled:opacity-50 whitespace-nowrap"
+          >
+            {videoSaving ? "Kaydediliyor..." : "💾 Kaydet"}
+          </button>
+        </div>
+
+        {videoSettings.enabled && videoSettings.videoUrl && (
+          <div className="rounded-xl overflow-hidden border border-[#f1f5f9] max-w-sm">
+            <div className="aspect-video bg-[#0f172a] flex items-center justify-center text-white text-xs">
+              <iframe
+                src={toYouTubeEmbed(videoSettings.videoUrl) || ""}
+                title="Önizleme"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+                style={{ border: 0 }}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Package List */}

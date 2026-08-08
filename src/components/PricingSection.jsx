@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import axios from "../utils/axios";
 import CountdownPricingBanner from "./CountdownPricingBanner";
+import { toYouTubeEmbed } from "../utils/youtube";
 import {
   isPromoActive,
   formatPromoEndDate,
@@ -118,6 +119,7 @@ export default function PricingSection() {
   const [tab, setTab] = useState("yks");
   const [packages, setPackages] = useState([]);
   const [earlyReg, setEarlyReg] = useState(null);
+  const [video, setVideo] = useState(null);
   const [primaryIdx, setPrimaryIdx] = useState(0);
   const [activePlanIdx, setActivePlanIdx] = useState(0);
 
@@ -132,7 +134,12 @@ export default function PricingSection() {
     axios.get("/api/settings/early-registration")
       .then((r) => { if (r.data.enabled) setEarlyReg(r.data); })
       .catch(() => {});
+    axios.get("/api/settings/pricing-video")
+      .then((r) => { if (r.data.enabled && r.data.videoUrl) setVideo(r.data); })
+      .catch(() => {});
   }, []);
+
+  const videoEmbedUrl = video ? toYouTubeEmbed(video.videoUrl) : null;
 
   useEffect(() => { setPrimaryIdx(0); setActivePlanIdx(0); }, [tab]);
 
@@ -275,6 +282,39 @@ export default function PricingSection() {
             </p>
           </motion.div>
         </div>
+
+        {/* Tanıtım videosu */}
+        {videoEmbedUrl && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+            className="flex justify-center mb-14"
+          >
+            <div className="w-full" style={{ maxWidth: 760 }}>
+              <div
+                className="relative rounded-[28px] overflow-hidden"
+                style={{
+                  boxShadow: "0 20px 50px rgba(28,27,138,0.2)",
+                  border: "6px solid #1C1B8A",
+                }}
+              >
+                <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#D8FF4F", filter: "blur(70px)", opacity: 0.35, top: -60, left: -40, zIndex: 0 }} />
+                <div className="aspect-video relative" style={{ zIndex: 1 }}>
+                  <iframe
+                    src={videoEmbedUrl}
+                    title="Program Tanıtımı"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                    style={{ border: 0, display: "block" }}
+                  />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Geri sayım banner */}
         <CountdownPricingBanner />
