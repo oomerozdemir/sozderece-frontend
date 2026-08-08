@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "../utils/axios";
 import { Link } from "react-router-dom";
+import Button from "../components/ui/Button";
 
 export default function AdminCountdownPage() {
   const [enabled, setEnabled] = useState(false);
@@ -66,7 +67,7 @@ export default function AdminCountdownPage() {
         <div className="flex items-center gap-3 mb-8">
           <Link
             to="/admin"
-            className="text-sm text-blue-600 hover:underline"
+            className="text-sm text-brand-navy hover:underline"
           >
             ← Admin Paneli
           </Link>
@@ -110,7 +111,7 @@ export default function AdminCountdownPage() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="örn. Fiyatlar Yakında Artıyor!"
-                className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/10"
               />
             </div>
 
@@ -124,7 +125,7 @@ export default function AdminCountdownPage() {
                 value={subtitle}
                 onChange={(e) => setSubtitle(e.target.value)}
                 placeholder="örn. Bu fiyatlarla son şansın! Hemen paketini al."
-                className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/10"
               />
             </div>
 
@@ -137,7 +138,7 @@ export default function AdminCountdownPage() {
                 type="datetime-local"
                 value={targetDate}
                 onChange={(e) => setTargetDate(e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/10"
               />
               <p className="text-xs text-gray-400 mt-1">
                 Bu tarih/saate kadar geri sayım gösterilir. Süre dolunca otomatik gizlenir.
@@ -167,13 +168,9 @@ export default function AdminCountdownPage() {
             )}
 
             {/* Kaydet butonu */}
-            <button
-              type="submit"
-              disabled={saving}
-              className="w-full bg-[#0f2a4a] text-white font-bold py-3 rounded-xl hover:bg-[#1a3d6b] transition disabled:opacity-60"
-            >
+            <Button type="submit" disabled={saving} variant="secondary" fullWidth>
               {saving ? "Kaydediliyor..." : "Kaydet"}
-            </button>
+            </Button>
           </form>
         </div>
       </div>

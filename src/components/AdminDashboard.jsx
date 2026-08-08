@@ -55,6 +55,7 @@ const STATUS_META = {
   refunded:         { label: "İade Edildi",       cls: "bg-[#fef2f2] text-[#991b1b] border-[#fecaca]" },
   refund_requested: { label: "İade Talep Edildi", cls: "bg-[#fff7ed] text-[#9a3412] border-[#fed7aa]" },
   failed:           { label: "Başarısız",          cls: "bg-[#fef2f2] text-[#991b1b] border-[#fecaca]" },
+  pending:          { label: "Ödeme Bekleniyor",   cls: "bg-[#fffbeb] text-[#92400e] border-[#fde68a]" },
   expired:          { label: "Süresi Doldu",       cls: "bg-[#f8fafc] text-[#475569] border-[#e2e8f0]" },
   active:           { label: "Aktif",              cls: "bg-[#ecfdf5] text-[#065f46] border-[#a7f3d0]" },
 };
@@ -63,6 +64,7 @@ const getOrderMeta = (order) => {
   if (order.status === "refunded")         return STATUS_META.refunded;
   if (order.status === "refund_requested") return STATUS_META.refund_requested;
   if (order.status === "failed")           return STATUS_META.failed;
+  if (order.status === "pending" || order.status === "pending_payment") return STATUS_META.pending;
   if (new Date(order.endDate) < new Date()) return STATUS_META.expired;
   return STATUS_META.active;
 };
@@ -139,12 +141,10 @@ const AdminDashboard = () => {
       const updatedUser = { ...editingUser, assignedCoach: assignedCoachData };
       setUsers((prev) => prev.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
       setSelectedUser(null);
-      setMessage("Kullanıcı başarıyla güncellendi.");
-      setTimeout(() => setMessage(null), 3000);
+      showMsg("Kullanıcı başarıyla güncellendi.");
     } catch (error) {
       console.error("Kullanıcı güncellenemedi:", error);
-      setMessage("Güncelleme sırasında hata oluştu.");
-      setTimeout(() => setMessage(null), 3000);
+      showMsg("Güncelleme sırasında hata oluştu.");
     }
   };
 
@@ -155,23 +155,26 @@ const AdminDashboard = () => {
       await axios.delete(`/api/admin/users/${selectedUser.id}`, { headers: { Authorization: `Bearer ${token}` } });
       setUsers((prev) => prev.filter((u) => u.id !== selectedUser.id));
       setSelectedUser(null);
-      setMessage("Kullanıcı silindi.");
-      setTimeout(() => setMessage(null), 3000);
+      showMsg("Kullanıcı silindi.");
     } catch (error) {
       console.error("Kullanıcı silinemedi:", error);
-      setMessage("Kullanıcı silinemedi.");
-      setTimeout(() => setMessage(null), 3000);
+      showMsg("Kullanıcı silinemedi.");
     }
+  };
+
+  const showMsg = (msg) => {
+    setMessage(msg);
+    setTimeout(() => setMessage(null), 3000);
   };
 
   const handleApproveRefund = async (orderId) => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(`/api/admin/orders/${orderId}/approve-refund`, {}, { headers: { Authorization: `Bearer ${token}` } });
-      alert("İade onaylandı.");
-      window.location.reload();
+      setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status: "refunded" } : o)));
+      showMsg("İade onaylandı.");
     } catch (err) {
-      alert("İade onaylanamadı.");
+      showMsg("İade onaylanamadı.");
     }
   };
 
@@ -180,11 +183,11 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(`/api/admin/orders/${orderId}`, { endDate: newEndDate }, { headers: { Authorization: `Bearer ${token}` } });
-      alert("Bitiş tarihi başarıyla güncellendi.");
-      window.location.reload();
+      setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, endDate: newEndDate } : o)));
+      showMsg("Bitiş tarihi başarıyla güncellendi.");
     } catch (error) {
       console.error("Tarih güncellenemedi:", error);
-      alert("Bitiş tarihi güncellenirken bir hata oluştu.");
+      showMsg("Bitiş tarihi güncellenirken bir hata oluştu.");
     }
   };
 
@@ -192,13 +195,16 @@ const AdminDashboard = () => {
     if (!window.confirm("Fatura bilgilerini güncellemek istediğinize emin misiniz?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`/api/admin/orders/${orderId}/billing`, updatedBillingInfo, { headers: { Authorization: `Bearer ${token}` } });
-      alert("Fatura bilgileri güncellendi.");
+      const res = await axios.put(`/api/admin/orders/${orderId}/billing`, updatedBillingInfo, { headers: { Authorization: `Bearer ${token}` } });
+      const newBillingInfo = res.data?.updatedOrder?.billingInfo;
+      setOrders((prev) =>
+        prev.map((o) => (o.id === orderId ? { ...o, billingInfo: newBillingInfo || { ...o.billingInfo, ...updatedBillingInfo } } : o))
+      );
       setEditingBilling(null);
-      window.location.reload();
+      showMsg("Fatura bilgileri güncellendi.");
     } catch (err) {
       console.error("Fatura güncelleme hatası:", err);
-      alert("Fatura bilgileri güncellenemedi.");
+      showMsg("Fatura bilgileri güncellenemedi.");
     }
   };
 
@@ -477,13 +483,15 @@ const AdminDashboard = () => {
                                 <p><strong>Şehir:</strong> {order.billingInfo.city} — {order.billingInfo.postalCode}</p>
                                 <p><strong>Telefon:</strong> {order.billingInfo.phone}</p>
                                 <p><strong>E-posta:</strong> {order.billingInfo.email}</p>
+                                <p><strong>Sınıf:</strong> {order.billingInfo.sinif || "—"}</p>
+                                <p><strong>Alan:</strong> {order.billingInfo.alan || "—"}</p>
                               </div>
                             ) : (
                               <p className="text-xs text-[#94a3b8] mt-1">Fatura bilgisi bulunamadı.</p>
                             )}
                             {editingBilling === order.id ? (
                               <div className="mt-2 bg-white rounded-xl p-3 border border-[#e5e7eb] grid grid-cols-2 gap-2 max-[640px]:grid-cols-1">
-                                {["name","surname","tcNo","address","city","postalCode","phone","email"].map((f) => (
+                                {["name","surname","tcNo","address","city","postalCode","phone","email","sinif","alan"].map((f) => (
                                   <input key={f} className={inputCls} placeholder={f}
                                     value={updatedBillingInfo[f] || ""}
                                     onChange={(e) => setUpdatedBillingInfo({ ...updatedBillingInfo, [f]: e.target.value })}
@@ -617,12 +625,10 @@ const AdminDashboard = () => {
                         const res = await axios.post("/api/admin/users", newUser, { headers: { Authorization: `Bearer ${token}` } });
                         setUsers([...users, res.data]);
                         setNewUser({ name: "", email: "", password: "", role: "student" });
-                        setMessage("Yeni kullanıcı oluşturuldu.");
-                        setTimeout(() => setMessage(null), 3000);
+                        showMsg("Yeni kullanıcı oluşturuldu.");
                       } catch (err) {
                         console.error(err);
-                        setMessage("Kullanıcı oluşturulamadı.");
-                        setTimeout(() => setMessage(null), 3000);
+                        showMsg("Kullanıcı oluşturulamadı.");
                       }
                     }}
                   >

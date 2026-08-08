@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "../utils/axios";
 import { Link } from "react-router-dom";
+import Button from "../components/ui/Button";
 
 export default function AdminEarlyRegistrationPage() {
   const [enabled, setEnabled] = useState(false);
@@ -63,7 +64,7 @@ export default function AdminEarlyRegistrationPage() {
   };
 
   const inputCls =
-    "w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400";
+    "w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/10";
 
   if (loading) {
     return (
@@ -78,7 +79,7 @@ export default function AdminEarlyRegistrationPage() {
       <div className="max-w-[640px] mx-auto">
 
         <div className="flex items-center gap-3 mb-8">
-          <Link to="/admin" className="text-sm text-blue-600 hover:underline">
+          <Link to="/admin" className="text-sm text-brand-navy hover:underline">
             ← Admin Paneli
           </Link>
           <span className="text-gray-300">/</span>
@@ -236,13 +237,9 @@ export default function AdminEarlyRegistrationPage() {
               </div>
             )}
 
-            <button
-              type="submit"
-              disabled={saving}
-              className="w-full bg-[#0f2a4a] text-white font-bold py-3 rounded-xl hover:bg-[#1a3d6b] transition disabled:opacity-60"
-            >
+            <Button type="submit" disabled={saving} variant="secondary" fullWidth>
               {saving ? "Kaydediliyor..." : "Kaydet"}
-            </button>
+            </Button>
           </form>
         </div>
       </div>
