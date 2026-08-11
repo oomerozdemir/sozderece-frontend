@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaBullseye, FaClipboardList, FaHourglassHalf } from "react-icons/fa";
+import axios from "../utils/axios";
 
 const WA_LINK = "https://wa.me/905312546701?text=S%C4%B0STEM";
 
@@ -66,12 +68,526 @@ const SOCIAL_PROOF = [
 
 const MARQUEE_CARDS = [...SOCIAL_PROOF, ...SOCIAL_PROOF];
 
-export default function HeroSection() {
+const eyebrowStyle = {
+  display: "inline-flex", alignItems: "center", gap: 8,
+  background: "rgba(216,255,79,0.12)",
+  border: "1px solid rgba(216,255,79,0.3)",
+  borderRadius: 999, padding: "7px 16px",
+};
+
+// ══════════════════════════════════════════════
+// SLAYT 1 — Varsayılan (YKS + LGS genel)
+// ══════════════════════════════════════════════
+function DefaultSlide() {
   const stats = [
     { value: "500+", label: "Öğrenci" },
     { value: "%94", label: "Hedef Başarı" },
-    { value: "4.9★", label: "Veli Puanı" },
   ];
+
+  return (
+    <div className="grid grid-cols-[1fr_auto] gap-16 items-center max-[960px]:grid-cols-1">
+      {/* Sol — metin */}
+      <div>
+        <motion.div {...fadeUp} className="mb-7">
+          <span style={eyebrowStyle}>
+            <span style={{
+              width: 7, height: 7, borderRadius: "50%",
+              background: "#D8FF4F", display: "inline-block",
+              animation: "heroSparkle 1.5s ease-in-out infinite",
+            }} />
+            <span className="font-fredoka text-lime text-sm font-semibold tracking-[0.1em] uppercase">
+              LGS & YKS Koçluğu
+            </span>
+          </span>
+        </motion.div>
+
+        <motion.h1
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.1 }}
+          className="font-fredoka text-[72px] max-[900px]:text-[52px] max-[640px]:text-[42px] max-[400px]:text-[34px] leading-[1.05] text-white mb-6"
+          style={{ letterSpacing: "-0.5px", maxWidth: 640 }}
+        >
+          Çalışıyorsun Ama Netlerin Artmıyor Mu? {" "}
+          <span style={{
+            background: "linear-gradient(90deg, #D8FF4F, #ffffff, #D8FF4F)",
+            backgroundSize: "200% auto",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            animation: "heroShimmer 3s linear infinite",
+          }}>Sorun Sende Değil.</span>
+        </motion.h1>
+
+        <motion.p
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.15 }}
+          className="font-nunito font-bold text-white/65 text-[19px] max-[640px]:text-base leading-relaxed mb-10"
+          style={{ maxWidth: 520 }}
+        >
+          Kişiye özel koçluk, haftalık takip ve deneme analizleriyle LGS & YKS'ye hazırlan. Sistematik, stressiz, sonuç odaklı.
+        </motion.p>
+
+        <motion.div
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.24 }}
+          className="flex flex-wrap gap-4 mb-14"
+        >
+          <Link
+            to="/ucretsiz-on-gorusme"
+            className="inline-flex items-center gap-2 text-white font-fredoka font-bold text-[18px] px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
+            style={{
+              background: "#FF6B35",
+              animation: "heroPulse 2.5s ease-out infinite",
+              letterSpacing: "0.3px",
+            }}
+          >
+            Ücretsiz Tanışma Görüşmesi
+          </Link>
+          <a
+            href="#nasil-calisir"
+            className="inline-flex items-center gap-2 text-white font-fredoka font-semibold text-[16px] px-7 py-4 rounded-full no-underline transition-all hover:bg-white/10"
+            style={{ border: "1.5px solid rgba(255,255,255,0.25)" }}
+          >
+            Nasıl Çalışır?
+          </a>
+        </motion.div>
+
+        <div className="flex gap-8">
+          {stats.map((s, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
+            >
+              <div className="font-fredoka font-bold text-lime text-[28px] leading-none">{s.value}</div>
+              <div className="font-nunito font-bold text-white/50 text-[13px] mt-1 tracking-wide">{s.label}</div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Sağ — floating kartlar */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, delay: 0.2 }}
+        className="flex-shrink-0 max-[960px]:hidden"
+      >
+        <div className="relative" style={{ width: 390, height: 440 }}>
+          {/* Glow ring */}
+          <div style={{
+            position: "absolute", top: 60, left: 10,
+            width: 380, height: 380, borderRadius: "50%",
+            background: "#4a1da0", filter: "blur(80px)", opacity: 0.28,
+            animation: "heroOrbMove 10s ease-in-out infinite",
+            pointerEvents: "none",
+          }} />
+
+          {/* Ana kart — haftalık plan */}
+          <div style={{
+            position: "absolute", top: 70, left: 40,
+            width: 310,
+            background: "rgba(255,255,255,0.06)",
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: 28, padding: "28px 24px",
+            animation: "heroFloat1 5s ease-in-out infinite",
+            boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
+          }}>
+            <div className="font-fredoka font-bold text-lime text-sm tracking-[0.12em] uppercase mb-4">
+              Bu Haftanın Planı
+            </div>
+            {[
+              { text: "Mat: Türevler — 2 ders", done: true },
+              { text: "Fizik: Elektrik — 1 ders", done: true },
+              { text: "Deneme Analizi — Cuma", done: false },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3 mb-3.5">
+                <div style={{
+                  width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
+                  background: item.done ? "#D8FF4F" : "rgba(255,255,255,0.1)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  {item.done && (
+                    <svg width="11" height="11" viewBox="0 0 12 12">
+                      <polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  )}
+                </div>
+                <span className="font-nunito font-bold text-sm" style={{ color: item.done ? "#fff" : "rgba(255,255,255,0.45)" }}>
+                  {item.text}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Turuncu rozet — net artışı */}
+          <div style={{
+            position: "absolute", top: 0, left: 0,
+            background: "#FF6B35", borderRadius: 20, padding: "16px 22px",
+            animation: "heroFloat2 4s ease-in-out infinite",
+            boxShadow: "0 12px 30px rgba(255,107,53,0.5)",
+          }}>
+            <div className="font-fredoka font-bold text-white text-[28px] leading-none">+47</div>
+            <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">Net artışı</div>
+          </div>
+
+          {/* Sarı rozet — koç */}
+          <div style={{
+            position: "absolute", bottom: 10, right: 0,
+            background: "rgba(216,255,79,0.96)", borderRadius: 18, padding: "14px 20px",
+            animation: "heroFloat3 6s ease-in-out infinite",
+            boxShadow: "0 10px 24px rgba(216,255,79,0.35)",
+          }}>
+            <div className="font-fredoka font-bold text-page-dark text-[15px] leading-snug">Koçunla bugün</div>
+            <div className="font-fredoka font-bold text-page-dark text-[15px] flex items-center gap-1.5">görüş <FaBullseye size={13} /></div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+// SLAYT 2 — Erken Kayıt (admin panelden yönetilen
+// /api/settings/early-registration verisiyle dinamik)
+// ══════════════════════════════════════════════
+function ErkenKayitSlide({ earlyReg, daysLeft }) {
+  const title = earlyReg.title || "Erken Kayıt Fırsatını Kaçırma!";
+  const subtitle = earlyReg.subtitle || "Sınav öncesi başla, daha az öde. Bu fiyatlarla sınırlı süre.";
+  const discountText = earlyReg.discountText || "%20 İndirim";
+  const ctaText = earlyReg.ctaText || "Hemen Kaydol →";
+
+  return (
+    <div className="grid grid-cols-[1fr_auto] gap-16 items-center max-[960px]:grid-cols-1">
+      {/* Sol — metin */}
+      <div>
+        <motion.div {...fadeUp} className="mb-7">
+          <span style={eyebrowStyle}>
+            <FaHourglassHalf size={11} color="#D8FF4F" />
+            <span className="font-fredoka text-lime text-sm font-semibold tracking-[0.1em] uppercase">
+              Erken Kayıt
+            </span>
+          </span>
+        </motion.div>
+
+        <motion.h1
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.1 }}
+          className="font-fredoka text-[64px] max-[900px]:text-[46px] max-[640px]:text-[38px] max-[400px]:text-[30px] leading-[1.05] text-white mb-6"
+          style={{ letterSpacing: "-0.5px", maxWidth: 640 }}
+        >
+          {title.split(" ").slice(0, -2).join(" ")}{" "}
+          <span style={{
+            background: "linear-gradient(90deg, #D8FF4F, #ffffff, #D8FF4F)",
+            backgroundSize: "200% auto",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            animation: "heroShimmer 3s linear infinite",
+          }}>{title.split(" ").slice(-2).join(" ")}</span>
+        </motion.h1>
+
+        <motion.p
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.15 }}
+          className="font-nunito font-bold text-white/65 text-[19px] max-[640px]:text-base leading-relaxed mb-8"
+          style={{ maxWidth: 520 }}
+        >
+          {subtitle}
+        </motion.p>
+
+        <motion.div
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.2 }}
+          className="flex flex-wrap items-center gap-3 mb-10"
+        >
+          <span className="font-fredoka font-bold text-[15px] px-5 py-2 rounded-full" style={{ background: "#D8FF4F", color: "#0D0A2E" }}>
+            {discountText}
+          </span>
+          {daysLeft !== null && (
+            <span className="font-fredoka font-bold text-[15px] px-5 py-2 rounded-full text-white" style={{ background: "rgba(255,255,255,0.1)" }}>
+              ⏳ {daysLeft} gün kaldı
+            </span>
+          )}
+        </motion.div>
+
+        <motion.div
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.28 }}
+          className="flex flex-wrap gap-4"
+        >
+          <Link
+            to="/hemen-basla"
+            className="inline-flex items-center gap-2 font-fredoka font-bold text-[18px] px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
+            style={{
+              background: "#D8FF4F",
+              color: "#0D0A2E",
+              animation: "heroPulse 2.5s ease-out infinite",
+              letterSpacing: "0.3px",
+            }}
+          >
+            {ctaText}
+          </Link>
+        </motion.div>
+      </div>
+
+      {/* Sağ — indirim vitrini */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, delay: 0.2 }}
+        className="flex-shrink-0 max-[960px]:hidden"
+      >
+        <div className="relative" style={{ width: 390, height: 440 }}>
+          <div style={{
+            position: "absolute", top: 60, left: 10,
+            width: 380, height: 380, borderRadius: "50%",
+            background: "#D8FF4F", filter: "blur(90px)", opacity: 0.22,
+            animation: "heroOrbMove 10s ease-in-out infinite",
+            pointerEvents: "none",
+          }} />
+
+          <div style={{
+            position: "absolute", top: 90, left: 45,
+            width: 300,
+            background: "rgba(216,255,79,0.1)",
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(216,255,79,0.3)",
+            borderRadius: 28, padding: "36px 28px",
+            animation: "heroFloat1 5s ease-in-out infinite",
+            boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
+            textAlign: "center",
+          }}>
+            <div className="font-fredoka font-bold text-lime text-xs tracking-[0.12em] uppercase mb-3">
+              Erken Kayıt Fiyatı
+            </div>
+            <div className="font-fredoka font-bold text-white leading-none mb-2" style={{ fontSize: 44 }}>
+              {discountText}
+            </div>
+            <div className="font-nunito font-bold text-white/55 text-sm">
+              Kontenjan dolmadan yerini ayırt
+            </div>
+          </div>
+
+          {daysLeft !== null && (
+            <div style={{
+              position: "absolute", top: 0, right: 10,
+              background: "#FF6B35", borderRadius: 20, padding: "14px 20px",
+              animation: "heroFloat2 4s ease-in-out infinite",
+              boxShadow: "0 12px 30px rgba(255,107,53,0.5)",
+            }}>
+              <div className="font-fredoka font-bold text-white text-[24px] leading-none">{daysLeft}</div>
+              <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">gün kaldı</div>
+            </div>
+          )}
+
+          <div style={{
+            position: "absolute", bottom: 20, left: 0,
+            background: "rgba(255,255,255,0.96)", borderRadius: 18, padding: "12px 18px",
+            animation: "heroFloat3 6s ease-in-out infinite",
+            boxShadow: "0 10px 24px rgba(0,0,0,0.2)",
+          }}>
+            <div className="font-fredoka font-bold text-page-dark text-[14px]">⚡ Sınırlı kontenjan</div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+// SLAYT 3 — LGS'ye özel
+// ══════════════════════════════════════════════
+function LgsSlide() {
+  return (
+    <div className="grid grid-cols-[1fr_auto] gap-16 items-center max-[960px]:grid-cols-1">
+      {/* Sol — metin */}
+      <div>
+        <motion.div {...fadeUp} className="mb-7">
+          <span style={eyebrowStyle}>
+            <span style={{
+              width: 7, height: 7, borderRadius: "50%",
+              background: "#D8FF4F", display: "inline-block",
+              animation: "heroSparkle 1.5s ease-in-out infinite",
+            }} />
+            <span className="font-fredoka text-lime text-sm font-semibold tracking-[0.1em] uppercase">
+              LGS Koçluğu
+            </span>
+          </span>
+        </motion.div>
+
+        <motion.h1
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.1 }}
+          className="font-fredoka text-[64px] max-[900px]:text-[46px] max-[640px]:text-[38px] max-[400px]:text-[30px] leading-[1.05] text-white mb-6"
+          style={{ letterSpacing: "-0.5px", maxWidth: 640 }}
+        >
+          8. Sınıf Stresi Bitsin, {" "}
+          <span style={{
+            background: "linear-gradient(90deg, #D8FF4F, #ffffff, #D8FF4F)",
+            backgroundSize: "200% auto",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            animation: "heroShimmer 3s linear infinite",
+          }}>LGS'ye Hazır Gitsin.</span>
+        </motion.h1>
+
+        <motion.p
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.15 }}
+          className="font-nunito font-bold text-white/65 text-[19px] max-[640px]:text-base leading-relaxed mb-10"
+          style={{ maxWidth: 520 }}
+        >
+          Günlük takip, telefon yönetimi ve haftalık veli raporuyla LGS'ye kadar yanında biri olsun.
+        </motion.p>
+
+        <motion.div
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.24 }}
+          className="flex flex-wrap gap-4"
+        >
+          <Link
+            to="/lgs-hazirlik"
+            className="inline-flex items-center gap-2 text-white font-fredoka font-bold text-[18px] px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
+            style={{
+              background: "#FF6B35",
+              animation: "heroPulse 2.5s ease-out infinite",
+              letterSpacing: "0.3px",
+            }}
+          >
+            LGS Hazırlığını İncele
+          </Link>
+          <Link
+            to="/ucretsiz-on-gorusme"
+            className="inline-flex items-center gap-2 text-white font-fredoka font-semibold text-[16px] px-7 py-4 rounded-full no-underline transition-all hover:bg-white/10"
+            style={{ border: "1.5px solid rgba(255,255,255,0.25)" }}
+          >
+            Ücretsiz Görüşme
+          </Link>
+        </motion.div>
+      </div>
+
+      {/* Sağ — floating kartlar */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, delay: 0.2 }}
+        className="flex-shrink-0 max-[960px]:hidden"
+      >
+        <div className="relative" style={{ width: 390, height: 440 }}>
+          <div style={{
+            position: "absolute", top: 60, left: 10,
+            width: 380, height: 380, borderRadius: "50%",
+            background: "#7340C8", filter: "blur(80px)", opacity: 0.28,
+            animation: "heroOrbMove 10s ease-in-out infinite",
+            pointerEvents: "none",
+          }} />
+
+          {/* Ana kart — haftalık plan */}
+          <div style={{
+            position: "absolute", top: 70, left: 40,
+            width: 310,
+            background: "rgba(255,255,255,0.06)",
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: 28, padding: "28px 24px",
+            animation: "heroFloat1 5s ease-in-out infinite",
+            boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
+          }}>
+            <div className="font-fredoka font-bold text-lime text-sm tracking-[0.12em] uppercase mb-4">
+              Bu Haftanın Planı
+            </div>
+            {[
+              { text: "Türkçe: Paragraf — 2 ders", done: true },
+              { text: "Matematik: Denklemler — 1 ders", done: true },
+              { text: "Deneme Analizi — Cuma", done: false },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3 mb-3.5">
+                <div style={{
+                  width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
+                  background: item.done ? "#D8FF4F" : "rgba(255,255,255,0.1)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  {item.done && (
+                    <svg width="11" height="11" viewBox="0 0 12 12">
+                      <polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  )}
+                </div>
+                <span className="font-nunito font-bold text-sm" style={{ color: item.done ? "#fff" : "rgba(255,255,255,0.45)" }}>
+                  {item.text}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Mor rozet — net artışı */}
+          <div style={{
+            position: "absolute", top: 0, left: 0,
+            background: "#7340C8", borderRadius: 20, padding: "16px 22px",
+            animation: "heroFloat2 4s ease-in-out infinite",
+            boxShadow: "0 12px 30px rgba(115,64,200,0.5)",
+          }}>
+            <div className="font-fredoka font-bold text-white text-[28px] leading-none">+38</div>
+            <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">Net artışı</div>
+          </div>
+
+          {/* Sarı rozet — veli raporu */}
+          <div style={{
+            position: "absolute", bottom: 10, right: 0,
+            background: "rgba(216,255,79,0.96)", borderRadius: 18, padding: "14px 20px",
+            animation: "heroFloat3 6s ease-in-out infinite",
+            boxShadow: "0 10px 24px rgba(216,255,79,0.35)",
+          }}>
+            <div className="font-fredoka font-bold text-page-dark text-[15px] leading-snug">Veli raporu</div>
+            <div className="font-fredoka font-bold text-page-dark text-[15px] flex items-center gap-1.5">her hafta <FaClipboardList size={13} /></div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+export default function HeroSection() {
+  const [earlyReg, setEarlyReg] = useState(null);
+  useEffect(() => {
+    axios.get("/api/settings/early-registration")
+      .then((r) => setEarlyReg(r.data))
+      .catch(() => {});
+  }, []);
+  const earlyDaysLeft = earlyReg?.endDate
+    ? Math.ceil((new Date(earlyReg.endDate) - new Date()) / 86400000)
+    : null;
+  const earlyRegActive = !!earlyReg?.enabled && (earlyDaysLeft === null || earlyDaysLeft > 0);
+
+  const slides = [
+    { key: "default", content: <DefaultSlide /> },
+    ...(earlyRegActive ? [{ key: "erken", content: <ErkenKayitSlide earlyReg={earlyReg} daysLeft={earlyDaysLeft} /> }] : []),
+    { key: "lgs", content: <LgsSlide /> },
+  ];
+
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  // earlyRegActive geç yüklendiğinde slides.length değişip activeIdx'in
+  // sınırın dışında kalmasını önler.
+  useEffect(() => {
+    if (activeIdx >= slides.length) setActiveIdx(0);
+  }, [slides.length, activeIdx]);
+
+  useEffect(() => {
+    if (slides.length < 2) return;
+    const id = setInterval(() => {
+      setActiveIdx((i) => (i + 1) % slides.length);
+    }, 7000);
+    return () => clearInterval(id);
+  }, [slides.length]);
 
   return (
     <section
@@ -121,181 +637,38 @@ export default function HeroSection() {
         }} />
       ))}
 
-      {/* Main content */}
-      <div className="max-w-[1200px] mx-auto px-5 pt-16 pb-6 max-[768px]:pt-12 max-[768px]:pb-5 w-full" style={{ position: "relative", zIndex: 1 }}>
-        <div className="grid grid-cols-[1fr_auto] gap-16 items-center max-[960px]:grid-cols-1">
-
-          {/* Sol — metin */}
-          <div>
-            <motion.div {...fadeUp} className="mb-7">
-              <span style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                background: "rgba(216,255,79,0.12)",
-                border: "1px solid rgba(216,255,79,0.3)",
-                borderRadius: 999, padding: "7px 16px",
-              }}>
-                <span style={{
-                  width: 7, height: 7, borderRadius: "50%",
-                  background: "#D8FF4F", display: "inline-block",
-                  animation: "heroSparkle 1.5s ease-in-out infinite",
-                }} />
-                <span className="font-fredoka text-lime text-sm font-semibold tracking-[0.1em] uppercase">
-                  LGS & YKS Koçluğu
-                </span>
-              </span>
-            </motion.div>
-
-            <motion.h1
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: 0.1 }}
-              className="font-fredoka text-[72px] max-[900px]:text-[52px] max-[640px]:text-[42px] max-[400px]:text-[34px] leading-[1.05] text-white mb-6"
-              style={{ letterSpacing: "-0.5px", maxWidth: 640 }}
-            >
-              Çalışıyorsun Ama Netlerin Artmıyor Mu? {" "}
-              <span style={{
-                background: "linear-gradient(90deg, #D8FF4F, #ffffff, #D8FF4F)",
-                backgroundSize: "200% auto",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                animation: "heroShimmer 3s linear infinite",
-              }}>Sorun Sende Değil.</span>{" "}
-          
-            </motion.h1>
-
-            <motion.p
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: 0.15 }}
-              className="font-nunito font-bold text-white/65 text-[19px] max-[640px]:text-base leading-relaxed mb-10"
-              style={{ maxWidth: 520 }}
-            >
-              Kişiye özel koçluk, haftalık takip ve deneme analizleriyle LGS & YKS'ye hazırlan. Sistematik, stressiz, sonuç odaklı.
-            </motion.p>
-
-            <motion.div
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: 0.24 }}
-              className="flex flex-wrap gap-4 mb-14"
-            >
-              <Link
-                to="/ucretsiz-on-gorusme"
-                className="inline-flex items-center gap-2 text-white font-fredoka font-bold text-[18px] px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
-                style={{
-                  background: "#FF6B35",
-                  animation: "heroPulse 2.5s ease-out infinite",
-                  letterSpacing: "0.3px",
-                }}
-              >
-                Ücretsiz Tanışma Görüşmesi
-              </Link>
-              <a
-                href="#nasil-calisir"
-                className="inline-flex items-center gap-2 text-white font-fredoka font-semibold text-[16px] px-7 py-4 rounded-full no-underline transition-all hover:bg-white/10"
-                style={{ border: "1.5px solid rgba(255,255,255,0.25)" }}
-              >
-                Nasıl Çalışır?
-              </a>
-            </motion.div>
-
-            <div className="flex gap-8">
-              {stats.map((s, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
-                >
-                  <div className="font-fredoka font-bold text-lime text-[28px] leading-none">{s.value}</div>
-                  <div className="font-nunito font-bold text-white/50 text-[13px] mt-1 tracking-wide">{s.label}</div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          {/* Sağ — floating kartlar */}
+      {/* Kayan slayt içeriği */}
+      <div className="max-w-[1200px] mx-auto px-5 pt-16 pb-6 max-[768px]:pt-12 max-[768px]:pb-5 w-full" style={{ position: "relative", zIndex: 1, minHeight: 440 }}>
+        <AnimatePresence mode="wait">
           <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="flex-shrink-0 max-[960px]:hidden"
+            key={slides[activeIdx]?.key}
+            initial={{ opacity: 0, x: 60 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -60 }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
           >
-            <div className="relative" style={{ width: 390, height: 440 }}>
-
-              {/* Glow ring */}
-              <div style={{
-                position: "absolute", top: 60, left: 10,
-                width: 380, height: 380, borderRadius: "50%",
-                background: "#4a1da0", filter: "blur(80px)", opacity: 0.28,
-                animation: "heroOrbMove 10s ease-in-out infinite",
-                pointerEvents: "none",
-              }} />
-
-              {/* Ana kart — haftalık plan */}
-              <div style={{
-                position: "absolute", top: 70, left: 40,
-                width: 310,
-                background: "rgba(255,255,255,0.06)",
-                backdropFilter: "blur(20px)",
-                border: "1px solid rgba(255,255,255,0.12)",
-                borderRadius: 28, padding: "28px 24px",
-                animation: "heroFloat1 5s ease-in-out infinite",
-                boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
-              }}>
-                <div className="font-fredoka font-bold text-lime text-sm tracking-[0.12em] uppercase mb-4">
-                  Bu Haftanın Planı
-                </div>
-                {[
-                  { text: "Mat: Türevler — 2 ders", done: true },
-                  { text: "Fizik: Elektrik — 1 ders", done: true },
-                  { text: "Deneme Analizi — Cuma", done: false },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 mb-3.5">
-                    <div style={{
-                      width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
-                      background: item.done ? "#D8FF4F" : "rgba(255,255,255,0.1)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      {item.done && (
-                        <svg width="11" height="11" viewBox="0 0 12 12">
-                          <polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" />
-                        </svg>
-                      )}
-                    </div>
-                    <span className="font-nunito font-bold text-sm" style={{ color: item.done ? "#fff" : "rgba(255,255,255,0.45)" }}>
-                      {item.text}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Turuncu rozet — net artışı */}
-              <div style={{
-                position: "absolute", top: 0, left: 0,
-                background: "#FF6B35", borderRadius: 20, padding: "16px 22px",
-                animation: "heroFloat2 4s ease-in-out infinite",
-                boxShadow: "0 12px 30px rgba(255,107,53,0.5)",
-              }}>
-                <div className="font-fredoka font-bold text-white text-[28px] leading-none">+47</div>
-                <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">Net artışı</div>
-              </div>
-
-              {/* Sarı rozet — koç */}
-              <div style={{
-                position: "absolute", bottom: 10, right: 0,
-                background: "rgba(216,255,79,0.96)", borderRadius: 18, padding: "14px 20px",
-                animation: "heroFloat3 6s ease-in-out infinite",
-                boxShadow: "0 10px 24px rgba(216,255,79,0.35)",
-              }}>
-                <div className="font-fredoka font-bold text-page-dark text-[15px] leading-snug">Koçunla bugün</div>
-                <div className="font-fredoka font-bold text-page-dark text-[15px]">görüş 🎯</div>
-              </div>
-
-            </div>
+            {slides[activeIdx]?.content}
           </motion.div>
-        </div>
+        </AnimatePresence>
       </div>
+
+      {/* Slayt noktaları */}
+      {slides.length > 1 && (
+        <div className="flex justify-center gap-2 relative" style={{ zIndex: 1, marginTop: -8, marginBottom: 8 }}>
+          {slides.map((s, i) => (
+            <button
+              key={s.key}
+              onClick={() => setActiveIdx(i)}
+              aria-label={`Slayt ${i + 1}`}
+              className="h-2 rounded-full transition-all duration-300 border-none cursor-pointer"
+              style={{
+                width: i === activeIdx ? 22 : 8,
+                background: i === activeIdx ? "#D8FF4F" : "rgba(255,255,255,0.25)",
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Sosyal kanıt marquee şeridi */}
       <div
