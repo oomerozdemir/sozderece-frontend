@@ -568,8 +568,8 @@ export default function HeroSection() {
   const earlyRegActive = !!earlyReg?.enabled && (earlyDaysLeft === null || earlyDaysLeft > 0);
 
   const slides = [
-    { key: "default", content: <DefaultSlide /> },
     ...(earlyRegActive ? [{ key: "erken", content: <ErkenKayitSlide earlyReg={earlyReg} daysLeft={earlyDaysLeft} /> }] : []),
+    { key: "default", content: <DefaultSlide /> },
     { key: "lgs", content: <LgsSlide /> },
   ];
 
