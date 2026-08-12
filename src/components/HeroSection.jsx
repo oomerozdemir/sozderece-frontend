@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaBullseye, FaClipboardList, FaHourglassHalf } from "react-icons/fa";
+import { FaBullseye, FaClipboardList, FaHourglassHalf, FaShieldAlt } from "react-icons/fa";
 import axios from "../utils/axios";
 
 const WA_LINK = "https://wa.me/905312546701?text=S%C4%B0STEM";
@@ -256,7 +256,6 @@ function DefaultSlide() {
 // /api/settings/early-registration verisiyle dinamik)
 // ══════════════════════════════════════════════
 function ErkenKayitSlide({ earlyReg, daysLeft }) {
-  const title = earlyReg.title || "Erken Kayıt Fırsatını Kaçırma!";
   const subtitle = earlyReg.subtitle || "Sınav öncesi başla, daha az öde. Bu fiyatlarla sınırlı süre.";
   const discountText = earlyReg.discountText || "%20 İndirim";
   const ctaText = earlyReg.ctaText || "Hemen Kaydol →";
@@ -280,7 +279,7 @@ function ErkenKayitSlide({ earlyReg, daysLeft }) {
           className="font-fredoka text-[64px] max-[900px]:text-[46px] max-[640px]:text-[38px] max-[400px]:text-[30px] leading-[1.05] text-white mb-6"
           style={{ letterSpacing: "-0.5px", maxWidth: 640 }}
         >
-          {title.split(" ").slice(0, -2).join(" ")}{" "}
+          Sınav Senesine{" "}
           <span style={{
             background: "linear-gradient(90deg, #D8FF4F, #ffffff, #D8FF4F)",
             backgroundSize: "200% auto",
@@ -288,13 +287,13 @@ function ErkenKayitSlide({ earlyReg, daysLeft }) {
             backgroundClip: "text",
             WebkitTextFillColor: "transparent",
             animation: "heroShimmer 3s linear infinite",
-          }}>{title.split(" ").slice(-2).join(" ")}</span>
+          }}>Rakiplerinden Önde Başla!</span>
         </motion.h1>
 
         <motion.p
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.15 }}
-          className="font-nunito font-bold text-white/65 text-[19px] max-[640px]:text-base leading-relaxed mb-8"
+          className="font-nunito font-bold text-white/65 text-[19px] max-[640px]:text-base leading-relaxed mb-10"
           style={{ maxWidth: 520 }}
         >
           {subtitle}
@@ -302,22 +301,7 @@ function ErkenKayitSlide({ earlyReg, daysLeft }) {
 
         <motion.div
           {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.2 }}
-          className="flex flex-wrap items-center gap-3 mb-10"
-        >
-          <span className="font-fredoka font-bold text-[15px] px-5 py-2 rounded-full" style={{ background: "#D8FF4F", color: "#0D0A2E" }}>
-            {discountText}
-          </span>
-          {daysLeft !== null && (
-            <span className="font-fredoka font-bold text-[15px] px-5 py-2 rounded-full text-white" style={{ background: "rgba(255,255,255,0.1)" }}>
-              ⏳ {daysLeft} gün kaldı
-            </span>
-          )}
-        </motion.div>
-
-        <motion.div
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.28 }}
+          transition={{ ...fadeUp.transition, delay: 0.24 }}
           className="flex flex-wrap gap-4"
         >
           <Link
@@ -333,9 +317,20 @@ function ErkenKayitSlide({ earlyReg, daysLeft }) {
             {ctaText}
           </Link>
         </motion.div>
+
+        <motion.div
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.32 }}
+          className="flex items-center gap-2 mt-5"
+        >
+          <FaShieldAlt size={13} color="#D8FF4F" style={{ flexShrink: 0 }} />
+          <span className="font-nunito font-bold text-white/50 text-[13px]">
+            14 gün içinde beğenmezsen %100 iade garantisi
+          </span>
+        </motion.div>
       </div>
 
-      {/* Sağ — indirim vitrini */}
+      {/* Sağ — değer görseli: programın kendisi, indirim/kontenjan sadece destekleyici rozet */}
       <motion.div
         initial={{ opacity: 0, scale: 0.92 }}
         whileInView={{ opacity: 1, scale: 1 }}
@@ -352,28 +347,41 @@ function ErkenKayitSlide({ earlyReg, daysLeft }) {
             pointerEvents: "none",
           }} />
 
+          {/* Ana kart — programa dahil olanlar (değer görseli) */}
           <div style={{
-            position: "absolute", top: 90, left: 45,
-            width: 300,
-            background: "rgba(216,255,79,0.1)",
+            position: "absolute", top: 70, left: 40,
+            width: 310,
+            background: "rgba(216,255,79,0.08)",
             backdropFilter: "blur(20px)",
-            border: "1px solid rgba(216,255,79,0.3)",
-            borderRadius: 28, padding: "36px 28px",
+            border: "1px solid rgba(216,255,79,0.25)",
+            borderRadius: 28, padding: "28px 24px",
             animation: "heroFloat1 5s ease-in-out infinite",
             boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
-            textAlign: "center",
           }}>
-            <div className="font-fredoka font-bold text-lime text-xs tracking-[0.12em] uppercase mb-3">
-              Erken Kayıt Fiyatı
+            <div className="font-fredoka font-bold text-lime text-sm tracking-[0.12em] uppercase mb-4">
+              Programına Dahil
             </div>
-            <div className="font-fredoka font-bold text-white leading-none mb-2" style={{ fontSize: 44 }}>
-              {discountText}
-            </div>
-            <div className="font-nunito font-bold text-white/55 text-sm">
-              Kontenjan dolmadan yerini ayırt
-            </div>
+            {[
+              "Günlük WhatsApp Takibi",
+              "Haftalık Deneme Analizi",
+              "Kişisel Çalışma Planı",
+            ].map((text, i) => (
+              <div key={i} className="flex items-center gap-3 mb-3.5">
+                <div style={{
+                  width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
+                  background: "#D8FF4F",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <svg width="11" height="11" viewBox="0 0 12 12">
+                    <polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <span className="font-nunito font-bold text-sm text-white">{text}</span>
+              </div>
+            ))}
           </div>
 
+          {/* Turuncu rozet — kalan süre */}
           {daysLeft !== null && (
             <div style={{
               position: "absolute", top: 0, right: 10,
@@ -386,10 +394,22 @@ function ErkenKayitSlide({ earlyReg, daysLeft }) {
             </div>
           )}
 
+          {/* Lime rozet — indirim oranı */}
           <div style={{
-            position: "absolute", bottom: 20, left: 0,
+            position: "absolute", bottom: 60, right: -10,
+            background: "rgba(216,255,79,0.96)", borderRadius: 18, padding: "12px 18px",
+            animation: "heroFloat3 6s ease-in-out infinite",
+            boxShadow: "0 10px 24px rgba(216,255,79,0.35)",
+          }}>
+            <div className="font-fredoka font-bold text-page-dark text-[15px] leading-snug">{discountText}</div>
+          </div>
+
+          {/* Beyaz rozet — sınırlı kontenjan */}
+          <div style={{
+            position: "absolute", bottom: 0, left: 10,
             background: "rgba(255,255,255,0.96)", borderRadius: 18, padding: "12px 18px",
             animation: "heroFloat3 6s ease-in-out infinite",
+            animationDelay: "1.5s",
             boxShadow: "0 10px 24px rgba(0,0,0,0.2)",
           }}>
             <div className="font-fredoka font-bold text-page-dark text-[14px]">⚡ Sınırlı kontenjan</div>
