@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaBullseye, FaClipboardList, FaHourglassHalf, FaShieldAlt } from "react-icons/fa";
+import { FaBullseye, FaClipboardList, FaHourglassHalf, FaShieldAlt, FaChartLine } from "react-icons/fa";
 import axios from "../utils/axios";
 
 const WA_LINK = "https://wa.me/905312546701?text=S%C4%B0STEM";
@@ -473,7 +473,7 @@ function LgsSlide() {
           className="flex flex-wrap gap-4"
         >
           <Link
-            to="/lgs-hazirlik"
+            to="/ucretsiz-on-gorusme"
             className="inline-flex items-center gap-2 text-white font-fredoka font-bold text-[18px] px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
             style={{
               background: "#FF6B35",
@@ -481,14 +481,14 @@ function LgsSlide() {
               letterSpacing: "0.3px",
             }}
           >
-            LGS Hazırlığını İncele
+            Ücretsiz Görüşme Planla
           </Link>
           <Link
-            to="/ucretsiz-on-gorusme"
+            to="/lgs-hazirlik"
             className="inline-flex items-center gap-2 text-white font-fredoka font-semibold text-[16px] px-7 py-4 rounded-full no-underline transition-all hover:bg-white/10"
             style={{ border: "1.5px solid rgba(255,255,255,0.25)" }}
           >
-            Ücretsiz Görüşme
+            LGS Hazırlığını İncele
           </Link>
         </motion.div>
       </div>
@@ -521,8 +521,13 @@ function LgsSlide() {
             animation: "heroFloat1 5s ease-in-out infinite",
             boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
           }}>
-            <div className="font-fredoka font-bold text-lime text-sm tracking-[0.12em] uppercase mb-4">
-              Bu Haftanın Planı
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center font-fredoka font-bold text-white text-xs flex-shrink-0" style={{ background: "#7340C8" }}>
+                M
+              </div>
+              <div className="font-fredoka font-bold text-lime text-sm tracking-[0.06em] uppercase">
+                Mert'in Bu Haftası
+              </div>
             </div>
             {[
               { text: "Türkçe: Paragraf — 2 ders", done: true },
@@ -546,6 +551,15 @@ function LgsSlide() {
                 </span>
               </div>
             ))}
+            <div className="mt-4">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="font-nunito font-bold text-white/45 text-[11px] uppercase tracking-wide">Tamamlanma</span>
+                <span className="font-fredoka font-bold text-lime text-xs">%65</span>
+              </div>
+              <div style={{ height: 6, borderRadius: 999, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
+                <div style={{ height: "100%", width: "65%", borderRadius: 999, background: "#D8FF4F" }} />
+              </div>
+            </div>
           </div>
 
           {/* Mor rozet — net artışı */}
@@ -555,19 +569,27 @@ function LgsSlide() {
             animation: "heroFloat2 4s ease-in-out infinite",
             boxShadow: "0 12px 30px rgba(115,64,200,0.5)",
           }}>
-            <div className="font-fredoka font-bold text-white text-[28px] leading-none">+38</div>
+            <div className="flex items-center gap-1.5">
+              <span className="font-fredoka font-bold text-white text-[28px] leading-none">+38</span>
+              <FaChartLine size={16} color="#D8FF4F" />
+            </div>
             <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">Net artışı</div>
           </div>
 
-          {/* Sarı rozet — veli raporu */}
+          {/* Lila/buzlu cam rozet — veli raporu (turuncu CTA'dan dikkat çalmasın diye
+              artık neon lime değil, ana kartın frosted-glass diliyle ve mor tonuyla
+              uyumlu, daha soft bir görünüm) */}
           <div style={{
             position: "absolute", bottom: 10, right: 0,
-            background: "rgba(216,255,79,0.96)", borderRadius: 18, padding: "14px 20px",
+            background: "rgba(115,64,200,0.18)",
+            backdropFilter: "blur(16px)",
+            border: "1px solid rgba(115,64,200,0.4)",
+            borderRadius: 18, padding: "14px 20px",
             animation: "heroFloat3 6s ease-in-out infinite",
-            boxShadow: "0 10px 24px rgba(216,255,79,0.35)",
+            boxShadow: "0 10px 24px rgba(0,0,0,0.25)",
           }}>
-            <div className="font-fredoka font-bold text-page-dark text-[15px] leading-snug">Veli raporu</div>
-            <div className="font-fredoka font-bold text-page-dark text-[15px] flex items-center gap-1.5">her hafta <FaClipboardList size={13} /></div>
+            <div className="font-fredoka font-bold text-white text-[15px] leading-snug">Veli raporu</div>
+            <div className="font-fredoka font-bold text-white text-[15px] flex items-center gap-1.5">her hafta <FaClipboardList size={13} color="#D8FF4F" /></div>
           </div>
         </div>
       </motion.div>
@@ -645,8 +667,11 @@ export default function HeroSection() {
         pointerEvents: "none",
       }} />
 
-      {/* Star dots */}
-      {[[120,90,5,0],[300,220,4,0.5],[80,400,6,1],[500,60,3,0.8],[420,330,5,1.4],[650,180,4,0.3],[180,560,5,1.8],[760,90,3,0.6]].map(([x,y,s,d],i) => (
+      {/* Star dots — metin sütununun (sol, ~x:0-640) dışında, kenarlarda/sağ
+          görsel bölgesinde kalacak şekilde konumlandırılmış: aksi halde
+          slayta göre değişen metin uzunluklarıyla kelimelerin arasına denk
+          gelip "glitch" gibi görünebiliyor. */}
+      {[[40,40,5,0],[700,55,4,0.5],[30,500,6,1],[730,150,3,0.8],[770,310,5,1.4],[660,25,4,0.3],[40,560,5,1.8],[790,430,3,0.6]].map(([x,y,s,d],i) => (
         <div key={i} style={{
           position: "absolute", left: x, top: y,
           width: s, height: s, borderRadius: "50%",
