@@ -11,7 +11,8 @@ import {
   FaHeadset,
   FaCreditCard,
   FaChevronDown,
-  FaChevronUp
+  FaChevronUp,
+  FaUndo
 } from "react-icons/fa";
 
 import Navbar from "../components/navbar";
@@ -161,8 +162,6 @@ const PackageDetail = () => {
     "description": selected.subtitle || "Sözderece Koçluk YKS hazırlık paketi.",
     "brand": { "@type": "Brand", "name": "Sözderece Koçluk" },
     "sku": selected.slug,
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5.0", "reviewCount": "124", "bestRating": "5", "worstRating": "1" },
-    "review": { "@type": "Review", "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "author": { "@type": "Person", "name": "Öğrenci Yorumu" }, "reviewBody": "Sistemli çalışma ile netlerim arttı, kesinlikle tavsiye ederim." },
     "offers": {
       "@type": "Offer",
       "url": canonicalUrl,
@@ -191,147 +190,202 @@ const PackageDetail = () => {
       <TopBar />
       <Navbar />
 
-      <div className="bg-[#f8f9fa] py-[60px] min-h-[80vh]">
-        <div className="max-w-[800px] mx-auto px-5">
+      <div className="bg-[#f8fafc] py-16 max-[768px]:py-10 min-h-[80vh]">
+        <div className="max-w-[880px] mx-auto px-5">
 
-          <div className="bg-white p-[50px] rounded-[20px] shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-[#eaeaea] max-[768px]:p-[25px]">
-            <div className="text-center mb-[30px]">
-              <span className="inline-block bg-[#e3f2fd] text-[#0f2a4a] font-bold py-1.5 px-4 rounded-[20px] text-[0.9rem] mb-[15px] tracking-wide uppercase">
-                {isSpecialTutoring ? "Özel Ders" : "En Çok Tercih Edilen"}
+          {/* Başlık */}
+          <div className="text-center mb-8">
+            {isSpecialTutoring && (
+              <span className="inline-block bg-[#ede8fa] text-page-navy font-fredoka font-bold py-1.5 px-4 rounded-full text-xs mb-4 tracking-wide uppercase">
+                Özel Ders
               </span>
-              <h1 className="text-[2.2rem] font-extrabold text-[#0f2a4a] mb-[15px] leading-[1.2] max-[768px]:text-[1.8rem]">{selected.name}</h1>
-              <p className="text-[1.1rem] text-[#666] leading-[1.6] max-w-[600px] mx-auto">{selected.subtitle}</p>
-            </div>
-
-            {/* Süre sekmeleri */}
-            {hasPlanTabs && (
-              <div className="flex bg-[#f1f5f9] rounded-full p-1 mb-6 max-w-[320px] mx-auto">
-                {plans.map((plan, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    className={`flex-1 py-2 text-sm font-bold rounded-full transition-all ${
-                      activePlanIdx === i
-                        ? "bg-white shadow text-[#0f2a4a]"
-                        : "text-[#64748b] hover:text-[#0f2a4a]"
-                    }`}
-                    onClick={() => setActivePlanIdx(i)}
-                  >
-                    {plan.label}
-                  </button>
-                ))}
-              </div>
             )}
+            <h1 className="font-fredoka font-bold text-page-navy text-[2.4rem] max-[768px]:text-[1.8rem] mb-3 leading-[1.1]">
+              {selected.name}
+            </h1>
+            <p className="font-nunito text-[#64748b] text-lg max-[768px]:text-base leading-relaxed max-w-[560px] mx-auto">
+              {selected.subtitle}
+            </p>
+          </div>
 
-            <div className="text-center mb-[30px] pb-5 border-b border-[#f0f0f0]">
-              {planBadge && (
-                <div className="mb-2">
-                  <span className={`inline-block text-[0.8rem] font-bold px-4 py-1.5 rounded-full ${planBadgeStyle}`}>
+          {/* Süre sekmeleri */}
+          {hasPlanTabs && (
+            <div className="flex bg-white border border-[#e5e7eb] rounded-full p-1.5 mb-6 max-w-[340px] mx-auto">
+              {plans.map((plan, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className={`flex-1 py-2 text-sm font-fredoka font-bold rounded-full transition-all ${
+                    activePlanIdx === i
+                      ? "bg-page-navy text-white"
+                      : "text-[#64748b] hover:text-page-navy"
+                  }`}
+                  onClick={() => setActivePlanIdx(i)}
+                >
+                  {plan.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Paket seçici (birden fazla paket varsa) */}
+          {packages.length > 1 && (
+            <div className="bg-white border border-[#e5e7eb] rounded-2xl p-4 mb-6 max-w-[420px] mx-auto">
+              <label className="block font-nunito font-bold text-xs text-[#64748b] mb-2 uppercase tracking-wide">Paket Seçenekleri</label>
+              <select
+                value={selectedSlug}
+                onChange={(e) => {
+                  setSelectedSlug(e.target.value);
+                  navigate(`?slug=${e.target.value}`, { replace: true });
+                }}
+                className="w-full py-3 px-3.5 border border-[#e5e7eb] rounded-xl text-base bg-white cursor-pointer outline-none transition-all focus:border-page-navy"
+              >
+                {packages.map((p) => (
+                  <option key={p.slug} value={p.slug}>{p.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Fiyat + Özellikler — bento ikili */}
+          <div className="grid grid-cols-2 gap-5 mb-6 max-[640px]:grid-cols-1">
+
+            {/* Fiyat kartı (koyu, PricingSection Hücre 1 ile aynı dil) */}
+            <div
+              className="rounded-[28px] relative overflow-hidden flex flex-col"
+              style={{ background: "#1C1B8A", padding: "36px 32px", boxShadow: "0 16px 40px rgba(28,27,138,0.25)" }}
+            >
+              <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#4a1da0", filter: "blur(60px)", opacity: 0.5, top: -60, right: -40 }} />
+
+              <div className="relative">
+                {planBadge && (
+                  <span className={`inline-block text-xs font-fredoka font-bold px-3 py-1.5 rounded-full mb-3 ${planBadgeStyle}`}>
                     {planBadge}
                   </span>
-                </div>
-              )}
-              {strikethroughPrice && (
-                <div className="line-through text-[#999] text-[1.3rem] mb-1">{strikethroughPrice}</div>
-              )}
-              <div className="flex items-baseline justify-center gap-2">
-                <span className="text-[2.5rem] font-extrabold text-[#f39c12] max-[768px]:text-[2rem]">
-                  {displayPrice}
-                </span>
-                {durationText && (
-                  <span className="text-[#64748b] text-base font-semibold">{durationText}</span>
                 )}
-              </div>
-              {priceBadgeText && (
-                <div className="mt-2">
-                  <span className={`inline-block text-[0.8rem] font-bold px-4 py-1.5 rounded-full ${priceBadgeStyle}`}>
+                {strikethroughPrice && (
+                  <div className="font-nunito font-bold text-sm mb-1" style={{ color: "rgba(216,255,79,0.45)", textDecoration: "line-through" }}>
+                    {strikethroughPrice}
+                  </div>
+                )}
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="font-fredoka font-bold text-lime leading-none" style={{ fontSize: "clamp(40px,5vw,52px)", letterSpacing: -1 }}>
+                    {displayPrice}
+                  </span>
+                  {durationText && (
+                    <span className="font-nunito font-bold text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>{durationText}</span>
+                  )}
+                </div>
+                {priceBadgeText && (
+                  <span className={`inline-block text-xs font-fredoka font-bold px-3 py-1.5 rounded-full mt-2 ${priceBadgeStyle}`}>
                     {priceBadgeText}
                   </span>
-                </div>
-              )}
-              {examActive && (
-                <div className="flex items-center justify-center gap-2 mt-2 flex-wrap">
-                  {getExamDailyCost(selected) && (
-                    <span className="text-[0.8rem] text-[#64748b]">
-                      Günlük sadece <strong>{getExamDailyCost(selected)}₺</strong> ile
-                    </span>
-                  )}
-                  {getExamSavings(selected) && (
-                    <span className="inline-block bg-[#dcfce7] text-[#166534] text-[0.78rem] font-bold px-3 py-0.5 rounded-full">
-                      {getExamSavings(selected)}₺ tasarruf
-                    </span>
-                  )}
-                </div>
-              )}
-              <p className="text-[0.9rem] text-[#999] mt-1">Tüm vergiler dahildir.</p>
-            </div>
-
-            {packages.length > 1 && (
-              <div className="mb-[30px]">
-                <label className="block font-semibold mb-2 text-[#333]">Paket Seçenekleri:</label>
-                <select
-                  value={selectedSlug}
-                  onChange={(e) => {
-                    setSelectedSlug(e.target.value);
-                    navigate(`?slug=${e.target.value}`, { replace: true });
-                  }}
-                  className="w-full py-3.5 px-3.5 border border-[#ddd] rounded-[10px] text-base bg-white cursor-pointer outline-none transition-all focus:border-[#f39c12]"
-                >
-                  {packages.map((p) => (
-                    <option key={p.slug} value={p.slug}>{p.name}</option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            <ul className="list-none p-[25px] mb-10 bg-[#f9f9f9] rounded-[15px]">
-              {features.map((f, i) => (
-                <li key={i} className={`flex items-center gap-[15px] text-[1.05rem] mb-[15px] last:mb-0 ${f.included ? "text-[#444]" : "text-[#999] line-through opacity-70"}`}>
-                  {f.included
-                    ? <FaCheckCircle className="text-[#27ae60] text-[1.3rem] min-w-[24px]" />
-                    : <FaTimesCircle className="text-[#ccc] text-[1.3rem] min-w-[24px]" />
-                  }
-                  {f.label}
-                </li>
-              ))}
-            </ul>
-
-            <div className="flex justify-center gap-[30px] mb-[30px] flex-wrap max-[768px]:gap-[15px]">
-              <div className="flex items-center gap-2 text-[0.9rem] text-[#555] font-semibold"><FaShieldAlt /> %100 Güvenli Ödeme</div>
-              <div className="flex items-center gap-2 text-[0.9rem] text-[#555] font-semibold"><FaHeadset /> 7/24 Destek</div>
-              <div className="flex items-center gap-2 text-[0.9rem] text-[#555] font-semibold"><FaCreditCard /> Taksit İmkanı</div>
-            </div>
-
-            <button
-              className="w-full py-5 bg-[#f39c12] text-white border-0 rounded-xl text-[1.3rem] font-bold cursor-pointer transition-all shadow-[0_10px_25px_rgba(243,156,18,0.3)] mb-5 hover:bg-[#d35400] hover:-translate-y-[3px] hover:shadow-[0_15px_30px_rgba(243,156,18,0.4)]"
-              onClick={handleContinue}
-            >
-              {isSpecialTutoring ? "Öğretmenleri İncele" : (activePlan?.ctaLabel || "Hemen Başla (Güvenli Ödeme)")}
-            </button>
-
-            <div className="flex justify-center gap-[15px] opacity-80 mb-10 pb-[30px] border-b border-[#eee]">
-              <img src="/images/kare-logo-mastercard.webp" alt="Mastercard" width="40" height="25" loading="lazy" className="h-[35px] object-contain grayscale hover:grayscale-0 transition-all max-[768px]:h-[25px]" />
-              <img src="/images/kare-logo-visa.webp" alt="Visa" width="40" height="25" loading="lazy" className="h-[35px] object-contain grayscale hover:grayscale-0 transition-all max-[768px]:h-[25px]" />
-              <img src="/images/kare-logo-troy.webp" alt="Troy" width="40" height="25" loading="lazy" className="h-[35px] object-contain grayscale hover:grayscale-0 transition-all max-[768px]:h-[25px]" />
-              <img src="/images/kare-logo-paytr.webp" alt="PayTR" width="40" height="25" loading="lazy" className="h-[35px] object-contain grayscale hover:grayscale-0 transition-all max-[768px]:h-[25px]" />
-            </div>
-
-            <div>
-              <h3 className="text-[1.4rem] text-[#0f2a4a] mb-[25px] text-center">Sıkça Sorulan Sorular</h3>
-              {faqList.map((item, idx) => (
-                <div key={idx} className="border border-[#eee] rounded-[10px] mb-3 overflow-hidden">
-                  <button
-                    className="w-full flex justify-between items-center py-[18px] px-[18px] bg-white border-0 font-semibold text-[#333] cursor-pointer text-left text-base transition-colors hover:bg-[#fcfcfc]"
-                    onClick={() => toggleAccordion(idx)}
-                  >
-                    {item.title}
-                    {activeIndex === idx ? <FaChevronUp /> : <FaChevronDown />}
-                  </button>
-                  <div className={`overflow-hidden transition-all duration-300 bg-[#f9f9f9] ${activeIndex === idx ? "max-h-[200px] py-[18px] px-[18px] text-[#555] leading-[1.6] border-t border-[#eee]" : "max-h-0"}`}>
-                    <p>{item.content}</p>
+                )}
+                {examActive && (
+                  <div className="flex items-center gap-2 mt-2 flex-wrap">
+                    {getExamDailyCost(selected) && (
+                      <span className="font-nunito text-xs" style={{ color: "rgba(255,255,255,0.55)" }}>
+                        Günlük sadece <strong className="text-white">{getExamDailyCost(selected)}₺</strong> ile
+                      </span>
+                    )}
+                    {getExamSavings(selected) && (
+                      <span className="inline-block bg-[#dcfce7] text-[#166534] text-[11px] font-fredoka font-bold px-2.5 py-0.5 rounded-full">
+                        {getExamSavings(selected)}₺ tasarruf
+                      </span>
+                    )}
                   </div>
+                )}
+                <p className="font-nunito text-xs mt-2" style={{ color: "rgba(255,255,255,0.4)" }}>Tüm vergiler dahildir.</p>
+              </div>
+
+              <button
+                className="block w-full text-center font-fredoka font-bold text-base rounded-full mt-6 relative transition-transform hover:scale-[1.02]"
+                style={{ background: "#D8FF4F", color: "#1C1B8A", padding: "16px", boxShadow: "0 6px 18px rgba(216,255,79,0.3)" }}
+                onClick={handleContinue}
+              >
+                {isSpecialTutoring ? "Öğretmenleri İncele" : (activePlan?.ctaLabel || "Hemen Başla →")}
+              </button>
+            </div>
+
+            {/* Özellikler kartı (açık lila, PricingSection Hücre 2 ile aynı dil) */}
+            <div className="rounded-[28px]" style={{ background: "#f4f2fa", padding: "32px 28px" }}>
+              <div className="font-fredoka font-bold text-page-navy text-base mb-4" style={{ letterSpacing: 0.3 }}>
+                Pakete Dahil…
+              </div>
+              <ul className="list-none flex flex-col gap-2.5">
+                {features.map((f, i) => (
+                  <li
+                    key={i}
+                    className="inline-flex items-start gap-2 rounded-xl font-nunito font-bold text-[13px] leading-snug"
+                    style={{
+                      background: f.included ? (i % 2 === 0 ? "#ede8fa" : "#fff0ea") : "#f1f5f9",
+                      color: f.included ? (i % 2 === 0 ? "#1C1B8A" : "#FF6B35") : "#94a3b8",
+                      padding: "10px 14px",
+                      textDecoration: f.included ? "none" : "line-through",
+                    }}
+                  >
+                    {f.included
+                      ? <FaCheckCircle className="flex-shrink-0 mt-0.5" style={{ opacity: 0.8 }} />
+                      : <FaTimesCircle className="flex-shrink-0 mt-0.5" style={{ opacity: 0.5 }} />
+                    }
+                    {f.label}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Güven şeridi */}
+          <div className="bg-white border border-[#f1f5f9] rounded-2xl p-5 mb-6">
+            <div className="flex justify-center gap-2.5 flex-wrap mb-5">
+              <span className="inline-flex items-center gap-1.5 bg-[#f8fafc] text-[#475569] font-nunito font-bold text-xs px-3.5 py-2 rounded-full">
+                <FaShieldAlt className="text-page-navy" /> %100 Güvenli Ödeme
+              </span>
+              <span className="inline-flex items-center gap-1.5 bg-[#f8fafc] text-[#475569] font-nunito font-bold text-xs px-3.5 py-2 rounded-full">
+                <FaHeadset className="text-page-navy" /> 7/24 Destek
+              </span>
+              <span className="inline-flex items-center gap-1.5 bg-[#f8fafc] text-[#475569] font-nunito font-bold text-xs px-3.5 py-2 rounded-full">
+                <FaCreditCard className="text-page-navy" /> Taksit İmkanı
+              </span>
+              <span className="inline-flex items-center gap-1.5 bg-[#ecfdf5] text-[#065f46] font-nunito font-bold text-xs px-3.5 py-2 rounded-full">
+                <FaUndo /> 14 Gün İade Garantisi
+              </span>
+            </div>
+            <div className="flex justify-center gap-4 opacity-70 pt-4 border-t border-[#f1f5f9]">
+              <img src="/images/kare-logo-mastercard.webp" alt="Mastercard" width="40" height="25" loading="lazy" className="h-6 object-contain grayscale hover:grayscale-0 transition-all" />
+              <img src="/images/kare-logo-visa.webp" alt="Visa" width="40" height="25" loading="lazy" className="h-6 object-contain grayscale hover:grayscale-0 transition-all" />
+              <img src="/images/kare-logo-troy.webp" alt="Troy" width="40" height="25" loading="lazy" className="h-6 object-contain grayscale hover:grayscale-0 transition-all" />
+              <img src="/images/kare-logo-paytr.webp" alt="PayTR" width="40" height="25" loading="lazy" className="h-6 object-contain grayscale hover:grayscale-0 transition-all" />
+            </div>
+          </div>
+
+          {/* SSS + kapanış CTA */}
+          <div className="bg-white border border-[#f1f5f9] rounded-2xl p-6 max-[768px]:p-4">
+            <h3 className="font-fredoka font-bold text-page-navy text-xl mb-6 text-center">Sıkça Sorulan Sorular</h3>
+            {faqList.map((item, idx) => (
+              <div key={idx} className="border border-[#f1f5f9] rounded-xl mb-3 overflow-hidden">
+                <button
+                  className="w-full flex justify-between items-center py-4 px-4 bg-white border-0 font-nunito font-bold text-[#334155] cursor-pointer text-left text-sm transition-colors hover:bg-[#fafafa]"
+                  onClick={() => toggleAccordion(idx)}
+                >
+                  {item.title}
+                  {activeIndex === idx ? <FaChevronUp className="text-page-navy flex-shrink-0" /> : <FaChevronDown className="text-[#94a3b8] flex-shrink-0" />}
+                </button>
+                <div className={`overflow-hidden transition-all duration-300 bg-[#f8fafc] ${activeIndex === idx ? "max-h-[200px] py-4 px-4 text-[#64748b] text-sm leading-relaxed border-t border-[#f1f5f9]" : "max-h-0"}`}>
+                  <p>{item.content}</p>
                 </div>
-              ))}
+              </div>
+            ))}
+
+            <div className="text-center mt-8 pt-6 border-t border-[#f1f5f9]">
+              <p className="font-nunito text-[#64748b] text-sm mb-4">İkna oldun mu? Yerini hemen ayırt.</p>
+              <button
+                className="inline-flex items-center gap-2 font-fredoka font-bold text-base rounded-full transition-transform hover:scale-[1.02]"
+                style={{ background: "#D8FF4F", color: "#1C1B8A", padding: "14px 32px", boxShadow: "0 6px 18px rgba(216,255,79,0.3)" }}
+                onClick={handleContinue}
+              >
+                {isSpecialTutoring ? "Öğretmenleri İncele" : "Hemen Başla →"}
+              </button>
             </div>
           </div>
 
