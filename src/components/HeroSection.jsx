@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaBullseye, FaClipboardList, FaHourglassHalf, FaShieldAlt, FaChartLine } from "react-icons/fa";
+import { FaBullseye, FaClipboardList, FaHourglassHalf, FaShieldAlt, FaChartLine, FaChevronLeft, FaChevronRight, FaPlay, FaPause } from "react-icons/fa";
 import axios from "../utils/axios";
 
 const WA_LINK = "https://wa.me/905312546701?text=S%C4%B0STEM";
@@ -597,6 +597,182 @@ function LgsSlide() {
   );
 }
 
+// ══════════════════════════════════════════════
+// SLAYT 4 — YKS'ye özel (LGS slaydıyla simetrik)
+// ══════════════════════════════════════════════
+function YksSlide() {
+  return (
+    <div className="grid grid-cols-[1fr_auto] gap-16 items-center max-[960px]:grid-cols-1">
+      {/* Sol — metin */}
+      <div>
+        <motion.div {...fadeUp} className="mb-7">
+          <span style={eyebrowStyle}>
+            <span style={{
+              width: 7, height: 7, borderRadius: "50%",
+              background: "#D8FF4F", display: "inline-block",
+              animation: "heroSparkle 1.5s ease-in-out infinite",
+            }} />
+            <span className="font-fredoka text-lime text-sm font-semibold tracking-[0.1em] uppercase">
+              YKS Koçluğu
+            </span>
+          </span>
+        </motion.div>
+
+        <motion.h1
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.1 }}
+          className="font-fredoka text-[64px] max-[900px]:text-[46px] max-[640px]:text-[38px] max-[400px]:text-[30px] leading-[1.05] text-white mb-6"
+          style={{ letterSpacing: "-0.5px", maxWidth: 640 }}
+        >
+          TYT-AYT Stresi Bitsin, {" "}
+          <span style={{
+            background: "linear-gradient(90deg, #D8FF4F, #ffffff, #D8FF4F)",
+            backgroundSize: "200% auto",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            animation: "heroShimmer 3s linear infinite",
+          }}>Hedefine Netlerinle Ulaş.</span>
+        </motion.h1>
+
+        <motion.p
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.15 }}
+          className="font-nunito font-bold text-white/65 text-[19px] max-[640px]:text-base leading-relaxed mb-10"
+          style={{ maxWidth: 520 }}
+        >
+          Günlük çalışma takibi, haftalık deneme analizi ve kişisel programla TYT-AYT'ye sistemli hazırlan.
+        </motion.p>
+
+        <motion.div
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.24 }}
+          className="flex flex-wrap gap-4"
+        >
+          <Link
+            to="/ucretsiz-on-gorusme"
+            className="inline-flex items-center gap-2 text-white font-fredoka font-bold text-[18px] px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
+            style={{
+              background: "#FF6B35",
+              animation: "heroPulse 2.5s ease-out infinite",
+              letterSpacing: "0.3px",
+            }}
+          >
+            Ücretsiz Görüşme Planla
+          </Link>
+          <Link
+            to="/yks-yolculugu"
+            className="inline-flex items-center gap-2 text-white font-fredoka font-semibold text-[16px] px-7 py-4 rounded-full no-underline transition-all hover:bg-white/10"
+            style={{ border: "1.5px solid rgba(255,255,255,0.25)" }}
+          >
+            YKS Yolculuğunu İncele
+          </Link>
+        </motion.div>
+      </div>
+
+      {/* Sağ — floating kartlar */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, delay: 0.2 }}
+        className="flex-shrink-0 max-[960px]:hidden"
+      >
+        <div className="relative" style={{ width: 390, height: 440 }}>
+          <div style={{
+            position: "absolute", top: 60, left: 10,
+            width: 380, height: 380, borderRadius: "50%",
+            background: "#1C1B8A", filter: "blur(80px)", opacity: 0.32,
+            animation: "heroOrbMove 10s ease-in-out infinite",
+            pointerEvents: "none",
+          }} />
+
+          {/* Ana kart — haftalık plan */}
+          <div style={{
+            position: "absolute", top: 70, left: 40,
+            width: 310,
+            background: "rgba(255,255,255,0.06)",
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: 28, padding: "28px 24px",
+            animation: "heroFloat1 5s ease-in-out infinite",
+            boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
+          }}>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center font-fredoka font-bold text-white text-xs flex-shrink-0" style={{ background: "#1C1B8A" }}>
+                Z
+              </div>
+              <div className="font-fredoka font-bold text-lime text-sm tracking-[0.06em] uppercase">
+                Zeynep'in Bu Haftası
+              </div>
+            </div>
+            {[
+              { text: "Matematik: Fonksiyonlar — 2 ders", done: true },
+              { text: "Fizik: Hareket — 1 ders", done: true },
+              { text: "Deneme Analizi — Pazar", done: false },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3 mb-3.5">
+                <div style={{
+                  width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
+                  background: item.done ? "#D8FF4F" : "rgba(255,255,255,0.1)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  {item.done && (
+                    <svg width="11" height="11" viewBox="0 0 12 12">
+                      <polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  )}
+                </div>
+                <span className="font-nunito font-bold text-sm" style={{ color: item.done ? "#fff" : "rgba(255,255,255,0.45)" }}>
+                  {item.text}
+                </span>
+              </div>
+            ))}
+            <div className="mt-4">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="font-nunito font-bold text-white/45 text-[11px] uppercase tracking-wide">Tamamlanma</span>
+                <span className="font-fredoka font-bold text-lime text-xs">%72</span>
+              </div>
+              <div style={{ height: 6, borderRadius: 999, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
+                <div style={{ height: "100%", width: "72%", borderRadius: 999, background: "#D8FF4F" }} />
+              </div>
+            </div>
+          </div>
+
+          {/* Lacivert rozet — net artışı */}
+          <div style={{
+            position: "absolute", top: 0, left: 0,
+            background: "#1C1B8A", borderRadius: 20, padding: "16px 22px",
+            animation: "heroFloat2 4s ease-in-out infinite",
+            boxShadow: "0 12px 30px rgba(28,27,138,0.5)",
+          }}>
+            <div className="flex items-center gap-1.5">
+              <span className="font-fredoka font-bold text-white text-[28px] leading-none">+41</span>
+              <FaChartLine size={16} color="#D8FF4F" />
+            </div>
+            <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">Net artışı</div>
+          </div>
+
+          {/* Lacivert/buzlu cam rozet — deneme takibi (turuncu CTA'dan dikkat çalmasın diye
+              soft, ana kartın frosted-glass diliyle uyumlu) */}
+          <div style={{
+            position: "absolute", bottom: 10, right: 0,
+            background: "rgba(28,27,138,0.22)",
+            backdropFilter: "blur(16px)",
+            border: "1px solid rgba(28,27,138,0.45)",
+            borderRadius: 18, padding: "14px 20px",
+            animation: "heroFloat3 6s ease-in-out infinite",
+            boxShadow: "0 10px 24px rgba(0,0,0,0.25)",
+          }}>
+            <div className="font-fredoka font-bold text-white text-[15px] leading-snug">Deneme takibi</div>
+            <div className="font-fredoka font-bold text-white text-[15px] flex items-center gap-1.5">her hafta <FaClipboardList size={13} color="#D8FF4F" /></div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function HeroSection() {
   const [earlyReg, setEarlyReg] = useState(null);
   useEffect(() => {
@@ -610,9 +786,10 @@ export default function HeroSection() {
   const earlyRegActive = !!earlyReg?.enabled && (earlyDaysLeft === null || earlyDaysLeft > 0);
 
   const slides = [
-    ...(earlyRegActive ? [{ key: "erken", content: <ErkenKayitSlide earlyReg={earlyReg} daysLeft={earlyDaysLeft} /> }] : []),
-    { key: "default", content: <DefaultSlide /> },
-    { key: "lgs", content: <LgsSlide /> },
+    ...(earlyRegActive ? [{ key: "erken", label: "Erken Kayıt", content: <ErkenKayitSlide earlyReg={earlyReg} daysLeft={earlyDaysLeft} /> }] : []),
+    { key: "default", label: "Genel Tanıtım", content: <DefaultSlide /> },
+    { key: "yks", label: "YKS Koçluğu", content: <YksSlide /> },
+    { key: "lgs", label: "LGS Koçluğu", content: <LgsSlide /> },
   ];
 
   const [activeIdx, setActiveIdx] = useState(0);
@@ -623,13 +800,32 @@ export default function HeroSection() {
     if (activeIdx >= slides.length) setActiveIdx(0);
   }, [slides.length, activeIdx]);
 
+  // Erişilebilirlik (ui-ux-pro-max skill'inden gelen "auto-rotation-controls"
+  // ve "reduced-motion" kuralları): kullanıcı azaltılmış hareket istiyorsa
+  // veya carousel'in üzerine gelmiş/odaklanmışsa ya da elle durdurmuşsa
+  // otomatik geçiş durur.
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   useEffect(() => {
-    if (slides.length < 2) return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mq.matches);
+    const handler = (e) => setPrefersReducedMotion(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  const [isPaused, setIsPaused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const autoPlayActive = slides.length > 1 && !isPaused && !isHovered && !prefersReducedMotion;
+
+  useEffect(() => {
+    if (!autoPlayActive) return;
     const id = setInterval(() => {
       setActiveIdx((i) => (i + 1) % slides.length);
     }, 7000);
     return () => clearInterval(id);
-  }, [slides.length]);
+  }, [autoPlayActive, slides.length]);
+
+  const goToSlide = (i) => setActiveIdx((i + slides.length) % slides.length);
 
   return (
     <section
@@ -637,6 +833,12 @@ export default function HeroSection() {
       style={{
         background:
           "radial-gradient(ellipse 80% 60% at 60% 40%, #3d1a80 0%, #1A0A40 55%, #0d0520 100%)",
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsHovered(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) setIsHovered(false);
       }}
     >
       <style>{`
@@ -696,37 +898,85 @@ export default function HeroSection() {
       ))}
 
       {/* Kayan slayt içeriği — tüm slaytlar ayn boyutta görünsün diye
-          sabit yükseklikli bir "viewport" içinde dikey ortalanıyor. */}
-      <div className="hero-slide-viewport max-w-[1200px] mx-auto px-5 flex items-center w-full" style={{ position: "relative", zIndex: 1 }}>
+          sabit yükseklikli bir "viewport" içinde dikey ortalanıyor.
+          Azaltılmış hareket tercih edildiğinde yatay kayma yerine sade
+          bir çapraz geçiş (crossfade) kullanılıyor. */}
+      <div
+        className="hero-slide-viewport max-w-[1200px] mx-auto px-5 flex items-center w-full"
+        style={{ position: "relative", zIndex: 1 }}
+        role="group"
+        aria-roledescription="carousel"
+        aria-label="Sözderece tanıtım slaytları"
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={slides[activeIdx]?.key}
-            initial={{ opacity: 0, x: 60 }}
+            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: 60 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -60 }}
-            transition={{ duration: 0.45, ease: "easeOut" }}
+            exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: -60 }}
+            transition={{ duration: prefersReducedMotion ? 0.2 : 0.45, ease: "easeOut" }}
             className="w-full"
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`${activeIdx + 1} / ${slides.length}: ${slides[activeIdx]?.label}`}
           >
             {slides[activeIdx]?.content}
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Slayt noktaları */}
+      {/* Ekran okuyucular için görünmez slayt duyurusu */}
+      <div className="sr-only" aria-live="polite">
+        Slayt {activeIdx + 1} / {slides.length}: {slides[activeIdx]?.label}
+      </div>
+
+      {/* Slayt kontrolleri: önceki/sonraki, oynat/durdur, noktalar */}
       {slides.length > 1 && (
-        <div className="flex justify-center gap-2 relative" style={{ zIndex: 1, marginTop: -8, marginBottom: 8 }}>
-          {slides.map((s, i) => (
+        <div className="flex items-center justify-center gap-3 relative" style={{ zIndex: 1, marginTop: -8, marginBottom: 8 }}>
+          <button
+            onClick={() => goToSlide(activeIdx - 1)}
+            aria-label="Önceki slayt"
+            className="flex items-center justify-center rounded-full border-none cursor-pointer transition-colors"
+            style={{ width: 28, height: 28, background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)" }}
+          >
+            <FaChevronLeft size={11} />
+          </button>
+
+          <div className="flex gap-2">
+            {slides.map((s, i) => (
+              <button
+                key={s.key}
+                onClick={() => goToSlide(i)}
+                aria-label={`${s.label} slaytına git`}
+                aria-current={i === activeIdx}
+                className="h-2 rounded-full transition-all duration-300 border-none cursor-pointer"
+                style={{
+                  width: i === activeIdx ? 22 : 8,
+                  background: i === activeIdx ? "#D8FF4F" : "rgba(255,255,255,0.25)",
+                }}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={() => goToSlide(activeIdx + 1)}
+            aria-label="Sonraki slayt"
+            className="flex items-center justify-center rounded-full border-none cursor-pointer transition-colors"
+            style={{ width: 28, height: 28, background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)" }}
+          >
+            <FaChevronRight size={11} />
+          </button>
+
+          {!prefersReducedMotion && (
             <button
-              key={s.key}
-              onClick={() => setActiveIdx(i)}
-              aria-label={`Slayt ${i + 1}`}
-              className="h-2 rounded-full transition-all duration-300 border-none cursor-pointer"
-              style={{
-                width: i === activeIdx ? 22 : 8,
-                background: i === activeIdx ? "#D8FF4F" : "rgba(255,255,255,0.25)",
-              }}
-            />
-          ))}
+              onClick={() => setIsPaused((p) => !p)}
+              aria-label={isPaused ? "Otomatik geçişi başlat" : "Otomatik geçişi durdur"}
+              className="flex items-center justify-center rounded-full border-none cursor-pointer transition-colors ml-1"
+              style={{ width: 28, height: 28, background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)" }}
+            >
+              {isPaused ? <FaPlay size={10} style={{ marginLeft: 1 }} /> : <FaPause size={10} />}
+            </button>
+          )}
         </div>
       )}
 
