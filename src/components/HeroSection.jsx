@@ -648,6 +648,19 @@ export default function HeroSection() {
         @keyframes heroShimmer  { 0%{background-position:200% center} 100%{background-position:-200% center} }
         @keyframes heroPulse    { 0%{box-shadow:0 8px 28px rgba(255,107,53,0.45),0 0 0 0 rgba(255,107,53,0.5)} 70%{box-shadow:0 8px 28px rgba(255,107,53,0.45),0 0 0 20px rgba(255,107,53,0)} 100%{box-shadow:0 8px 28px rgba(255,107,53,0.45),0 0 0 0 rgba(255,107,53,0)} }
         @keyframes heroMarquee  { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+        /* Slaytların hepsi birebir aynı boyutta olsun diye sabit bir
+           "viewport" yüksekliği — içerik slayta göre değişse de kayan
+           alan büyüyüp küçülmüyor. Masaüstünde sabit height (sağdaki
+           floating kart grubu zaten 440px sabit), mobilde min-height
+           (tek sütuna düşünce metin sarmasına göre taşma olmasın diye). */
+        .hero-slide-viewport { height: 690px; }
+        @media (max-width: 960px) {
+          .hero-slide-viewport { height: auto; min-height: 600px; }
+        }
+        @media (max-width: 640px) {
+          .hero-slide-viewport { min-height: 660px; }
+        }
       `}</style>
 
       {/* Orb 1 */}
@@ -682,8 +695,9 @@ export default function HeroSection() {
         }} />
       ))}
 
-      {/* Kayan slayt içeriği */}
-      <div className="max-w-[1200px] mx-auto px-5 pt-16 pb-6 max-[768px]:pt-12 max-[768px]:pb-5 w-full" style={{ position: "relative", zIndex: 1, minHeight: 440 }}>
+      {/* Kayan slayt içeriği — tüm slaytlar ayn boyutta görünsün diye
+          sabit yükseklikli bir "viewport" içinde dikey ortalanıyor. */}
+      <div className="hero-slide-viewport max-w-[1200px] mx-auto px-5 flex items-center w-full" style={{ position: "relative", zIndex: 1 }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={slides[activeIdx]?.key}
@@ -691,6 +705,7 @@ export default function HeroSection() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -60 }}
             transition={{ duration: 0.45, ease: "easeOut" }}
+            className="w-full"
           >
             {slides[activeIdx]?.content}
           </motion.div>
