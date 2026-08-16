@@ -9,6 +9,10 @@ import Seo from "../components/Seo";
 const fadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.55 } };
 const inp = "w-full px-4 py-3 rounded-xl border border-[#e5e7eb] text-sm text-[#0f172a] outline-none focus:border-page-navy focus:ring-2 focus:ring-page-navy/10 transition-all bg-white font-nunito";
 
+function daysLeft(yksDate) {
+  return Math.max(0, Math.ceil((new Date(yksDate) - new Date()) / (1000 * 60 * 60 * 24)));
+}
+
 function FaqAccordion({ faqData }) {
   const [open, setOpen] = useState(null);
   const items = faqData?.items || [];
@@ -51,6 +55,7 @@ function FaqAccordion({ faqData }) {
 }
 
 const STATIC_FALLBACK = {
+  yksDate: "2027-06-20",
   hero: {
     navbarCta: "Yerimi Ayırt →",
     titleAccent: "YKS Yolculuğunda Koçun Yanında Olsun.",
@@ -195,6 +200,13 @@ export default function YksYolculuguPage() {
     );
   }
 
+  // 2027 YKS tarihi ÖSYM tarafından henüz resmi olarak açıklanmadı — bu tahmini
+  // tarih SADECE "~₺X/gün" fiyat vurgusu için kullanılıyor, sayfada kesin bir
+  // "X gün kaldı" iddiası olarak GÖSTERİLMİYOR. Resmi tarih açıklanınca admin
+  // panelden (content.yksDate) güncellenmeli.
+  const days = daysLeft(content.yksDate || "2027-06-20");
+  const price = content.offer?.price || "2800";
+  const dailyCost = days > 0 ? Math.round(parseInt(price) / days) : parseInt(price);
   const remaining = quota.remainingQuota;
   const hero = content.hero || {};
   const painPoints = content.painPoints || {};
@@ -421,7 +433,7 @@ export default function YksYolculuguPage() {
                     <p className="font-nunito text-[#374151] text-sm leading-relaxed italic flex-grow">"{t.quote}"</p>
                     <div className="flex items-center gap-3 pt-2 border-t border-[#f1f5f9]">
                       <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-fredoka font-bold text-sm flex-shrink-0" style={{ background: t.isParent ? "#1C1B8A" : "#FF6B35" }}>
-                        {t.author?.[0]?.toUpperCase() || "Ö"}
+                        {t.author?.[0]?.toUpperCase() || (t.isParent ? "V" : "Ö")}
                       </div>
                       <div>
                         <p className="font-nunito font-bold text-xs text-[#0f172a]">{t.author}</p>
@@ -477,6 +489,7 @@ export default function YksYolculuguPage() {
                             {plan.priceText && <span className="font-nunito text-[#64748b] text-xs">{plan.priceText}</span>}
                           </div>
                           {plan.desc && <p className="font-nunito text-[#64748b] text-xs mt-1">{plan.desc}</p>}
+                          {days > 0 && parseInt(plan.price) > 0 && <p className="font-nunito text-[#64748b] text-xs mt-1">~₺{Math.round(parseInt(plan.price) / days)} / gün</p>}
                         </div>
                         {planIncludes.length > 0 && (
                           <ul className="space-y-1.5 mb-6 flex-grow">
@@ -507,6 +520,7 @@ export default function YksYolculuguPage() {
                             {plan.priceText && <span className="font-nunito text-white/40 text-xs">{plan.priceText}</span>}
                           </div>
                           {plan.desc && <p className="font-nunito text-white/40 text-xs mt-1">{plan.desc}</p>}
+                          {days > 0 && parseInt(plan.price) > 0 && <p className="font-nunito text-white/28 text-xs mt-1">~₺{Math.round(parseInt(plan.price) / days)} / gün</p>}
                         </div>
                         {planIncludes.length > 0 && (
                           <ul className="space-y-1.5 mb-6 flex-grow">
@@ -561,6 +575,7 @@ export default function YksYolculuguPage() {
                 <div className="mb-6">
                   <div className="font-fredoka font-bold" style={{ fontSize: "clamp(34px,4vw,52px)", color: "#D8FF4F" }}>₺{offer.price || "2.800"}</div>
                   <p className="font-nunito text-white/40 text-xs mt-1">{offer.priceLabel || "4 Haftalık Program"}</p>
+                  {days > 0 && <p className="font-nunito text-white/50 text-sm mt-1">~₺{dailyCost} / gün</p>}
                 </div>
                 {offer.includes?.length > 0 && (
                   <ul className="space-y-2 mb-8 flex-grow">
@@ -644,7 +659,7 @@ export default function YksYolculuguPage() {
           <div className="max-w-lg mx-auto flex items-center justify-between gap-4">
             <div className="font-nunito font-bold text-sm text-white flex items-center gap-2">
               {remaining !== null && remaining > 0 && <span style={{ color: "#ef4444" }}>🔥 {remaining} yer kaldı ·</span>}
-              <span className="text-white/45">2027 YKS'ye hazırlanıyoruz</span>
+              <span className="text-white/45">₺{offer.price || "2.800"} / 4 haftalık program</span>
             </div>
             <button onClick={scrollToOffer} className="font-fredoka font-bold text-sm px-6 py-2.5 rounded-full transition-all hover:scale-105 whitespace-nowrap" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 4px 12px rgba(216,255,79,0.3)" }}>
               {hero.navbarCta || "⚡ Yerimi Ayırt →"}

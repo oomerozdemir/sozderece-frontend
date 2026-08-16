@@ -18,6 +18,7 @@ import AdminPackagePage from "../pages/AdminPackagePage";
 import AdminCampPage from "../pages/AdminCampPage";
 import AdminPaymentSettings from "../pages/AdminPaymentSettings";
 import AdminLgsPage from "../pages/AdminLgsPage";
+import AdminYksPage from "../pages/AdminYksPage";
 import AdminNavbarPage from "../pages/AdminNavbarPage";
 import AdminSubscriptionsPage from "../pages/AdminSubscriptionsPage";
 import AdminContactsPage from "../pages/AdminContactsPage";
@@ -316,6 +317,7 @@ const AdminDashboard = () => {
     { key: "camp",               label: "Deneme Kampı" },
     { key: "payment-settings",   label: "Ödeme Sayfası" },
     { key: "lgs",                label: "LGS Başvuruları" },
+    { key: "yks",                label: "YKS Başvuruları" },
     { key: "contacts",           label: "Görüşme Talepleri" },
     { key: "applications",       label: "Eğitmen Başvuruları" },
     { key: "navbar",             label: "Navbar" },
@@ -411,6 +413,7 @@ const AdminDashboard = () => {
         {view === "camp"              && <AdminCampPage />}
         {view === "payment-settings"  && <AdminPaymentSettings />}
         {view === "lgs"               && <AdminLgsPage />}
+        {view === "yks"               && <AdminYksPage />}
         {view === "contacts"          && <AdminContactsPage />}
         {view === "applications"      && <AdminInstructorApplicationsPage />}
         {view === "navbar"            && <AdminNavbarPage />}
