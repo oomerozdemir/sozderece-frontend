@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import axios from "../utils/axios";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { isValidName, isValidPhone, isValidEmail } from "../utils/validation";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";
@@ -18,12 +19,35 @@ import {
   FaCalendarAlt
 } from "react-icons/fa";
 
+const fadeUp = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.5, ease: "easeOut" },
+};
+
+const inputCls =
+  "w-full px-3.5 py-3 rounded-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] focus:border-page-navy focus:ring-2 focus:ring-page-navy/10 transition-all bg-white";
+const labelCls = "block font-nunito font-bold text-xs text-[#475569] mb-1.5";
+
+const benefits = [
+  { icon: <FaUserCheck />, color: "#D8FF4F", bg: "rgba(216,255,79,0.12)", title: "Kişiye Özel Analiz", desc: "Eksiklerini nokta atışı belirle." },
+  { icon: <FaClipboardList />, color: "#a78bfa", bg: "rgba(115,64,200,0.18)", title: "Koçluk Sistemi Tanıtımı", desc: "Sana özel hazırlanan sistemin detaylarını öğren." },
+  { icon: <FaPhoneAlt />, color: "#FF9A7A", bg: "rgba(255,107,53,0.15)", title: "Ücretsiz Görüşme", desc: "Koçunla tanış, sorularını sor." },
+];
+
+const steps = [
+  { num: "01", title: "Randevu", desc: "Formu doldur, sana uygun tarih ve saati seç.", circleColor: "#D8FF4F", circleText: "#0D0A2E" },
+  { num: "02", title: "Görüşme", desc: "Belirlediğin zamanda koçumuz seni arasın ve analiz yapsın.", circleColor: "#7340C8", circleText: "#ffffff" },
+  { num: "03", title: "Başlangıç", desc: "Sistemi ve koçunu sevdiysen hemen çalışmaya başla.", circleColor: "#FF6B35", circleText: "#ffffff" },
+];
+
 const IletisimPage = () => {
   const navigate = useNavigate();
   const formRef = useRef(null);
 
   const today = new Date().toISOString().split("T")[0];
-  
+
   const maxDateObj = new Date();
   maxDateObj.setMonth(maxDateObj.getMonth() + 2);
   const maxDate = maxDateObj.toISOString().split("T")[0];
@@ -78,7 +102,7 @@ const IletisimPage = () => {
     return () => clearInterval(interval);
   }, [formData.meetingDate, fetchBlockedSlots]);
 
-  // --- GÜNCELLEME: 20 Dakikalık Aralıklar ---
+  // --- 20 Dakikalık Aralıklar ---
   const timeSlots = [
     // Sabah
     "09:00 - 09:20", "09:20 - 09:40", "09:40 - 10:00",
@@ -172,9 +196,6 @@ const IletisimPage = () => {
     }
   };
 
-  const inputClass = "w-full p-3 border border-[#ddd] rounded-lg text-base bg-[#fdfdfd]";
-  const labelClass = "block font-semibold text-[0.85rem] text-[#444] mb-1";
-
   return (
     <>
       <Seo
@@ -186,76 +207,150 @@ const IletisimPage = () => {
       <TopBar />
       <Navbar />
 
-      <div className="bg-[#f8f9fa] min-h-screen max-[960px]:pb-[70px]">
+      <div className="bg-white min-h-screen max-[960px]:pb-[70px]">
 
-        {/* HERO SECTION */}
-        <div className="bg-brand-navy pt-[50px] pb-[80px] relative max-[960px]:pt-5 max-[960px]:pb-10">
-          <div className="max-w-[1200px] mx-auto px-5">
-            <div className="grid grid-cols-[1.2fr_1fr] gap-[60px] items-start max-[960px]:grid-cols-1 max-[960px]:gap-[30px]">
+        {/* HERO + FORM */}
+        <section
+          className="relative overflow-hidden mx-3 sm:mx-6 lg:mx-10 mt-3 rounded-[32px] max-[640px]:rounded-[22px]"
+          style={{
+            background: "radial-gradient(ellipse 80% 60% at 60% 40%, #3d1a80 0%, #1A0A40 55%, #0d0520 100%)",
+          }}
+        >
+          {/* Orb'lar */}
+          <div style={{
+            position: "absolute", top: -120, right: 80, width: 420, height: 420, borderRadius: "50%",
+            background: "#4a1da0", filter: "blur(90px)", opacity: 0.32, pointerEvents: "none",
+          }} />
+          <div style={{
+            position: "absolute", bottom: -80, left: 60, width: 300, height: 300, borderRadius: "50%",
+            background: "#FF6B35", filter: "blur(100px)", opacity: 0.16, pointerEvents: "none",
+          }} />
 
-              {/* SOL TARAF */}
-              <div className="text-white max-[960px]:text-center">
-                <span className="bg-[rgba(243,156,18,0.2)] text-[#f39c12] py-1.5 px-3.5 rounded-[20px] text-[0.85rem] font-bold inline-block mb-[15px] border border-[rgba(243,156,18,0.4)]">🚀 YKS/LGS 2027 Hazırlık</span>
-                <h1 className="text-[2.8rem] leading-[1.2] font-extrabold mb-5 max-[960px]:text-[1.8rem] max-[960px]:mb-2.5">Hedeflerine Ulaşmak İçin<br /><span className="text-[#f39c12]">İlk Adımı At</span></h1>
-                <p className="text-[1.1rem] text-gray-300 leading-[1.6] mb-[30px] max-w-[95%] max-[960px]:text-base max-[960px]:mb-[15px]">
+          <div className="max-w-[1200px] mx-auto px-5 py-16 max-[960px]:py-10 relative" style={{ zIndex: 1 }}>
+            <div className="grid grid-cols-[1.2fr_1fr] gap-[60px] items-start max-[960px]:grid-cols-1 max-[960px]:gap-10">
+
+              {/* SOL — Metin */}
+              <div className="max-[960px]:text-center">
+                <motion.div {...fadeUp}>
+                  <span style={{
+                    display: "inline-flex", alignItems: "center", gap: 8,
+                    background: "rgba(216,255,79,0.12)", border: "1px solid rgba(216,255,79,0.3)",
+                    borderRadius: 999, padding: "7px 16px", marginBottom: 18,
+                  }}>
+                    <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#D8FF4F", display: "inline-block" }} />
+                    <span className="font-fredoka text-lime text-sm font-semibold tracking-[0.1em] uppercase">
+                      YKS / LGS 2027 Hazırlık
+                    </span>
+                  </span>
+                </motion.div>
+
+                <motion.h1
+                  {...fadeUp}
+                  transition={{ ...fadeUp.transition, delay: 0.1 }}
+                  className="font-fredoka font-bold text-white text-[2.6rem] leading-[1.1] mb-5 max-[960px]:text-[1.9rem]"
+                  style={{ letterSpacing: "-0.5px" }}
+                >
+                  Hedeflerine Ulaşmak İçin<br />
+                  <span className="text-lime">İlk Adımı At</span>
+                </motion.h1>
+
+                <motion.p
+                  {...fadeUp}
+                  transition={{ ...fadeUp.transition, delay: 0.15 }}
+                  className="font-nunito font-bold text-white/65 text-[1.05rem] leading-relaxed mb-8 max-w-[95%] max-[960px]:text-base max-[960px]:max-w-full"
+                >
                   YKS/LGS sınav sürecinde yalnız değilsin. Formu doldur, derece öğrencisi koçlarımız
                   seni arayıp seviyene uygun yol haritasını anlatsın.
-                </p>
+                </motion.p>
 
-                <div className="hidden max-[960px]:inline-flex items-center gap-2 bg-[rgba(255,255,255,0.15)] text-[#f39c12] border border-[rgba(243,156,18,0.5)] py-2.5 px-5 rounded-full font-semibold mb-5 cursor-pointer text-[0.95rem]" onClick={scrollToForm}>
+                <button
+                  className="hidden max-[960px]:inline-flex items-center gap-2 font-fredoka font-bold text-sm px-6 py-3 rounded-full mb-6 cursor-pointer border-none"
+                  style={{ background: "#D8FF4F", color: "#0D0A2E" }}
+                  onClick={scrollToForm}
+                >
                   Hemen Başvur <FaArrowDown />
-                </div>
+                </button>
 
-                <ul className="list-none p-0 mb-[30px] max-[960px]:flex max-[960px]:flex-wrap max-[960px]:justify-center max-[960px]:gap-2.5 max-[960px]:mb-5">
-                  <li className="flex gap-[15px] mb-[15px] items-center max-[960px]:bg-[rgba(255,255,255,0.05)] max-[960px]:p-2 max-[960px]:px-3 max-[960px]:rounded-lg max-[960px]:m-0 max-[960px]:w-full max-[960px]:justify-start">
-                    <div className="bg-[rgba(255,255,255,0.1)] text-[#f39c12] w-10 h-10 rounded-[10px] flex items-center justify-center text-[1.1rem] flex-shrink-0"><FaUserCheck /></div>
-                    <div><strong className="block text-base mb-0.5">Kişiye Özel Analiz</strong><span className="text-[0.9rem] text-gray-400">Eksiklerini nokta atışı belirle.</span></div>
-                  </li>
-                  <li className="flex gap-[15px] mb-[15px] items-center max-[960px]:bg-[rgba(255,255,255,0.05)] max-[960px]:p-2 max-[960px]:px-3 max-[960px]:rounded-lg max-[960px]:m-0 max-[960px]:w-full max-[960px]:justify-start">
-                    <div className="bg-[rgba(255,255,255,0.1)] text-[#f39c12] w-10 h-10 rounded-[10px] flex items-center justify-center text-[1.1rem] flex-shrink-0"><FaClipboardList /></div>
-                    <div><strong className="block text-base mb-0.5">Koçluk Sistemi Tanıtımı</strong><span className="text-[0.9rem] text-gray-400">Sana özel hazırlanan sistemin detaylarını öğren.</span></div>
-                  </li>
-                  <li className="flex gap-[15px] mb-[15px] items-center max-[960px]:bg-[rgba(255,255,255,0.05)] max-[960px]:p-2 max-[960px]:px-3 max-[960px]:rounded-lg max-[960px]:m-0 max-[960px]:w-full max-[960px]:justify-start">
-                    <div className="bg-[rgba(255,255,255,0.1)] text-[#f39c12] w-10 h-10 rounded-[10px] flex items-center justify-center text-[1.1rem] flex-shrink-0"><FaPhoneAlt /></div>
-                    <div><strong className="block text-base mb-0.5">Ücretsiz Görüşme</strong><span className="text-[0.9rem] text-gray-400">Koçunla tanış, sorularını sor.</span></div>
-                  </li>
-                </ul>
+                <motion.ul
+                  {...fadeUp}
+                  transition={{ ...fadeUp.transition, delay: 0.2 }}
+                  className="list-none p-0 mb-8 flex flex-col gap-4 max-[960px]:flex-row max-[960px]:flex-wrap max-[960px]:justify-center max-[960px]:gap-2.5"
+                >
+                  {benefits.map((b, i) => (
+                    <li key={i} className="flex gap-3.5 items-center max-[960px]:bg-white/5 max-[960px]:p-2.5 max-[960px]:px-3.5 max-[960px]:rounded-xl max-[960px]:w-full max-[960px]:justify-start">
+                      <div
+                        className="w-11 h-11 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
+                        style={{ background: b.bg, color: b.color }}
+                      >
+                        {b.icon}
+                      </div>
+                      <div>
+                        <strong className="font-fredoka font-bold text-white text-base block mb-0.5">{b.title}</strong>
+                        <span className="font-nunito text-white/45 text-sm">{b.desc}</span>
+                      </div>
+                    </li>
+                  ))}
+                </motion.ul>
 
-                <div className="mt-5 pt-5 border-t border-[rgba(255,255,255,0.1)] max-[960px]:hidden">
-                  <p className="text-[0.9rem] text-gray-400 mb-2.5">Veya bize ulaşın:</p>
-                  <div className="flex gap-[15px]">
-                    <a href="tel:05312546701" className="flex items-center gap-2.5 py-3 px-6 rounded-lg font-semibold no-underline transition-all cursor-pointer bg-transparent border-2 border-white text-white hover:bg-white hover:text-brand-navy"><FaPhoneAlt /> 0 531 254 67 01</a>
-                    <button onClick={() => navigate('/paket-detay')} className="flex items-center gap-2.5 py-3 px-6 rounded-lg font-semibold transition-all cursor-pointer bg-[rgba(255,255,255,0.1)] text-[#f39c12] border-0 hover:bg-[rgba(255,255,255,0.2)] hover:text-white">Paketleri İncele</button>
+                <div className="pt-6 border-t border-white/10 max-[960px]:hidden">
+                  <p className="font-nunito text-white/40 text-sm mb-3">Veya bize ulaşın:</p>
+                  <div className="flex gap-3">
+                    <a
+                      href="tel:05312546701"
+                      className="inline-flex items-center gap-2.5 py-3 px-6 rounded-full font-fredoka font-bold text-sm no-underline transition-all"
+                      style={{ border: "1.5px solid rgba(255,255,255,0.25)", color: "#fff" }}
+                    >
+                      <FaPhoneAlt /> 0 531 254 67 01
+                    </a>
+                    <button
+                      onClick={() => navigate('/paket-detay')}
+                      className="inline-flex items-center gap-2.5 py-3 px-6 rounded-full font-fredoka font-bold text-sm border-none cursor-pointer transition-all"
+                      style={{ background: "rgba(216,255,79,0.12)", color: "#D8FF4F" }}
+                    >
+                      Paketleri İncele
+                    </button>
                   </div>
                 </div>
               </div>
 
-              {/* SAĞ TARAF: FORM KARTI */}
-              <div className="bg-white p-[30px] rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.25)] max-[960px]:p-5 max-[960px]:shadow-[0_10px_30px_rgba(0,0,0,0.15)]" ref={formRef}>
-                <div className="text-center mb-5">
-                  <h3 className="text-[#0f2a4a] text-[1.4rem] font-bold mb-1">Randevu Oluştur 📅</h3>
-                  <p className="text-gray-500 text-[0.9rem]">Müsait olduğun zamanı seç, biz arayalım.</p>
+              {/* SAĞ — Form Kartı */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.15 }}
+                className="bg-white p-7 rounded-[28px] shadow-[0_20px_50px_rgba(0,0,0,0.3)] max-[960px]:p-5"
+                ref={formRef}
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(216,255,79,0.15)", color: "#7340C8" }}>
+                    <FaCalendarAlt />
+                  </div>
+                  <div>
+                    <h2 className="font-fredoka font-bold text-page-navy text-lg leading-tight">Randevu Oluştur</h2>
+                    <p className="font-nunito text-[#94a3b8] text-xs mt-0.5">Müsait olduğun zamanı seç, biz arayalım.</p>
+                  </div>
                 </div>
 
                 <form onSubmit={handleSubmit}>
-                  <div className="mb-3">
-                    <label className={labelClass}>Adınız Soyadınız</label>
-                    <input type="text" name="name" value={formData.name} onChange={handleInputChange} required placeholder="Örn: Ahmet Yılmaz" maxLength={100} className={inputClass} />
+                  <div className="mb-3.5">
+                    <label className={labelCls}>Adınız Soyadınız</label>
+                    <input type="text" name="name" value={formData.name} onChange={handleInputChange} required placeholder="Örn: Ahmet Yılmaz" maxLength={100} className={inputCls} />
                   </div>
 
-                  <div className="mb-3">
-                    <label className={labelClass}>E-posta Adresi</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} required placeholder="ornek@gmail.com" maxLength={254} className={inputClass} />
+                  <div className="mb-3.5">
+                    <label className={labelCls}>E-posta Adresi</label>
+                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} required placeholder="ornek@gmail.com" maxLength={254} className={inputCls} />
                   </div>
 
-                  <div className="mb-3">
-                    <label className={labelClass}>Telefon Numarası</label>
-                    <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="05XX XXX XX XX" pattern="^05\d{9}$" maxLength={11} className={inputClass} />
+                  <div className="mb-3.5">
+                    <label className={labelCls}>Telefon Numarası</label>
+                    <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="05XX XXX XX XX" pattern="^05\d{9}$" maxLength={11} className={inputCls} />
                   </div>
 
-                  <div className="mb-3">
-                    <label className={labelClass}>Durumunuz</label>
-                    <select name="userType" value={formData.userType} onChange={handleInputChange} required className={inputClass}>
+                  <div className="mb-3.5">
+                    <label className={labelCls}>Durumunuz</label>
+                    <select name="userType" value={formData.userType} onChange={handleInputChange} required className={inputCls}>
                       <option value="">Seçiniz...</option>
                       <option value="Mezun">Mezun Öğrenci</option>
                       <option value="12. Sınıf">12. Sınıf Öğrencisi</option>
@@ -267,29 +362,29 @@ const IletisimPage = () => {
                   </div>
 
                   {/* TARİH VE SAAT SEÇİMİ */}
-                  <div className="mb-3">
-                    <label className={labelClass}>Tarih Seçiniz</label>
-                    <input type="date" name="meetingDate" value={formData.meetingDate} onChange={handleInputChange} min={today} max={maxDate} required style={{ cursor: "pointer" }} className={inputClass} />
+                  <div className="mb-3.5">
+                    <label className={labelCls}>Tarih Seçiniz</label>
+                    <input type="date" name="meetingDate" value={formData.meetingDate} onChange={handleInputChange} min={today} max={maxDate} required style={{ cursor: "pointer" }} className={inputCls} />
                   </div>
 
                   {/* SAAT SLOT GRID */}
-                  <div className="mb-3">
-                    <label className={labelClass}>
+                  <div className="mb-3.5">
+                    <label className={labelCls}>
                       Müsait Olduğunuz Saat Aralığı
-                      {slotsLoading && <span className="text-[0.75rem] text-gray-400 ml-2">güncelleniyor…</span>}
+                      {slotsLoading && <span className="text-[11px] font-normal normal-case text-[#94a3b8] ml-2">güncelleniyor…</span>}
                     </label>
 
                     {!formData.meetingDate ? (
-                      <div className="w-full p-3 border border-[#ddd] rounded-lg text-[0.9rem] text-gray-400 bg-[#f9f9f9] text-center">
+                      <div className="w-full p-3 border border-[#e5e7eb] rounded-xl text-sm text-[#94a3b8] bg-[#f8fafc] text-center">
                         Önce tarih seçin
                       </div>
                     ) : (
                       <>
                         {/* Legenda */}
-                        <div className="flex gap-3 mb-2 text-[0.75rem] text-gray-500">
+                        <div className="flex gap-3 mb-2 text-[11px] text-[#64748b]">
                           <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-[#e8f5e9] border border-[#4caf50]"></span>Boş</span>
                           <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-[#fde8e8] border border-[#e57373]"></span>Dolu</span>
-                          <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-brand-navy border border-brand-navy"></span>Seçili</span>
+                          <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-page-navy border border-page-navy"></span>Seçili</span>
                         </div>
 
                         {/* Gruplara göre slotlar */}
@@ -300,7 +395,7 @@ const IletisimPage = () => {
                           { label: "Akşam", slots: timeSlots.slice(27) },
                         ].map((group) => (
                           <div key={group.label} className="mb-3">
-                            <div className="text-[0.72rem] font-bold text-gray-400 uppercase tracking-wider mb-1">{group.label}</div>
+                            <div className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-wider mb-1">{group.label}</div>
                             <div className="grid grid-cols-3 gap-1.5">
                               {group.slots.map((slot) => {
                                 const dolu = blockedSlots.has(slot);
@@ -311,16 +406,16 @@ const IletisimPage = () => {
                                     type="button"
                                     disabled={dolu}
                                     onClick={() => !dolu && setFormData((prev) => ({ ...prev, meetingTime: slot }))}
-                                    className={`py-1.5 px-1 rounded-md text-[0.72rem] font-medium border transition-all text-center leading-tight
+                                    className={`py-1.5 px-1 rounded-lg text-[11px] font-bold border transition-all text-center leading-tight
                                       ${secili
-                                        ? "bg-brand-navy text-white border-brand-navy shadow-md"
+                                        ? "bg-page-navy text-white border-page-navy shadow-md"
                                         : dolu
                                         ? "bg-[#fde8e8] text-[#c62828] border-[#e57373] cursor-not-allowed opacity-70"
-                                        : "bg-[#e8f5e9] text-[#2e7d32] border-[#4caf50] hover:bg-brand-navy hover:text-white hover:border-brand-navy cursor-pointer"
+                                        : "bg-[#e8f5e9] text-[#2e7d32] border-[#4caf50] hover:bg-page-navy hover:text-white hover:border-page-navy cursor-pointer"
                                       }`}
                                   >
                                     {slot.replace(" - ", "–")}
-                                    {dolu && <span className="block text-[0.65rem] mt-0.5 opacity-80">Dolu</span>}
+                                    {dolu && <span className="block text-[10px] mt-0.5 opacity-80">Dolu</span>}
                                   </button>
                                 );
                               })}
@@ -330,7 +425,7 @@ const IletisimPage = () => {
 
                         {/* Seçilen saati göster */}
                         {formData.meetingTime && (
-                          <div className="mt-1 text-[0.8rem] text-brand-navy font-semibold">
+                          <div className="mt-1 text-xs text-page-navy font-bold">
                             ✓ Seçilen saat: {formData.meetingTime}
                           </div>
                         )}
@@ -341,52 +436,86 @@ const IletisimPage = () => {
                     )}
                   </div>
 
-                  <div className="mb-3">
-                    <label className={labelClass}>Hedefleriniz / Notunuz</label>
-                    <textarea name="message" rows="3" value={formData.message} onChange={handleInputChange} maxLength={1000} className={inputClass}></textarea>
+                  <div className="mb-4">
+                    <label className={labelCls}>Hedefleriniz / Notunuz</label>
+                    <textarea name="message" rows="3" value={formData.message} onChange={handleInputChange} maxLength={1000} className={`${inputCls} resize-none`}></textarea>
                   </div>
 
-                  <button type="submit" className="w-full py-3.5 bg-gradient-to-r from-[#f39c12] to-[#d35400] text-white border-0 rounded-lg font-bold text-[1.1rem] cursor-pointer mt-2.5 shadow-[0_4px_15px_rgba(243,156,18,0.4)]" disabled={loading}>
+                  <button
+                    type="submit"
+                    className="w-full py-4 font-fredoka font-bold text-base rounded-full border-none cursor-pointer transition-transform hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
+                    style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 6px 18px rgba(216,255,79,0.3)" }}
+                    disabled={loading}
+                  >
                     {loading ? "Gönderiliyor..." : "Randevu Talebi Oluştur"}
                   </button>
 
-                  {successMsg && <div className="p-2.5 rounded-md mt-2.5 text-[0.85rem] flex items-center gap-2 bg-[#d1e7dd] text-[#0f5132]"><FaCheckCircle /> {successMsg}</div>}
-                  {errorMsg && <div className="p-2.5 rounded-md mt-2.5 text-[0.85rem] flex items-center gap-2 bg-[#f8d7da] text-[#842029]"><FaExclamationCircle /> {errorMsg}</div>}
+                  {successMsg && <div className="p-3 rounded-xl mt-3 text-sm flex items-center gap-2 bg-[#ecfdf5] text-[#065f46] font-nunito font-bold"><FaCheckCircle /> {successMsg}</div>}
+                  {errorMsg && <div className="p-3 rounded-xl mt-3 text-sm flex items-center gap-2 bg-[#fef2f2] text-[#991b1b] font-nunito font-bold"><FaExclamationCircle /> {errorMsg}</div>}
 
-                  <p className="text-center text-[0.75rem] text-gray-300 mt-2.5">Bilgileriniz 3. şahıslarla paylaşılmaz.</p>
+                  <p className="text-center text-[11px] text-[#94a3b8] font-nunito mt-3">Bilgileriniz 3. şahıslarla paylaşılmaz.</p>
                 </form>
-              </div>
+              </motion.div>
 
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* PROCESS SECTION */}
-        <div className="py-[60px] bg-white">
+        {/* SÜREÇ */}
+        <div className="py-20 max-[960px]:py-14">
           <div className="max-w-[1200px] mx-auto px-5">
-            <h2 className="text-center text-[1.8rem] text-[#0f2a4a] mb-10 max-[480px]:text-[1.3rem] max-[480px]:mb-6">Süreç Nasıl İşliyor?</h2>
-            <div className="grid grid-cols-3 gap-5 max-[960px]:grid-cols-1 max-[960px]:gap-[30px] max-[480px]:gap-4">
-              <div className="text-center p-2.5">
-                <div className="w-[45px] h-[45px] bg-[#eef2ff] text-[#0f2a4a] rounded-full text-[1.3rem] font-extrabold flex items-center justify-center mx-auto mb-[15px] border-2 border-[#0f2a4a]">1</div>
-                <h4>Randevu</h4>
-                <p>Formu doldur, sana uygun tarih ve saati seç.</p>
+            <motion.div {...fadeUp} className="text-center mb-12">
+              <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>
+                SÜREÇ
               </div>
-              <div className="text-center p-2.5">
-                <div className="w-[45px] h-[45px] bg-[#eef2ff] text-[#0f2a4a] rounded-full text-[1.3rem] font-extrabold flex items-center justify-center mx-auto mb-[15px] border-2 border-[#0f2a4a]">2</div>
-                <h4>Görüşme</h4>
-                <p>Belirlediğin zamanda koçumuz seni arasın ve analiz yapsın.</p>
-              </div>
-              <div className="text-center p-2.5">
-                <div className="w-[45px] h-[45px] bg-[#eef2ff] text-[#0f2a4a] rounded-full text-[1.3rem] font-extrabold flex items-center justify-center mx-auto mb-[15px] border-2 border-[#0f2a4a]">3</div>
-                <h4>Başlangıç</h4>
-                <p>Sistemi ve koçunu sevdiysen hemen çalışmaya başla.</p>
-              </div>
+              <h2 className="font-fredoka font-bold text-page-navy m-0 leading-tight" style={{ fontSize: "clamp(28px,4vw,40px)" }}>
+                Süreç Nasıl İşliyor?
+              </h2>
+            </motion.div>
+
+            <div className="grid grid-cols-3 gap-5 max-[960px]:grid-cols-1 max-[960px]:gap-6 relative">
+              <div
+                className="absolute max-[960px]:hidden"
+                style={{
+                  top: 22, left: "16.5%", right: "16.5%", height: 2,
+                  background: "linear-gradient(to right, #D8FF4F, #7340C8, #FF6B35)",
+                  opacity: 0.35, zIndex: 0,
+                }}
+              />
+              {steps.map((s, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.45, delay: i * 0.1 }}
+                  className="relative"
+                  style={{ zIndex: 1 }}
+                >
+                  <div className="bg-white border border-[#f1f5f9] rounded-[24px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_32px_rgba(115,64,200,0.12)] transition-all h-full text-center">
+                    <div
+                      className="w-11 h-11 rounded-full flex items-center justify-center mb-4 mx-auto font-fredoka font-bold text-base flex-shrink-0"
+                      style={{ background: s.circleColor, color: s.circleText, boxShadow: `0 4px 14px ${s.circleColor}55` }}
+                    >
+                      {s.num}
+                    </div>
+                    <h3 className="font-fredoka font-bold text-page-navy text-base mb-2">{s.title}</h3>
+                    <p className="font-nunito text-[#64748b] text-sm leading-relaxed">{s.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="hidden max-[960px]:block fixed bottom-0 left-0 w-full bg-white p-3 px-5 shadow-[0_-5px_20px_rgba(0,0,0,0.1)] z-[999] border-t border-gray-200">
-           <button className="w-full bg-[#f39c12] text-white border-0 py-3 rounded-lg font-bold text-base flex justify-center items-center gap-2.5 shadow-[0_4px_10px_rgba(243,156,18,0.3)]" onClick={scrollToForm}>Hemen Başvur <FaArrowDown/></button>
+        <div className="hidden max-[960px]:block fixed bottom-0 left-0 w-full bg-white p-3 px-5 shadow-[0_-5px_20px_rgba(0,0,0,0.1)] z-[999] border-t border-[#f1f5f9]">
+           <button
+             className="w-full border-none py-3.5 rounded-full font-fredoka font-bold text-base flex justify-center items-center gap-2.5 cursor-pointer"
+             style={{ background: "#D8FF4F", color: "#1C1B8A" }}
+             onClick={scrollToForm}
+           >
+             Hemen Başvur <FaArrowDown/>
+           </button>
         </div>
 
       </div>
