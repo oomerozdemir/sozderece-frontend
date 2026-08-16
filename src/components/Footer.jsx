@@ -86,7 +86,7 @@ const Footer = () => {
         <div className="border border-white/8 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 mb-10 bg-white/3">
           <div>
             <p className="font-nunito font-black text-white text-base mb-0.5">Hâlâ kararsız mısın?</p>
-            <p className="text-white/50 text-sm">Ücretsiz keşif görüşmesi — 15 dakika, sana özel değerlendirme.</p>
+            <p className="text-white/50 text-sm">Ücretsiz keşif görüşmesi: 15 dakika, sana özel değerlendirme.</p>
           </div>
           <a
             href={WA_LINK}
@@ -100,7 +100,7 @@ const Footer = () => {
 
         {/* Alt Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-white/8">
-          <p className="text-white/30 text-xs">© {new Date().getFullYear()} Sözderece Koçluk — Tüm hakları saklıdır.</p>
+          <p className="text-white/30 text-xs">© {new Date().getFullYear()} Sözderece Koçluk. Tüm hakları saklıdır.</p>
           <div className="flex items-center gap-1.5 text-white/30 text-xs">
             <a href="https://www.instagram.com/sozderece/" target="_blank" rel="noreferrer" className="no-underline text-white/30 hover:text-lime transition-colors">@sozderece</a>
           </div>

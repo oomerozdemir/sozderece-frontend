@@ -69,7 +69,7 @@ function PriceDisplay({ pkg, activePlan }) {
           <span className="font-fredoka font-bold text-lime leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{price}</span>
         </div>
         <span className="inline-block mt-2 font-nunito font-bold text-[12px] px-3 py-1 rounded-full text-lime" style={{ background: "rgba(216,255,79,0.15)" }}>
-          Sınava {days} gün — indirimli
+          Sınava {days} gün, indirimli
         </span>
       </div>
     );

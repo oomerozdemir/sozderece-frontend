@@ -15,17 +15,17 @@ const fadeUp = {
 
 const SOCIAL_PROOF = [
   {
-    quote: "1. ayda +17 net yaptım. Koçum her gün takip etti, hiç kaçırmadım.",
+    quote: "1 ayda +17 net yaptım. Koçumun her gün takip etmesi ve her an yanımda olması istikrarlı olmamı sağladı.",
     name: "Şevval",
     role: "ÖĞRENCİ",
     badge: "+17 NET · 1. AY",
     avatar: "Ş",
     avatarBg: "#1C1B8A",
-    year: "TYT-AYT 2024",
+    year: "TYT-AYT 2026",
     stars: 5,
   },
   {
-    quote: "Çocuğumun motivasyonu çok arttı. Veli raporu sayesinde süreci yakından takip edebildim.",
+    quote: "Çocuğumun ders çalışma isteği arttı. Ben de veli raporlaması sayesinde süreci yakından takip edebildim.",
     name: "Serpil H.",
     role: "VELİ",
     badge: "LGS 2025",
@@ -35,7 +35,7 @@ const SOCIAL_PROOF = [
     stars: 4,
   },
   {
-    quote: "Deneme analizleri sayesinde hep aynı hataları yapıyordum fark ettim ve artık yapmıyorum.",
+    quote: "Her deneme sonrası yapılan analizler sayesinde hatalarımı fark ettim ve artık yapmıyorum.",
     name: "Ege K.",
     role: "ÖĞRENCİ",
     badge: "+18 NET",
@@ -45,20 +45,20 @@ const SOCIAL_PROOF = [
     stars: 5,
   },
   {
-    quote: "Hedefimi koydu, programa bağladı. Sınava en hazır gittiğim yıl oldu bu.",
+    quote: "Hedefimi belirledik, programımı ayarladık. Uyamadığım zamanlar oldu programıma ama o zamanda koçum hep destek oldu ve bana göre düzenledi programımı. Sayesinde mezun senemde sınava en hazır gittiğim yıl oldu bu.",
     name: "Mert A.",
     role: "ÖĞRENCİ",
     badge: "+22 NET",
     avatar: "M",
     avatarBg: "#1C1B8A",
-    year: "AYT 2024",
+    year: "AYT 2026",
     stars: 5,
   },
   {
     quote: "LGS puanı beklentimizin çok üzerinde çıktı. Sistematik çalışma fark yaratıyor.",
     name: "Ayşe K.",
     role: "VELİ",
-    badge: "LGS 2024",
+    badge: "LGS 2025",
     avatar: "A",
     avatarBg: "#7340C8",
     year: "LGS 2024",

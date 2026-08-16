@@ -78,7 +78,7 @@ const AdminCoachPage = () => {
             "Content-Type": "multipart/form-data",
           },
         });
-        alert("Koç başarıyla oluşturuldu — giriş bilgileri e-postayla gönderildi.");
+        alert("Koç başarıyla oluşturuldu, giriş bilgileri e-postayla gönderildi.");
       }
 
       setFormData({ name: "", email: "", subject: "", description: "", imageFile: null });

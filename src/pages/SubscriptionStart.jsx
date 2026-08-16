@@ -180,8 +180,8 @@ export default function SubscriptionStart() {
           <h1 className="text-lg font-bold text-[#0f172a]">{hasPlanIndex ? `${pkg.name} — ${plan.label}` : pkg.name}</h1>
           <p className="text-2xl font-black text-[#f35900] mt-1">{plan.priceText || `${(plan.unitPrice / 100).toFixed(2)} TL`} <span className="text-sm font-semibold text-[#64748b]">/ ay</span></p>
           <p className="text-xs text-[#94a3b8] mt-2">
-            Her ay otomatik olarak yenilenir. "Siparişlerim" sayfasından dilediğin zaman tek tıkla iptal edebilirsin —
-            iptal ettiğinde ödediğin dönem sonuna kadar erişimin devam eder.
+            Her ay otomatik olarak yenilenir. "Siparişlerim" sayfasından dilediğin zaman tek tıkla iptal edebilirsin.
+            İptal ettiğinde ödediğin dönem sonuna kadar erişimin devam eder.
           </p>
         </div>
 

@@ -240,7 +240,7 @@ const AccountPage = () => {
         <main className="max-w-[860px] w-full mx-auto">
           {liveMissingCount > 0 && (
             <div className="flex items-center gap-2.5 bg-[#fff7ed] border border-[#fed7aa] text-[#9a3412] py-2.5 px-3 rounded-xl mb-4 font-bold">
-              ⚠ Profilini tamamla — Eksik alan: {liveMissingCount}
+              ⚠ Profilini tamamla (eksik alan: {liveMissingCount})
             </div>
           )}
 

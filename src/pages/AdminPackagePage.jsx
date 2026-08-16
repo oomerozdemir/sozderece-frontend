@@ -269,7 +269,7 @@ const AdminPackagePage = () => {
               onChange={(e) => setVideoSettings({ ...videoSettings, videoUrl: e.target.value })}
             />
             <p className="text-[11px] text-[#94a3b8] mt-1">
-              YouTube'dan kopyaladığınız normal video linkini (izleme, kısa veya paylaşım linki) direkt yapıştırabilirsiniz — otomatik uygun formata çevrilir.
+              YouTube'dan kopyaladığınız normal video linkini (izleme, kısa veya paylaşım linki) direkt yapıştırabilirsiniz, otomatik uygun formata çevrilir.
             </p>
           </div>
           <button
@@ -518,7 +518,7 @@ const AdminPackagePage = () => {
                   </select>
                   {form.plans?.length > 0 && (
                     <p className="text-[10px] text-[#94a3b8] mt-1">
-                      Aşağıda süre planı eklediyseniz, her planın kendi Ödeme Tipi'i bunun yerine geçerli olur — bu
+                      Aşağıda süre planı eklediyseniz, her planın kendi Ödeme Tipi'i bunun yerine geçerli olur. Bu
                       alan sadece süre planı olmayan (tek fiyatlı) paketler için kullanılır.
                     </p>
                   )}
@@ -651,7 +651,7 @@ const AdminPackagePage = () => {
                 {form.promoEndDate && (
                   new Date(form.promoEndDate) > new Date()
                     ? <p className="text-xs font-semibold text-[#065f46]">Promosyon aktif olacak.</p>
-                    : <p className="text-xs font-semibold text-[#991b1b]">Bu tarih geçmiş — promosyon gösterilmez.</p>
+                    : <p className="text-xs font-semibold text-[#991b1b]">Bu tarih geçmiş, promosyon gösterilmez.</p>
                 )}
               </div>
 
@@ -696,7 +696,7 @@ const AdminPackagePage = () => {
                   const daysLeft = getExamDaysLeft(previewPkg);
                   const examPrice = getExamPrice(previewPkg);
                   if (daysLeft <= 0) return (
-                    <p className="text-xs font-semibold text-[#991b1b]">Sınav tarihi geçmiş — dinamik fiyat gösterilmez.</p>
+                    <p className="text-xs font-semibold text-[#991b1b]">Sınav tarihi geçmiş, dinamik fiyat gösterilmez.</p>
                   );
                   const baseTotal = Math.round((daysLeft / 30) * (parseFloat(form.price) || 0));
                   return (
@@ -827,7 +827,7 @@ const AdminPackagePage = () => {
                   {newPlan.billingCycle === "monthly" && (
                     <p className="text-[11px] text-[#92400e] bg-[#fffbeb] border border-[#fde68a] rounded-lg px-2.5 py-1.5">
                       ⚠️ Buradaki "Unit Price" tutarı, müşteri aboneliği seçtiğinde <strong>her ay</strong> otomatik olarak
-                      kartından çekilecek. Bu planı sadece aylık bir tutarı temsil ediyorsa işaretleyin — "sınava kadar
+                      kartından çekilecek. Bu planı sadece aylık bir tutarı temsil ediyorsa işaretleyin. "Sınava kadar
                       toplu" gibi çok aylık/tek seferlik fiyatlanmış bir planı aylık abonelik yaparsanız müşteriden
                       yanlışlıkla her ay o toplu tutar çekilir.
                     </p>

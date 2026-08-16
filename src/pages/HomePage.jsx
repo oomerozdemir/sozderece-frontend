@@ -40,7 +40,7 @@ const whyCards = [
   {
     icon: "👨‍👩‍👦",
     title: "Veli Dahil Süreç",
-    desc: "'Ders çalış' demek zorunda kalmıyorsunuz. Kötü polis olmayı biz üstleniyoruz — haftalık rapor, aylık görüşme.",
+    desc: "'Ders çalış' demek zorunda kalmıyorsunuz. Kötü polis olmayı biz üstleniyoruz: haftalık rapor, aylık görüşme.",
     accent: "#a78bfa",
     accentBg: "rgba(115,64,200,0.12)",
     border: "rgba(115,64,200,0.25)",
@@ -64,7 +64,7 @@ const whyCards = [
   {
     icon: "📈",
     title: "Ölçülebilir Sonuçlar",
-    desc: "Ortalama +17.5 net artışı ilk ayda. Boş vaat değil — gerçek hikayeler, gerçek rakamlar.",
+    desc: "Ortalama +17.5 net artışı ilk ayda. Boş vaat değil, gerçek hikayeler ve gerçek rakamlar.",
     accent: "#a78bfa",
     accentBg: "rgba(115,64,200,0.12)",
     border: "rgba(115,64,200,0.25)",
@@ -75,7 +75,7 @@ const steps = [
   {
     num: "01",
     title: "Görüşme Talep Et",
-    desc: "Formu doldur ya da WhatsApp'tan yaz. 15 dakika içinde dönüyoruz — hiçbir taahhüt yok.",
+    desc: "Formu doldur ya da WhatsApp'tan yaz. 15 dakika içinde dönüyoruz, hiçbir taahhüt yok.",
     icon: "💬",
     circleColor: "#D8FF4F",
     circleText: "#0D0A2E",
@@ -195,7 +195,7 @@ const faqs = [
   },
   {
     q: "LGS için veli ne kadar dahil oluyor?",
-    a: "Haftalık gelişim raporu ve aylık veli görüşmesi yapıyoruz. Çocuğunuzla olan ilişkiyi korumak bizim işimiz — biz 'kötü polis' olmayı üstleniyoruz.",
+    a: "Haftalık gelişim raporu ve aylık veli görüşmesi yapıyoruz. Çocuğunuzla olan ilişkiyi korumak bizim işimiz, 'kötü polis' olmayı biz üstleniyoruz.",
   },
   {
     q: "8. sınıfa başladım, geç mi kaldım?",
@@ -327,7 +327,7 @@ function WhyDifferentSection() {
             <span style={{ color: "transparent", WebkitTextStroke: "2.5px #D8FF4F" }}>biz ne yapıyoruz?</span>
           </h2>
           <p className="font-nunito text-white/50 text-base mt-5 max-w-[500px]">
-            Dershane konu anlatır. Koçun görevi evdeki boşluğu kapatmak — her gün, somut olarak.
+            Dershane konu anlatır. Koçun görevi evdeki boşluğu kapatmak, her gün ve somut olarak.
           </p>
         </motion.div>
 

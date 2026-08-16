@@ -425,8 +425,8 @@ export default function CoachingWizardOdeme() {
                     </button>
                   </div>
                   <p className="font-nunito text-xs text-[#94a3b8] mt-2">
-                    Aylık abonelik seçersen ayrı bir adımda giriş yapman ve otomatik yenilemeyi onaylaman istenecek —
-                    dilediğin zaman "Siparişlerim" sayfasından tek tıkla iptal edebilirsin.
+                    Aylık abonelik seçersen ayrı bir adımda giriş yapman ve otomatik yenilemeyi onaylaman istenecek.
+                    Dilediğin zaman "Siparişlerim" sayfasından tek tıkla iptal edebilirsin.
                   </p>
                 </div>
               )}

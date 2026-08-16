@@ -188,7 +188,7 @@ export default function LgsHazirlikPage() {
             </h1>
 
             <p className="font-nunito font-bold text-lg mb-8" style={{ color: "rgba(255,255,255,0.6)", fontSize: "clamp(15px,2vw,18px)" }}>
-              {hero.subtitle || "Her gün yanında biri var — koçu, planı, sistemi."}
+              {hero.subtitle || "Her gün yanında biri var: koçu, planı, sistemi."}
             </p>
 
             <div className="flex flex-wrap justify-center gap-2 mb-8">
@@ -330,7 +330,7 @@ export default function LgsHazirlikPage() {
             <motion.div {...fadeUp} className="text-center mb-12">
               <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>SOSYAL KANIT</div>
               <h2 className="font-fredoka font-bold text-page-navy m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,40px)" }}>
-                {socialProof.title || "Sadece söz değil —"}{" "}
+                {socialProof.title || "Sadece söz değil,"}{" "}
                 <span style={{ color: "#FF6B35" }}>{socialProof.titleAccent || "aileler konuşuyor"}</span>
               </h2>
             </motion.div>
@@ -504,7 +504,7 @@ export default function LgsHazirlikPage() {
               <motion.div {...fadeUp} className="rounded-3xl p-8 flex flex-col border" style={{ background: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.11)", backdropFilter: "blur(8px)" }}>
                 <div className="mb-6">
                   <div className="font-fredoka font-bold" style={{ fontSize: "clamp(34px,4vw,52px)", color: "#D8FF4F" }}>₺{offer.price || "2.500"}</div>
-                  <p className="font-nunito text-white/40 text-xs mt-1">{offer.priceLabel || "LGS'ye kadar — tek seferlik"}</p>
+                  <p className="font-nunito text-white/40 text-xs mt-1">{offer.priceLabel || "LGS'ye kadar, tek seferlik"}</p>
                   {days > 0 && <p className="font-nunito text-white/50 text-sm mt-1">~₺{dailyCost} / gün</p>}
                 </div>
                 {offer.includes?.length > 0 && (

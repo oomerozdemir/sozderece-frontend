@@ -301,7 +301,7 @@ export default function DenemeKampiPage() {
         <div className="max-w-3xl mx-auto relative text-center">
           {/* Urgency bar */}
           <div className="inline-flex items-center gap-2 bg-[#f39c12]/20 border border-[#f39c12]/40 rounded-full px-4 py-1.5 text-sm font-bold mb-5 backdrop-blur">
-            ⏳ 2027 YKS'ye hazırlanıyoruz —&nbsp;
+            ⏳ 2027 YKS'ye hazırlanıyoruz,&nbsp;
             <span className="text-[#f39c12]">{hero.highlightPhrase || "Sözderece ile"}</span> kontrol sende!
           </div>
 
@@ -846,7 +846,7 @@ export default function DenemeKampiPage() {
                 >
                   <span>{formCfg.paidButtonText || "💳 Hemen Başla"}</span>
                   <span className="text-xs font-normal text-white/80">
-                    {currentPlan ? `${currentPlan.price}₺ ${currentPlan.priceText}` : `${offer.price}₺ — Sınava Kadar`}
+                    {currentPlan ? `${currentPlan.price}₺ ${currentPlan.priceText}` : `${offer.price}₺, Sınava Kadar`}
                   </span>
                 </button>
               </div>

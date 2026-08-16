@@ -574,7 +574,7 @@ function OfferFormEditor({ content, setContent }) {
             <input type="number" value={o.price || ""} onChange={(e) => set(setContent, "offer.price", e.target.value)} className={inp} placeholder="2500" />
           </Field>
           <Field label="Fiyat Etiketi">
-            <input value={o.priceLabel || ""} onChange={(e) => set(setContent, "offer.priceLabel", e.target.value)} className={inp} placeholder="LGS'ye kadar — tek seferlik" />
+            <input value={o.priceLabel || ""} onChange={(e) => set(setContent, "offer.priceLabel", e.target.value)} className={inp} placeholder="LGS'ye kadar, tek seferlik" />
           </Field>
           <Field label="Ana CTA">
             <input value={o.ctaPrimary || ""} onChange={(e) => set(setContent, "offer.ctaPrimary", e.target.value)} className={inp} placeholder="⚡ Yerimi Ayırt" />

@@ -78,8 +78,8 @@ export default function SubscriptionAuthGate({ onAuthenticated }) {
       <div className="w-full max-w-[420px] text-center p-6 mx-4 my-8">
         <h1 className="text-xl font-bold text-[#0f172a]">Devam etmeden önce giriş yap</h1>
         <p className="text-sm text-slate-600 mb-6">
-          Abonelik başlatmak için e-posta ile tek kullanımlık kodla giriş yapman gerekiyor —
-          böylece daha sonra aboneliğini görüntüleyip iptal edebilirsin.
+          Abonelik başlatmak için e-posta ile tek kullanımlık kodla giriş yapman gerekiyor.
+          Böylece daha sonra aboneliğini görüntüleyip iptal edebilirsin.
         </p>
 
         {step === "email" && (

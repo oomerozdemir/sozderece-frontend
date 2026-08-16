@@ -54,7 +54,7 @@ const STATIC_FALLBACK = {
   hero: {
     navbarCta: "Yerimi Ayırt →",
     titleAccent: "YKS Yolculuğunda Koçun Yanında Olsun.",
-    subtitle: "Günlük plan, anlık takip, deneme analizi — hepsi bir arada.",
+    subtitle: "Günlük plan, anlık takip, deneme analizi: hepsi bir arada.",
     chip1: "Kişisel Koç",
     chip2: "📊 Deneme Analizi",
     ctaPrimary: "⚡ Yerimi Şimdi Ayırt →",
@@ -72,7 +72,7 @@ const STATIC_FALLBACK = {
     steps: [
       { title: "İlk Görüşme", desc: "Ücretsiz tanışma görüşmesiyle mevcut durumun analiz edilir, hedeflerin netleştirilir." },
       { title: "Kişisel Plan", desc: "Koçun sana özel haftalık çalışma planı hazırlar. Günlük WhatsApp takibi başlar." },
-      { title: "Deneme Analizi", desc: "Her deneme sonrası 24 saat içinde detaylı analiz — zayıf konular önceliklendirilir." },
+      { title: "Deneme Analizi", desc: "Her deneme sonrası 24 saat içinde detaylı analiz yapılır, zayıf konular önceliklendirilir." },
     ],
     comparisonTitle: "Neden Sözderece?",
     comparisonCta: "Hemen Kayıt Ol →",
@@ -85,7 +85,7 @@ const STATIC_FALLBACK = {
     ],
   },
   socialProof: {
-    title: "Sadece söz değil —",
+    title: "Sadece söz değil,",
     titleAccent: "öğrenciler konuşuyor",
     stats: [],
     testimonials: [],
@@ -246,7 +246,7 @@ export default function YksYolculuguPage() {
             </h1>
 
             <p className="font-nunito font-bold text-lg mb-8" style={{ color: "rgba(255,255,255,0.6)", fontSize: "clamp(15px,2vw,18px)" }}>
-              {hero.subtitle || "Günlük plan, anlık takip, deneme analizi — hepsi bir arada."}
+              {hero.subtitle || "Günlük plan, anlık takip, deneme analizi: hepsi bir arada."}
             </p>
 
             <div className="flex flex-wrap justify-center gap-2 mb-8">
@@ -388,7 +388,7 @@ export default function YksYolculuguPage() {
             <motion.div {...fadeUp} className="text-center mb-12">
               <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>SOSYAL KANIT</div>
               <h2 className="font-fredoka font-bold text-page-navy m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,40px)" }}>
-                {socialProof.title || "Sadece söz değil —"}{" "}
+                {socialProof.title || "Sadece söz değil,"}{" "}
                 <span style={{ color: "#FF6B35" }}>{socialProof.titleAccent || "öğrenciler konuşuyor"}</span>
               </h2>
             </motion.div>

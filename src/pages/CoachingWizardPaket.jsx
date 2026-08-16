@@ -70,7 +70,7 @@ function PackagePrice({ pkg, activePlan }) {
           className="inline-block mt-2 font-fredoka font-bold text-[12px] px-3 py-1 rounded-full text-page-navy"
           style={{ background: "rgba(28,27,138,0.08)" }}
         >
-          Sınava {days} gün kaldı — %{rate} indirimli
+          Sınava {days} gün kaldı, %{rate} indirimli
         </span>
       </div>
     );
@@ -282,7 +282,7 @@ export default function CoachingWizardPaket() {
 
               {effectivePlan?.billingCycle === "monthly" && (
                 <p className="font-nunito text-xs text-[#64748b] mt-4 bg-[#fff7ed] border border-[#fed7aa] rounded-xl px-3 py-2.5">
-                  🔁 Bu plan <strong>aylık abonelik</strong> olarak da alınabilir — ödeme adımında tek seferlik mi
+                  🔁 Bu plan <strong>aylık abonelik</strong> olarak da alınabilir. Ödeme adımında tek seferlik mi
                   yoksa otomatik yenilenen aylık abonelik mi istediğini seçeceksin. Aboneliği dilediğin zaman
                   "Siparişlerim" sayfasından tek tıkla iptal edebilirsin.
                 </p>

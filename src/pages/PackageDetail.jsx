@@ -121,7 +121,7 @@ const PackageDetail = () => {
     displayPrice = `${examPrice}₺`;
     durationText = "";
     strikethroughPrice = selected.priceText || `${selected.price}₺`;
-    priceBadgeText = `Sınava ${daysLeft} gün kaldı — %${rate} indirimli`;
+    priceBadgeText = `Sınava ${daysLeft} gün kaldı, %${rate} indirimli`;
     priceBadgeStyle = "bg-[#dbeafe] text-[#1e40af]";
     planBadge = null;
     planBadgeStyle = "";
