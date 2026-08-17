@@ -10,8 +10,6 @@ import {
   FaShieldAlt,
   FaHeadset,
   FaCreditCard,
-  FaChevronDown,
-  FaChevronUp,
   FaUndo
 } from "react-icons/fa";
 
@@ -190,23 +188,38 @@ const PackageDetail = () => {
       <TopBar />
       <Navbar />
 
-      <div className="bg-[#f8fafc] py-16 max-[768px]:py-10 min-h-[80vh]">
-        <div className="max-w-[880px] mx-auto px-5">
+      <div className="bg-white min-h-screen">
 
-          {/* Başlık */}
-          <div className="text-center mb-8">
-            {isSpecialTutoring && (
-              <span className="inline-block bg-[#ede8fa] text-page-navy font-fredoka font-bold py-1.5 px-4 rounded-full text-xs mb-4 tracking-wide uppercase">
-                Özel Ders
+        {/* Başlık — koyu hero kartı, anasayfa marka diliyle */}
+        <section
+          className="relative overflow-hidden mx-3 sm:mx-6 lg:mx-10 mt-3 rounded-[32px] max-[640px]:rounded-[22px]"
+          style={{ background: "radial-gradient(ellipse 80% 60% at 60% 40%, #3d1a80 0%, #1A0A40 55%, #0d0520 100%)" }}
+        >
+          <div style={{ position: "absolute", top: -120, right: 60, width: 380, height: 380, borderRadius: "50%", background: "#4a1da0", filter: "blur(90px)", opacity: 0.32, pointerEvents: "none" }} />
+          <div style={{ position: "absolute", bottom: -80, left: 40, width: 280, height: 280, borderRadius: "50%", background: "#FF6B35", filter: "blur(100px)", opacity: 0.14, pointerEvents: "none" }} />
+
+          <div className="max-w-[880px] mx-auto px-5 py-16 max-[768px]:py-10 relative text-center" style={{ zIndex: 1 }}>
+            <span
+              className="inline-flex items-center gap-2 rounded-full mb-4"
+              style={{ background: "rgba(216,255,79,0.12)", border: "1px solid rgba(216,255,79,0.3)", padding: "7px 16px" }}
+            >
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#D8FF4F", display: "inline-block" }} />
+              <span className="font-fredoka text-lime text-xs font-bold tracking-[0.1em] uppercase">
+                {isSpecialTutoring ? "Özel Ders" : "Paket Detayı"}
               </span>
-            )}
-            <h1 className="font-fredoka font-bold text-page-navy text-[2.4rem] max-[768px]:text-[1.8rem] mb-3 leading-[1.1]">
+            </span>
+            <h1 className="font-fredoka font-bold text-white text-[2.4rem] max-[768px]:text-[1.8rem] mb-3 leading-[1.1]">
               {selected.name}
             </h1>
-            <p className="font-nunito text-[#64748b] text-lg max-[768px]:text-base leading-relaxed max-w-[560px] mx-auto">
-              {selected.subtitle}
-            </p>
+            {selected.subtitle && (
+              <p className="font-nunito font-bold text-white/60 text-lg max-[768px]:text-base leading-relaxed max-w-[560px] mx-auto">
+                {selected.subtitle}
+              </p>
+            )}
           </div>
+        </section>
+
+        <div className="max-w-[880px] mx-auto px-5 py-12 max-[768px]:py-8">
 
           {/* Süre sekmeleri */}
           {hasPlanTabs && (
@@ -336,13 +349,13 @@ const PackageDetail = () => {
           </div>
 
           {/* Güven şeridi */}
-          <div className="bg-white border border-[#f1f5f9] rounded-2xl p-5 mb-6">
+          <div className="bg-white border border-[#f1f5f9] rounded-[24px] p-5 mb-6 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
             <div className="flex justify-center gap-2.5 flex-wrap mb-5">
               <span className="inline-flex items-center gap-1.5 bg-[#f8fafc] text-[#475569] font-nunito font-bold text-xs px-3.5 py-2 rounded-full">
-                <FaShieldAlt className="text-page-navy" /> %100 Güvenli Ödeme
+                <FaShieldAlt style={{ color: "#7340C8" }} /> %100 Güvenli Ödeme
               </span>
               <span className="inline-flex items-center gap-1.5 bg-[#f8fafc] text-[#475569] font-nunito font-bold text-xs px-3.5 py-2 rounded-full">
-                <FaHeadset className="text-page-navy" /> 7/24 Destek
+                <FaHeadset style={{ color: "#FF6B35" }} /> 7/24 Destek
               </span>
               <span className="inline-flex items-center gap-1.5 bg-[#f8fafc] text-[#475569] font-nunito font-bold text-xs px-3.5 py-2 rounded-full">
                 <FaCreditCard className="text-page-navy" /> Taksit İmkanı
@@ -360,22 +373,32 @@ const PackageDetail = () => {
           </div>
 
           {/* SSS + kapanış CTA */}
-          <div className="bg-white border border-[#f1f5f9] rounded-2xl p-6 max-[768px]:p-4">
-            <h3 className="font-fredoka font-bold text-page-navy text-xl mb-6 text-center">Sıkça Sorulan Sorular</h3>
-            {faqList.map((item, idx) => (
-              <div key={idx} className="border border-[#f1f5f9] rounded-xl mb-3 overflow-hidden">
-                <button
-                  className="w-full flex justify-between items-center py-4 px-4 bg-white border-0 font-nunito font-bold text-[#334155] cursor-pointer text-left text-sm transition-colors hover:bg-[#fafafa]"
-                  onClick={() => toggleAccordion(idx)}
+          <div className="bg-white border border-[#f1f5f9] rounded-[24px] p-6 max-[768px]:p-4 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+            <div className="text-center mb-6">
+              <div className="font-fredoka font-bold text-accent-orange text-[11px] uppercase mb-2" style={{ letterSpacing: 4 }}>SSS</div>
+              <h3 className="font-fredoka font-bold text-page-navy text-xl">Sıkça Sorulan Sorular</h3>
+            </div>
+            {faqList.map((item, idx) => {
+              const isOpen = activeIndex === idx;
+              return (
+                <div
+                  key={idx}
+                  className={`relative rounded-2xl border overflow-hidden mb-3 transition-all duration-300 ${isOpen ? "border-page-navy shadow-[0_0_0_3px_rgba(28,27,138,0.06)]" : "border-[#e2e8f0] hover:border-page-navy/30"}`}
                 >
-                  {item.title}
-                  {activeIndex === idx ? <FaChevronUp className="text-page-navy flex-shrink-0" /> : <FaChevronDown className="text-[#94a3b8] flex-shrink-0" />}
-                </button>
-                <div className={`overflow-hidden transition-all duration-300 bg-[#f8fafc] ${activeIndex === idx ? "max-h-[200px] py-4 px-4 text-[#64748b] text-sm leading-relaxed border-t border-[#f1f5f9]" : "max-h-0"}`}>
-                  <p>{item.content}</p>
+                  <div className={`absolute left-0 top-0 bottom-0 w-1 transition-all duration-300 ${isOpen ? "bg-lime" : "bg-transparent"}`} />
+                  <button
+                    className="w-full flex justify-between items-center gap-4 py-4 pl-6 pr-4 bg-white border-0 font-nunito font-bold text-[#0f172a] cursor-pointer text-left text-sm transition-colors"
+                    onClick={() => toggleAccordion(idx)}
+                  >
+                    {item.title}
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-lg font-black transition-all duration-300 ${isOpen ? "bg-lime text-page-navy rotate-45" : "bg-[#f1f5f9] text-[#64748b] rotate-0"}`}>+</div>
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-300 bg-[#f8fafc] ${isOpen ? "max-h-[200px] py-4 pl-6 pr-4 text-[#64748b] text-sm leading-relaxed border-t border-[#f1f5f9]" : "max-h-0"}`}>
+                    <p>{item.content}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             <div className="text-center mt-8 pt-6 border-t border-[#f1f5f9]">
               <p className="font-nunito text-[#64748b] text-sm mb-4">İkna oldun mu? Yerini hemen ayırt.</p>
