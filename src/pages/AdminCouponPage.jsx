@@ -79,7 +79,10 @@ const AdminCouponPage = () => {
         type: form.type,
         isFirstOrder: form.isFirstOrder,
         discountRate: form.type === "RATE" ? parseInt(form.discountRate) : null,
-        discountAmount: form.type === "FIXED" ? parseFloat(form.discountAmount) * 100 : null,
+        // Kuruşa çevirme işlemi backend'de yapılıyor (createCoupon/updateCoupon), burada
+        // admin'in girdiği TL değeri olduğu gibi gönderilir. İki tarafta da ×100 yapılırsa
+        // 500 TL'lik indirim 50.000 TL'ye dönüşüp tüm siparişi sıfırlıyordu.
+        discountAmount: form.type === "FIXED" ? parseFloat(form.discountAmount) : null,
         validPackages: form.selectedPackages,
         expiresAt: form.expiresAt || null,
       };
