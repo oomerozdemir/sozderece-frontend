@@ -8,6 +8,9 @@ import Footer from "../components/Footer";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
+// Ekranda kuruş göstermiyoruz (₺27000.00 yerine ₺27.000) — ödemeye giden tutarlar bundan etkilenmez.
+const trPrice = (n) => Math.round(Number(n) || 0).toLocaleString("tr-TR");
+
 const DEFAULT_SETTINGS = {
   logoUrl: "/images/hero-logo.webp",
   slogan: "Başarıya giden yol buradan geçiyor",
@@ -480,7 +483,7 @@ const PaymentPage = () => {
                           <strong className="text-[#0f172a] text-sm block">{item.name}</strong>
                           {item.description && <p className="m-0 text-[#64748b] text-xs leading-relaxed mt-0.5">{item.description}</p>}
                         </div>
-                        <span className="text-[#f35900] font-bold text-sm whitespace-nowrap">₺{lineTL(item).toFixed(2)}</span>
+                        <span className="text-[#f35900] font-bold text-sm whitespace-nowrap">₺{trPrice(lineTL(item))}</span>
                       </div>
                     </li>
                   ))}
@@ -530,31 +533,31 @@ const PaymentPage = () => {
                   {tutoringTotal > 0 && (
                     <div className="flex justify-between text-[#475569]">
                       <span>Özel Ders</span>
-                      <span>₺{tutoringTotal.toFixed(2)}</span>
+                      <span>₺{trPrice(tutoringTotal)}</span>
                     </div>
                   )}
                   {otherTotal > 0 && (
                     <div className="flex justify-between text-[#475569]">
                       <span>Diğer</span>
-                      <span>₺{otherTotal.toFixed(2)}</span>
+                      <span>₺{trPrice(otherTotal)}</span>
                     </div>
                   )}
                   {calculatedDiscountValue > 0 && (
                     <div className="flex justify-between text-[#059669] font-semibold">
                       <span>Kupon ({couponData?.code})</span>
-                      <span>-₺{calculatedDiscountValue.toFixed(2)}</span>
+                      <span>-₺{trPrice(calculatedDiscountValue)}</span>
                     </div>
                   )}
                   {eligibleTutoringTotal > 0 && (
                     <div className="flex justify-between text-[#475569]">
                       <span>KDV (%20)</span>
-                      <span>₺{finalCalculations.kdvAmount.toFixed(2)}</span>
+                      <span>₺{trPrice(finalCalculations.kdvAmount)}</span>
                     </div>
                   )}
                   <hr className="border-[#e2e8f0] my-2" />
                   <div className="flex justify-between text-[#0f172a] font-black text-base">
                     <span>Toplam</span>
-                    <span className="text-[#f35900]">₺{finalCalculations.payable.toFixed(2)}</span>
+                    <span className="text-[#f35900]">₺{trPrice(finalCalculations.payable)}</span>
                   </div>
                 </div>
 

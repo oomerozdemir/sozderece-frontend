@@ -17,6 +17,9 @@ import Footer from "../components/Footer";
 
 const WIZARD_STEPS = [{ label: "Alan" }, { label: "Paket" }, { label: "Ödeme" }];
 
+// Ekranda kuruş göstermiyoruz (₺27000.00 yerine ₺27.000) — ödemeye giden tutarlar bundan etkilenmez.
+const trPrice = (n) => Math.round(Number(n) || 0).toLocaleString("tr-TR");
+
 const DEFAULT_SETTINGS = {
   logoUrl: "/images/hero-logo.webp",
   slogan: "Başarıya giden yol buradan geçiyor",
@@ -650,7 +653,7 @@ export default function CoachingWizardOdeme() {
                     <li key={i} className="pb-3 border-b border-[#f1f5f9] last:border-b-0">
                       <div className="flex justify-between items-start gap-2">
                         <strong className="text-[#0f172a] text-sm">{item.name}</strong>
-                        <span className="text-[#f35900] font-bold text-sm whitespace-nowrap">₺{Number(item.price).toFixed(2)}</span>
+                        <span className="text-[#f35900] font-bold text-sm whitespace-nowrap">₺{trPrice(item.price)}</span>
                       </div>
                     </li>
                   ))}
@@ -691,19 +694,19 @@ export default function CoachingWizardOdeme() {
                   {calculatedDiscountValue > 0 && (
                     <div className="flex justify-between text-[#059669] font-semibold">
                       <span>Kupon ({couponData?.code})</span>
-                      <span>-₺{calculatedDiscountValue.toFixed(2)}</span>
+                      <span>-₺{trPrice(calculatedDiscountValue)}</span>
                     </div>
                   )}
                   {eligibleTutoringTotal > 0 && (
                     <div className="flex justify-between text-[#475569]">
                       <span>KDV (%20)</span>
-                      <span>₺{finalCalculations.kdvAmount.toFixed(2)}</span>
+                      <span>₺{trPrice(finalCalculations.kdvAmount)}</span>
                     </div>
                   )}
                   <hr className="border-[#e2e8f0] my-2" />
                   <div className="flex justify-between text-[#0f172a] font-black text-base">
                     <span>Toplam</span>
-                    <span className="text-[#f35900]">₺{finalCalculations.payable.toFixed(2)}</span>
+                    <span className="text-[#f35900]">₺{trPrice(finalCalculations.payable)}</span>
                   </div>
                 </div>
 
