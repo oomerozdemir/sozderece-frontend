@@ -17,7 +17,7 @@ const DEFAULT = {
     "Özel Topluluğa Erişim",
     "Kurs Güncellemelerine Ömür Boyu Erişim",
   ],
-  guaranteeText: "Siparişinizi teslim aldıktan sonra 5 gün içinde koşulsuz cayma hakkınız bulunmaktadır.",
+  guaranteeText: "Siparişinizi teslim aldıktan sonra 14 gün içinde koşulsuz cayma hakkınız bulunmaktadır.",
   ctaButtonText: "Güvenli Ödemeye Geç",
 };
 
@@ -252,7 +252,7 @@ export default function AdminPaymentSettings() {
               className={`${inp} h-24 resize-none`}
               value={settings.guaranteeText || ""}
               onChange={(e) => set("guaranteeText", e.target.value)}
-              placeholder="Siparişinizi teslim aldıktan sonra 5 gün içinde koşulsuz cayma hakkınız bulunmaktadır."
+              placeholder="Siparişinizi teslim aldıktan sonra 14 gün içinde koşulsuz cayma hakkınız bulunmaktadır."
             />
           </div>
           {/* Önizleme */}

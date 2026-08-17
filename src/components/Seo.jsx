@@ -16,7 +16,7 @@ const Seo = ({
   
   const siteName = "Sözderece Koçluk";
   const defaultTitle = "Sözderece Koçluk | YKS & LGS Online Öğrenci Koçluğu";
-  const defaultDesc = "Sözderece Koçluk ile YKS ve LGS sınavlarına hazırlanın. Kişiye özel ders programı, deneme analizi, motivasyon desteği ve derece öğrencisi koçlarla başarıya ulaşın. İlk 5 gün koşulsuz iade garantisi.";
+  const defaultDesc = "Sözderece Koçluk ile YKS ve LGS sınavlarına hazırlanın. Kişiye özel ders programı, deneme analizi, motivasyon desteği ve derece öğrencisi koçlarla başarıya ulaşın. İlk 14 gün koşulsuz iade garantisi.";
   const defaultKeywords = "YKS koçluk, LGS koçluk, öğrenci koçluğu, online koçluk, ders çalışma programı, sınav koçluğu, TYT koçluk, AYT koçluk, üniversite sınavı koçluğu";
   const siteUrl = "https://sozderecekocluk.com";
   const defaultImage = `${siteUrl}/seo-cover.jpg`;

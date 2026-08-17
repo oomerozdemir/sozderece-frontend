@@ -15,7 +15,7 @@ const IadeVeCaymaPolitikasi = () => {
       */}
       <Seo 
         title="İade ve Cayma Politikası" 
-        description="Sözderece Koçluk hizmetlerinde geçerli iade şartları, 5 günlük koşulsuz cayma hakkı, ücret iadesi prosedürleri ve hizmet iptal koşulları hakkında detaylı yasal bilgilendirme."
+        description="Sözderece Koçluk hizmetlerinde geçerli iade şartları, 14 günlük koşulsuz cayma hakkı, ücret iadesi prosedürleri ve hizmet iptal koşulları hakkında detaylı yasal bilgilendirme."
         canonical="/iade-ve-cayma-politikasi"
       />
 
@@ -60,7 +60,7 @@ const IadeVeCaymaPolitikasi = () => {
 
             <h2>1. CAYMA HAKKI VE SÜRESİ</h2>
             <p>
-            Alıcı, hizmetin satın alındığı tarihten itibaren <strong>5 (beş) takvim günü</strong> içerisinde, hiçbir hukuki ve cezai sorumluluk üstlenmeksizin ve hiçbir gerekçe göstermeksizin sözleşmeden cayma hakkına sahiptir.
+            Alıcı, hizmetin satın alındığı tarihten itibaren <strong>14 (on dört) takvim günü</strong> içerisinde, hiçbir hukuki ve cezai sorumluluk üstlenmeksizin ve hiçbir gerekçe göstermeksizin sözleşmeden cayma hakkına sahiptir.
             Cayma hakkının kullanılması için bu süre içinde Satıcı'ya yazılı olarak veya kalıcı veri saklayıcısı ile bildirimde bulunulması şarttır.
             </p>
 
@@ -85,14 +85,14 @@ const IadeVeCaymaPolitikasi = () => {
             Aşağıdaki durumlarda yasal mevzuat gereği cayma hakkı kullanılamaz veya sınırlandırılabilir:
             </p>
             <ul>
-                <li>5 günlük yasal cayma süresi dolduktan sonra yapılan başvurular.</li>
-                <li>Hizmetin ifasına başlandıktan sonra, tüketicinin onayı ile 5 günlük süre dolmadan tamamlanan tek seferlik danışmanlık hizmetleri.</li>
+                <li>14 günlük yasal cayma süresi dolduktan sonra yapılan başvurular.</li>
+                <li>Hizmetin ifasına başlandıktan sonra, tüketicinin onayı ile 14 günlük süre dolmadan tamamlanan tek seferlik danışmanlık hizmetleri.</li>
                 <li>Kopyalanabilir nitelikteki dijital içerikler (PDF notlar, video ders kayıtları vb.) teslim edildikten sonra.</li>
             </ul>
 
             <h2>5. HİZMET İPTALİ VE FESİH</h2>
             <p>
-            Koçluk süreci devam ederken (5 günlük cayma süresi geçtikten sonra) hizmetin Alıcı tarafından sonlandırılmak istenmesi durumunda, kullanılan gün veya haftaların ücreti "standart paket fiyatı" üzerinden hesaplanarak düşülür ve kalan bakiye iade edilir. Ancak kampanyalı/indirimli paket alımlarında iptal durumunda indirim tutarı geri alınabilir.
+            Koçluk süreci devam ederken (14 günlük cayma süresi geçtikten sonra) hizmetin Alıcı tarafından sonlandırılmak istenmesi durumunda, kullanılan gün veya haftaların ücreti "standart paket fiyatı" üzerinden hesaplanarak düşülür ve kalan bakiye iade edilir. Ancak kampanyalı/indirimli paket alımlarında iptal durumunda indirim tutarı geri alınabilir.
             </p>
 
             <h2>6. MÜCBİR SEBEPLER</h2>

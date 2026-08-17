@@ -35,7 +35,7 @@ const faqs = [
   },
   {
     question: "Koşulsuz iptal/iade hakkı nedir?",
-    answer: "Satın aldığınız paketten memnun kalmazsanız, ilk 5 gün içinde koşulsuz cayma ve iade hakkınızı kullanabilirsiniz.Bu süreçte herhangi bir gerekçe bildirmeniz gerekmez.",
+    answer: "Satın aldığınız paketten memnun kalmazsanız, ilk 14 gün içinde koşulsuz cayma ve iade hakkınızı kullanabilirsiniz.Bu süreçte herhangi bir gerekçe bildirmeniz gerekmez.",
   },
 ];
 

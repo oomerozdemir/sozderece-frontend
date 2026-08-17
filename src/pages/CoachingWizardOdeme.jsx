@@ -36,7 +36,7 @@ const DEFAULT_SETTINGS = {
     "Özel Topluluğa Erişim",
     "Kurs Güncellemelerine Ömür Boyu Erişim",
   ],
-  guaranteeText: "Siparişinizi teslim aldıktan sonra 5 gün içinde koşulsuz cayma hakkınız bulunmaktadır.",
+  guaranteeText: "Siparişinizi teslim aldıktan sonra 14 gün içinde koşulsuz cayma hakkınız bulunmaktadır.",
   ctaButtonText: "Güvenli Ödemeye Geç",
 };
 

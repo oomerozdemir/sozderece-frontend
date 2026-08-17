@@ -44,7 +44,7 @@ const faqs = [
   },
   {
     question: "İptal ve iade hakkım var mı?",
-    answer: "Evet, güveniniz bizim için paradan daha değerli. Paketi satın aldıktan sonraki ilk 5 gün içinde hiçbir gerekçe göstermeksizin %100 ücret iadesi talep edebilirsiniz.",
+    answer: "Evet, güveniniz bizim için paradan daha değerli. Paketi satın aldıktan sonraki ilk 14 gün içinde hiçbir gerekçe göstermeksizin %100 ücret iadesi talep edebilirsiniz.",
   },
 ];
 

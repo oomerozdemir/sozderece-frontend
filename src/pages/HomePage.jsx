@@ -163,7 +163,7 @@ const compRows = [
 const faqs = [
   {
     q: "İptal ve iade hakkı var mı?",
-    a: "Evet. Hizmet başlamadan önce tam iade yapılır. Hizmet başladıktan sonra 7 gün içinde iptal talebinde bulunabilirsiniz. Detaylar için iade politikamıza göz atın.",
+    a: "Evet. Hizmet başlamadan önce tam iade yapılır. Hizmet başladıktan sonra 14 gün içinde iptal talebinde bulunabilirsiniz. Detaylar için iade politikamıza göz atın.",
   },
   {
     q: "Koç değişikliği yapabilir miyim?",
