@@ -221,42 +221,32 @@ const PackageDetail = () => {
 
         <div className="max-w-[880px] mx-auto px-5 py-12 max-[768px]:py-8">
 
-          {/* Süre sekmeleri */}
-          {hasPlanTabs && (
-            <div className="flex bg-white border border-[#e5e7eb] rounded-full p-1.5 mb-6 max-w-[340px] mx-auto">
-              {plans.map((plan, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  className={`flex-1 py-2 text-sm font-fredoka font-bold rounded-full transition-all ${
-                    activePlanIdx === i
-                      ? "bg-page-navy text-white"
-                      : "text-[#64748b] hover:text-page-navy"
-                  }`}
-                  onClick={() => setActivePlanIdx(i)}
-                >
-                  {plan.label}
-                </button>
-              ))}
-            </div>
-          )}
-
           {/* Paket seçici (birden fazla paket varsa) */}
           {packages.length > 1 && (
-            <div className="bg-white border border-[#e5e7eb] rounded-2xl p-4 mb-6 max-w-[420px] mx-auto">
-              <label className="block font-nunito font-bold text-xs text-[#64748b] mb-2 uppercase tracking-wide">Paket Seçenekleri</label>
-              <select
-                value={selectedSlug}
-                onChange={(e) => {
-                  setSelectedSlug(e.target.value);
-                  navigate(`?slug=${e.target.value}`, { replace: true });
-                }}
-                className="w-full py-3 px-3.5 border border-[#e5e7eb] rounded-xl text-base bg-white cursor-pointer outline-none transition-all focus:border-page-navy"
-              >
-                {packages.map((p) => (
-                  <option key={p.slug} value={p.slug}>{p.name}</option>
-                ))}
-              </select>
+            <div className="mb-6 text-center">
+              <label className="block font-nunito font-bold text-xs text-[#94a3b8] mb-2.5 uppercase tracking-wide">Paket Seçenekleri</label>
+              <div className="flex flex-wrap justify-center gap-2">
+                {packages.map((p) => {
+                  const active = p.slug === selectedSlug;
+                  return (
+                    <button
+                      key={p.slug}
+                      type="button"
+                      onClick={() => {
+                        setSelectedSlug(p.slug);
+                        navigate(`?slug=${p.slug}`, { replace: true });
+                      }}
+                      className={`font-fredoka font-bold text-sm px-5 py-2.5 rounded-full border-2 transition-all ${
+                        active
+                          ? "bg-page-navy text-white border-page-navy"
+                          : "bg-white text-[#475569] border-[#e5e7eb] hover:border-page-navy/40"
+                      }`}
+                    >
+                      {p.name}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
 
@@ -271,6 +261,24 @@ const PackageDetail = () => {
               <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#4a1da0", filter: "blur(60px)", opacity: 0.5, top: -60, right: -40 }} />
 
               <div className="relative">
+                {hasPlanTabs && (
+                  <div className="inline-flex bg-white/10 border border-white/15 rounded-full p-1 mb-4">
+                    {plans.map((plan, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        className={`px-4 py-1.5 text-xs font-fredoka font-bold rounded-full transition-all ${
+                          activePlanIdx === i
+                            ? "bg-lime text-page-navy"
+                            : "text-white/55 hover:text-white"
+                        }`}
+                        onClick={() => setActivePlanIdx(i)}
+                      >
+                        {plan.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
                 {planBadge && (
                   <span className={`inline-block text-xs font-fredoka font-bold px-3 py-1.5 rounded-full mb-3 ${planBadgeStyle}`}>
                     {planBadge}
