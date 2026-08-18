@@ -4,6 +4,7 @@ import axios from "../utils/axios";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { isValidEmail, isValidName, isValidPhone, isValidPostalCode, isValidAddress, isValidTcNo } from "../utils/validation";
 import { lineTL, computeCartTotals, computeCouponDiscount, computeFinalCalculations } from "../utils/checkoutPricing";
+import { getStoredVisitorId, getStoredSessionId } from "../components/VisitorTracker";
 import Footer from "../components/Footer";
 
 const user = JSON.parse(localStorage.getItem("user"));
@@ -189,6 +190,8 @@ const PaymentPage = () => {
             baseTutoring: Number(eligibleTutoringTotal.toFixed(2)),
           },
           requestIds,
+          visitorId: getStoredVisitorId(),
+          sessionId: getStoredSessionId(),
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );

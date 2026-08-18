@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import axios from "../utils/axios";
 import { Link } from "react-router-dom";
 import Button from "./ui/Button";
+import { FaInstagram, FaFacebook, FaGoogle, FaTiktok, FaWhatsapp, FaEnvelope, FaTwitter, FaYoutube, FaGlobe, FaLink } from "react-icons/fa";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -76,6 +77,26 @@ const getOrderMeta = (order) => {
 
 const inputCls = "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/10 transition-all bg-white";
 
+const CHANNEL_ICONS = {
+  instagram: FaInstagram,
+  facebook: FaFacebook,
+  google: FaGoogle,
+  tiktok: FaTiktok,
+  whatsapp: FaWhatsapp,
+  email: FaEnvelope,
+  x: FaTwitter,
+  youtube: FaYoutube,
+  referral: FaLink,
+  direct: FaGlobe,
+};
+
+const formatDuration = (seconds) => {
+  if (!seconds && seconds !== 0) return "—";
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${String(s).padStart(2, "0")} dk`;
+};
+
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -118,6 +139,19 @@ const AdminDashboard = () => {
   const [editingBilling, setEditingBilling] = useState(null);
   const [updatedBillingInfo, setUpdatedBillingInfo] = useState({});
   const [view, setView] = useState("dashboard");
+  const [attributionCache, setAttributionCache] = useState({}); // orderId -> data | "loading" | "error"
+
+  const loadAttribution = async (orderId) => {
+    if (attributionCache[orderId]) return; // zaten yüklendi/yükleniyor
+    setAttributionCache((prev) => ({ ...prev, [orderId]: "loading" }));
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`/api/admin/orders/${orderId}/attribution`, { headers: { Authorization: `Bearer ${token}` } });
+      setAttributionCache((prev) => ({ ...prev, [orderId]: res.data }));
+    } catch {
+      setAttributionCache((prev) => ({ ...prev, [orderId]: "error" }));
+    }
+  };
 
   // Arama/filtre değişince sayfalamayı başa al — aksi halde filtrelenmiş
   // listede olmayan bir sayfada kalıp boş görünüm gösterebilir.
@@ -591,6 +625,70 @@ const AdminDashboard = () => {
                                 ✏️ Fatura Düzenle
                               </button>
                             )}
+                          </details>
+
+                          {/* Trafik Kaynağı */}
+                          <details className="mb-4" onToggle={(e) => { if (e.target.open) loadAttribution(order.id); }}>
+                            <summary className="text-sm font-bold text-[#2563eb] cursor-pointer hover:text-[#1d4ed8] list-none">
+                              🎯 Trafik Kaynağı & Oturum Geçmişi
+                            </summary>
+                            <div className="mt-2">
+                              {(() => {
+                                const data = attributionCache[order.id];
+                                if (!data || data === "loading") {
+                                  return <p className="text-xs text-[#94a3b8]">Yükleniyor...</p>;
+                                }
+                                if (data === "error") {
+                                  return <p className="text-xs text-[#ef4444]">Trafik verisi yüklenemedi.</p>;
+                                }
+                                if (!data.hasData) {
+                                  return <p className="text-xs text-[#94a3b8]">Bu sipariş için oturum verisi yok (eski sipariş ya da bu özellik eklenmeden önce oluşturulmuş).</p>;
+                                }
+                                const { snapshot, totalSessions, firstSession, convertingSession, middleSessionsCount } = data;
+                                const SnapshotIcon = snapshot ? (CHANNEL_ICONS[snapshot.icon] || FaGlobe) : null;
+                                const hasUtm = snapshot?.utm && (snapshot.utm.source || snapshot.utm.medium || snapshot.utm.campaign || snapshot.utm.term || snapshot.utm.content);
+                                return (
+                                  <div className="space-y-3">
+                                    {snapshot && (
+                                      <div className="bg-white rounded-xl p-3 border border-[#e5e7eb] space-y-1.5 text-xs text-[#334155]">
+                                        <p className="flex items-center gap-2 font-bold text-[#0f172a] text-sm">
+                                          <SnapshotIcon className="text-[#2563eb] flex-shrink-0" /> Sipariş {snapshot.headline}
+                                        </p>
+                                        {snapshot.referrerDomain && <p><strong>Yönlendiren:</strong> {snapshot.referrerDomain}</p>}
+                                        <p><strong>Cihaz:</strong> {snapshot.deviceTypeLabel}{snapshot.os ? ` - ${snapshot.os}` : ""}{snapshot.browser ? ` - ${snapshot.browser}` : ""}</p>
+                                        <p><strong>Oturum Süresi:</strong> {formatDuration(snapshot.durationSeconds)}</p>
+                                        {snapshot.landingPage && <p className="break-all"><strong>Başlangıç Sayfası:</strong> {snapshot.landingPage}</p>}
+                                        {hasUtm && (
+                                          <div className="mt-2 pt-2 border-t border-[#f1f5f9] grid grid-cols-2 gap-1">
+                                            {snapshot.utm.source && <p className="text-[11px]"><strong>utm_source:</strong> {snapshot.utm.source}</p>}
+                                            {snapshot.utm.medium && <p className="text-[11px]"><strong>utm_medium:</strong> {snapshot.utm.medium}</p>}
+                                            {snapshot.utm.campaign && <p className="text-[11px]"><strong>utm_campaign:</strong> {snapshot.utm.campaign}</p>}
+                                            {snapshot.utm.term && <p className="text-[11px]"><strong>utm_term:</strong> {snapshot.utm.term}</p>}
+                                            {snapshot.utm.content && <p className="text-[11px]"><strong>utm_content:</strong> {snapshot.utm.content}</p>}
+                                          </div>
+                                        )}
+                                      </div>
+                                    )}
+                                    <div className="bg-[#f8fafc] rounded-xl p-3 border border-[#f1f5f9] text-xs text-[#334155] space-y-1.5">
+                                      <p className="font-bold text-[#0f172a]">Toplam Oturum Sayısı: {totalSessions}</p>
+                                      {firstSession?.isConverting ? (
+                                        <p>• 1. oturumda sipariş {firstSession.headline} — {new Date(firstSession.startedAt).toLocaleDateString("tr-TR")}</p>
+                                      ) : (
+                                        <>
+                                          {firstSession && (
+                                            <p>• 1. oturum {firstSession.headline} — {new Date(firstSession.startedAt).toLocaleDateString("tr-TR")}</p>
+                                          )}
+                                          {middleSessionsCount > 0 && <p>• {middleSessionsCount} kez daha giriş yapıldı</p>}
+                                          {convertingSession && (
+                                            <p>• Sipariş {convertingSession.headline} — {new Date(convertingSession.startedAt).toLocaleDateString("tr-TR")}</p>
+                                          )}
+                                        </>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })()}
+                            </div>
                           </details>
 
                           {/* Bitiş Tarihi */}

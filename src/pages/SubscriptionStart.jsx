@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import SubscriptionAuthGate from "../components/SubscriptionAuthGate";
+import { getStoredVisitorId, getStoredSessionId } from "../components/VisitorTracker";
 import {
   isValidEmail,
   isValidName,
@@ -139,7 +140,14 @@ export default function SubscriptionStart() {
       const token = localStorage.getItem("token");
       const res = await axios.post(
         "/api/subscriptions/start",
-        { slug, planIndex: hasPlanIndex ? parseInt(planIndex) : null, billingInfo: formData, consentAccepted: true },
+        {
+          slug,
+          planIndex: hasPlanIndex ? parseInt(planIndex) : null,
+          billingInfo: formData,
+          consentAccepted: true,
+          visitorId: getStoredVisitorId(),
+          sessionId: getStoredSessionId(),
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setPayTrEndpoint(res.data.paytrEndpoint);

@@ -13,6 +13,7 @@ import { computeCartTotals, computeCouponDiscount, computeFinalCalculations } fr
 import { isExamPriceActive, isPromoActive, getExamUnitPrice } from "../utils/promoUtils";
 import WizardStepBar from "../components/WizardStepBar";
 import WizardUrgencyBanner from "../components/WizardUrgencyBanner";
+import { getStoredVisitorId, getStoredSessionId } from "../components/VisitorTracker";
 import Footer from "../components/Footer";
 
 const WIZARD_STEPS = [{ label: "Alan" }, { label: "Paket" }, { label: "Ödeme" }];
@@ -313,6 +314,8 @@ export default function CoachingWizardOdeme() {
           vatAmount: Number(finalCalculations.kdvAmount.toFixed(2)),
           baseTutoring: Number(eligibleTutoringTotal.toFixed(2)),
         },
+        visitorId: getStoredVisitorId(),
+        sessionId: getStoredSessionId(),
       });
 
       if (response.data?.fields) {
