@@ -7,6 +7,7 @@ import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
 import PricingSection from "../components/PricingSection";
 import HeroSection from "../components/HeroSection";
+import DiscountPopup from "../components/DiscountPopup";
 
 const WA_LINK = "https://wa.me/905312546701?text=S%C4%B0STEM";
 
@@ -1006,6 +1007,7 @@ export default function HomePage() {
       />
 
       <Navbar />
+      <DiscountPopup />
       <HeroSection />
       <EarlyRegistrationBanner />
       <PricingSection />
