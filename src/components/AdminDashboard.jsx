@@ -1,8 +1,13 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, Fragment } from "react";
 import axios from "../utils/axios";
 import { Link } from "react-router-dom";
 import Button from "./ui/Button";
 import { FaInstagram, FaFacebook, FaGoogle, FaTiktok, FaWhatsapp, FaEnvelope, FaTwitter, FaYoutube, FaGlobe, FaLink } from "react-icons/fa";
+import {
+  FaChartPie, FaChalkboardTeacher, FaBoxOpen, FaUserCheck, FaClipboardList, FaShoppingCart,
+  FaSyncAlt, FaUsers, FaFire, FaCreditCard, FaGraduationCap, FaUniversity, FaPhoneAlt,
+  FaFileAlt, FaListUl, FaSearch, FaFilter, FaChevronDown, FaChevronUp, FaDownload,
+} from "react-icons/fa";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -97,6 +102,21 @@ const formatDuration = (seconds) => {
   return `${m}:${String(s).padStart(2, "0")} dk`;
 };
 
+// ikas'taki "Bugün / 19:38" gösterimiyle aynı: bugünse "Bugün", dünse "Dün",
+// değilse kısa tarih — altında saat ayrı satırda gösteriliyor.
+const formatOrderDateParts = (dateStr) => {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const isSameDay = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  const yesterday = new Date(now); yesterday.setDate(now.getDate() - 1);
+  let label;
+  if (isSameDay(d, now)) label = "Bugün";
+  else if (isSameDay(d, yesterday)) label = "Dün";
+  else label = d.toLocaleDateString("tr-TR", { day: "2-digit", month: "short", year: "numeric" });
+  const time = d.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+  return { label, time };
+};
+
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -107,7 +127,11 @@ const AdminDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [orderStatusFilter, setOrderStatusFilter] = useState("all");
   const [orderPage, setOrderPage] = useState(1);
-  const ORDERS_PER_PAGE = 10;
+  const [ordersPerPage, setOrdersPerPage] = useState(10);
+  const [ordersSubView, setOrdersSubView] = useState("all"); // "all" | "abandoned"
+  const [expandedOrderId, setExpandedOrderId] = useState(null);
+  const [abandonedCarts, setAbandonedCarts] = useState(null);
+  const [abandonedLoading, setAbandonedLoading] = useState(false);
   const filteredOrders = orders.filter((order) => {
     const term = searchTerm.trim().toLowerCase();
     const matchesSearch =
@@ -120,8 +144,33 @@ const AdminDashboard = () => {
     const matchesStatus = orderStatusFilter === "all" || order.status === orderStatusFilter;
     return matchesSearch && matchesStatus;
   });
-  const orderTotalPages = Math.max(1, Math.ceil(filteredOrders.length / ORDERS_PER_PAGE));
-  const pagedOrders = filteredOrders.slice((orderPage - 1) * ORDERS_PER_PAGE, orderPage * ORDERS_PER_PAGE);
+  const orderTotalPages = Math.max(1, Math.ceil(filteredOrders.length / ordersPerPage));
+  const pagedOrders = filteredOrders.slice((orderPage - 1) * ordersPerPage, orderPage * ordersPerPage);
+
+  const loadAbandonedCarts = async () => {
+    if (abandonedCarts) return; // zaten yüklendi
+    setAbandonedLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get("/api/admin/carts/abandoned", { headers: { Authorization: `Bearer ${token}` } });
+      setAbandonedCarts(res.data.carts || []);
+    } catch {
+      setAbandonedCarts([]);
+    } finally {
+      setAbandonedLoading(false);
+    }
+  };
+
+  const handleDeleteAbandonedCart = async (id) => {
+    if (!window.confirm("Bu terk edilmiş sepeti silmek istediğine emin misin?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`/api/admin/carts/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      setAbandonedCarts((prev) => prev.filter((c) => c.id !== id));
+    } catch {
+      alert("Sepet silinemedi.");
+    }
+  };
 
   const [userSearchTerm, setUserSearchTerm] = useState("");
   const [userRoleFilter, setUserRoleFilter] = useState("all");
@@ -155,7 +204,7 @@ const AdminDashboard = () => {
 
   // Arama/filtre değişince sayfalamayı başa al — aksi halde filtrelenmiş
   // listede olmayan bir sayfada kalıp boş görünüm gösterebilir.
-  useEffect(() => { setOrderPage(1); }, [searchTerm, orderStatusFilter]);
+  useEffect(() => { setOrderPage(1); }, [searchTerm, orderStatusFilter, ordersPerPage]);
   useEffect(() => { setUserPage(1); }, [userSearchTerm, userRoleFilter]);
 
   useEffect(() => {
@@ -339,31 +388,54 @@ const AdminDashboard = () => {
     };
   }, [orders]);
 
-  const TABS = [
-    { key: "dashboard",          label: "Genel Bakış" },
-    { key: "coaches",            label: "Koçlar" },
-    { key: "packages",           label: "Paketler" },
-    { key: "teacher-approvals",  label: "Öğretmen Onayları" },
-    { key: "teacher-requests",   label: "Talep Özeti" },
-    { key: "orders",             label: "Siparişler" },
-    { key: "subscriptions",      label: "Abonelikler" },
-    { key: "users",              label: "Kullanıcılar" },
-    { key: "camp",               label: "Deneme Kampı" },
-    { key: "payment-settings",   label: "Ödeme Sayfası" },
-    { key: "lgs",                label: "LGS Başvuruları" },
-    { key: "yks",                label: "YKS Başvuruları" },
-    { key: "contacts",           label: "Görüşme Talepleri" },
-    { key: "applications",       label: "Eğitmen Başvuruları" },
-    { key: "navbar",             label: "Navbar" },
+  const SIDEBAR_SECTIONS = [
+    {
+      title: "Genel",
+      items: [{ key: "dashboard", label: "Genel Bakış", icon: FaChartPie }],
+    },
+    {
+      title: "Satış & Ödeme",
+      items: [
+        { key: "orders", label: "Siparişler", icon: FaShoppingCart },
+        { key: "subscriptions", label: "Abonelikler", icon: FaSyncAlt },
+        { key: "payment-settings", label: "Ödeme Sayfası", icon: FaCreditCard },
+      ],
+    },
+    {
+      title: "Ekip & Kullanıcılar",
+      items: [
+        { key: "coaches", label: "Koçlar", icon: FaChalkboardTeacher },
+        { key: "teacher-approvals", label: "Öğretmen Onayları", icon: FaUserCheck },
+        { key: "teacher-requests", label: "Talep Özeti", icon: FaClipboardList },
+        { key: "users", label: "Kullanıcılar", icon: FaUsers },
+      ],
+    },
+    {
+      title: "Kampanyalar",
+      items: [
+        { key: "camp", label: "Deneme Kampı", icon: FaFire },
+        { key: "lgs", label: "LGS Başvuruları", icon: FaGraduationCap },
+        { key: "yks", label: "YKS Başvuruları", icon: FaUniversity },
+      ],
+    },
+    {
+      title: "İletişim & İçerik",
+      items: [
+        { key: "contacts", label: "Görüşme Talepleri", icon: FaPhoneAlt },
+        { key: "applications", label: "Eğitmen Başvuruları", icon: FaFileAlt },
+        { key: "packages", label: "Paketler", icon: FaBoxOpen },
+        { key: "navbar", label: "Navbar", icon: FaListUl },
+      ],
+    },
   ];
 
-  const tabCls = (key) =>
+  const sidebarItemCls = (key) =>
     view === key
-      ? "px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-brand-navy text-white shadow-[0_4px_12px_rgba(16,4,129,0.25)] transition-all"
-      : "px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold text-[#475569] hover:bg-[#f1f5f9] transition-all";
+      ? "bg-lime/15 text-lime border-l-2 border-lime"
+      : "text-white/55 hover:text-white hover:bg-white/5 border-l-2 border-transparent";
 
   return (
-    <div className="min-h-screen bg-[#f1f5f9]">
+    <div className="min-h-screen bg-[#f1f5f9] flex">
 
       {/* ── Toast ── */}
       {message && (
@@ -371,6 +443,37 @@ const AdminDashboard = () => {
           {message}
         </div>
       )}
+
+      {/* ── Sidebar ── */}
+      <aside className="w-60 flex-shrink-0 sticky top-0 h-screen overflow-y-auto" style={{ background: "#0D0A2E" }}>
+        <div className="px-5 py-6 border-b border-white/10">
+          <p className="font-fredoka font-bold text-white text-lg leading-tight">Sözderece</p>
+          <p className="text-white/40 text-xs mt-0.5">Admin Kontrol Paneli</p>
+        </div>
+        <nav className="py-3">
+          {SIDEBAR_SECTIONS.map((section) => (
+            <div key={section.title} className="mb-4">
+              <p className="px-5 mb-1.5 text-[10px] font-bold uppercase tracking-wider text-white/30">{section.title}</p>
+              {section.items.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.key}
+                    onClick={() => setView(item.key)}
+                    className={`w-full flex items-center gap-3 px-5 py-2.5 text-sm font-semibold transition-all ${sidebarItemCls(item.key)}`}
+                  >
+                    <Icon className="flex-shrink-0 text-[15px]" />
+                    <span className="truncate">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
+      </aside>
+
+      {/* ── Main content ── */}
+      <div className="flex-1 min-w-0">
 
       {/* ── Header ── */}
       <div className="bg-gradient-to-r from-brand-navy to-[#2563eb] text-white px-8 py-6 shadow-lg">
@@ -430,15 +533,6 @@ const AdminDashboard = () => {
           <StatCard icon="📦" label="Toplam Sipariş"    value={orders.length}          color="bg-[#fff7ed]" />
         </div>
 
-        {/* ── Navigation Tabs ── */}
-        <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#f1f5f9] p-2 flex flex-wrap gap-1.5">
-          {TABS.map((t) => (
-            <button key={t.key} onClick={() => setView(t.key)} className={tabCls(t.key)}>
-              {t.label}
-            </button>
-          ))}
-        </div>
-
         {/* ── Sub-page Views ── */}
         {view === "coaches"           && <AdminCoachPage />}
         {view === "packages"          && <AdminPackagePage />}
@@ -485,37 +579,16 @@ const AdminDashboard = () => {
         {/* ══════════════════════════ SİPARİŞLER ══════════════════════════ */}
         {view === "orders" && (
           <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#f1f5f9] overflow-hidden">
-            {/* Toolbar */}
-            <div className="p-5 border-b border-[#f1f5f9] flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-base font-black text-[#0f172a]">📦 Siparişler ({filteredOrders.length})</h2>
-              <div className="flex items-center gap-3 flex-wrap">
-                <div className="flex items-center gap-2 bg-[#f8fafc] border border-[#e5e7eb] rounded-xl px-3 py-2">
-                  <span className="text-[#94a3b8] text-sm">🔍</span>
-                  <input
-                    type="text"
-                    placeholder="İsim, e-posta, paket ya da sipariş no..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="border-0 outline-none bg-transparent text-sm min-w-[200px]"
-                  />
-                </div>
-                <select
-                  value={orderStatusFilter}
-                  onChange={(e) => setOrderStatusFilter(e.target.value)}
-                  className="bg-[#f8fafc] border border-[#e5e7eb] rounded-xl px-3 py-2.5 text-sm outline-none"
-                >
-                  <option value="all">Tüm Durumlar</option>
-                  <option value="paid">Ödendi / Aktif</option>
-                  <option value="pending">Ödeme Bekliyor</option>
-                  <option value="refund_requested">İade Talep Edildi</option>
-                  <option value="refunded">İade Edildi</option>
-                  <option value="failed">Başarısız</option>
-                </select>
-                <Button onClick={handleSendReminders} variant="success">
+            {/* Page header */}
+            <div className="px-6 pt-5 pb-4 flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-xl font-black text-[#0f172a]">Siparişler</h2>
+              <div className="flex items-center gap-2 flex-wrap">
+                <Button onClick={handleSendReminders} variant="success" size="sm">
                   Hatırlatma Gönder
                 </Button>
                 <Button
                   variant="secondary"
+                  size="sm"
                   onClick={() => {
                     const token = localStorage.getItem("token");
                     fetch("/api/admin/orders/export", { headers: { Authorization: `Bearer ${token}` } })
@@ -529,40 +602,115 @@ const AdminDashboard = () => {
                       .catch(() => alert("CSV indirilemedi."));
                   }}
                 >
-                  CSV İndir
+                  <FaDownload className="inline mr-1.5 -mt-0.5" /> Dışa Aktar
                 </Button>
               </div>
             </div>
 
-            {/* Order List */}
-            {filteredOrders.length === 0 ? (
-              <div className="p-10 text-center text-[#94a3b8] text-sm">Sipariş bulunamadı.</div>
-            ) : (
-              <ul className="divide-y divide-[#f1f5f9]">
-                {pagedOrders.map((order) => {
-                  const meta = getOrderMeta(order);
-                  return (
-                    <li key={order.id}>
-                      <details className="group">
-                        <summary className="flex items-center gap-3 px-5 py-4 cursor-pointer hover:bg-[#f8fafc] transition-all list-none select-none">
-                          <span className="text-lg">📦</span>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-bold text-[#0f172a] text-sm truncate">{order.package}</p>
-                            <p className="text-xs text-[#64748b] truncate">{order.userName} · {order.userEmail}</p>
-                          </div>
-                          {order.couponCode && (
-                            <span className="text-xs font-bold px-2.5 py-1 rounded-full border bg-[#fefce8] text-[#854d0e] border-[#fde68a] flex-shrink-0">
-                              🎟 {order.couponCode}
-                            </span>
-                          )}
-                          <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${meta.cls} flex-shrink-0`}>
-                            {meta.label}
-                          </span>
-                          <span className="text-sm font-black text-[#0f172a] flex-shrink-0">₺{order.totalPrice}</span>
-                          <span className="text-[#94a3b8] group-open:rotate-180 transition-transform flex-shrink-0">▼</span>
-                        </summary>
+            {/* Sub-tabs */}
+            <div className="px-6 flex items-center gap-6 border-b border-[#e5e7eb]">
+              <button
+                onClick={() => setOrdersSubView("all")}
+                className={`pb-3 text-sm font-bold border-b-2 transition-colors ${ordersSubView === "all" ? "text-page-navy border-page-navy" : "text-[#94a3b8] border-transparent hover:text-[#475569]"}`}
+              >
+                Tüm Siparişler
+              </button>
+              <button
+                onClick={() => { setOrdersSubView("abandoned"); loadAbandonedCarts(); }}
+                className={`pb-3 text-sm font-bold border-b-2 transition-colors ${ordersSubView === "abandoned" ? "text-page-navy border-page-navy" : "text-[#94a3b8] border-transparent hover:text-[#475569]"}`}
+              >
+                Terk Edilmiş Sepetler{abandonedCarts ? ` (${abandonedCarts.length})` : ""}
+              </button>
+            </div>
 
-                        <div className="px-5 pb-5 pt-2 bg-[#f8fafc] border-t border-[#f1f5f9]">
+            {ordersSubView === "all" ? (
+              <>
+                {/* Search + Filter */}
+                <div className="px-6 py-4 flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-2 bg-[#f8fafc] border border-[#e5e7eb] rounded-xl px-3.5 py-2.5 flex-1 min-w-[220px] max-w-[380px]">
+                    <FaSearch className="text-[#94a3b8] text-xs flex-shrink-0" />
+                    <input
+                      type="text"
+                      placeholder="Tabloda arama yapın"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="border-0 outline-none bg-transparent text-sm w-full"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 bg-white border border-[#e5e7eb] rounded-xl px-3.5 py-2.5">
+                    <FaFilter className="text-[#94a3b8] text-xs flex-shrink-0" />
+                    <select
+                      value={orderStatusFilter}
+                      onChange={(e) => setOrderStatusFilter(e.target.value)}
+                      className="outline-none text-sm bg-transparent"
+                    >
+                      <option value="all">Tüm Durumlar</option>
+                      <option value="paid">Ödendi / Aktif</option>
+                      <option value="pending">Ödeme Bekliyor</option>
+                      <option value="refund_requested">İade Talep Edildi</option>
+                      <option value="refunded">İade Edildi</option>
+                      <option value="failed">Başarısız</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Table */}
+                {filteredOrders.length === 0 ? (
+                  <div className="p-10 text-center text-[#94a3b8] text-sm">Sipariş bulunamadı.</div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="bg-[#f8fafc] border-y border-[#e5e7eb] text-left text-[11px] font-bold uppercase tracking-wide text-[#64748b]">
+                          <th className="px-6 py-3">Sipariş</th>
+                          <th className="px-4 py-3">Tarih</th>
+                          <th className="px-4 py-3">Müşteri</th>
+                          <th className="px-4 py-3">Durum</th>
+                          <th className="px-4 py-3 text-right">Toplam Tutar</th>
+                          <th className="px-6 py-3 w-8"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pagedOrders.map((order) => {
+                          const meta = getOrderMeta(order);
+                          const isOpen = expandedOrderId === order.id;
+                          const { label: dateLabel, time: dateTime } = formatOrderDateParts(order.createdAt);
+                          return (
+                            <Fragment key={order.id}>
+                              <tr
+                                onClick={() => setExpandedOrderId(isOpen ? null : order.id)}
+                                className={`border-b border-[#f1f5f9] cursor-pointer transition-colors ${isOpen ? "bg-[#f8fafc]" : "hover:bg-[#f8fafc]"}`}
+                              >
+                                <td className="px-6 py-4 align-top">
+                                  <p className="font-bold text-[#0f172a]">#{order.id}</p>
+                                  <p className="text-xs text-[#64748b] truncate max-w-[220px]">{order.package}</p>
+                                </td>
+                                <td className="px-4 py-4 align-top whitespace-nowrap">
+                                  <p className="text-[#0f172a] font-semibold">{dateLabel}</p>
+                                  <p className="text-xs text-[#94a3b8]">{dateTime}</p>
+                                </td>
+                                <td className="px-4 py-4 align-top">
+                                  <p className="font-semibold text-[#0f172a] truncate max-w-[180px]">{order.userName || "—"}</p>
+                                  <p className="text-xs text-[#94a3b8] truncate max-w-[180px]">{order.userEmail}</p>
+                                </td>
+                                <td className="px-4 py-4 align-top">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${meta.cls}`}>{meta.label}</span>
+                                    {order.couponCode && (
+                                      <span className="text-xs font-bold px-2 py-1 rounded-full border bg-[#fefce8] text-[#854d0e] border-[#fde68a]">
+                                        🎟 {order.couponCode}
+                                      </span>
+                                    )}
+                                  </div>
+                                </td>
+                                <td className="px-4 py-4 align-top text-right font-black text-[#0f172a] whitespace-nowrap">₺{order.totalPrice}</td>
+                                <td className="px-6 py-4 align-top text-[#94a3b8]">
+                                  {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+                                </td>
+                              </tr>
+                              {isOpen && (
+                                <tr className="bg-[#f8fafc] border-b border-[#f1f5f9]">
+                                  <td colSpan={6} className="px-6 pb-6 pt-2">
                           <div className="grid grid-cols-2 gap-3 mb-4 max-[640px]:grid-cols-1">
                             <div className="bg-white rounded-xl p-3 border border-[#e5e7eb]">
                               <p className="text-xs text-[#64748b] font-semibold">Sipariş ID</p>
@@ -734,18 +882,95 @@ const AdminDashboard = () => {
                               Siparişi Sil
                             </Button>
                           </div>
-                        </div>
-                      </details>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-            {filteredOrders.length > 0 && orderTotalPages > 1 && (
-              <div className="p-4 border-t border-[#f1f5f9] flex items-center justify-center gap-1.5 flex-wrap">
-                <Button disabled={orderPage === 1} onClick={() => setOrderPage((p) => p - 1)} variant="neutral" size="sm">‹ Önceki</Button>
-                <span className="text-xs text-[#64748b] px-2">Sayfa {orderPage} / {orderTotalPages}</span>
-                <Button disabled={orderPage === orderTotalPages} onClick={() => setOrderPage((p) => p + 1)} variant="neutral" size="sm">Sonraki ›</Button>
+                                  </td>
+                                </tr>
+                              )}
+                            </Fragment>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {/* Pagination */}
+                {filteredOrders.length > 0 && (
+                  <div className="px-6 py-4 border-t border-[#f1f5f9] flex items-center justify-between flex-wrap gap-3">
+                    <div className="flex items-center gap-2 text-xs text-[#64748b]">
+                      <span>Satır Adedi:</span>
+                      <select
+                        value={ordersPerPage}
+                        onChange={(e) => setOrdersPerPage(Number(e.target.value))}
+                        className="border border-[#e5e7eb] rounded-lg px-2 py-1 text-xs outline-none"
+                      >
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                        <option value={50}>50</option>
+                      </select>
+                      <span>
+                        {filteredOrders.length === 0 ? 0 : (orderPage - 1) * ordersPerPage + 1} - {Math.min(orderPage * ordersPerPage, filteredOrders.length)} / {filteredOrders.length} Sipariş
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Button disabled={orderPage === 1} onClick={() => setOrderPage((p) => p - 1)} variant="neutral" size="sm">‹ Önceki</Button>
+                      <Button disabled={orderPage === orderTotalPages} onClick={() => setOrderPage((p) => p + 1)} variant="neutral" size="sm">Sonraki ›</Button>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="p-6">
+                {abandonedLoading ? (
+                  <div className="p-10 text-center text-[#94a3b8] text-sm">Yükleniyor...</div>
+                ) : !abandonedCarts || abandonedCarts.length === 0 ? (
+                  <div className="p-10 text-center text-[#94a3b8] text-sm">Terk edilmiş sepet yok.</div>
+                ) : (
+                  <div className="overflow-x-auto -mx-6">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="bg-[#f8fafc] border-y border-[#e5e7eb] text-left text-[11px] font-bold uppercase tracking-wide text-[#64748b]">
+                          <th className="px-6 py-3">Müşteri</th>
+                          <th className="px-4 py-3">Ürünler</th>
+                          <th className="px-4 py-3">Oluşturulma</th>
+                          <th className="px-4 py-3">Hatırlatma</th>
+                          <th className="px-4 py-3 text-right">Toplam</th>
+                          <th className="px-6 py-3"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {abandonedCarts.map((cart) => {
+                          const { label: dateLabel, time: dateTime } = formatOrderDateParts(cart.createdAt);
+                          return (
+                            <tr key={cart.id} className="border-b border-[#f1f5f9] hover:bg-[#f8fafc] transition-colors">
+                              <td className="px-6 py-4 align-top">
+                                <p className="font-semibold text-[#0f172a]">{cart.customerName || "Misafir"}</p>
+                                <p className="text-xs text-[#94a3b8] truncate max-w-[220px]">{cart.customerEmail || "—"}</p>
+                              </td>
+                              <td className="px-4 py-4 align-top text-xs text-[#475569]">
+                                {cart.items.map((it, i) => (
+                                  <p key={i}>{it.title} × {it.quantity}</p>
+                                ))}
+                              </td>
+                              <td className="px-4 py-4 align-top whitespace-nowrap">
+                                <p className="text-[#0f172a] font-semibold">{dateLabel}</p>
+                                <p className="text-xs text-[#94a3b8]">{dateTime}</p>
+                              </td>
+                              <td className="px-4 py-4 align-top">
+                                <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${cart.reminderSent ? "bg-[#ecfdf5] text-[#065f46] border-[#a7f3d0]" : "bg-[#f8fafc] text-[#64748b] border-[#e2e8f0]"}`}>
+                                  {cart.reminderSent ? "Gönderildi" : "Gönderilmedi"}
+                                </span>
+                              </td>
+                              <td className="px-4 py-4 align-top text-right font-black text-[#0f172a] whitespace-nowrap">₺{(cart.total / 100).toFixed(2)}</td>
+                              <td className="px-6 py-4 align-top">
+                                <Button onClick={() => handleDeleteAbandonedCart(cart.id)} variant="danger" size="sm">Sil</Button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -854,6 +1079,7 @@ const AdminDashboard = () => {
             </div>
           </div>
         )}
+      </div>
       </div>
 
       {/* ══════════════════════════ USER MODAL ══════════════════════════ */}
