@@ -135,11 +135,14 @@ export default function PricingSection() {
       .then((r) => { if (r.data.enabled) setEarlyReg(r.data); })
       .catch(() => {});
     axios.get("/api/settings/pricing-video")
-      .then((r) => { if (r.data.enabled && r.data.videoUrl) setVideo(r.data); })
+      .then((r) => setVideo(r.data))
       .catch(() => {});
   }, []);
 
-  const videoEmbedUrl = video ? toYouTubeEmbed(video.videoUrl) : null;
+  // "erken" sekmesi paket listesinde YKS grubuna düşüyor (bkz. `visible` altta) —
+  // video seçiminde de aynı mantık: sadece "lgs" için LGS videosu gösterilir.
+  const activeVideo = video?.[tab === "lgs" ? "lgs" : "yks"];
+  const videoEmbedUrl = activeVideo?.enabled && activeVideo?.videoUrl ? toYouTubeEmbed(activeVideo.videoUrl) : null;
 
   useEffect(() => { setPrimaryIdx(0); setActivePlanIdx(0); }, [tab]);
 

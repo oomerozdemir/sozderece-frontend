@@ -48,7 +48,10 @@ const emptyForm = {
   billingCycle: "once",
 };
 
-const emptyVideoSettings = { enabled: false, videoUrl: "" };
+const emptyVideoSettings = {
+  yks: { enabled: false, videoUrl: "" },
+  lgs: { enabled: false, videoUrl: "" },
+};
 
 const AdminPackagePage = () => {
   const [packages, setPackages] = useState([]);
@@ -80,7 +83,10 @@ const AdminPackagePage = () => {
   const fetchVideoSettings = async () => {
     try {
       const res = await axios.get("/api/settings/pricing-video");
-      setVideoSettings({ enabled: !!res.data.enabled, videoUrl: res.data.videoUrl || "" });
+      setVideoSettings({
+        yks: { enabled: !!res.data?.yks?.enabled, videoUrl: res.data?.yks?.videoUrl || "" },
+        lgs: { enabled: !!res.data?.lgs?.enabled, videoUrl: res.data?.lgs?.videoUrl || "" },
+      });
     } catch (err) {
       console.error("Video ayarları alınamadı:", err);
     }
@@ -241,60 +247,69 @@ const AdminPackagePage = () => {
         </button>
       </div>
 
-      {/* Paketler Bölümü Videosu */}
-      <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#f1f5f9] p-5 space-y-4">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <div>
-            <h3 className="text-sm font-black text-[#0f172a]">🎬 Paketler Bölümü Videosu</h3>
-            <p className="text-xs text-[#64748b] mt-0.5">Ana sayfada paketlerin üstünde gösterilen tanıtım videosu</p>
-          </div>
-          <label className="flex items-center gap-2 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={videoSettings.enabled}
-              onChange={(e) => setVideoSettings({ ...videoSettings, enabled: e.target.checked })}
-              className="w-4 h-4 accent-brand-navy"
-            />
-            <span className="text-xs font-bold text-[#475569]">Ana sayfada göster</span>
-          </label>
+      {/* Paketler Bölümü Videosu — YKS ve LGS sekmeleri için ayrı ayrı */}
+      <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#f1f5f9] p-5 space-y-5">
+        <div>
+          <h3 className="text-sm font-black text-[#0f172a]">🎬 Paketler Bölümü Videosu</h3>
+          <p className="text-xs text-[#64748b] mt-0.5">Ana sayfada paketlerin üstünde, o an açık olan sekmeye (YKS/LGS) göre gösterilen tanıtım videosu.</p>
         </div>
 
-        <div className="grid grid-cols-[1fr_auto] gap-3 items-end max-[560px]:grid-cols-1">
-          <div>
-            <label className="block text-xs font-bold text-[#475569] mb-1.5">YouTube Video Linki</label>
-            <input
-              className={inputCls}
-              placeholder="https://www.youtube.com/watch?v=..."
-              value={videoSettings.videoUrl}
-              onChange={(e) => setVideoSettings({ ...videoSettings, videoUrl: e.target.value })}
-            />
-            <p className="text-[11px] text-[#94a3b8] mt-1">
-              YouTube'dan kopyaladığınız normal video linkini (izleme, kısa veya paylaşım linki) direkt yapıştırabilirsiniz, otomatik uygun formata çevrilir.
-            </p>
-          </div>
-          <button
-            onClick={handleSaveVideoSettings}
-            disabled={videoSaving}
-            className="h-[42px] px-5 bg-gradient-to-r from-brand-navy to-[#2563eb] text-white rounded-xl text-sm font-bold hover:shadow-[0_6px_16px_rgba(16,4,129,0.3)] transition-all disabled:opacity-50 whitespace-nowrap"
-          >
-            {videoSaving ? "Kaydediliyor..." : "💾 Kaydet"}
-          </button>
+        <div className="grid grid-cols-2 gap-4 max-[720px]:grid-cols-1">
+          {[
+            { key: "yks", label: "🎓 YKS Sekmesi Videosu" },
+            { key: "lgs", label: "📚 LGS Sekmesi Videosu" },
+          ].map(({ key, label }) => {
+            const v = videoSettings[key];
+            return (
+              <div key={key} className="bg-[#f8fafc] rounded-xl border border-[#e5e7eb] p-4 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <h4 className="text-xs font-black text-[#0f172a]">{label}</h4>
+                  <label className="flex items-center gap-1.5 cursor-pointer select-none flex-shrink-0">
+                    <input
+                      type="checkbox"
+                      checked={v.enabled}
+                      onChange={(e) => setVideoSettings({ ...videoSettings, [key]: { ...v, enabled: e.target.checked } })}
+                      className="w-4 h-4 accent-brand-navy"
+                    />
+                    <span className="text-[11px] font-bold text-[#475569]">Göster</span>
+                  </label>
+                </div>
+                <input
+                  className={inputCls}
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  value={v.videoUrl}
+                  onChange={(e) => setVideoSettings({ ...videoSettings, [key]: { ...v, videoUrl: e.target.value } })}
+                />
+                {v.enabled && v.videoUrl && (
+                  <div className="rounded-xl overflow-hidden border border-[#e5e7eb]">
+                    <div className="aspect-video bg-[#0f172a] flex items-center justify-center text-white text-xs">
+                      <iframe
+                        src={toYouTubeEmbed(v.videoUrl) || ""}
+                        title={`${label} Önizleme`}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full"
+                        style={{ border: 0 }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
-        {videoSettings.enabled && videoSettings.videoUrl && (
-          <div className="rounded-xl overflow-hidden border border-[#f1f5f9] max-w-sm">
-            <div className="aspect-video bg-[#0f172a] flex items-center justify-center text-white text-xs">
-              <iframe
-                src={toYouTubeEmbed(videoSettings.videoUrl) || ""}
-                title="Önizleme"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-                style={{ border: 0 }}
-              />
-            </div>
-          </div>
-        )}
+        <p className="text-[11px] text-[#94a3b8]">
+          YouTube'dan kopyaladığınız normal video linkini (izleme, kısa veya paylaşım linki) direkt yapıştırabilirsiniz, otomatik uygun formata çevrilir.
+        </p>
+
+        <button
+          onClick={handleSaveVideoSettings}
+          disabled={videoSaving}
+          className="px-5 py-2.5 bg-gradient-to-r from-brand-navy to-[#2563eb] text-white rounded-xl text-sm font-bold hover:shadow-[0_6px_16px_rgba(16,4,129,0.3)] transition-all disabled:opacity-50"
+        >
+          {videoSaving ? "Kaydediliyor..." : "💾 Kaydet"}
+        </button>
       </div>
 
       {/* Package List */}
