@@ -18,6 +18,7 @@ import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
 import Testimonials from "../components/Testimonials";
 import { isPromoActive, formatPromoEndDate, isExamPriceActive, getExamPrice, getExamDaysLeft, getExamDailyCost, getExamSavings } from "../utils/promoUtils";
+import { toYouTubeEmbed } from "../utils/youtube";
 
 const BADGE_COLORS = {
   green:  "bg-[#dcfce7] text-[#166534]",
@@ -45,6 +46,7 @@ const PackageDetail = () => {
   const [selectedSlug, setSelectedSlug] = useState(querySlug || defaultSlug);
   const [activeIndex, setActiveIndex] = useState(null);
   const [activePlanIdx, setActivePlanIdx] = useState(0);
+  const [video, setVideo] = useState(null);
 
   useEffect(() => {
     axios.get("/api/packages")
@@ -52,6 +54,9 @@ const PackageDetail = () => {
         if (r.data.success) setPackages(r.data.packages);
       })
       .catch((err) => console.error("Paketler yüklenemedi:", err));
+    axios.get("/api/settings/pricing-video")
+      .then((r) => setVideo(r.data))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -71,6 +76,10 @@ const PackageDetail = () => {
   if (!selected) return null;
 
   const isSpecialTutoring = selected.type === "tutoring_only" || selected.slug === "ozel-ders-paketi";
+
+  // PricingSection'daki aynı kural: sadece type "lgs" olan paketler LGS videosunu gösterir.
+  const activeVideo = video?.[selected.type === "lgs" ? "lgs" : "yks"];
+  const videoEmbedUrl = activeVideo?.enabled && activeVideo?.videoUrl ? toYouTubeEmbed(activeVideo.videoUrl) : null;
 
   const plans = Array.isArray(selected.plans) ? selected.plans : [];
   const hasPlanTabs = plans.length > 1;
@@ -379,6 +388,31 @@ const PackageDetail = () => {
               <img src="/images/kare-logo-paytr.webp" alt="PayTR" width="40" height="25" loading="lazy" className="h-6 object-contain grayscale hover:grayscale-0 transition-all" />
             </div>
           </div>
+
+          {/* Tanıtım videosu */}
+          {videoEmbedUrl && (
+            <div className="flex justify-center mb-6">
+              <div
+                className="relative rounded-[28px] overflow-hidden w-full"
+                style={{
+                  boxShadow: "0 20px 50px rgba(28,27,138,0.2)",
+                  border: "6px solid #1C1B8A",
+                }}
+              >
+                <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#D8FF4F", filter: "blur(70px)", opacity: 0.35, top: -60, left: -40, zIndex: 0 }} />
+                <div className="aspect-video relative" style={{ zIndex: 1 }}>
+                  <iframe
+                    src={videoEmbedUrl}
+                    title="Program Tanıtımı"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                    style={{ border: 0, display: "block" }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* SSS + kapanış CTA */}
           <div className="bg-white border border-[#f1f5f9] rounded-[24px] p-6 max-[768px]:p-4 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
