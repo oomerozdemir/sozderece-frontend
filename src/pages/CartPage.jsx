@@ -2,9 +2,11 @@ import { useState, useMemo } from "react";
 import useCart from "../hooks/useCart";
 import { CgTrash } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
+import { FaShieldAlt, FaUndo, FaCreditCard, FaHeadset } from "react-icons/fa";
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
 import StepIndicator from "../components/StepIndicator";
+import Footer from "../components/Footer";
 
 const CartPage = () => {
   const {
@@ -91,11 +93,11 @@ const CartPage = () => {
   };
 
   return (
-    <div>
+    <div className="bg-[#f8fafc] min-h-screen">
       <TopBar />
       <Navbar />
 
-      <div className="max-w-[900px] mx-10 my-10 bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] px-[50px] max-[768px]:mx-2.5 max-[768px]:my-5 max-[768px]:px-5 max-[768px]:rounded-lg">
+      <div className="max-w-[900px] mx-auto my-10 bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] px-[50px] max-[768px]:mx-2.5 max-[768px]:my-5 max-[768px]:px-5 max-[768px]:rounded-lg">
         <StepIndicator currentStep={1} />
         <h2 className="text-[3rem] text-center mb-5 py-5 border-b border-[#e65e04] text-brand-orange font-normal max-[768px]:text-[2rem] max-[768px]:mb-4">Sepet</h2>
 
@@ -191,6 +193,53 @@ const CartPage = () => {
           </>
         ) : null}
       </div>
+
+      {/* Güven şeridi — ödemeye geçmeden önceki son itiraz/tereddütleri karşılar */}
+      <div className="max-w-[900px] mx-auto px-5 pb-14 max-[768px]:px-3">
+        <div className="bg-white border border-[#f1f5f9] rounded-[24px] p-7 max-[768px]:p-5 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+          <div className="text-center mb-6">
+            <span className="font-fredoka font-bold text-accent-orange text-[11px] uppercase" style={{ letterSpacing: 4 }}>
+              Ödemeye Geçmeden Önce
+            </span>
+            <h3 className="font-fredoka font-bold text-page-navy text-xl mt-2">
+              200'den fazla öğrenci bu adımı çoktan attı
+            </h3>
+            <p className="font-nunito text-[#64748b] text-sm mt-2 max-w-[480px] mx-auto leading-relaxed">
+              Kart bilgin PayTR'nin güvenli altyapısında işlenir, bizim sunucularımıza hiç ulaşmaz. Program sana uymazsa ilk 14 gün içinde koşulsuz iade alırsın.
+            </p>
+          </div>
+
+          <div className="flex justify-center gap-2.5 flex-wrap mb-6">
+            <span className="inline-flex items-center gap-1.5 bg-[#f8fafc] text-[#475569] font-nunito font-bold text-xs px-3.5 py-2 rounded-full">
+              <FaShieldAlt style={{ color: "#7340C8" }} /> 256-bit SSL Güvenli Ödeme
+            </span>
+            <span className="inline-flex items-center gap-1.5 bg-[#ecfdf5] text-[#065f46] font-nunito font-bold text-xs px-3.5 py-2 rounded-full">
+              <FaUndo /> 14 Gün Koşulsuz İade
+            </span>
+            <span className="inline-flex items-center gap-1.5 bg-[#f8fafc] text-[#475569] font-nunito font-bold text-xs px-3.5 py-2 rounded-full">
+              <FaCreditCard className="text-page-navy" /> Taksit İmkanı
+            </span>
+            <span className="inline-flex items-center gap-1.5 bg-[#f8fafc] text-[#475569] font-nunito font-bold text-xs px-3.5 py-2 rounded-full">
+              <FaHeadset style={{ color: "#FF6B35" }} /> 7/24 WhatsApp Destek
+            </span>
+          </div>
+
+          <div className="flex items-center justify-center gap-3 pt-5 border-t border-[#f1f5f9]">
+            <div className="flex text-sm" style={{ color: "#F5A623" }}>
+              {"★★★★★"}
+            </div>
+            <span className="font-nunito font-bold text-[#475569] text-sm">+200 Mutlu Öğrenci</span>
+            <span className="text-[#cbd5e1]">·</span>
+            <div className="flex justify-center gap-3 opacity-70">
+              <img src="/images/kare-logo-mastercard.webp" alt="Mastercard" width="32" height="20" loading="lazy" className="h-5 object-contain grayscale" />
+              <img src="/images/kare-logo-visa.webp" alt="Visa" width="32" height="20" loading="lazy" className="h-5 object-contain grayscale" />
+              <img src="/images/kare-logo-paytr.webp" alt="PayTR" width="32" height="20" loading="lazy" className="h-5 object-contain grayscale" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Footer />
     </div>
   );
 };
