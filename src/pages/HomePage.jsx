@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { Warp } from "@paper-design/shaders-react";
+import { FaWhatsapp, FaChartLine, FaUsers, FaHandshake, FaSyncAlt, FaChartBar, FaCheckCircle } from "react-icons/fa";
 import axios from "../utils/axios";
 import Seo from "../components/Seo";
 import Navbar from "../components/navbar";
@@ -21,54 +23,81 @@ const fadeUp = {
 // ══════════════════════════════════════════════
 // DATA — değiştirilmedi
 // ══════════════════════════════════════════════
+// Her kartın shader rengi, kartın orijinal accent tonuyla aynı aile
+// (lime/turuncu/mor) — WebGL sırt planı marka paletinden kopmuyor.
+const shaderLime = {
+  proportion: 0.32, softness: 0.85, distortion: 0.16, swirl: 0.65, swirlIterations: 9,
+  shape: "dots", shapeScale: 0.1,
+  colors: ["hsl(70,90%,32%)", "hsl(80,100%,60%)", "hsl(60,85%,38%)", "hsl(85,100%,72%)"],
+};
+const shaderLime2 = {
+  proportion: 0.4, softness: 1.05, distortion: 0.2, swirl: 0.85, swirlIterations: 13,
+  shape: "checks", shapeScale: 0.085,
+  colors: ["hsl(75,95%,30%)", "hsl(88,100%,58%)", "hsl(65,85%,36%)", "hsl(90,100%,70%)"],
+};
+const shaderOrange = {
+  proportion: 0.38, softness: 1.0, distortion: 0.19, swirl: 0.8, swirlIterations: 11,
+  shape: "checks", shapeScale: 0.09,
+  colors: ["hsl(14,100%,38%)", "hsl(30,100%,58%)", "hsl(8,90%,42%)", "hsl(36,100%,70%)"],
+};
+const shaderOrange2 = {
+  proportion: 0.34, softness: 0.9, distortion: 0.15, swirl: 0.7, swirlIterations: 8,
+  shape: "dots", shapeScale: 0.12,
+  colors: ["hsl(18,100%,36%)", "hsl(34,100%,60%)", "hsl(12,90%,40%)", "hsl(40,100%,72%)"],
+};
+const shaderPurple = {
+  proportion: 0.36, softness: 0.95, distortion: 0.17, swirl: 0.75, swirlIterations: 10,
+  shape: "dots", shapeScale: 0.11,
+  colors: ["hsl(255,90%,32%)", "hsl(272,100%,64%)", "hsl(246,85%,38%)", "hsl(266,100%,74%)"],
+};
+const shaderPurple2 = {
+  proportion: 0.44, softness: 1.1, distortion: 0.21, swirl: 0.9, swirlIterations: 14,
+  shape: "checks", shapeScale: 0.1,
+  colors: ["hsl(250,90%,34%)", "hsl(268,100%,66%)", "hsl(258,85%,40%)", "hsl(262,100%,76%)"],
+};
+
 const whyCards = [
   {
-    icon: "📲",
+    icon: <FaWhatsapp />,
     title: "Günlük WhatsApp Takibi",
     desc: "Sabah planını, akşam özetini alıyorsun. Plato döneminde bile bir gün bile boşa gitmiyor.",
     accent: "#D8FF4F",
-    accentBg: "rgba(216,255,79,0.1)",
-    border: "rgba(216,255,79,0.22)",
+    shader: shaderLime,
   },
   {
-    icon: "📊",
+    icon: <FaChartLine />,
     title: "Anlık Deneme Analizi",
     desc: "Her deneme sonrası 24 saat içinde program yeniden yapılandırılıyor. Aynı hatayı bir daha yapmazsın.",
     accent: "#FF6B35",
-    accentBg: "rgba(255,107,53,0.1)",
-    border: "rgba(255,107,53,0.22)",
+    shader: shaderOrange,
   },
   {
-    icon: "👨‍👩‍👦",
+    icon: <FaUsers />,
     title: "Veli Dahil Süreç",
     desc: "'Ders çalış' demek zorunda kalmıyorsunuz. Kötü polis olmayı biz üstleniyoruz: haftalık rapor, aylık görüşme.",
     accent: "#a78bfa",
-    accentBg: "rgba(115,64,200,0.12)",
-    border: "rgba(115,64,200,0.25)",
+    shader: shaderPurple,
   },
   {
-    icon: "🎯",
+    icon: <FaHandshake />,
     title: "Koç Uyum Garantisi",
     desc: "Koçunu beğenmezsen değiştiriyoruz. Memnuniyetin bizim önceliğimiz.",
     accent: "#D8FF4F",
-    accentBg: "rgba(216,255,79,0.1)",
-    border: "rgba(216,255,79,0.22)",
+    shader: shaderLime2,
   },
   {
-    icon: "🔄",
+    icon: <FaSyncAlt />,
     title: "Dinamik Program",
     desc: "Sabit PDF değil, her denemeden sonra güncellenen canlı program. Strateji durgun kalmaz, sen de kalmıyorsun.",
     accent: "#FF6B35",
-    accentBg: "rgba(255,107,53,0.1)",
-    border: "rgba(255,107,53,0.22)",
+    shader: shaderOrange2,
   },
   {
-    icon: "📈",
+    icon: <FaChartBar />,
     title: "Ölçülebilir Sonuçlar",
     desc: "Ortalama +17.5 net artışı ilk ayda. Boş vaat değil, gerçek hikayeler ve gerçek rakamlar.",
     accent: "#a78bfa",
-    accentBg: "rgba(115,64,200,0.12)",
-    border: "rgba(115,64,200,0.25)",
+    shader: shaderPurple2,
   },
 ];
 
@@ -340,25 +369,36 @@ function WhyDifferentSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: i * 0.07 }}
-              className="rounded-[24px] p-6"
-              style={{
-                background: c.accentBg,
-                border: `1px solid ${c.border}`,
-              }}
+              className="group relative rounded-[24px] overflow-hidden h-80 transition-transform duration-300 hover:-translate-y-1"
             >
-              <div
-                className="w-11 h-11 rounded-2xl flex items-center justify-center text-xl mb-4"
-                style={{ background: "rgba(255,255,255,0.06)" }}
-              >
-                {c.icon}
+              <div className="absolute inset-0">
+                <Warp
+                  style={{ width: "100%", height: "100%" }}
+                  scale={1}
+                  rotation={0}
+                  speed={0.8}
+                  {...c.shader}
+                />
               </div>
-              <h3 className="font-fredoka font-bold text-white text-lg mb-2">{c.title}</h3>
-              <p className="font-nunito text-white/55 text-sm leading-relaxed">{c.desc}</p>
+
               <div
-                className="inline-block mt-4 font-fredoka font-bold text-[11px] px-2.5 py-1 rounded-full"
-                style={{ background: "rgba(255,255,255,0.06)", color: c.accent }}
+                className="relative z-10 h-full flex flex-col p-6"
+                style={{ background: "rgba(10,8,30,0.74)" }}
               >
-                ✓ dahil
+                <div
+                  className="w-11 h-11 rounded-2xl flex items-center justify-center text-xl mb-4 text-white"
+                  style={{ background: "rgba(255,255,255,0.1)" }}
+                >
+                  {c.icon}
+                </div>
+                <h3 className="font-fredoka font-bold text-white text-lg mb-2">{c.title}</h3>
+                <p className="font-nunito text-white/70 text-sm leading-relaxed flex-grow">{c.desc}</p>
+                <div
+                  className="inline-flex items-center gap-1.5 mt-4 font-fredoka font-bold text-[11px] px-2.5 py-1 rounded-full self-start"
+                  style={{ background: "rgba(255,255,255,0.1)", color: c.accent }}
+                >
+                  <FaCheckCircle size={10} /> dahil
+                </div>
               </div>
             </motion.div>
           ))}
