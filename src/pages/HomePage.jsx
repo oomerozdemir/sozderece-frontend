@@ -323,23 +323,32 @@ function EarlyRegistrationBanner() {
 // ══════════════════════════════════════════════
 function WhyDifferentSection() {
   return (
-    <section
-      className="relative overflow-hidden py-24 px-5"
-      style={{ background: "linear-gradient(160deg, #0D0A2E 0%, #1a0d3d 100%)" }}
-    >
-      <style>{`
-        @keyframes whyOrb { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,20px)} }
-      `}</style>
-      <div style={{
-        position: "absolute", top: -120, right: -100, width: 500, height: 500,
-        borderRadius: "50%", background: "#4a1da0", filter: "blur(120px)", opacity: 0.22,
-        animation: "whyOrb 14s ease-in-out infinite", pointerEvents: "none",
-      }} />
-      <div style={{
-        position: "absolute", bottom: -60, left: -60, width: 300, height: 300,
-        borderRadius: "50%", background: "#FF6B35", filter: "blur(100px)", opacity: 0.1,
-        pointerEvents: "none",
-      }} />
+    <section className="relative overflow-hidden py-24 px-5" style={{ background: "#0D0A2E" }}>
+      {/* Kartlardaki shader dilini bölümün geneline taşıyan, yavaş ve
+          koyu tonlu bir ambiyans shader'ı — statik gradyan+orb yerine. */}
+      <div className="absolute inset-0" style={{ pointerEvents: "none" }}>
+        <Warp
+          style={{ width: "100%", height: "100%" }}
+          proportion={0.5}
+          softness={1.4}
+          distortion={0.12}
+          swirl={0.4}
+          swirlIterations={6}
+          shape="dots"
+          shapeScale={0.05}
+          scale={1.4}
+          rotation={0}
+          speed={0.2}
+          colors={["hsl(255,55%,7%)", "hsl(266,50%,14%)", "hsl(280,45%,9%)", "hsl(18,60%,11%)"]}
+        />
+      </div>
+      <div
+        className="absolute inset-0"
+        style={{
+          background: "linear-gradient(160deg, rgba(13,10,46,0.72) 0%, rgba(26,13,61,0.82) 100%)",
+          pointerEvents: "none",
+        }}
+      />
 
       <div className="max-w-[1200px] mx-auto relative" style={{ zIndex: 1 }}>
         <motion.div {...fadeUp} className="mb-14">
