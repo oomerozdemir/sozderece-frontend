@@ -532,17 +532,84 @@ function HowItWorksSection() {
 // ══════════════════════════════════════════════
 // TESTİMONYALS — Dark, glassmorphism kart
 // ══════════════════════════════════════════════
+function TestimonialsColumn({ items, duration, className }) {
+  return (
+    <div className={className}>
+      <motion.div
+        animate={{ translateY: "-50%" }}
+        transition={{ duration, repeat: Infinity, ease: "linear", repeatType: "loop" }}
+        className="flex flex-col gap-5"
+      >
+        {[0, 1].map((dup) => (
+          <React.Fragment key={dup}>
+            {items.map((t, i) => (
+              <div
+                key={`${dup}-${i}`}
+                className="rounded-[24px] p-6 w-[300px] flex-shrink-0"
+                style={{
+                  background: "rgba(255,255,255,0.05)",
+                  backdropFilter: "blur(20px)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
+                <div
+                  className="inline-block font-fredoka font-bold text-[11px] px-3 py-1 rounded-full mb-4"
+                  style={{
+                    background: t.badgeColor === "#D8FF4F" ? "rgba(216,255,79,0.15)" : `${t.badgeColor}22`,
+                    border: `1px solid ${t.badgeColor}44`,
+                    color: t.badgeColor === "#D8FF4F" ? "#D8FF4F" : t.badgeColor === "#7340C8" ? "#a78bfa" : "#FF9A7A",
+                  }}
+                >
+                  {t.badge}
+                </div>
+
+                <p className="font-nunito text-white/70 text-sm leading-relaxed mb-4">"{t.quote}"</p>
+
+                {t.before && t.after && (
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex-1 rounded-xl px-3 py-2 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
+                      <div className="font-fredoka font-bold text-white/35 text-[9px] uppercase tracking-wide">Önce</div>
+                      <div className="font-fredoka font-bold text-white text-base">{t.before}</div>
+                    </div>
+                    <span className="text-lime text-xs">→</span>
+                    <div className="flex-1 rounded-xl px-3 py-2 text-center" style={{ background: "rgba(216,255,79,0.12)" }}>
+                      <div className="font-fredoka font-bold text-lime/60 text-[9px] uppercase tracking-wide">Sonra</div>
+                      <div className="font-fredoka font-bold text-lime text-base">{t.after}</div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2.5 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+                  <div
+                    className="w-9 h-9 rounded-full flex items-center justify-center text-white font-fredoka font-bold text-sm flex-shrink-0"
+                    style={{ background: t.avatarBg }}
+                  >
+                    {t.avatar}
+                  </div>
+                  <div>
+                    <p className="font-fredoka font-bold text-white text-sm m-0">{t.name}</p>
+                    <p className="font-nunito text-white/40 text-[11px] m-0 flex items-center gap-1.5">
+                      <span>{t.role} · {t.year}</span>
+                      <span style={{ color: t.badgeColor, letterSpacing: 1 }}>
+                        {"★".repeat(t.stars || 5)}
+                        <span style={{ opacity: 0.25 }}>{"★".repeat(5 - (t.stars || 5))}</span>
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </React.Fragment>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
 function TestimonialsSection() {
-  const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const t = testimonials[current];
+  const col1 = testimonials;
+  const col2 = [testimonials[1], testimonials[2], testimonials[0]];
+  const col3 = [testimonials[2], testimonials[0], testimonials[1]];
 
   return (
     <section
@@ -560,7 +627,7 @@ function TestimonialsSection() {
         pointerEvents: "none",
       }} />
 
-      <div className="max-w-[720px] mx-auto relative" style={{ zIndex: 1 }}>
+      <div className="max-w-[1100px] mx-auto relative" style={{ zIndex: 1 }}>
         <motion.div {...fadeUp} className="text-center mb-12">
           <div
             className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-4"
@@ -577,101 +644,13 @@ function TestimonialsSection() {
           </h2>
         </motion.div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={current}
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -40 }}
-            transition={{ duration: 0.4 }}
-            className="rounded-[28px] p-8 mb-8 relative overflow-hidden"
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              backdropFilter: "blur(20px)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
-            }}
-          >
-            {/* Badge */}
-            <div
-              className="absolute top-6 right-6 font-fredoka font-bold text-xs px-4 py-1.5 rounded-full"
-              style={{
-                background: t.badgeColor === "#D8FF4F"
-                  ? "rgba(216,255,79,0.15)"
-                  : `${t.badgeColor}22`,
-                border: `1px solid ${t.badgeColor}44`,
-                color: t.badgeColor === "#D8FF4F" ? "#D8FF4F" : t.badgeColor === "#7340C8" ? "#a78bfa" : "#FF9A7A",
-              }}
-            >
-              {t.badge}
-            </div>
-
-            <div className="font-fredoka text-[56px] leading-none mb-2" style={{ color: "rgba(255,255,255,0.08)" }}>
-              "
-            </div>
-            <blockquote className="font-nunito font-bold text-white/75 text-base leading-relaxed mb-6">
-              "{t.quote}"
-            </blockquote>
-
-            {t.before && t.after && (
-              <div className="flex items-center gap-3 mb-6">
-                <div
-                  className="flex-1 rounded-2xl px-4 py-3 text-center"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
-                >
-                  <div className="font-fredoka font-bold text-white/35 text-[10px] uppercase tracking-wide mb-1">Önce</div>
-                  <div className="font-fredoka font-bold text-white text-xl">{t.before}</div>
-                </div>
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-fredoka font-bold text-page-dark"
-                  style={{ background: "#D8FF4F" }}
-                >
-                  →
-                </div>
-                <div
-                  className="flex-1 rounded-2xl px-4 py-3 text-center"
-                  style={{ background: "rgba(216,255,79,0.12)", border: "1px solid rgba(216,255,79,0.25)" }}
-                >
-                  <div className="font-fredoka font-bold text-lime/60 text-[10px] uppercase tracking-wide mb-1">Sonra</div>
-                  <div className="font-fredoka font-bold text-lime text-xl">{t.after}</div>
-                </div>
-              </div>
-            )}
-
-            <div className="flex items-center gap-3">
-              <div
-                className="w-10 h-10 rounded-full flex items-center justify-center text-white font-fredoka font-bold text-base flex-shrink-0"
-                style={{ background: t.avatarBg }}
-              >
-                {t.avatar}
-              </div>
-              <div>
-                <p className="font-fredoka font-bold text-white text-sm m-0">{t.name}</p>
-                <p className="font-nunito text-white/40 text-xs m-0 flex items-center gap-1.5 mt-0.5">
-                  <span>{t.role} · {t.year}</span>
-                  <span style={{ color: t.badgeColor, letterSpacing: 1 }}>
-                    {"★".repeat(t.stars || 5)}
-                    <span style={{ opacity: 0.25 }}>{"★".repeat(5 - (t.stars || 5))}</span>
-                  </span>
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Dots */}
-        <div className="flex justify-center gap-2 mb-10">
-          {testimonials.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrent(i)}
-              className="h-2.5 rounded-full transition-all duration-300 border-none cursor-pointer"
-              style={{
-                width: i === current ? 24 : 10,
-                background: i === current ? "#D8FF4F" : "rgba(216,255,79,0.2)",
-              }}
-            />
-          ))}
+        <div
+          className="flex justify-center gap-5 mb-10 max-h-[560px] overflow-hidden"
+          style={{ maskImage: "linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)" }}
+        >
+          <TestimonialsColumn items={col1} duration={22} />
+          <TestimonialsColumn items={col2} duration={28} className="hidden md:block" />
+          <TestimonialsColumn items={col3} duration={25} className="hidden lg:block" />
         </div>
 
         <div className="text-center">
