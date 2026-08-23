@@ -323,31 +323,10 @@ function EarlyRegistrationBanner() {
 // ══════════════════════════════════════════════
 function WhyDifferentSection() {
   return (
-    <section className="relative overflow-hidden py-24 px-5" style={{ background: "#0D0A2E" }}>
-      {/* Kartlardaki shader dilini bölümün geneline taşıyan, yavaş ve
-          koyu tonlu bir ambiyans shader'ı — statik gradyan+orb yerine. */}
-      <div className="absolute inset-0" style={{ pointerEvents: "none" }}>
-        <Warp
-          style={{ width: "100%", height: "100%" }}
-          proportion={0.5}
-          softness={1.4}
-          distortion={0.12}
-          swirl={0.4}
-          swirlIterations={6}
-          shape="dots"
-          shapeScale={0.05}
-          scale={1.4}
-          rotation={0}
-          speed={0.2}
-          colors={["hsl(255,55%,7%)", "hsl(266,50%,14%)", "hsl(280,45%,9%)", "hsl(18,60%,11%)"]}
-        />
-      </div>
+    <section className="relative overflow-hidden py-24 px-5 bg-white">
       <div
-        className="absolute inset-0"
-        style={{
-          background: "linear-gradient(160deg, rgba(13,10,46,0.72) 0%, rgba(26,13,61,0.82) 100%)",
-          pointerEvents: "none",
-        }}
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(216,255,79,0.08) 0%, transparent 70%)" }}
       />
 
       <div className="max-w-[1200px] mx-auto relative" style={{ zIndex: 1 }}>
@@ -362,10 +341,10 @@ function WhyDifferentSection() {
             className="font-fredoka font-bold m-0 leading-[0.95]"
             style={{ fontSize: "clamp(40px, 4.5vw, 64px)", letterSpacing: -1, maxWidth: 720 }}
           >
-            <span className="text-white">Diğerleri ne yapıyor, </span>
-            <span style={{ color: "transparent", WebkitTextStroke: "2.5px #D8FF4F" }}>biz ne yapıyoruz?</span>
+            <span className="text-page-dark">Diğerleri ne yapıyor, </span>
+            <span style={{ color: "transparent", WebkitTextStroke: "2.5px #1C1B8A" }}>biz ne yapıyoruz?</span>
           </h2>
-          <p className="font-nunito text-white/50 text-base mt-5 max-w-[500px]">
+          <p className="font-nunito text-[#64748b] text-base mt-5 max-w-[500px]">
             Dershane konu anlatır. Koçun görevi evdeki boşluğu kapatmak, her gün ve somut olarak.
           </p>
         </motion.div>
