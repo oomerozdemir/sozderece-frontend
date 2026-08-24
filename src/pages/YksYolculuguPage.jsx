@@ -123,6 +123,7 @@ const STATIC_FALLBACK = {
 export default function YksYolculuguPage() {
   const navigate = useNavigate();
   const [content, setContent] = useState(null);
+  const [yksPackage, setYksPackage] = useState(null);
   const { cart, addToCart, removeFromCart } = useCart();
   const [quota, setQuota] = useState({ remainingQuota: null });
   const [showSticky, setShowSticky] = useState(false);
@@ -137,6 +138,16 @@ export default function YksYolculuguPage() {
   useEffect(() => {
     axios.get("/api/yks-content").then((r) => setContent(r.data)).catch(() => setContent(STATIC_FALLBACK));
     axios.get("/api/settings/yks").then((r) => setQuota(r.data)).catch(() => {});
+    // Fiyat, admin panelinde ayrıca elle girilen içerik metni yerine gerçek
+    // paket fiyatından (AdminPackagePage'de yönetilen) okunur — böylece paket
+    // fiyatı değiştiğinde bu sayfa da otomatik güncellenir, iki ayrı yerde
+    // birbirinden bağımsız fiyat tutulmaz.
+    axios.get("/api/packages")
+      .then((r) => {
+        const pkg = r.data?.packages?.find((p) => p.slug === "yks-kocluk-paketi" || p.type === "yks");
+        if (pkg) setYksPackage(pkg);
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -205,7 +216,7 @@ export default function YksYolculuguPage() {
   // "X gün kaldı" iddiası olarak GÖSTERİLMİYOR. Resmi tarih açıklanınca admin
   // panelden (content.yksDate) güncellenmeli.
   const days = daysLeft(content.yksDate || "2027-06-20");
-  const price = content.offer?.price || "2800";
+  const price = String(yksPackage?.price || content.offer?.price || "2800");
   const dailyCost = days > 0 ? Math.round(parseInt(price) / days) : parseInt(price);
   const remaining = quota.remainingQuota;
   const hero = content.hero || {};
@@ -573,7 +584,7 @@ export default function YksYolculuguPage() {
             <div className="grid grid-cols-2 gap-8 max-[768px]:grid-cols-1">
               <motion.div {...fadeUp} className="rounded-3xl p-8 flex flex-col border" style={{ background: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.11)", backdropFilter: "blur(8px)" }}>
                 <div className="mb-6">
-                  <div className="font-fredoka font-bold" style={{ fontSize: "clamp(34px,4vw,52px)", color: "#D8FF4F" }}>₺{offer.price || "2.800"}</div>
+                  <div className="font-fredoka font-bold" style={{ fontSize: "clamp(34px,4vw,52px)", color: "#D8FF4F" }}>₺{price}</div>
                   <p className="font-nunito text-white/40 text-xs mt-1">{offer.priceLabel || "4 Haftalık Program"}</p>
                   {days > 0 && <p className="font-nunito text-white/50 text-sm mt-1">~₺{dailyCost} / gün</p>}
                 </div>
@@ -659,7 +670,7 @@ export default function YksYolculuguPage() {
           <div className="max-w-lg mx-auto flex items-center justify-between gap-4">
             <div className="font-nunito font-bold text-sm text-white flex items-center gap-2">
               {remaining !== null && remaining > 0 && <span style={{ color: "#ef4444" }}>🔥 {remaining} yer kaldı ·</span>}
-              <span className="text-white/45">₺{offer.price || "2.800"} / 4 haftalık program</span>
+              <span className="text-white/45">₺{price} / 4 haftalık program</span>
             </div>
             <button onClick={scrollToOffer} className="font-fredoka font-bold text-sm px-6 py-2.5 rounded-full transition-all hover:scale-105 whitespace-nowrap" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 4px 12px rgba(216,255,79,0.3)" }}>
               {hero.navbarCta || "⚡ Yerimi Ayırt →"}

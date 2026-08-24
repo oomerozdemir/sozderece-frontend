@@ -565,8 +565,12 @@ function OfferFormEditor({ content, setContent }) {
         <p className="text-sm font-black text-[#0f172a] mb-3 pb-2 border-b border-[#f1f5f9]">
           Fallback Fiyat <span className="text-[#94a3b8] font-normal text-xs">(yukarıda plan yoksa bu tek blok gösterilir)</span>
         </p>
+        <p className="text-xs text-[#94a3b8] -mt-2 mb-3">
+          Sayfada asıl gösterilen fiyat artık "YKS Koçluk Paketi" ürününün gerçek fiyatıdır
+          (Paketler bölümünden değiştirilir). Buradaki alan sadece o paket bulunamazsa yedek olarak kullanılır.
+        </p>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Fiyat (₺)">
+          <Field label="Fiyat (₺) — yedek">
             <input type="number" value={o.price || ""} onChange={(e) => set(setContent, "offer.price", e.target.value)} className={inp} placeholder="2800" />
           </Field>
           <Field label="Fiyat Etiketi">
