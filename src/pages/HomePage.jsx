@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Warp } from "@paper-design/shaders-react";
 import { FaWhatsapp, FaChartLine, FaUsers, FaHandshake, FaSyncAlt, FaChartBar, FaCheckCircle } from "react-icons/fa";
-import axios from "../utils/axios";
 import Seo from "../components/Seo";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
@@ -240,83 +239,6 @@ const faqs = [
     a: "Günlük WhatsApp takibi, her deneme sonrası anlık analiz, dinamik program güncellemesi ve haftalık veli raporunu bir arada sunan çok az koçluk var. Biz sistemi bu şekilde kuruyoruz.",
   },
 ];
-
-// ══════════════════════════════════════════════
-// ERKEN KAYIT KAMPANYA BANNER
-// ══════════════════════════════════════════════
-function EarlyRegistrationBanner() {
-  const [settings, setSettings] = useState(null);
-
-  useEffect(() => {
-    axios.get("/api/settings/early-registration")
-      .then((r) => setSettings(r.data))
-      .catch(() => {});
-  }, []);
-
-  if (!settings?.enabled) return null;
-
-  const daysLeft = settings.endDate
-    ? Math.ceil((new Date(settings.endDate) - new Date()) / 86400000)
-    : null;
-
-  if (daysLeft !== null && daysLeft <= 0) return null;
-
-  return (
-    <motion.section {...fadeUp} className="bg-lime py-14 px-5 relative overflow-hidden">
-      <div className="absolute top-[-60px] right-[-40px] w-[260px] h-[260px] rounded-full bg-page-dark opacity-[0.06] pointer-events-none" />
-      <div className="absolute bottom-[-50px] left-[-30px] w-[200px] h-[200px] rounded-full bg-page-navy opacity-[0.06] pointer-events-none" />
-
-      <div className="max-w-[900px] mx-auto relative">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-          <div className="text-center lg:text-left">
-            {settings.badge && (
-              <span
-                className="inline-block bg-page-dark text-lime font-fredoka font-bold text-xs px-4 py-1.5 rounded-full uppercase mb-4"
-                style={{ letterSpacing: 3 }}
-              >
-                {settings.badge}
-              </span>
-            )}
-            <h2
-              className="font-fredoka font-bold m-0 text-page-dark leading-[0.95]"
-              style={{ fontSize: "clamp(32px, 3.5vw, 44px)", letterSpacing: -1 }}
-            >
-              {settings.title || "Erken Kayıt Fırsatını Kaçırma!"}
-            </h2>
-            <p className="font-nunito text-page-dark/65 text-base mt-3 max-w-[500px]">
-              {settings.subtitle}
-            </p>
-            <div className="flex flex-wrap items-center gap-3 mt-4 justify-center lg:justify-start">
-              {settings.discountText && (
-                <span className="bg-page-dark text-lime font-fredoka font-bold text-sm px-5 py-2 rounded-full">
-                  {settings.discountText}
-                </span>
-              )}
-              {daysLeft !== null && (
-                <span className="bg-white/60 text-page-dark font-fredoka font-bold text-sm px-5 py-2 rounded-full">
-                  ⏳ {daysLeft} gün kaldı
-                </span>
-              )}
-              {settings.note && (
-                <span className="font-nunito text-page-dark/60 text-sm">{settings.note}</span>
-              )}
-            </div>
-          </div>
-          <div className="flex-shrink-0">
-            <a
-              href={WA_LINK}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 bg-page-dark text-lime font-fredoka font-bold text-base px-9 py-4 rounded-full no-underline hover:bg-page-navy transition-all shadow-[0_8px_30px_rgba(13,10,46,0.2)] hover:scale-105 whitespace-nowrap"
-            >
-              {settings.ctaText || "Hemen Kaydol →"}
-            </a>
-          </div>
-        </div>
-      </div>
-    </motion.section>
-  );
-}
 
 // ══════════════════════════════════════════════
 // NEDEN FARKLI — Dark, glassmorphism grid
@@ -1010,7 +932,6 @@ export default function HomePage() {
       <Navbar />
       <DiscountPopup />
       <HeroSection />
-      <EarlyRegistrationBanner />
       <PricingSection />
       <WhyDifferentSection />
       <HowItWorksSection />

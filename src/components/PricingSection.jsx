@@ -13,8 +13,6 @@ import {
   getExamDaysLeft,
 } from "../utils/promoUtils";
 
-const WA_LINK = "https://wa.me/905312546701?text=S%C4%B0STEM";
-
 const STATIC_FEATURES = [
   'Hızlı Net Getiren "Banko Konu" Odaklı Planlama',
   'Takıldığın An Ulaşabileceğin Birebir WhatsApp İletişimi',
@@ -118,7 +116,6 @@ const popIn = {
 export default function PricingSection() {
   const [tab, setTab] = useState("yks");
   const [packages, setPackages] = useState([]);
-  const [earlyReg, setEarlyReg] = useState(null);
   const [video, setVideo] = useState(null);
   const [primaryIdx, setPrimaryIdx] = useState(0);
   const [activePlanIdx, setActivePlanIdx] = useState(0);
@@ -131,16 +128,11 @@ export default function PricingSection() {
     axios.get("/api/packages")
       .then((r) => { if (r.data.success) setPackages(r.data.packages); })
       .catch(() => {});
-    axios.get("/api/settings/early-registration")
-      .then((r) => { if (r.data.enabled) setEarlyReg(r.data); })
-      .catch(() => {});
     axios.get("/api/settings/pricing-video")
       .then((r) => setVideo(r.data))
       .catch(() => {});
   }, []);
 
-  // "erken" sekmesi paket listesinde YKS grubuna düşüyor (bkz. `visible` altta) —
-  // video seçiminde de aynı mantık: sadece "lgs" için LGS videosu gösterilir.
   const activeVideo = video?.[tab === "lgs" ? "lgs" : "yks"];
   const videoEmbedUrl = activeVideo?.enabled && activeVideo?.videoUrl ? toYouTubeEmbed(activeVideo.videoUrl) : null;
 
@@ -154,10 +146,6 @@ export default function PricingSection() {
   const plans = Array.isArray(primary?.plans) ? primary.plans : [];
   const hasPlanTabs = plans.length > 1;
   const activePlan = hasPlanTabs ? plans[activePlanIdx] : null;
-
-  const earlyDaysLeft = earlyReg?.endDate
-    ? Math.max(0, Math.ceil((new Date(earlyReg.endDate) - new Date()) / 86400000))
-    : null;
 
   const features =
     primary?.features && primary.features.filter((f) => f.included).length >= 3
@@ -260,27 +248,15 @@ export default function PricingSection() {
             {[
               { key: "yks", label: "YKS" },
               { key: "lgs", label: "LGS" },
-              ...(earlyReg ? [{ key: "erken", label: "Erken Kayıt" }] : []),
             ].map((t) => (
               <button
                 key={t.key}
                 onClick={() => setTab(t.key)}
                 className="font-fredoka font-bold text-[17px] px-7 py-3 rounded-full border-none cursor-pointer transition-all duration-200"
                 style={{
-                  background:
-                    tab === t.key
-                      ? t.key === "erken" ? "#D8FF4F" : "#1C1B8A"
-                      : "transparent",
-                  color:
-                    tab === t.key
-                      ? t.key === "erken" ? "#0D0A2E" : "#D8FF4F"
-                      : "#6B6B8A",
-                  boxShadow:
-                    tab === t.key
-                      ? t.key === "erken"
-                        ? "0 4px 14px rgba(216,255,79,0.4)"
-                        : "0 4px 14px rgba(28,27,138,0.3)"
-                      : "none",
+                  background: tab === t.key ? "#1C1B8A" : "transparent",
+                  color: tab === t.key ? "#D8FF4F" : "#6B6B8A",
+                  boxShadow: tab === t.key ? "0 4px 14px rgba(28,27,138,0.3)" : "none",
                 }}
               >
                 {t.label}
@@ -434,34 +410,20 @@ export default function PricingSection() {
                 </div>
               </motion.div>
 
-              {/* Hücre 4 — Erken kayıt (sarı) */}
+              {/* Hücre 4 — Garanti (sarı) */}
               <motion.div
                 {...popIn}
                 transition={{ duration: 0.5, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 className="bento-c4"
               >
                 <div className="rounded-[28px] flex flex-col justify-center gap-2 h-full" style={{ background: "#D8FF4F", padding: "28px 32px" }}>
-                  <div className="text-[36px] leading-none">⚡</div>
+                  <div className="text-[36px] leading-none">🛡️</div>
                   <div className="font-fredoka font-bold text-page-navy text-xl leading-snug">
-                    {tab === "erken" && earlyReg
-                      ? (earlyReg.title || "Erken Kayıt Avantajı")
-                      : "Erken Kayıt Avantajı"}
+                    14 Gün Koşulsuz İade
                   </div>
-                  {tab === "erken" && earlyReg?.discountText && (
-                    <div className="font-fredoka font-bold text-page-dark text-2xl leading-none">
-                      {earlyReg.discountText}
-                    </div>
-                  )}
                   <div className="font-nunito font-bold text-sm" style={{ color: "rgba(28,27,138,0.65)" }}>
-                    {tab === "erken" && earlyReg
-                      ? (earlyReg.subtitle || "Kontenjan dolmadan yerinizi ayırtın")
-                      : "Kontenjan dolmadan yerinizi ayırtın"}
+                    Program sana uymazsa tam iade alırsın
                   </div>
-                  {tab === "erken" && earlyDaysLeft !== null && (
-                    <div className="font-fredoka font-bold text-sm" style={{ color: "rgba(28,27,138,0.5)" }}>
-                      ⏰ {earlyDaysLeft} gün kaldı
-                    </div>
-                  )}
                 </div>
               </motion.div>
 

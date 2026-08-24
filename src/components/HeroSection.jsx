@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaBullseye, FaClipboardList, FaHourglassHalf, FaShieldAlt, FaChartLine, FaChevronLeft, FaChevronRight, FaPlay, FaPause } from "react-icons/fa";
-import axios from "../utils/axios";
-
-const WA_LINK = "https://wa.me/905312546701?text=S%C4%B0STEM";
+import { FaBullseye, FaClipboardList, FaChartLine, FaChevronLeft, FaChevronRight, FaPlay, FaPause } from "react-icons/fa";
 
 const fadeUp = {
   initial: { opacity: 0, y: 32 },
@@ -252,176 +249,7 @@ function DefaultSlide() {
 }
 
 // ══════════════════════════════════════════════
-// SLAYT 2 — Erken Kayıt (admin panelden yönetilen
-// /api/settings/early-registration verisiyle dinamik)
-// ══════════════════════════════════════════════
-function ErkenKayitSlide({ earlyReg, daysLeft }) {
-  const subtitle = earlyReg.subtitle || "Sınav öncesi başla, daha az öde. Bu fiyatlarla sınırlı süre.";
-  const discountText = earlyReg.discountText || "%20 İndirim";
-  const ctaText = earlyReg.ctaText || "Hemen Kaydol →";
-
-  return (
-    <div className="grid grid-cols-[1fr_auto] gap-16 items-center max-[960px]:grid-cols-1">
-      {/* Sol — metin */}
-      <div>
-        <motion.div {...fadeUp} className="mb-7">
-          <span style={eyebrowStyle}>
-            <FaHourglassHalf size={11} color="#D8FF4F" />
-            <span className="font-fredoka text-lime text-sm font-semibold tracking-[0.1em] uppercase">
-              Erken Kayıt
-            </span>
-          </span>
-        </motion.div>
-
-        <motion.h1
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.1 }}
-          className="font-fredoka text-[64px] max-[900px]:text-[46px] max-[640px]:text-[38px] max-[400px]:text-[30px] leading-[1.05] text-white mb-6"
-          style={{ letterSpacing: "-0.5px", maxWidth: 640 }}
-        >
-          Sınav Senesine{" "}
-          <span style={{
-            background: "linear-gradient(90deg, #D8FF4F, #ffffff, #D8FF4F)",
-            backgroundSize: "200% auto",
-            WebkitBackgroundClip: "text",
-            backgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            animation: "heroShimmer 3s linear infinite",
-          }}>Rakiplerinden Önde Başla!</span>
-        </motion.h1>
-
-        <motion.p
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.15 }}
-          className="font-nunito font-bold text-white/65 text-[19px] max-[640px]:text-base leading-relaxed mb-10"
-          style={{ maxWidth: 520 }}
-        >
-          {subtitle}
-        </motion.p>
-
-        <motion.div
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.24 }}
-          className="flex flex-wrap gap-4"
-        >
-          <Link
-            to="/hemen-basla"
-            className="inline-flex items-center gap-2 font-fredoka font-bold text-[18px] px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
-            style={{
-              background: "#D8FF4F",
-              color: "#0D0A2E",
-              animation: "heroPulse 2.5s ease-out infinite",
-              letterSpacing: "0.3px",
-            }}
-          >
-            {ctaText}
-          </Link>
-        </motion.div>
-
-        <motion.div
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.32 }}
-          className="flex items-center gap-2 mt-5"
-        >
-          <FaShieldAlt size={13} color="#D8FF4F" style={{ flexShrink: 0 }} />
-          <span className="font-nunito font-bold text-white/50 text-[13px]">
-            14 gün içinde beğenmezsen %100 iade garantisi
-          </span>
-        </motion.div>
-      </div>
-
-      {/* Sağ — değer görseli: programın kendisi, indirim/kontenjan sadece destekleyici rozet */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.92 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.7, delay: 0.2 }}
-        className="flex-shrink-0 max-[960px]:hidden"
-      >
-        <div className="relative" style={{ width: 390, height: 440 }}>
-          <div style={{
-            position: "absolute", top: 60, left: 10,
-            width: 380, height: 380, borderRadius: "50%",
-            background: "#D8FF4F", filter: "blur(90px)", opacity: 0.22,
-            animation: "heroOrbMove 10s ease-in-out infinite",
-            pointerEvents: "none",
-          }} />
-
-          {/* Ana kart — programa dahil olanlar (değer görseli) */}
-          <div style={{
-            position: "absolute", top: 70, left: 40,
-            width: 310,
-            background: "rgba(216,255,79,0.08)",
-            backdropFilter: "blur(20px)",
-            border: "1px solid rgba(216,255,79,0.25)",
-            borderRadius: 28, padding: "28px 24px",
-            animation: "heroFloat1 5s ease-in-out infinite",
-            boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
-          }}>
-            <div className="font-fredoka font-bold text-lime text-sm tracking-[0.12em] uppercase mb-4">
-              Programına Dahil
-            </div>
-            {[
-              "Günlük WhatsApp Takibi",
-              "Haftalık Deneme Analizi",
-              "Kişisel Çalışma Planı",
-            ].map((text, i) => (
-              <div key={i} className="flex items-center gap-3 mb-3.5">
-                <div style={{
-                  width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
-                  background: "#D8FF4F",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  <svg width="11" height="11" viewBox="0 0 12 12">
-                    <polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                </div>
-                <span className="font-nunito font-bold text-sm text-white">{text}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Turuncu rozet — kalan süre */}
-          {daysLeft !== null && (
-            <div style={{
-              position: "absolute", top: 0, right: 10,
-              background: "#FF6B35", borderRadius: 20, padding: "14px 20px",
-              animation: "heroFloat2 4s ease-in-out infinite",
-              boxShadow: "0 12px 30px rgba(255,107,53,0.5)",
-            }}>
-              <div className="font-fredoka font-bold text-white text-[24px] leading-none">{daysLeft}</div>
-              <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">gün kaldı</div>
-            </div>
-          )}
-
-          {/* Lime rozet — indirim oranı */}
-          <div style={{
-            position: "absolute", bottom: 60, right: -10,
-            background: "rgba(216,255,79,0.96)", borderRadius: 18, padding: "12px 18px",
-            animation: "heroFloat3 6s ease-in-out infinite",
-            boxShadow: "0 10px 24px rgba(216,255,79,0.35)",
-          }}>
-            <div className="font-fredoka font-bold text-page-dark text-[15px] leading-snug">{discountText}</div>
-          </div>
-
-          {/* Beyaz rozet — sınırlı kontenjan */}
-          <div style={{
-            position: "absolute", bottom: 0, left: 10,
-            background: "rgba(255,255,255,0.96)", borderRadius: 18, padding: "12px 18px",
-            animation: "heroFloat3 6s ease-in-out infinite",
-            animationDelay: "1.5s",
-            boxShadow: "0 10px 24px rgba(0,0,0,0.2)",
-          }}>
-            <div className="font-fredoka font-bold text-page-dark text-[14px]">⚡ Sınırlı kontenjan</div>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
-// ══════════════════════════════════════════════
-// SLAYT 3 — LGS'ye özel
+// SLAYT 2 — LGS'ye özel
 // ══════════════════════════════════════════════
 function LgsSlide() {
   return (
@@ -774,31 +602,13 @@ function YksSlide() {
 }
 
 export default function HeroSection() {
-  const [earlyReg, setEarlyReg] = useState(null);
-  useEffect(() => {
-    axios.get("/api/settings/early-registration")
-      .then((r) => setEarlyReg(r.data))
-      .catch(() => {});
-  }, []);
-  const earlyDaysLeft = earlyReg?.endDate
-    ? Math.ceil((new Date(earlyReg.endDate) - new Date()) / 86400000)
-    : null;
-  const earlyRegActive = !!earlyReg?.enabled && (earlyDaysLeft === null || earlyDaysLeft > 0);
-
   const slides = [
-    ...(earlyRegActive ? [{ key: "erken", label: "Erken Kayıt", content: <ErkenKayitSlide earlyReg={earlyReg} daysLeft={earlyDaysLeft} /> }] : []),
     { key: "default", label: "Genel Tanıtım", content: <DefaultSlide /> },
     { key: "yks", label: "YKS Koçluğu", content: <YksSlide /> },
     { key: "lgs", label: "LGS Koçluğu", content: <LgsSlide /> },
   ];
 
   const [activeIdx, setActiveIdx] = useState(0);
-
-  // earlyRegActive geç yüklendiğinde slides.length değişip activeIdx'in
-  // sınırın dışında kalmasını önler.
-  useEffect(() => {
-    if (activeIdx >= slides.length) setActiveIdx(0);
-  }, [slides.length, activeIdx]);
 
   // Erişilebilirlik (ui-ux-pro-max skill'inden gelen "auto-rotation-controls"
   // ve "reduced-motion" kuralları): kullanıcı azaltılmış hareket istiyorsa
