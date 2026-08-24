@@ -9,10 +9,6 @@ import Seo from "../components/Seo";
 const fadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.55 } };
 const inp = "w-full px-4 py-3 rounded-xl border border-[#e5e7eb] text-sm text-[#0f172a] outline-none focus:border-page-navy focus:ring-2 focus:ring-page-navy/10 transition-all bg-white font-nunito";
 
-function daysLeft(yksDate) {
-  return Math.max(0, Math.ceil((new Date(yksDate) - new Date()) / (1000 * 60 * 60 * 24)));
-}
-
 function FaqAccordion({ faqData }) {
   const [open, setOpen] = useState(null);
   const items = faqData?.items || [];
@@ -211,13 +207,7 @@ export default function YksYolculuguPage() {
     );
   }
 
-  // 2027 YKS tarihi ÖSYM tarafından henüz resmi olarak açıklanmadı — bu tahmini
-  // tarih SADECE "~₺X/gün" fiyat vurgusu için kullanılıyor, sayfada kesin bir
-  // "X gün kaldı" iddiası olarak GÖSTERİLMİYOR. Resmi tarih açıklanınca admin
-  // panelden (content.yksDate) güncellenmeli.
-  const days = daysLeft(content.yksDate || "2027-06-20");
   const price = String(yksPackage?.price || content.offer?.price || "2800");
-  const dailyCost = days > 0 ? Math.round(parseInt(price) / days) : parseInt(price);
   const remaining = quota.remainingQuota;
   const hero = content.hero || {};
   const painPoints = content.painPoints || {};
@@ -500,7 +490,7 @@ export default function YksYolculuguPage() {
                             {plan.priceText && <span className="font-nunito text-[#64748b] text-xs">{plan.priceText}</span>}
                           </div>
                           {plan.desc && <p className="font-nunito text-[#64748b] text-xs mt-1">{plan.desc}</p>}
-                          {days > 0 && parseInt(plan.price) > 0 && <p className="font-nunito text-[#64748b] text-xs mt-1">~₺{Math.round(parseInt(plan.price) / days)} / gün</p>}
+                          <p className="font-nunito font-bold text-[#166534] text-xs mt-1">✓ 14 gün içinde memnun kalmazsan iade alırsın</p>
                         </div>
                         {planIncludes.length > 0 && (
                           <ul className="space-y-1.5 mb-6 flex-grow">
@@ -531,7 +521,7 @@ export default function YksYolculuguPage() {
                             {plan.priceText && <span className="font-nunito text-white/40 text-xs">{plan.priceText}</span>}
                           </div>
                           {plan.desc && <p className="font-nunito text-white/40 text-xs mt-1">{plan.desc}</p>}
-                          {days > 0 && parseInt(plan.price) > 0 && <p className="font-nunito text-white/28 text-xs mt-1">~₺{Math.round(parseInt(plan.price) / days)} / gün</p>}
+                          <p className="font-nunito font-bold text-xs mt-1" style={{ color: "#D8FF4F" }}>✓ 14 gün içinde memnun kalmazsan iade alırsın</p>
                         </div>
                         {planIncludes.length > 0 && (
                           <ul className="space-y-1.5 mb-6 flex-grow">
@@ -586,7 +576,7 @@ export default function YksYolculuguPage() {
                 <div className="mb-6">
                   <div className="font-fredoka font-bold" style={{ fontSize: "clamp(34px,4vw,52px)", color: "#D8FF4F" }}>₺{price}</div>
                   <p className="font-nunito text-white/40 text-xs mt-1">{offer.priceLabel || "4 Haftalık Program"}</p>
-                  {days > 0 && <p className="font-nunito text-white/50 text-sm mt-1">~₺{dailyCost} / gün</p>}
+                  <p className="font-nunito font-bold text-sm mt-1" style={{ color: "#D8FF4F" }}>✓ 14 gün içinde memnun kalmazsan iade alırsın</p>
                 </div>
                 {offer.includes?.length > 0 && (
                   <ul className="space-y-2 mb-8 flex-grow">
