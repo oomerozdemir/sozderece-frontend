@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FaShieldAlt, FaCheck, FaCheckCircle, FaSyncAlt, FaCreditCard,
+  FaUserGraduate, FaMapMarkerAlt, FaLock, FaTag,
+} from "react-icons/fa";
 import axios from "../utils/axios";
 import {
   isValidEmail,
@@ -77,8 +82,14 @@ function validateAddressSection(formData) {
 }
 
 const inputBase =
-  "py-[18px] px-3 h-14 border border-[#e2e8f0] rounded-2xl text-base bg-white w-full box-border focus:outline-none focus:border-[#f35900] focus:shadow-[0_0_0_3px_rgba(243,89,0,0.1)] placeholder:text-[#aaa] text-[#0f172a]";
+  "py-[18px] px-3 h-14 border border-[#e2e8f0] rounded-2xl text-base bg-white w-full box-border focus:outline-none focus:border-page-navy focus:shadow-[0_0_0_3px_rgba(28,27,138,0.1)] placeholder:text-[#aaa] text-[#0f172a] transition-colors font-nunito";
 const errCls = "border border-red-500 bg-[#fff0f0]";
+
+const fadeUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.45, ease: "easeOut" },
+};
 
 export default function CoachingWizardOdeme() {
   const navigate = useNavigate();
@@ -345,21 +356,24 @@ export default function CoachingWizardOdeme() {
   if (!slug || !alan) return null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc]">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+      className="min-h-screen flex flex-col bg-[#f8fafc]"
+    >
       <header className="bg-white border-b border-[#e2e8f0] shadow-sm sticky top-0 z-50">
         <div className="max-w-[1200px] mx-auto px-5 py-3 flex items-center justify-between gap-4 max-[480px]:px-3">
           <div className="flex items-center gap-4 max-[480px]:gap-2">
             <img src={settings.logoUrl || "/images/hero-logo.webp"} alt="Sözderece" className="h-10 w-auto max-[480px]:h-8" />
             {settings.slogan && (
-              <span className="text-sm font-semibold text-[#475569] italic border-l border-[#e2e8f0] pl-4 max-[640px]:hidden">
+              <span className="font-nunito text-sm font-semibold text-[#475569] italic border-l border-[#e2e8f0] pl-4 max-[640px]:hidden">
                 {settings.slogan}
               </span>
             )}
           </div>
-          <div className="flex items-center gap-2 text-xs font-bold text-[#059669] bg-[#ecfdf5] border border-[#a7f3d0] px-3 py-1.5 rounded-full whitespace-nowrap">
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
+          <div className="flex items-center gap-2 font-nunito text-xs font-bold text-[#059669] bg-[#ecfdf5] border border-[#a7f3d0] px-3 py-1.5 rounded-full whitespace-nowrap">
+            <FaShieldAlt size={13} />
             256-bit SSL Güvenli Ödeme
           </div>
         </div>
@@ -370,8 +384,8 @@ export default function CoachingWizardOdeme() {
 
       <main className="flex-1">
         {payTrFields ? (
-          <div className="max-w-md mx-auto px-4 py-24 text-center">
-            <div className="inline-block w-10 h-10 border-4 border-[#f1f5f9] border-t-[#f35900] rounded-full animate-spin mb-4" />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-md mx-auto px-4 py-24 text-center">
+            <div className="inline-block w-10 h-10 border-4 border-[#f1f5f9] border-t-page-navy rounded-full animate-spin mb-4" />
             <p className="text-[#64748b] font-nunito">PayTR güvenli ödeme sayfasına yönlendiriliyorsunuz…</p>
             {/* Bu form doğrudan PayTR'ye POST eder — action PayTR'nin kendi
                 endpoint'i. Kart alanları BİZİM sunucumuza hiç gitmiyor. */}
@@ -385,24 +399,29 @@ export default function CoachingWizardOdeme() {
               <input type="hidden" name="expiry_year" value={cardData.expiry_year} />
               <input type="hidden" name="cvv" value={cardData.cvv} />
             </form>
-          </div>
+          </motion.div>
         ) : !pkgLoaded ? (
           <p className="text-center text-[#64748b] font-nunito py-16">Yükleniyor…</p>
         ) : !pkg ? (
           <div className="text-center py-16">
             <p className="text-[#64748b] mb-4">Paket bulunamadı.</p>
-            <button type="button" onClick={() => navigate("/hemen-basla")} className="text-[#f35900] font-bold underline">
+            <button type="button" onClick={() => navigate("/hemen-basla")} className="text-page-navy font-bold underline">
               Baştan başla →
             </button>
           </div>
         ) : (
-          <div className="flex gap-8 p-8 max-w-[1200px] mx-auto max-[768px]:flex-col-reverse max-[768px]:p-4 max-[768px]:gap-5">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
+            className="flex gap-8 p-8 max-w-[1200px] mx-auto max-[768px]:flex-col-reverse max-[768px]:p-4 max-[768px]:gap-5"
+          >
             {/* ── Sol: 3 akordiyon bölüm ── */}
             <form className="flex-[2] flex flex-col gap-4" onSubmit={handleSubmit}>
               <div className="flex items-center justify-between bg-white rounded-2xl px-5 py-3 border border-[#f1f5f9]">
                 <span className="font-nunito text-sm text-[#64748b]">Alan seçimin:</span>
                 <span className="font-fredoka font-bold text-sm text-page-navy">{alan}</span>
-                <button type="button" onClick={goEditAlan} className="text-xs text-[#f35900] underline">
+                <button type="button" onClick={goEditAlan} className="font-nunito text-xs text-page-navy underline">
                   değiştir
                 </button>
               </div>
@@ -416,18 +435,19 @@ export default function CoachingWizardOdeme() {
                     <button
                       type="button"
                       onClick={() => setBillingChoice("once")}
-                      className={`flex-1 py-3 px-3 rounded-xl border text-sm font-bold transition-colors ${
-                        billingChoice === "once" ? "bg-[#f35900] border-[#f35900] text-white" : "bg-white border-[#e2e8f0] text-[#64748b]"
+                      className={`flex-1 py-3 px-3 rounded-xl border text-sm font-bold font-nunito transition-colors flex items-center justify-center gap-1.5 ${
+                        billingChoice === "once" ? "border-page-navy text-white" : "bg-white border-[#e2e8f0] text-[#64748b]"
                       }`}
+                      style={billingChoice === "once" ? { background: "#1C1B8A" } : undefined}
                     >
-                      💳 Tek Seferlik
+                      <FaCreditCard size={13} /> Tek Seferlik
                     </button>
                     <button
                       type="button"
                       onClick={chooseMonthly}
-                      className="flex-1 py-3 px-3 rounded-xl border text-sm font-bold transition-colors bg-white border-[#e2e8f0] text-[#64748b] hover:border-[#f35900]"
+                      className="flex-1 py-3 px-3 rounded-xl border text-sm font-bold font-nunito transition-colors flex items-center justify-center gap-1.5 bg-white border-[#e2e8f0] text-[#64748b] hover:border-page-navy"
                     >
-                      🔁 Aylık Abonelik
+                      <FaSyncAlt size={13} /> Aylık Abonelik
                     </button>
                   </div>
                   <p className="font-nunito text-xs text-[#94a3b8] mt-2">
@@ -438,23 +458,30 @@ export default function CoachingWizardOdeme() {
               )}
 
               {/* ① Öğrenci Bilgileri */}
-              <div className="bg-white p-7 rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#f1f5f9]">
+              <motion.div {...fadeUp} className="bg-white p-7 rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#f1f5f9]">
                 <button
                   type="button"
                   onClick={() => setOpenSection("student")}
                   className="w-full flex items-center gap-3 bg-transparent border-none cursor-pointer text-left"
                 >
                   <span
-                    className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
-                      studentDone ? "bg-[#f35900] text-white" : "bg-[#f1f5f9] text-[#64748b]"
-                    }`}
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-sm font-fredoka font-bold flex-shrink-0 transition-colors"
+                    style={studentDone ? { background: "#D8FF4F", color: "#0D0A2E" } : { background: "#f1f5f9", color: "#64748b" }}
                   >
-                    {studentDone ? "✓" : "1"}
+                    {studentDone ? <FaCheck size={12} /> : <FaUserGraduate size={13} />}
                   </span>
-                  <h2 className="m-0 text-[#0f172a] text-lg font-bold flex-1">Öğrenci Bilgileri</h2>
+                  <h2 className="m-0 text-[#0f172a] text-lg font-fredoka font-bold flex-1">Öğrenci Bilgileri</h2>
                 </button>
 
+                <AnimatePresence initial={false}>
                 {openSection === "student" && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    style={{ overflow: "hidden" }}
+                  >
                   <div className="flex flex-col gap-3 mt-5">
                     <input type="email" name="email" value={formData.email} placeholder="E-posta" onChange={handleInputChange} className={`${inputBase}${errors.email ? ` ${errCls}` : ""}`} />
                     {errors.email && <span className="text-red-500 text-xs">{errors.email}</span>}
@@ -481,35 +508,51 @@ export default function CoachingWizardOdeme() {
                       <option value="Diğer">Diğer</option>
                     </select>
                     {errors.sinif && <span className="text-red-500 text-xs">{errors.sinif}</span>}
-                    <label className="flex items-center gap-2 text-sm text-[#475569] cursor-pointer">
-                      <input type="checkbox" checked={formData.allowEmails} name="allowEmails" onChange={handleInputChange} className="w-4 h-4 accent-[#f35900]" />
+                    <label className="flex items-center gap-2 font-nunito text-sm text-[#475569] cursor-pointer">
+                      <input type="checkbox" checked={formData.allowEmails} name="allowEmails" onChange={handleInputChange} className="w-4 h-4 accent-page-navy" />
                       Bana e-posta gönderilmesine izin veriyorum.
                     </label>
-                    <button type="button" onClick={confirmStudentSection} className="mt-2 py-3.5 bg-[#f35900] text-white font-bold rounded-2xl cursor-pointer hover:bg-[#d44e00] transition-colors">
+                    <motion.button
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.98 }}
+                      type="button"
+                      onClick={confirmStudentSection}
+                      className="mt-2 py-3.5 text-white font-fredoka font-bold rounded-2xl cursor-pointer transition-colors"
+                      style={{ background: "#1C1B8A" }}
+                    >
                       Devam Et →
-                    </button>
+                    </motion.button>
                   </div>
+                  </motion.div>
                 )}
-              </div>
+                </AnimatePresence>
+              </motion.div>
 
               {/* ② Adres Bilgileri */}
-              <div className="bg-white p-7 rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#f1f5f9]">
+              <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.05 }} className="bg-white p-7 rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#f1f5f9]">
                 <button
                   type="button"
                   onClick={() => studentDone && setOpenSection("address")}
                   className={`w-full flex items-center gap-3 bg-transparent border-none text-left ${studentDone ? "cursor-pointer" : "cursor-default opacity-50"}`}
                 >
                   <span
-                    className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
-                      addressDone ? "bg-[#f35900] text-white" : "bg-[#f1f5f9] text-[#64748b]"
-                    }`}
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-sm font-fredoka font-bold flex-shrink-0 transition-colors"
+                    style={addressDone ? { background: "#D8FF4F", color: "#0D0A2E" } : { background: "#f1f5f9", color: "#64748b" }}
                   >
-                    {addressDone ? "✓" : "2"}
+                    {addressDone ? <FaCheck size={12} /> : <FaMapMarkerAlt size={13} />}
                   </span>
-                  <h2 className="m-0 text-[#0f172a] text-lg font-bold flex-1">Adres Bilgileri</h2>
+                  <h2 className="m-0 text-[#0f172a] text-lg font-fredoka font-bold flex-1">Adres Bilgileri</h2>
                 </button>
 
+                <AnimatePresence initial={false}>
                 {openSection === "address" && studentDone && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    style={{ overflow: "hidden" }}
+                  >
                   <div className="flex flex-col gap-3 mt-5">
                     <input name="address" value={formData.address} placeholder="Adres" onChange={handleInputChange} className={`${inputBase}${errors.address ? ` ${errCls}` : ""}`} />
                     {errors.address && <span className="text-red-500 text-xs">{errors.address}</span>}
@@ -521,28 +564,47 @@ export default function CoachingWizardOdeme() {
                     {errors.postalCode && <span className="text-red-500 text-xs">{errors.postalCode}</span>}
                     <input name="tcNo" value={formData.tcNo} placeholder="TC Kimlik No" onChange={handleInputChange} className={`${inputBase}${errors.tcNo ? ` ${errCls}` : ""}`} />
                     {errors.tcNo && <span className="text-red-500 text-xs">{errors.tcNo}</span>}
-                    <button type="button" onClick={confirmAddressSection} className="mt-2 py-3.5 bg-[#f35900] text-white font-bold rounded-2xl cursor-pointer hover:bg-[#d44e00] transition-colors">
+                    <motion.button
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.98 }}
+                      type="button"
+                      onClick={confirmAddressSection}
+                      className="mt-2 py-3.5 text-white font-fredoka font-bold rounded-2xl cursor-pointer transition-colors"
+                      style={{ background: "#1C1B8A" }}
+                    >
                       Devam Et →
-                    </button>
+                    </motion.button>
                   </div>
+                  </motion.div>
                 )}
-              </div>
+                </AnimatePresence>
+              </motion.div>
 
               {/* ③ Ödeme Bilgileri */}
-              <div className="bg-white p-7 rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#f1f5f9]">
+              <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.1 }} className="bg-white p-7 rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#f1f5f9]">
                 <button
                   type="button"
                   onClick={() => addressDone && setOpenSection("payment")}
                   className={`w-full flex items-center gap-3 bg-transparent border-none text-left ${addressDone ? "cursor-pointer" : "cursor-default opacity-50"}`}
                 >
-                  <span className="w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 bg-[#f1f5f9] text-[#64748b]">3</span>
-                  <h2 className="m-0 text-[#0f172a] text-lg font-bold flex-1">Ödeme Bilgileri</h2>
+                  <span className="w-7 h-7 rounded-full flex items-center justify-center text-sm font-fredoka font-bold flex-shrink-0 bg-[#f1f5f9] text-[#64748b]">
+                    <FaCreditCard size={13} />
+                  </span>
+                  <h2 className="m-0 text-[#0f172a] text-lg font-fredoka font-bold flex-1">Ödeme Bilgileri</h2>
                 </button>
 
+                <AnimatePresence initial={false}>
                 {openSection === "payment" && addressDone && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    style={{ overflow: "hidden" }}
+                  >
                   <div className="flex flex-col gap-4 mt-5">
-                    <p className="text-xs text-[#94a3b8] -mt-1">
-                      Kart bilgilerin doğrudan PayTR'nin güvenli sistemine iletilir, sunucumuzda hiç saklanmaz.
+                    <p className="font-nunito text-xs text-[#94a3b8] -mt-1 flex items-center gap-1.5">
+                      <FaLock size={10} /> Kart bilgilerin doğrudan PayTR'nin güvenli sistemine iletilir, sunucumuzda hiç saklanmaz.
                     </p>
                     <input
                       type="text"
@@ -597,24 +659,36 @@ export default function CoachingWizardOdeme() {
                     </div>
                     {errors.card && <span className="text-red-500 text-xs">{errors.card}</span>}
 
-                    <label className="flex items-start gap-2 text-sm text-[#475569] cursor-pointer">
-                      <input type="checkbox" checked={isAgreed} onChange={() => setIsAgreed(!isAgreed)} className="w-4 h-4 mt-0.5 accent-[#f35900]" />
+                    <label className="flex items-start gap-2 font-nunito text-sm text-[#475569] cursor-pointer">
+                      <input type="checkbox" checked={isAgreed} onChange={() => setIsAgreed(!isAgreed)} className="w-4 h-4 mt-0.5 accent-page-navy" />
                       <span>
                         Okudum ve onaylıyorum:{" "}
-                        <a href="/mesafeli-hizmet-sozlesmesi" target="_blank" rel="noreferrer" className="text-[#f35900] underline">
+                        <a href="/mesafeli-hizmet-sozlesmesi" target="_blank" rel="noreferrer" className="text-page-navy underline">
                           Mesafeli Satış Sözleşmesi
                         </a>
                       </span>
                     </label>
                     {errors.agreement && <span className="text-red-500 text-xs">{errors.agreement}</span>}
 
-                    <button
+                    <motion.button
+                      whileHover={{ scale: submitting ? 1 : 1.01 }}
+                      whileTap={{ scale: submitting ? 1 : 0.98 }}
                       type="submit"
                       disabled={submitting}
-                      className="mt-1 py-4 bg-[#f35900] hover:bg-[#d44e00] text-white text-lg font-bold rounded-2xl cursor-pointer w-full transition-colors shadow-[0_4px_16px_rgba(243,89,0,0.3)] disabled:opacity-60"
+                      className="mt-1 py-4 text-white text-lg font-fredoka font-bold rounded-2xl cursor-pointer w-full disabled:opacity-60 flex items-center justify-center gap-2"
+                      style={{ background: "#FF6B35", boxShadow: "0 8px 24px rgba(255,107,53,0.3)" }}
                     >
-                      {submitting ? "Hazırlanıyor…" : (settings.ctaButtonText || "Güvenli Ödemeye Geç")}
-                    </button>
+                      {submitting ? (
+                        <>
+                          <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                          Hazırlanıyor…
+                        </>
+                      ) : (
+                        <>
+                          <FaLock size={14} /> {settings.ctaButtonText || "Güvenli Ödemeye Geç"}
+                        </>
+                      )}
+                    </motion.button>
 
                     <div className="flex items-center justify-center gap-3 flex-wrap">
                       {["/images/kare-logo-visa.webp", "/images/kare-logo-mastercard.webp", "/images/kare-logo-troy.webp", "/images/kare-logo-paytr.webp"].map((src, i) => (
@@ -622,41 +696,48 @@ export default function CoachingWizardOdeme() {
                       ))}
                     </div>
                   </div>
+                  </motion.div>
                 )}
-              </div>
+                </AnimatePresence>
+              </motion.div>
             </form>
 
             {/* ── Sağ: Sipariş özeti ── */}
-            <div className="flex-1 flex flex-col gap-4 max-[768px]:w-full">
-              <div className="bg-gradient-to-br from-brand-navy to-[#1a05b3] rounded-2xl p-5 text-white">
+            <motion.div
+              initial={{ opacity: 0, x: 16 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.45, delay: 0.15, ease: "easeOut" }}
+              className="flex-1 flex flex-col gap-4 max-[768px]:w-full md:sticky md:top-24 self-start"
+            >
+              <div className="rounded-2xl p-5 text-white" style={{ background: "linear-gradient(135deg, #1C1B8A 0%, #2a1f9e 100%)" }}>
                 <div className="flex items-center gap-2 mb-3">
                   <div className="flex -space-x-2">
                     {(settings.avatars || []).map((av, i) => (
-                      <div key={i} className="w-9 h-9 rounded-full border-2 border-white flex items-center justify-center text-xs font-black text-white flex-shrink-0" style={{ backgroundColor: av.color || "#100481" }}>
+                      <div key={i} className="w-9 h-9 rounded-full border-2 border-white flex items-center justify-center text-xs font-black text-white flex-shrink-0" style={{ backgroundColor: av.color || "#1C1B8A" }}>
                         {av.initials || "?"}
                       </div>
                     ))}
                   </div>
                   <div>
-                    <p className="font-bold text-sm leading-tight">{settings.socialProofText || "+200 Mutlu Öğrenci"}</p>
+                    <p className="font-fredoka font-bold text-sm leading-tight">{settings.socialProofText || "+200 Mutlu Öğrenci"}</p>
                     <div className="flex gap-0.5 mt-0.5">
                       {stars.map((filled, i) => (
-                        <span key={i} className={filled ? "text-[#f39c12] text-base" : "text-white/30 text-base"}>★</span>
+                        <span key={i} className={filled ? "text-lime text-base" : "text-white/30 text-base"}>★</span>
                       ))}
                     </div>
                   </div>
                 </div>
-                <p className="text-white/70 text-xs">Sözderece öğrencileri YKS'de hedeflerine ulaşıyor.</p>
+                <p className="font-nunito text-white/70 text-xs">Sözderece öğrencileri YKS'de hedeflerine ulaşıyor.</p>
               </div>
 
               <div className="bg-white rounded-2xl border border-[#e2e8f0] shadow-[0_2px_12px_rgba(0,0,0,0.05)] p-6 flex flex-col gap-4">
-                <h4 className="text-[#0f172a] text-lg font-bold m-0">Sipariş Özeti</h4>
+                <h4 className="text-[#0f172a] text-lg font-fredoka font-bold m-0">Sipariş Özeti</h4>
                 <ul className="list-none p-0 m-0 space-y-3">
                   {cart.map((item, i) => (
                     <li key={i} className="pb-3 border-b border-[#f1f5f9] last:border-b-0">
                       <div className="flex justify-between items-start gap-2">
-                        <strong className="text-[#0f172a] text-sm">{item.name}</strong>
-                        <span className="text-[#f35900] font-bold text-sm whitespace-nowrap">₺{trPrice(item.price)}</span>
+                        <strong className="font-nunito text-[#0f172a] text-sm">{item.name}</strong>
+                        <span className="font-fredoka font-bold text-accent-orange text-sm whitespace-nowrap">₺{trPrice(item.price)}</span>
                       </div>
                     </li>
                   ))}
@@ -664,11 +745,11 @@ export default function CoachingWizardOdeme() {
 
                 {(settings.includes || []).length > 0 && (
                   <div className="bg-[#f8fafc] rounded-xl p-4 border border-[#e2e8f0]">
-                    <p className="text-xs font-black text-[#0f172a] uppercase tracking-wide mb-3">Dahil Olanlar</p>
+                    <p className="font-nunito text-xs font-black text-[#0f172a] uppercase tracking-wide mb-3">Dahil Olanlar</p>
                     <ul className="space-y-2">
                       {(settings.includes || []).map((item, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-[#374151]">
-                          <span className="text-[#f35900] flex-shrink-0">✓</span>
+                        <li key={i} className="flex items-start gap-2 font-nunito text-sm text-[#374151]">
+                          <FaCheckCircle className="text-accent-orange flex-shrink-0 mt-0.5" size={13} />
                           {item}
                         </li>
                       ))}
@@ -677,29 +758,55 @@ export default function CoachingWizardOdeme() {
                 )}
 
                 <div>
-                  <label className="block mb-1.5 text-sm font-semibold text-[#0f172a]">Kupon Kodu</label>
+                  <label className="block mb-1.5 font-nunito text-sm font-semibold text-[#0f172a] flex items-center gap-1.5">
+                    <FaTag size={12} className="text-page-navy" /> Kupon Kodu
+                  </label>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                       placeholder="İNDİRİM10"
-                      className="border border-[#e2e8f0] p-2.5 rounded-xl w-full text-sm focus:outline-none focus:border-[#f35900] text-[#0f172a]"
+                      className="border border-[#e2e8f0] p-2.5 rounded-xl w-full text-sm focus:outline-none focus:border-page-navy text-[#0f172a] font-nunito transition-colors"
                     />
-                    <button onClick={handleApplyCoupon} type="button" className="bg-[#059669] hover:bg-[#047857] text-white px-4 rounded-xl text-sm font-bold transition-colors whitespace-nowrap">
+                    <motion.button
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={handleApplyCoupon}
+                      type="button"
+                      className="bg-[#059669] hover:bg-[#047857] text-white px-4 rounded-xl text-sm font-fredoka font-bold transition-colors whitespace-nowrap"
+                    >
                       Uygula
-                    </button>
+                    </motion.button>
                   </div>
-                  {couponMessage && <p className="mt-1.5 text-xs text-[#374151]">{couponMessage}</p>}
+                  <AnimatePresence>
+                    {couponMessage && (
+                      <motion.p
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="mt-1.5 font-nunito text-xs text-[#374151]"
+                      >
+                        {couponMessage}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                <div className="space-y-1.5 text-sm">
-                  {calculatedDiscountValue > 0 && (
-                    <div className="flex justify-between text-[#059669] font-semibold">
-                      <span>Kupon ({couponData?.code})</span>
-                      <span>-₺{trPrice(calculatedDiscountValue)}</span>
-                    </div>
-                  )}
+                <div className="space-y-1.5 text-sm font-nunito">
+                  <AnimatePresence>
+                    {calculatedDiscountValue > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="flex justify-between text-[#059669] font-semibold overflow-hidden"
+                      >
+                        <span>Kupon ({couponData?.code})</span>
+                        <span>-₺{trPrice(calculatedDiscountValue)}</span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                   {eligibleTutoringTotal > 0 && (
                     <div className="flex justify-between text-[#475569]">
                       <span>KDV (%20)</span>
@@ -707,25 +814,33 @@ export default function CoachingWizardOdeme() {
                     </div>
                   )}
                   <hr className="border-[#e2e8f0] my-2" />
-                  <div className="flex justify-between text-[#0f172a] font-black text-base">
+                  <div className="flex justify-between text-[#0f172a] font-fredoka font-black text-base">
                     <span>Toplam</span>
-                    <span className="text-[#f35900]">₺{trPrice(finalCalculations.payable)}</span>
+                    <motion.span
+                      key={finalCalculations.payable}
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="text-accent-orange"
+                    >
+                      ₺{trPrice(finalCalculations.payable)}
+                    </motion.span>
                   </div>
                 </div>
 
                 {settings.guaranteeText && (
                   <div className="flex items-start gap-2 p-3 bg-[#ecfdf5] rounded-xl border border-[#a7f3d0]">
-                    <span className="text-[#059669] flex-shrink-0">✓</span>
-                    <p className="text-xs text-[#065f46] leading-relaxed">{settings.guaranteeText}</p>
+                    <FaCheckCircle className="text-[#059669] flex-shrink-0 mt-0.5" size={13} />
+                    <p className="font-nunito text-xs text-[#065f46] leading-relaxed">{settings.guaranteeText}</p>
                   </div>
                 )}
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
       </main>
 
       <Footer />
-    </div>
+    </motion.div>
   );
 }

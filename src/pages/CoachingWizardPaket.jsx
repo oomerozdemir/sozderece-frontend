@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaCheckCircle, FaSyncAlt } from "react-icons/fa";
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
@@ -15,6 +17,12 @@ import {
 } from "../utils/promoUtils";
 
 const WIZARD_STEPS = [{ label: "Alan" }, { label: "Paket" }, { label: "Ödeme" }];
+
+const fadeUp = {
+  initial: { opacity: 0, y: 24 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5, ease: "easeOut" },
+};
 
 // PricingSection.jsx'teki PriceDisplay ile aynı iş mantığı (promo/sınav/plan
 // önceliklendirmesi), sadece açık zeminli sihirbaz kartına göre yeniden
@@ -195,22 +203,28 @@ export default function CoachingWizardPaket() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+      className="min-h-screen flex flex-col bg-white"
+    >
       <TopBar />
       <Navbar />
       <WizardUrgencyBanner storageKey="hemen-basla" minutes={15} />
       <WizardStepBar currentStep={2} steps={WIZARD_STEPS} />
 
       <main className="flex-1 max-w-[700px] mx-auto px-5 py-10 w-full">
-        <button
+        <motion.button
+          {...fadeUp}
           type="button"
           onClick={goBack}
           className="font-nunito text-[#64748b] text-sm mb-6 bg-transparent border-none cursor-pointer hover:text-page-navy"
         >
           ← Alanı değiştir {alan && `(${alan})`}
-        </button>
+        </motion.button>
 
-        <div className="text-center mb-8">
+        <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.05 }} className="text-center mb-8">
           <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>
             ADIM 2/3
           </div>
@@ -220,7 +234,7 @@ export default function CoachingWizardPaket() {
           >
             Sana uygun paketi seç
           </h1>
-        </div>
+        </motion.div>
 
         {!loaded && <p className="text-center text-[#64748b] font-nunito">Paketler yükleniyor…</p>}
 
@@ -239,7 +253,12 @@ export default function CoachingWizardPaket() {
 
         {selected && (
           <>
-            <div className="rounded-[28px] border-2 border-[#f4f2fa] bg-[#f8f9fc] p-8">
+            <motion.div
+              initial={{ opacity: 0, y: 24, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+              className="rounded-[28px] border-2 border-[#f4f2fa] bg-[#f8f9fc] p-8"
+            >
               <div className="font-fredoka font-semibold text-page-navy text-[13px] uppercase mb-3" style={{ letterSpacing: 2 }}>
                 {selected.name}
               </div>
@@ -251,55 +270,86 @@ export default function CoachingWizardPaket() {
                       key={i}
                       type="button"
                       onClick={() => setActivePlanIdx(i)}
-                      className="font-fredoka font-bold text-[12px] px-4 py-1.5 rounded-full border-none cursor-pointer transition-all duration-200 flex-1 text-center"
-                      style={{
-                        background: activePlanIdx === i ? "#1C1B8A" : "transparent",
-                        color: activePlanIdx === i ? "#D8FF4F" : "#1C1B8A",
-                      }}
+                      className="relative font-fredoka font-bold text-[12px] px-4 py-1.5 rounded-full border-none cursor-pointer flex-1 text-center overflow-hidden"
+                      style={{ color: activePlanIdx === i ? "#D8FF4F" : "#1C1B8A" }}
                     >
-                      {plan.billingCycle === "monthly" ? `🔁 ${plan.label}` : plan.label}
+                      {activePlanIdx === i && (
+                        <motion.span
+                          layoutId="planTabBg"
+                          className="absolute inset-0 rounded-full"
+                          style={{ background: "#1C1B8A" }}
+                          transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                        />
+                      )}
+                      <span className="relative z-10 inline-flex items-center gap-1">
+                        {plan.billingCycle === "monthly" && <FaSyncAlt size={10} />} {plan.label}
+                      </span>
                     </button>
                   ))}
                 </div>
               )}
 
-              <PackagePrice pkg={selected} activePlan={activePlan} />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${selected.slug}-${activePlanIdx}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <PackagePrice pkg={selected} activePlan={activePlan} />
+                </motion.div>
+              </AnimatePresence>
 
               <div className="font-nunito font-bold text-sm mt-3 text-[#64748b]">
                 {selected.subtitle || "Kişiye özel koçluk programı"}
               </div>
 
               {features.length > 0 && (
-                <div className="flex flex-col gap-2 mt-6">
+                <motion.div
+                  initial="initial"
+                  animate="animate"
+                  variants={{ animate: { transition: { staggerChildren: 0.05 } } }}
+                  className="flex flex-col gap-2 mt-6"
+                >
                   {features.map((f, i) => (
-                    <div key={i} className="flex items-start gap-2 font-nunito text-sm text-[#374151]">
-                      <span className="text-accent-orange font-bold">✓</span>
+                    <motion.div
+                      key={i}
+                      variants={{ initial: { opacity: 0, x: -8 }, animate: { opacity: 1, x: 0 } }}
+                      className="flex items-start gap-2 font-nunito text-sm text-[#374151]"
+                    >
+                      <FaCheckCircle className="text-accent-orange flex-shrink-0 mt-0.5" size={14} />
                       {f.label}
-                    </div>
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               )}
 
               {effectivePlan?.billingCycle === "monthly" && (
-                <p className="font-nunito text-xs text-[#64748b] mt-4 bg-[#fff7ed] border border-[#fed7aa] rounded-xl px-3 py-2.5">
-                  🔁 Bu plan <strong>aylık abonelik</strong> olarak da alınabilir. Ödeme adımında tek seferlik mi
-                  yoksa otomatik yenilenen aylık abonelik mi istediğini seçeceksin. Aboneliği dilediğin zaman
-                  "Siparişlerim" sayfasından tek tıkla iptal edebilirsin.
+                <p className="font-nunito text-xs text-[#64748b] mt-4 bg-[#fff7ed] border border-[#fed7aa] rounded-xl px-3 py-2.5 flex items-start gap-1.5">
+                  <FaSyncAlt size={12} className="text-accent-orange flex-shrink-0 mt-0.5" />
+                  <span>
+                    Bu plan <strong>aylık abonelik</strong> olarak da alınabilir. Ödeme adımında tek seferlik mi
+                    yoksa otomatik yenilenen aylık abonelik mi istediğini seçeceksin. Aboneliği dilediğin zaman
+                    "Siparişlerim" sayfasından tek tıkla iptal edebilirsin.
+                  </span>
                 </p>
               )}
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 type="button"
                 onClick={goNext}
-                className="w-full mt-7 py-4 rounded-full font-fredoka font-bold text-base transition-transform hover:scale-[1.02]"
-                style={{ background: "#FF6B35", color: "white" }}
+                className="w-full mt-7 py-4 rounded-full font-fredoka font-bold text-base"
+                style={{ background: "#FF6B35", color: "white", boxShadow: "0 8px 24px rgba(255,107,53,0.3)" }}
               >
                 Bu paketle devam et →
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
 
             {packages.length > 1 && (
-              <div className="text-center mt-6">
+              <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.3 }} className="text-center mt-6">
                 <button
                   type="button"
                   onClick={() => navigate("/paket-detay")}
@@ -307,13 +357,13 @@ export default function CoachingWizardPaket() {
                 >
                   Farklı bir paket mi arıyorsun? Tüm paketlere göz at →
                 </button>
-              </div>
+              </motion.div>
             )}
           </>
         )}
       </main>
 
       <Footer />
-    </div>
+    </motion.div>
   );
 }
