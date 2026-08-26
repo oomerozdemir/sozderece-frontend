@@ -5,6 +5,7 @@ import { lazy, Suspense } from "react";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import RoleRoute from "./components/RoleRoutes.jsx";
 import VisitorTracker from "./components/VisitorTracker.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 
 import "./cssFiles/index.css";
 import "slick-carousel/slick/slick.css";
@@ -77,6 +78,7 @@ function App() {
 
   return (
     <div className="App">
+      <ScrollToTop />
       <VisitorTracker />
       <AnimatePresence mode="wait">
         <Suspense fallback={<div className="loading-spinner"><span></span>Yükleniyor...</div>}>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { blogPosts } from "../components/posts";
@@ -11,10 +11,6 @@ const BlogDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const post = blogPosts.find((item) => item.slug === slug);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [slug]);
 
   if (!post) {
     return (
@@ -108,10 +104,7 @@ const BlogDetail = () => {
                 <div
                   key={rel.id}
                   className="cursor-pointer hover:opacity-80 transition-opacity"
-                  onClick={() => {
-                    navigate(`/blog/${rel.slug}`);
-                    window.scrollTo(0, 0);
-                  }}
+                  onClick={() => navigate(`/blog/${rel.slug}`)}
                 >
                   <img src={rel.image} alt={rel.title} loading="lazy" className="w-full rounded-lg mb-2 h-[140px] object-cover max-[480px]:h-[180px]" />
                   <h4 className="text-sm font-semibold text-[#222]">{rel.title}</h4>
