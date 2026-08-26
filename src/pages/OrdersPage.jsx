@@ -29,7 +29,7 @@ const NEXT_STEPS = [
   {
     icon: <FaPhoneAlt />,
     title: "Danışmanımız Sizi Arar",
-    desc: "Siparişiniz onaylandıktan sonra en geç 2 saat içinde eğitim danışmanımız sizi arayarak süreci başlatır.",
+    desc: "Siparişiniz onaylandıktan sonra 24 saat içinde eğitim danışmanımız sizi arayarak süreci başlatır.",
     circleColor: "#1C1B8A",
   },
   {
@@ -52,6 +52,33 @@ const NEXT_STEPS = [
   },
 ];
 
+const ORDER_FAQ = [
+  {
+    title: "Siparişimden sonra süreç nasıl işliyor?",
+    content: "Siparişiniz onaylandıktan sonra 24 saat içinde eğitim danışmanımız sizi arar. Akademik durumunuz analiz edilir, size en uygun koç atanır ve aynı gün koçunuzla tanışıp ilk haftalık programınızı oluşturursunuz.",
+  },
+  {
+    title: "İade politikanız nedir?",
+    content: "Kayıt tarihinden itibaren ilk 14 gün içinde koşulsuz iade hakkınız bulunuyor. Program sizi tatmin etmezse hiçbir gerekçe göstermeksizin talep oluşturabilirsiniz.",
+  },
+  {
+    title: "İade talebimi nasıl oluştururum?",
+    content: "Aşağıdaki sipariş kartınızda yer alan \"İade Talebi Oluştur\" butonuna tıklayıp formu doldurmanız yeterli. Talebiniz incelendikten sonra size dönüş yapılır ve durumunu bu sayfadan takip edebilirsiniz.",
+  },
+  {
+    title: "Aboneliğimi nasıl iptal ederim?",
+    content: "Aktif bir aboneliğiniz varsa, \"Aboneliklerim\" kartındaki \"Aboneliği İptal Et\" butonunu kullanabilirsiniz. İptal ettiğinizde mevcut ödediğiniz dönem sonuna kadar erişiminiz devam eder, bir sonraki ay tekrar çekim yapılmaz.",
+  },
+  {
+    title: "Koçumu değiştirebilir miyim?",
+    content: "Evet. Koçunuzla enerjiniz uyuşmazsa ilk 5 gün içinde koşulsuz, sonrasında talep etmeniz halinde her zaman koç değiştirme hakkınız vardır. Yeni koçla tanışma görüşmesi ücretsizdir.",
+  },
+  {
+    title: "Fatura bilgilerime nereden ulaşabilirim?",
+    content: "Her siparişin altındaki \"Fatura Bilgileri\" bölümüne tıklayarak ad soyad, adres ve ödeme bilgilerinizi görüntüleyebilirsiniz.",
+  },
+];
+
 const EmptyState = ({ icon, text }) => (
   <div className="flex flex-col items-center justify-center gap-3 py-14 border-2 border-dashed border-[#e2e8f0] rounded-2xl">
     <div className="text-3xl text-[#cbd5e1]">{icon}</div>
@@ -64,6 +91,7 @@ const OrdersPage = () => {
   const [loading, setLoading] = useState(true);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [faqOpenIndex, setFaqOpenIndex] = useState(null);
 
   // Abonelikler
   const [subscriptions, setSubscriptions] = useState([]);
@@ -375,6 +403,35 @@ const OrdersPage = () => {
               })}
             </div>
           )}
+        </section>
+
+        {/* SSS */}
+        <section className="bg-white border border-[#f1f5f9] rounded-[24px] p-6 max-[768px]:p-4 shadow-[0_2px_12px_rgba(0,0,0,0.04)] mt-6">
+          <div className="mb-5">
+            <div className="font-fredoka font-bold text-accent-orange text-[11px] uppercase mb-2" style={{ letterSpacing: 3 }}>SSS</div>
+            <h2 className="font-fredoka font-bold text-page-navy text-lg">Sipariş, Süreç ve İade Hakkında</h2>
+          </div>
+          {ORDER_FAQ.map((item, idx) => {
+            const isOpen = faqOpenIndex === idx;
+            return (
+              <div
+                key={idx}
+                className={`relative rounded-2xl border overflow-hidden mb-3 transition-all duration-300 ${isOpen ? "border-page-navy shadow-[0_0_0_3px_rgba(28,27,138,0.06)]" : "border-[#e2e8f0] hover:border-page-navy/30"}`}
+              >
+                <div className={`absolute left-0 top-0 bottom-0 w-1 transition-all duration-300 ${isOpen ? "bg-lime" : "bg-transparent"}`} />
+                <button
+                  className="w-full flex justify-between items-center gap-4 py-4 pl-6 pr-4 bg-white border-0 font-nunito font-bold text-[#0f172a] cursor-pointer text-left text-sm transition-colors"
+                  onClick={() => setFaqOpenIndex(isOpen ? null : idx)}
+                >
+                  {item.title}
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-lg font-black transition-all duration-300 ${isOpen ? "bg-lime text-page-navy rotate-45" : "bg-[#f1f5f9] text-[#64748b] rotate-0"}`}>+</div>
+                </button>
+                <div className={`overflow-hidden transition-all duration-300 bg-[#f8fafc] ${isOpen ? "max-h-[240px] py-4 pl-6 pr-4 text-[#64748b] text-sm leading-relaxed border-t border-[#f1f5f9]" : "max-h-0"}`}>
+                  <p>{item.content}</p>
+                </div>
+              </div>
+            );
+          })}
         </section>
       </div>
 

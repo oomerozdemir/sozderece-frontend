@@ -106,7 +106,7 @@ const PackageDetail = () => {
   const defaultFaq = [
     { title: "Ödeme güvenli mi?", content: "Evet, tüm ödemeler Paytr altyapısı ile korunmaktadır." },
     { title: "Taksit imkanı var mı?", content: "Evet, tüm kredi kartlarına 12 taksite varan taksit imkanı sunuyoruz. Ödemeleriniz PayTR altyapısı ile 256-bit SSL güvencesiyle korunur." },
-    { title: "Satın aldıktan sonra süreç nasıl işliyor?", content: "Satın alma sonrası en geç 2 saat içinde eğitim danışmanımız sizi arar, akademik durumunuz analiz edilir ve size en uygun koç atanır. Aynı gün koçunuzla tanışıp ilk haftalık programınızı oluşturursunuz." },
+    { title: "Satın aldıktan sonra süreç nasıl işliyor?", content: "Satın alma sonrası 24 saat içinde eğitim danışmanımız sizi arar, akademik durumunuz analiz edilir ve size en uygun koç atanır. Aynı gün koçunuzla tanışıp ilk haftalık programınızı oluşturursunuz." },
     { title: "Programlar kişiye özel mi hazırlanıyor?", content: "Evet, kopyala-yapıştır program kullanmıyoruz. Okul saatlerinize, seviyenize ve hedefinize göre her hafta size özel bir program hazırlanır." },
     { title: "Memnun kalmazsam koçumu değiştirebilir miyim?", content: "Kesinlikle. İlk 5 gün içinde koşulsuz, sonrasında talep etmeniz halinde her zaman koç değiştirme hakkınız vardır." },
     { title: "İade politikanız nedir?", content: "Koçluk programınız size verildikten sonraki ilk 14 gün içerisinde koşulsuz iade hakkınız vardır." }

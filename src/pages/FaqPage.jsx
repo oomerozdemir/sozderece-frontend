@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     question: "Sisteme kayıt olduktan sonra süreç nasıl işliyor?",
-    answer: "Kayıt sonrası en geç 2 saat içinde eğitim danışmanımız sizi arar. Akademik durumunuz analiz edilir ve size en uygun derece koçu atanır. Aynı gün koçunuzla tanışır, ilk haftalık programınızı yapar ve çalışmaya başlarsınız.",
+    answer: "Kayıt sonrası 24 saat içinde eğitim danışmanımız sizi arar. Akademik durumunuz analiz edilir ve size en uygun derece koçu atanır. Aynı gün koçunuzla tanışır, ilk haftalık programınızı yapar ve çalışmaya başlarsınız.",
   },
   {
     question: "Dershaneden veya özel dersten farkınız nedir?",
