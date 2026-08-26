@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-
+const inp = "w-full mt-1.5 px-3.5 py-2.5 rounded-xl border border-[#e5e7eb] text-sm text-page-dark outline-none focus:border-page-navy focus:ring-2 focus:ring-page-navy/10 transition-all font-nunito";
 
 const RefundModal = ({ orderId, onClose, onSubmit }) => {
   const [reason, setReason] = useState("");
@@ -8,8 +8,6 @@ const RefundModal = ({ orderId, onClose, onSubmit }) => {
   const [confirm, setConfirm] = useState(false);
 
   const handleSubmit = () => {
-    console.log({ orderId, reason, description });
-
     if (!reason || !confirm) {
       alert("Lütfen bir neden seçin ve onay kutusunu işaretleyin.");
       return;
@@ -23,18 +21,20 @@ const RefundModal = ({ orderId, onClose, onSubmit }) => {
   };
 
   return (
-    
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[999]">
-      <div className="bg-white p-6 rounded-lg w-[400px] shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
-        <h3 className="mb-4">📝 İade Talep Formu</h3>
+    <div className="fixed inset-0 bg-page-dark/50 flex items-center justify-center z-[999] p-4" onClick={onClose}>
+      <div
+        className="bg-white p-6 rounded-[24px] w-[420px] max-w-full shadow-[0_20px_50px_rgba(13,10,46,0.25)]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 className="font-fredoka font-bold text-page-navy text-lg mb-4">İade Talep Formu</h3>
 
-        <label className="block mb-3 font-medium">
-          İade Nedeni:
+        <label className="block mb-3 font-nunito font-bold text-xs text-[#374151]">
+          İade Nedeni
           <select
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             required
-            className="w-full mt-1 p-1.5 rounded border border-gray-300"
+            className={inp}
           >
             <option value="">Seçiniz...</option>
             <option value="Yanlış paket seçimi">Yanlış paket seçimi</option>
@@ -44,34 +44,36 @@ const RefundModal = ({ orderId, onClose, onSubmit }) => {
           </select>
         </label>
 
-        <label className="block mb-3 font-medium">
-          Açıklama (isteğe bağlı):
+        <label className="block mb-3 font-nunito font-bold text-xs text-[#374151]">
+          Açıklama (isteğe bağlı)
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Dilerseniz detaylı açıklama yapabilirsiniz..."
-            className="w-full mt-1 p-1.5 rounded border border-gray-300"
+            className={`${inp} resize-none h-20`}
           />
         </label>
 
-        <label className="flex items-center gap-2.5 my-3 font-medium">
+        <label className="flex items-start gap-2.5 my-4 font-nunito text-sm text-[#374151] cursor-pointer">
           <input
             type="checkbox"
             checked={confirm}
             onChange={(e) => setConfirm(e.target.checked)}
+            className="mt-0.5 accent-page-navy"
           />
           Aboneliğimi sonlandırmak ve iade talebi oluşturmak istiyorum.
         </label>
 
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-3 mt-2">
           <button
-            className="px-4 py-2 border-none rounded cursor-pointer bg-gray-300"
+            className="flex-1 py-2.5 rounded-full border border-[#e5e7eb] font-fredoka font-bold text-sm text-[#64748b] bg-white hover:bg-[#f8fafc] transition-colors"
             onClick={onClose}
           >
             İptal
           </button>
           <button
-            className="px-4 py-2 border-none rounded cursor-pointer bg-blue-600 text-white"
+            className="flex-1 py-2.5 rounded-full font-fredoka font-bold text-sm text-white transition-transform hover:scale-[1.02]"
+            style={{ background: "#1C1B8A" }}
             onClick={handleSubmit}
           >
             Gönder

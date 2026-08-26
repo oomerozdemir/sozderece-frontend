@@ -5,9 +5,59 @@ import trLocale from "date-fns/locale/tr";
 import RefundModal from "../components/RefundModal";
 import TopBar from "../components/TopBar";
 import Navbar from "../components/navbar";
+import Footer from "../components/Footer";
+import {
+  FaBoxOpen, FaSyncAlt, FaCreditCard, FaCalendarAlt, FaChevronDown,
+  FaWhatsapp, FaUserTie, FaClipboardList, FaPhoneAlt, FaTag,
+} from "react-icons/fa";
 
-const badgeBase = "inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-semibold w-max bg-[#f3f4f6] text-[#374151] border border-[#e5e7eb]";
-const refundBtnBase = "inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg border-0 bg-[#ffe69c] text-[#5a3e00] font-semibold cursor-pointer no-underline transition hover:brightness-[0.98] active:translate-y-px";
+const STATUS_META = {
+  paid: { label: "Ödendi", cls: "bg-[#ecfdf5] text-[#065f46] border-[#a7f3d0]" },
+  active: { label: "Aktif", cls: "bg-[#ecfdf5] text-[#065f46] border-[#a7f3d0]" },
+  pending: { label: "Ödeme Bekliyor", cls: "bg-[#fffbeb] text-[#92400e] border-[#fde68a]" },
+  pending_payment: { label: "Ödeme Bekliyor", cls: "bg-[#fffbeb] text-[#92400e] border-[#fde68a]" },
+  failed: { label: "Başarısız", cls: "bg-[#fef2f2] text-[#991b1b] border-[#fecaca]" },
+  cancelled: { label: "İptal", cls: "bg-[#f8fafc] text-[#64748b] border-[#e2e8f0]" },
+  refunded: { label: "İade Edildi", cls: "bg-[#fef2f2] text-[#991b1b] border-[#fecaca]" },
+  refund_requested: { label: "İade Talep Edildi", cls: "bg-[#fff7ed] text-[#9a3412] border-[#fed7aa]" },
+  expired: { label: "Süresi Dolmuş", cls: "bg-[#f8fafc] text-[#64748b] border-[#e2e8f0]" },
+  past_due: { label: "Ödeme Bekleniyor", cls: "bg-[#fffbeb] text-[#92400e] border-[#fde68a]" },
+  period_end: { label: "Dönem Sonunda Duracak", cls: "bg-[#fffbeb] text-[#92400e] border-[#fde68a]" },
+};
+
+const NEXT_STEPS = [
+  {
+    icon: <FaPhoneAlt />,
+    title: "Danışmanımız Sizi Arar",
+    desc: "Siparişiniz onaylandıktan sonra en geç 2 saat içinde eğitim danışmanımız sizi arayarak süreci başlatır.",
+    circleColor: "#1C1B8A",
+  },
+  {
+    icon: <FaUserTie />,
+    title: "Koçunuz Atanır",
+    desc: "Akademik durumunuz ve hedefleriniz analiz edilerek size en uygun koç atanır.",
+    circleColor: "#7340C8",
+  },
+  {
+    icon: <FaClipboardList />,
+    title: "Tanışma & İlk Programınız",
+    desc: "Koçunuzla aynı gün tanışır, ilk haftalık çalışma programınızı birlikte oluşturursunuz.",
+    circleColor: "#FF6B35",
+  },
+  {
+    icon: <FaWhatsapp />,
+    title: "Günlük Takip Başlar",
+    desc: "WhatsApp üzerinden günlük plan ve akşam özetiyle sistemli çalışmaya başlarsınız.",
+    circleColor: "#16a34a",
+  },
+];
+
+const EmptyState = ({ icon, text }) => (
+  <div className="flex flex-col items-center justify-center gap-3 py-14 border-2 border-dashed border-[#e2e8f0] rounded-2xl">
+    <div className="text-3xl text-[#cbd5e1]">{icon}</div>
+    <p className="font-nunito text-[#94a3b8] text-sm">{text}</p>
+  </div>
+);
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
@@ -38,7 +88,6 @@ const OrdersPage = () => {
     fetchOrders();
   }, []);
 
-
   // Abonelikleri çek
   useEffect(() => {
     (async () => {
@@ -58,10 +107,10 @@ const OrdersPage = () => {
   }, []);
 
   const subscriptionStatusMeta = (sub) => {
-    if (sub.status === "cancelled") return { label: "İptal Edildi", variant: "bg-[rgba(55,65,81,0.08)] text-[#374151] border-[rgba(55,65,81,0.2)]" };
-    if (sub.status === "past_due") return { label: "Ödeme Bekleniyor", variant: "bg-[rgba(217,119,6,0.10)] text-[#d97706] border-[rgba(217,119,6,0.25)]" };
-    if (sub.cancelAtPeriodEnd) return { label: "Dönem Sonunda Duracak", variant: "bg-[rgba(217,119,6,0.10)] text-[#d97706] border-[rgba(217,119,6,0.25)]" };
-    return { label: "Aktif", variant: "bg-[rgba(22,163,74,0.08)] text-[#16a34a] border-[rgba(22,163,74,0.2)]" };
+    if (sub.status === "cancelled") return STATUS_META.cancelled;
+    if (sub.status === "past_due") return STATUS_META.past_due;
+    if (sub.cancelAtPeriodEnd) return STATUS_META.period_end;
+    return STATUS_META.active;
   };
 
   const handleCancelSubscription = async (id) => {
@@ -93,14 +142,15 @@ const OrdersPage = () => {
   };
 
   // Yalnızca abonelik benzeri siparişlerde bitişe göre "Süresi Dolmuş" göster
-  const getStatusLabel = (status, endDate, isTutorPkg) => {
-    if (status === "refunded") return { label: "İade Edildi", variant: "bg-[rgba(14,165,233,0.08)] text-[#0ea5e9] border-[rgba(14,165,233,0.2)]" };
-    if (status === "refund_requested") return { label: "İade Talep Edildi", variant: "bg-[rgba(217,119,6,0.10)] text-[#d97706] border-[rgba(217,119,6,0.25)]" };
-    if (status === "failed") return { label: "Ödeme Başarısız", variant: "bg-[rgba(220,38,38,0.08)] text-[#dc2626] border-[rgba(220,38,38,0.2)]" };
-    if (!isTutorPkg && endDate && new Date(endDate) < new Date()) {
-      return { label: "Süresi Dolmuş", variant: "bg-[rgba(55,65,81,0.08)] text-[#374151] border-[rgba(55,65,81,0.2)]" };
+  const getStatusMeta = (status, endDate, isTutorPkg) => {
+    if (STATUS_META[status]) {
+      if (status === "paid" || status === "active") {
+        if (!isTutorPkg && endDate && new Date(endDate) < new Date()) return STATUS_META.expired;
+      }
+      return STATUS_META[status];
     }
-    return { label: "Aktif", variant: "bg-[rgba(22,163,74,0.08)] text-[#16a34a] border-[rgba(22,163,74,0.2)]" };
+    if (!isTutorPkg && endDate && new Date(endDate) < new Date()) return STATUS_META.expired;
+    return STATUS_META.active;
   };
 
   const handleRefundRequest = (orderId) => {
@@ -125,151 +175,211 @@ const OrdersPage = () => {
     }
   };
 
+  const hasAnything = !loading && !subsLoading && (orders.length > 0 || subscriptions.length > 0);
+
   return (
-    <>
+    <div className="bg-[#f8fafc] min-h-screen">
       <TopBar />
       <Navbar />
-      <div className="p-4">
-        <div className="w-full max-w-[780px] mx-auto">
-          <div>
-            <main className="max-w-[860px] w-full mx-auto">
-              {!subsLoading && subscriptions.length > 0 && (
-                <section className="bg-white p-[22px] rounded-[14px] shadow-[0_6px_24px_rgba(2,6,23,0.06)] border border-[#e5e7eb] mb-[18px]">
-                  <h2>🔁 Aboneliklerim</h2>
-                  <ul className="list-none p-0 m-0 flex flex-col gap-[14px]">
-                    {subscriptions.map((sub) => {
-                      const { label, variant } = subscriptionStatusMeta(sub);
-                      const canCancel = sub.status !== "cancelled" && !sub.cancelAtPeriodEnd;
-                      return (
-                        <li key={sub.id} className="bg-white border border-[#e5e7eb] rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-[14px] flex flex-col gap-2.5 max-[480px]:p-3">
-                          <h3 className="m-0 mb-1.5 text-base leading-tight text-[#111827]"><strong>{sub.planLabel}</strong></h3>
-                          <p className="m-0 text-[#6b7280] text-sm">💳 <strong>Aylık Tutar:</strong> ₺{(sub.amount / 100).toFixed(2)}</p>
-                          {sub.cardLast4 && (
-                            <p className="m-0 text-[#6b7280] text-sm mt-1">💳 <strong>Kart:</strong> •••• {sub.cardLast4}</p>
-                          )}
-                          {sub.status !== "cancelled" && (
-                            <p className="m-0 text-[#6b7280] text-sm mt-1">
-                              🗓️ <strong>{sub.cancelAtPeriodEnd ? "Erişim Sonu" : "Sonraki Çekim"}:</strong> {formatDate(sub.cancelAtPeriodEnd ? sub.currentPeriodEnd : sub.nextBillingDate)}
-                            </p>
-                          )}
-                          <span className={`${badgeBase} ${variant}`}>{label}</span>
-                          {canCancel && (
-                            <button
-                              onClick={() => handleCancelSubscription(sub.id)}
-                              disabled={cancellingId === sub.id}
-                              className={refundBtnBase}
-                            >
-                              {cancellingId === sub.id ? "İptal ediliyor..." : "🛑 Aboneliği İptal Et"}
-                            </button>
-                          )}
-                          {sub.cancelAtPeriodEnd && sub.status !== "cancelled" && (
-                            <p className="refund-waiting">ℹ️ Bu abonelik dönem sonunda otomatik olarak duracak, tekrar çekim yapılmayacak.</p>
-                          )}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </section>
-              )}
 
-              <section className="bg-white p-[22px] rounded-[14px] shadow-[0_6px_24px_rgba(2,6,23,0.06)] border border-[#e5e7eb] mb-[18px]">
-                <h2>📦 Siparişlerim</h2>
-
-                {loading ? (
-                  <p>🔄 Siparişler yükleniyor...</p>
-                ) : orders.length === 0 ? (
-                  <p>Henüz bir siparişiniz yok.</p>
-                ) : (
-                  <ul className="list-none p-0 m-0 flex flex-col gap-[14px]">
-                    {orders.map((order) => {
-                      const tutorPkg = isTutorLessonPackage(order.package);
-                      const { label, variant } = getStatusLabel(order.status, order.endDate, tutorPkg);
-
-                      return (
-                        <li className="bg-white border border-[#e5e7eb] rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-[14px] flex flex-col gap-2.5 max-[480px]:p-3" key={order.id}>
-                          <h3 className="m-0 mb-1.5 text-base leading-tight text-[#111827]"><strong>{order.package}</strong></h3>
-                          <p className="m-0 text-[#6b7280] text-sm">📄 <strong>Sipariş ID:</strong> {order.id}</p>
-                          <p className="m-0 text-[#6b7280] text-sm mt-1">🗓️ <strong>Satın Alma:</strong> {formatDate(order.createdAt)}</p>
-
-                          {/* Tek/3/6 ders paketlerinde bitiş tarihi GÖSTERME */}
-                          {!tutorPkg && (
-                            <p className="m-0 text-[#6b7280] text-sm mt-1">📅 <strong>Bitiş Tarihi:</strong> {formatDate(order.endDate)}</p>
-                          )}
-
-                          <span className={`${badgeBase} ${variant}`}>{label}</span>
-
-                          {/* Tek/3/6 ders paketleri: Öğrenci paneline yönlendirme */}
-                          {tutorPkg && (
-                            <div
-                              className="mt-3 p-3 px-[14px] bg-[#eef5ff] border border-[rgba(13,110,253,0.25)] rounded-lg"
-                              style={{ borderLeft: "4px solid #0d6efd" }}
-                            >
-                              <p className="m-0 mb-2 text-sm text-[#0b3c8a] mt-2">
-                                🔔 Talebinizin durumunu takip etmek için öğrenci paneline gidin.
-                              </p>
-                              <a
-                                href="/student/dashboard"
-                                className="inline-block mt-1.5 bg-[#0d6efd] text-white no-underline px-3 py-2 rounded-md font-semibold border-0 transition hover:bg-[#0b5ed7] focus:outline-[2px] focus:outline-[rgba(13,110,253,0.35)] focus:outline-offset-2"
-                              >
-                                👩‍🎓 Öğrenci Paneline Git
-                              </a>
-                            </div>
-                          )}
-
-                          <details className="billing-accordion">
-                            <summary>🧾 Fatura Bilgileri</summary>
-                            <div className="billing-info">
-                              <p><strong>Ad Soyad:</strong> {order.billingInfo?.name} {order.billingInfo?.surname}</p>
-                              <p><strong>Adres:</strong> {order.billingInfo?.address}, {order.billingInfo?.district}, {order.billingInfo?.city} {order.billingInfo?.postalCode}</p>
-                              <p><strong>Telefon:</strong> {order.billingInfo?.phone}</p>
-                              <p><strong>E-posta:</strong> {order.billingInfo?.email}</p>
-                            </div>
-                          </details>
-
-                          {order.totalPrice && (
-                            <p className="m-0 text-[#6b7280] text-sm mt-1"><strong>Toplam Ödenen Miktar:</strong> ₺{order.totalPrice}</p>
-                          )}
-                          {order.couponCode && (
-                            <p className="m-0 text-[#6b7280] text-sm mt-1">🏷️ <strong>Kupon:</strong> {order.couponCode}</p>
-                          )}
-
-                          {order.status === "paid" && (
-                            <button onClick={() => handleRefundRequest(order.id)} className={refundBtnBase}>
-                              📝 İade Talebi Oluştur
-                            </button>
-                          )}
-
-                          {order.status === "refund_requested" && (
-                            <p className="refund-waiting">⏳ İade talebiniz için cevap bekleniyor.</p>
-                          )}
-
-                          {selectedOrderId === order.id && showModal && (
-                            <RefundModal
-                              orderId={order.id}
-                              onClose={() => setShowModal(false)}
-                              onSubmit={submitRefundRequest}
-                            />
-                          )}
-
-                          <a
-                            href={`https://wa.me/9055312546701?text=Merhaba, ${order.package} paketiyle ilgili bir sorum var. Sipariş ID: ${order.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-2 inline-block text-[#0a7c3a] no-underline font-semibold hover:underline"
-                          >
-                            💬 Destek İçin (WhatsApp)
-                          </a>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </section>
-            </main>
-          </div>
+      <div className="max-w-[900px] mx-auto px-5 py-12 max-[768px]:py-8">
+        <div className="mb-8">
+          <h1 className="font-fredoka font-bold text-page-navy text-2xl">Siparişlerim</h1>
+          <p className="font-nunito text-[#64748b] text-sm mt-1">
+            Siparişlerinizi, aboneliklerinizi ve fatura bilgilerinizi buradan takip edebilirsiniz.
+          </p>
         </div>
+
+        {/* Siparişten sonra ne olur? */}
+        {hasAnything && (
+          <section className="bg-white border border-[#f1f5f9] rounded-[24px] p-6 max-[768px]:p-4 shadow-[0_2px_12px_rgba(0,0,0,0.04)] mb-6">
+            <div className="mb-5">
+              <div className="font-fredoka font-bold text-accent-orange text-[11px] uppercase mb-2" style={{ letterSpacing: 3 }}>
+                SIRADA NE VAR?
+              </div>
+              <h2 className="font-fredoka font-bold text-page-navy text-lg">Siparişinizden Sonra Süreç Nasıl İşliyor?</h2>
+            </div>
+            <div className="grid grid-cols-4 gap-4 max-[900px]:grid-cols-2 max-[480px]:grid-cols-1">
+              {NEXT_STEPS.map((step, i) => (
+                <div key={i} className="flex flex-col gap-2.5">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm flex-shrink-0"
+                    style={{ background: step.circleColor, boxShadow: `0 4px 14px ${step.circleColor}40` }}
+                  >
+                    {step.icon}
+                  </div>
+                  <h3 className="font-fredoka font-bold text-page-dark text-sm leading-snug">{step.title}</h3>
+                  <p className="font-nunito text-[#64748b] text-xs leading-relaxed">{step.desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Abonelikler */}
+        {!subsLoading && subscriptions.length > 0 && (
+          <section className="bg-white border border-[#f1f5f9] rounded-[24px] p-6 max-[768px]:p-4 shadow-[0_2px_12px_rgba(0,0,0,0.04)] mb-6">
+            <h2 className="font-fredoka font-bold text-page-navy text-lg mb-4 flex items-center gap-2">
+              <FaSyncAlt className="text-page-navy" size={16} /> Aboneliklerim
+            </h2>
+            <div className="flex flex-col gap-3">
+              {subscriptions.map((sub) => {
+                const meta = subscriptionStatusMeta(sub);
+                const canCancel = sub.status !== "cancelled" && !sub.cancelAtPeriodEnd;
+                return (
+                  <div key={sub.id} className="bg-[#f8fafc] border border-[#f1f5f9] rounded-2xl p-4 flex flex-col gap-2">
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="font-fredoka font-bold text-page-dark text-base m-0">{sub.planLabel}</h3>
+                      <span className={`inline-flex items-center py-1 px-2.5 rounded-full text-[11px] font-bold border ${meta.cls}`}>
+                        {meta.label}
+                      </span>
+                    </div>
+                    <p className="font-nunito text-[#64748b] text-sm m-0 flex items-center gap-1.5">
+                      <FaCreditCard size={12} /> Aylık Tutar: <strong className="text-page-dark">₺{(sub.amount / 100).toFixed(2)}</strong>
+                      {sub.cardLast4 && <span>· •••• {sub.cardLast4}</span>}
+                    </p>
+                    {sub.status !== "cancelled" && (
+                      <p className="font-nunito text-[#64748b] text-sm m-0 flex items-center gap-1.5">
+                        <FaCalendarAlt size={12} />
+                        {sub.cancelAtPeriodEnd ? "Erişim Sonu" : "Sonraki Çekim"}: {formatDate(sub.cancelAtPeriodEnd ? sub.currentPeriodEnd : sub.nextBillingDate)}
+                      </p>
+                    )}
+                    {sub.cancelAtPeriodEnd && sub.status !== "cancelled" && (
+                      <p className="font-nunito text-[#92400e] text-xs bg-[#fffbeb] border border-[#fde68a] rounded-lg px-3 py-2 mt-1">
+                        Bu abonelik dönem sonunda otomatik olarak duracak, tekrar çekim yapılmayacak.
+                      </p>
+                    )}
+                    {canCancel && (
+                      <button
+                        onClick={() => handleCancelSubscription(sub.id)}
+                        disabled={cancellingId === sub.id}
+                        className="mt-2 self-start font-fredoka font-bold text-xs px-4 py-2 rounded-full border border-[#fecaca] text-[#991b1b] bg-[#fef2f2] hover:bg-[#fee2e2] transition-colors disabled:opacity-60"
+                      >
+                        {cancellingId === sub.id ? "İptal ediliyor..." : "Aboneliği İptal Et"}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* Siparişler */}
+        <section className="bg-white border border-[#f1f5f9] rounded-[24px] p-6 max-[768px]:p-4 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+          <h2 className="font-fredoka font-bold text-page-navy text-lg mb-4 flex items-center gap-2">
+            <FaBoxOpen className="text-page-navy" size={16} /> Siparişlerim
+          </h2>
+
+          {loading ? (
+            <EmptyState icon={<FaSyncAlt className="animate-spin" />} text="Siparişler yükleniyor..." />
+          ) : orders.length === 0 ? (
+            <EmptyState icon={<FaBoxOpen />} text="Henüz bir siparişiniz yok." />
+          ) : (
+            <div className="flex flex-col gap-3">
+              {orders.map((order) => {
+                const tutorPkg = isTutorLessonPackage(order.package);
+                const meta = getStatusMeta(order.status, order.endDate, tutorPkg);
+
+                return (
+                  <div key={order.id} className="bg-[#f8fafc] border border-[#f1f5f9] rounded-2xl p-4 flex flex-col gap-2">
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="font-fredoka font-bold text-page-dark text-base m-0">{order.package}</h3>
+                      <span className={`inline-flex items-center py-1 px-2.5 rounded-full text-[11px] font-bold border whitespace-nowrap ${meta.cls}`}>
+                        {meta.label}
+                      </span>
+                    </div>
+
+                    <p className="font-nunito text-[#64748b] text-sm m-0">Sipariş #{order.id} · {formatDate(order.createdAt)}</p>
+
+                    {!tutorPkg && (
+                      <p className="font-nunito text-[#64748b] text-sm m-0 flex items-center gap-1.5">
+                        <FaCalendarAlt size={12} /> Bitiş Tarihi: {formatDate(order.endDate)}
+                      </p>
+                    )}
+
+                    {order.totalPrice != null && (
+                      <p className="font-nunito text-[#64748b] text-sm m-0">
+                        Toplam: <strong className="text-page-dark">₺{order.totalPrice}</strong>
+                      </p>
+                    )}
+                    {order.couponCode && (
+                      <p className="font-nunito text-[#64748b] text-sm m-0 flex items-center gap-1.5">
+                        <FaTag size={11} /> Kupon: {order.couponCode}
+                      </p>
+                    )}
+
+                    {tutorPkg && (
+                      <div className="mt-2 p-3.5 rounded-xl" style={{ background: "rgba(28,27,138,0.06)", border: "1px solid rgba(28,27,138,0.15)" }}>
+                        <p className="font-nunito text-page-navy text-sm m-0 mb-2">
+                          Talebinizin durumunu takip etmek için öğrenci paneline gidin.
+                        </p>
+                        <a
+                          href="/student/dashboard"
+                          className="inline-flex items-center gap-1.5 font-fredoka font-bold text-xs px-4 py-2 rounded-full no-underline text-white transition-colors"
+                          style={{ background: "#1C1B8A" }}
+                        >
+                          <FaUserTie size={11} /> Öğrenci Paneline Git
+                        </a>
+                      </div>
+                    )}
+
+                    <details className="group mt-1">
+                      <summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer flex items-center gap-1.5 font-nunito font-bold text-page-navy text-xs">
+                        <FaChevronDown size={10} className="transition-transform group-open:rotate-180" />
+                        Fatura Bilgileri
+                      </summary>
+                      <div className="mt-2 pl-4 border-l-2 border-[#e2e8f0] flex flex-col gap-1">
+                        <p className="font-nunito text-[#64748b] text-xs m-0"><strong className="text-page-dark">Ad Soyad:</strong> {order.billingInfo?.name} {order.billingInfo?.surname}</p>
+                        <p className="font-nunito text-[#64748b] text-xs m-0"><strong className="text-page-dark">Adres:</strong> {order.billingInfo?.address}, {order.billingInfo?.district}, {order.billingInfo?.city} {order.billingInfo?.postalCode}</p>
+                        <p className="font-nunito text-[#64748b] text-xs m-0"><strong className="text-page-dark">Telefon:</strong> {order.billingInfo?.phone}</p>
+                        <p className="font-nunito text-[#64748b] text-xs m-0"><strong className="text-page-dark">E-posta:</strong> {order.billingInfo?.email}</p>
+                      </div>
+                    </details>
+
+                    {order.status === "refund_requested" && (
+                      <p className="font-nunito text-[#9a3412] text-xs bg-[#fff7ed] border border-[#fed7aa] rounded-lg px-3 py-2 mt-1">
+                        İade talebiniz için cevap bekleniyor.
+                      </p>
+                    )}
+
+                    <div className="flex items-center gap-3 mt-2 flex-wrap">
+                      {order.status === "paid" && (
+                        <button
+                          onClick={() => handleRefundRequest(order.id)}
+                          className="font-fredoka font-bold text-xs px-4 py-2 rounded-full border border-[#fde68a] text-[#92400e] bg-[#fffbeb] hover:bg-[#fef3c7] transition-colors"
+                        >
+                          İade Talebi Oluştur
+                        </button>
+                      )}
+                      <a
+                        href={`https://wa.me/9055312546701?text=Merhaba, ${order.package} paketiyle ilgili bir sorum var. Sipariş ID: ${order.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 font-fredoka font-bold text-xs px-4 py-2 rounded-full no-underline transition-colors"
+                        style={{ background: "rgba(37,211,102,0.1)", color: "#128c4c", border: "1px solid rgba(37,211,102,0.3)" }}
+                      >
+                        <FaWhatsapp size={13} /> Destek İçin WhatsApp
+                      </a>
+                    </div>
+
+                    {selectedOrderId === order.id && showModal && (
+                      <RefundModal
+                        orderId={order.id}
+                        onClose={() => setShowModal(false)}
+                        onSubmit={submitRefundRequest}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
       </div>
-    </>
+
+      <Footer />
+    </div>
   );
 };
 
