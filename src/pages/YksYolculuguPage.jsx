@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "../utils/axios";
+import Navbar from "../components/navbar";
+import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
 import useCart from "../hooks/useCart";
 import Seo from "../components/Seo";
@@ -231,15 +233,8 @@ export default function YksYolculuguPage() {
         canonical="/yks-yolculugu"
       />
 
-      {/* Navbar */}
-      <header className="sticky top-0 z-50 border-b" style={{ background: "rgba(13,10,46,0.94)", backdropFilter: "blur(16px)", borderColor: "rgba(255,255,255,0.08)" }}>
-        <div className="max-w-5xl mx-auto px-5 py-3 flex items-center justify-between">
-          <img src="/images/hero-logo.webp" alt="Sözderece" className="h-9 w-auto" />
-          <button onClick={scrollToOffer} className="font-fredoka font-bold text-sm px-5 py-2.5 rounded-full transition-all hover:scale-105" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 4px 14px rgba(216,255,79,0.35)" }}>
-            {hero.navbarCta || "Yerimi Ayırt →"}
-          </button>
-        </div>
-      </header>
+      <TopBar />
+      <Navbar />
 
       {/* ── HERO ── */}
       <section className="relative overflow-hidden py-24 px-5 text-white" style={{ background: "#0D0A2E" }}>
@@ -268,9 +263,15 @@ export default function YksYolculuguPage() {
               ))}
             </div>
 
-            <button onClick={scrollToOffer} className="font-fredoka font-bold text-base px-10 py-4 rounded-full transition-all hover:scale-105 hover:-translate-y-0.5" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 10px 32px rgba(216,255,79,0.35)" }}>
+            <motion.button
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={scrollToOffer}
+              className="font-fredoka font-bold text-base px-10 py-4 rounded-full"
+              style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 10px 32px rgba(216,255,79,0.35)" }}
+            >
               {hero.ctaPrimary || "⚡ Yerimi Şimdi Ayırt →"}
-            </button>
+            </motion.button>
 
             {(hero.mediaType === "images" ? Array.isArray(hero.images) && hero.images.some((img) => img?.url) : !!hero.videoUrl) && (
               <div className="mt-10 max-w-3xl mx-auto w-full">
@@ -312,7 +313,8 @@ export default function YksYolculuguPage() {
                 const accent = accents[i % 6];
                 return (
                   <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }}
-                    className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-[0_8px_24px_rgba(28,27,138,0.09)] hover:border-page-navy/20 transition-all duration-200 flex gap-4">
+                    whileHover={{ y: -4 }}
+                    className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-[0_8px_24px_rgba(28,27,138,0.09)] hover:border-page-navy/20 transition-shadow duration-200 flex gap-4">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-lg" style={{ background: `${accent}22`, color: accent }}>
                       {emojis[i % 6]}
                     </div>
@@ -355,6 +357,7 @@ export default function YksYolculuguPage() {
                 <div className="grid grid-cols-3 gap-6 mb-16 max-[768px]:grid-cols-1">
                   {howItWorks.steps.map((s, i) => (
                     <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.1 }}
+                      whileHover={{ y: -4, borderColor: "rgba(216,255,79,0.4)" }}
                       className="rounded-2xl p-6 border relative" style={{ background: "rgba(255,255,255,0.07)", borderColor: "rgba(255,255,255,0.14)" }}>
                       <div className="font-fredoka font-bold mb-3" style={{ fontSize: 52, color: "rgba(216,255,79,0.18)", lineHeight: 1 }}>{String(i + 1).padStart(2, "0")}</div>
                       <h3 className="font-nunito font-bold text-white text-sm mb-2">{s.title}</h3>
@@ -410,6 +413,7 @@ export default function YksYolculuguPage() {
               <div className="grid gap-5 mb-12 max-[640px]:grid-cols-2" style={{ gridTemplateColumns: `repeat(${Math.min(socialProof.stats.length + (remaining > 0 ? 1 : 0), 4)}, minmax(0,1fr))` }}>
                 {socialProof.stats.map((s, i) => (
                   <motion.div key={i} {...fadeUp} transition={{ delay: i * 0.1 }}
+                    whileHover={{ scale: 1.03 }}
                     className="rounded-2xl p-6 border border-[#e2e8f0] text-center shadow-sm" style={{ background: i % 2 === 0 ? "#f4f2fa" : "#fff0ea" }}>
                     <div className="font-fredoka font-bold text-page-navy mb-1" style={{ fontSize: "clamp(28px,3vw,40px)" }}>{s.val}</div>
                     <div className="font-nunito font-bold text-sm text-[#64748b]">{s.label}</div>
@@ -417,6 +421,7 @@ export default function YksYolculuguPage() {
                 ))}
                 {remaining !== null && remaining > 0 && (
                   <motion.div {...fadeUp} transition={{ delay: (socialProof.stats?.length || 0) * 0.1 }}
+                    whileHover={{ scale: 1.03 }}
                     className="rounded-2xl p-6 border text-center shadow-sm" style={{ background: "#0D0A2E", borderColor: "#0D0A2E" }}>
                     <div className="font-fredoka font-bold mb-1" style={{ fontSize: "clamp(28px,3vw,40px)", color: "#D8FF4F" }}>{remaining}</div>
                     <div className="font-nunito font-bold text-sm text-white/50">yer kaldı</div>
@@ -429,7 +434,8 @@ export default function YksYolculuguPage() {
               <div className="grid grid-cols-2 gap-5 max-[640px]:grid-cols-1">
                 {socialProof.testimonials.map((t, i) => (
                   <motion.div key={i} {...fadeUp} transition={{ delay: i * 0.1 }}
-                    className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm flex flex-col gap-3">
+                    whileHover={{ y: -4 }}
+                    className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-[0_8px_24px_rgba(28,27,138,0.09)] transition-shadow duration-200 flex flex-col gap-3">
                     <div className="flex gap-0.5">{Array(5).fill(0).map((_, j) => <span key={j} style={{ color: "#FF6B35" }}>★</span>)}</div>
                     <p className="font-nunito text-[#374151] text-sm leading-relaxed italic flex-grow">"{t.quote}"</p>
                     <div className="flex items-center gap-3 pt-2 border-t border-[#f1f5f9]">
@@ -502,9 +508,9 @@ export default function YksYolculuguPage() {
                             ))}
                           </ul>
                         )}
-                        <button onClick={() => addToCartAndPay(plan, i)} className="w-full py-3.5 rounded-full font-fredoka font-bold text-sm transition-all hover:scale-105 hover:-translate-y-0.5" style={{ background: "#FF6B35", color: "white", boxShadow: "0 6px 20px rgba(255,107,53,0.3)" }}>
+                        <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.96 }} onClick={() => addToCartAndPay(plan, i)} className="w-full py-3.5 rounded-full font-fredoka font-bold text-sm" style={{ background: "#FF6B35", color: "white", boxShadow: "0 6px 20px rgba(255,107,53,0.3)" }}>
                           {plan.ctaText || "⚡ Yerimi Ayırt"}
-                        </button>
+                        </motion.button>
                       </div>
                     ) : (
                       <div key={i} className="relative rounded-3xl p-7 flex flex-col border" style={{ background: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.11)", backdropFilter: "blur(8px)" }}>
@@ -533,9 +539,9 @@ export default function YksYolculuguPage() {
                             ))}
                           </ul>
                         )}
-                        <button onClick={() => addToCartAndPay(plan, i)} className="w-full py-3.5 rounded-full border-2 font-fredoka font-bold text-sm transition-all hover:bg-white/10" style={{ borderColor: "rgba(255,255,255,0.22)", color: "white" }}>
+                        <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.96 }} onClick={() => addToCartAndPay(plan, i)} className="w-full py-3.5 rounded-full border-2 font-fredoka font-bold text-sm transition-colors hover:bg-white/10" style={{ borderColor: "rgba(255,255,255,0.22)", color: "white" }}>
                           {plan.ctaText || "Başla"}
-                        </button>
+                        </motion.button>
                       </div>
                     );
                   })}
@@ -589,9 +595,9 @@ export default function YksYolculuguPage() {
                   </ul>
                 )}
                 <div className="flex flex-col gap-3">
-                  <button onClick={() => navigate(offer.buyLink || "/paket-detay")} className="w-full py-4 rounded-full font-fredoka font-bold text-base transition-all hover:scale-105" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 6px 20px rgba(216,255,79,0.3)" }}>
+                  <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.96 }} onClick={() => navigate(offer.buyLink || "/paket-detay")} className="w-full py-4 rounded-full font-fredoka font-bold text-base" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 6px 20px rgba(216,255,79,0.3)" }}>
                     {offer.ctaPrimary || "⚡ Yerimi Ayırt"}
-                  </button>
+                  </motion.button>
                   <button onClick={scrollToForm} className="w-full py-3.5 rounded-full border-2 font-fredoka font-bold text-sm transition-all hover:bg-white/10" style={{ borderColor: "rgba(255,255,255,0.22)", color: "white" }}>
                     {offer.ctaSecondary || "📞 Önce Konuşalım"}
                   </button>
