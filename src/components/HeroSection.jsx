@@ -138,7 +138,7 @@ function DefaultSlide() {
               letterSpacing: "0.3px",
             }}
           >
-            Ücretsiz Tanışma Görüşmesi
+            Hemen Tanışalım →
           </Link>
           <a
             href="#nasil-calisir"
@@ -309,7 +309,7 @@ function LgsSlide() {
               letterSpacing: "0.3px",
             }}
           >
-            Ücretsiz Veli Görüşmesi Planla
+            Veli Görüşmesi Talep Et →
           </Link>
           <Link
             to="/lgs-hazirlik"
