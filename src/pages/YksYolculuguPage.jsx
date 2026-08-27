@@ -333,7 +333,7 @@ export default function YksYolculuguPage() {
                 <span className="text-page-navy">Sana özel bir çıkış yolu çizelim.</span>
               </p>
               <button onClick={scrollToForm} className="font-fredoka font-bold text-sm px-8 py-3.5 rounded-full transition-all hover:scale-105 inline-flex items-center gap-2" style={{ background: "#1C1B8A", color: "#D8FF4F", boxShadow: "0 4px 16px rgba(28,27,138,0.25)" }}>
-                Ücretsiz Görüşme Başlat →
+                15 Dakikalık Görüşme Planla →
               </button>
             </motion.div>
           </div>

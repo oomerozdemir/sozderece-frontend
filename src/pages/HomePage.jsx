@@ -320,11 +320,11 @@ function WhyDifferentSection() {
           className="mt-12 flex justify-center"
         >
           <Link
-            to="/ucretsiz-on-gorusme"
+            to="/paket-detay"
             className="inline-flex items-center gap-2 font-fredoka font-bold text-page-dark text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
             style={{ background: "#D8FF4F", boxShadow: "0 8px 28px rgba(216,255,79,0.3)" }}
           >
-            Ücretsiz Görüşme Al →
+            Paketleri İncele →
           </Link>
         </motion.div>
       </div>
@@ -557,7 +557,7 @@ function TestimonialsSection() {
             className="inline-flex items-center gap-2 font-fredoka font-bold text-page-dark text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
             style={{ background: "#D8FF4F", boxShadow: "0 8px 28px rgba(216,255,79,0.25)" }}
           >
-            Ücretsiz Görüşme Başlat →
+            Yol Haritanızı Çizelim →
           </Link>
         </div>
       </div>
@@ -680,11 +680,11 @@ function ComparisonSection() {
           className="text-center mt-8"
         >
           <Link
-            to="/ucretsiz-on-gorusme"
+            to="/paket-detay"
             className="inline-flex items-center gap-2 font-fredoka font-bold text-page-dark text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
             style={{ background: "#D8FF4F", boxShadow: "0 6px 20px rgba(216,255,79,0.3)" }}
           >
-            Ücretsiz Görüşme Başlat →
+            Fiyatları Gör →
           </Link>
         </motion.div>
       </div>
@@ -874,7 +874,7 @@ function ContactCtaSection() {
               letterSpacing: "0.3px",
             }}
           >
-            Ücretsiz Görüşme Başlat →
+            Ön Analiz Randevusu Oluştur →
           </Link>
         </motion.div>
       </div>
@@ -909,7 +909,7 @@ function StickyMobileCta() {
             className="block w-full font-fredoka font-bold text-page-dark text-base py-4 rounded-2xl text-center no-underline shadow-[0_-4px_24px_rgba(216,255,79,0.3)]"
             style={{ background: "#D8FF4F" }}
           >
-            Ücretsiz Görüşme Başlat →
+            Ücretsiz Ön Görüşme Ayarla →
           </Link>
         </motion.div>
       )}

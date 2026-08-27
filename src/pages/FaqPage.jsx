@@ -170,7 +170,7 @@ export default function FaqSection() {
       <div className="faq-cta">
         {/* Ahrefs Düzeltmesi: Internal linkler için <a> yerine <Link> kullanmalıyız. 
             Ayrıca /ucretsiz-on-gorusme sayfası yoksa var olan sayfaya yönlendirmeliyiz. */}
-        <p>Hala sorularınız mı var? <Link to="/ucretsiz-on-gorusme">Ücretsiz Ön Görüşme</Link> formunu doldurun, sizi arayalım.</p>
+        <p>Hala sorularınız mı var? <Link to="/ucretsiz-on-gorusme">Ücretsiz Danışmanlık</Link> formunu doldurun, sizi arayalım.</p>
       </div>
       
       <Footer />

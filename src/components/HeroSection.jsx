@@ -309,7 +309,7 @@ function LgsSlide() {
               letterSpacing: "0.3px",
             }}
           >
-            Ücretsiz Görüşme Planla
+            Ücretsiz Veli Görüşmesi Planla
           </Link>
           <Link
             to="/lgs-hazirlik"
@@ -486,7 +486,7 @@ function YksSlide() {
               letterSpacing: "0.3px",
             }}
           >
-            Ücretsiz Görüşme Planla
+            Sana Özel Değerlendirme Al
           </Link>
           <Link
             to="/yks-yolculugu"
