@@ -19,7 +19,6 @@ const WA_LINK = "https://wa.me/905312546701?text=S%C4%B0STEM";
 const DEFAULT_NAV_LINKS = [
   { name: "YKS 2027", path: "/yks-yolculugu" },
   { name: "LGS 2027", path: "/lgs-hazirlik" },
-  { name: "Nasıl Çalışır?", path: "/#nasil-calisir" },
   { name: "Paketler", path: "/paket-detay" },
   ...(SHOW_OGRETMEN ? [{ name: "Özel Ders", path: "/ogretmenler" }] : []),
 ];
