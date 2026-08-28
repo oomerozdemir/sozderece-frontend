@@ -710,13 +710,12 @@ export default function CoachingWizardOdeme() {
               className="flex-1 flex flex-col gap-4 max-[768px]:w-full md:sticky md:top-24 self-start"
             >
               <div className="rounded-2xl p-5 text-white" style={{ background: "linear-gradient(135deg, #1C1B8A 0%, #2a1f9e 100%)" }}>
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="flex -space-x-2">
-                    {(settings.avatars || []).map((av, i) => (
-                      <div key={i} className="w-9 h-9 rounded-full border-2 border-white flex items-center justify-center text-xs font-black text-white flex-shrink-0" style={{ backgroundColor: av.color || "#1C1B8A" }}>
-                        {av.initials || "?"}
-                      </div>
-                    ))}
+                <div className="flex items-center gap-3 mb-3">
+                  <div
+                    className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ background: "rgba(255,255,255,0.12)" }}
+                  >
+                    <FaUserGraduate size={18} />
                   </div>
                   <div>
                     <p className="font-fredoka font-bold text-sm leading-tight">{settings.socialProofText || "+200 Mutlu Öğrenci"}</p>

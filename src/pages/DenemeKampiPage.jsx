@@ -6,6 +6,7 @@ import useCampPage from "../hooks/useCampPage";
 import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
 import { motion } from "framer-motion";
+import { FaUserGraduate } from "react-icons/fa";
 
 // ── Helpers ───────────────────────────────────────────────────
 // Highlight a phrase in a string with orange color
@@ -348,15 +349,11 @@ export default function DenemeKampiPage() {
             </div>
           )}
 
-          {/* Social proof avatars */}
+          {/* Social proof */}
           {hero.socialProofText && (
-            <div className="flex items-center justify-center gap-2 mt-4">
-              <div className="flex -space-x-2">
-                {(hero.socialProofAvatars || ["#3b82f6","#10b981","#f59e0b","#ef4444","#8b5cf6"]).slice(0, 5).map((color, i) => (
-                  <div key={i} className="w-8 h-8 rounded-full border-2 border-brand-navy flex items-center justify-center text-white text-xs font-black" style={{ backgroundColor: color }}>
-                    {String.fromCharCode(65 + i)}
-                  </div>
-                ))}
+            <div className="flex items-center justify-center gap-2.5 mt-4">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.12)" }}>
+                <FaUserGraduate size={14} className="text-white" />
               </div>
               <span className="text-white/80 text-sm font-semibold">{hero.socialProofText}</span>
             </div>

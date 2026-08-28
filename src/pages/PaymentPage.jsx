@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
 import { useLocation, useSearchParams } from "react-router-dom";
+import { FaUserGraduate } from "react-icons/fa";
 import { isValidEmail, isValidName, isValidPhone, isValidPostalCode, isValidAddress, isValidTcNo } from "../utils/validation";
 import { lineTL, computeCartTotals, computeCouponDiscount, computeFinalCalculations } from "../utils/checkoutPricing";
 import { getStoredVisitorId, getStoredSessionId } from "../components/VisitorTracker";
@@ -451,17 +452,12 @@ const PaymentPage = () => {
 
               {/* Sosyal kanıt */}
               <div className="bg-gradient-to-br from-brand-navy to-[#1a05b3] rounded-2xl p-5 text-white">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="flex -space-x-2">
-                    {(settings.avatars || []).map((av, i) => (
-                      <div
-                        key={i}
-                        className="w-9 h-9 rounded-full border-2 border-white flex items-center justify-center text-xs font-black text-white flex-shrink-0"
-                        style={{ backgroundColor: av.color || "#100481" }}
-                      >
-                        {av.initials || "?"}
-                      </div>
-                    ))}
+                <div className="flex items-center gap-3 mb-3">
+                  <div
+                    className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ background: "rgba(255,255,255,0.12)" }}
+                  >
+                    <FaUserGraduate size={18} />
                   </div>
                   <div>
                     <p className="font-bold text-sm leading-tight">{settings.socialProofText || "+200 Mutlu Öğrenci"}</p>
