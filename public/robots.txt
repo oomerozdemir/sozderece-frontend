@@ -11,6 +11,11 @@ Disallow: /payment
 Disallow: /sepet
 Disallow: /pre-auth
 Disallow: /talep-basarili
+Disallow: /hemen-basla/paket
+Disallow: /hemen-basla/odeme
+Disallow: /abone-ol
+Disallow: /payment-fail
+Disallow: /order-success
 Allow: /
 
 Sitemap: https://sozderecekocluk.com/sitemap.xml

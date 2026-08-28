@@ -24,7 +24,7 @@ const AboutComp = () => {
       {/* === HERO SECTION === */}
       <section className="bg-gradient-to-b from-[#b89f9f] to-[#080894] text-white py-[100px] px-5 text-center max-[768px]:py-[56px] max-[768px]:px-4">
         <div className="max-w-[800px] mx-auto">
-          <h1 className="text-[2.5rem] mb-5 text-[#031083] max-[768px]:text-[1rem] max-[768px]:mb-3">Hakkımızda</h1>
+          <h1 className="text-[2.5rem] mb-5 text-[#031083] max-[768px]:text-[1rem] max-[768px]:mb-3">Hakkımızda: YKS ve LGS Koçluğunda Sözderece Farkı</h1>
           <p className="text-[1.1rem] text-[#ccc] max-[768px]:text-[0.8rem] max-[768px]:leading-[1.5]">
             Sözderece Koçluk olarak, her öğrencinin benzersiz bir öğrenme
             yolculuğu olduğuna inanıyoruz. Koçluk sistemimizle öğrencilerimizin

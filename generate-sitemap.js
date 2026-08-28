@@ -54,6 +54,7 @@ async function generateSitemap() {
     { loc: "/ucretsiz-on-gorusme",        priority: 0.8, changefreq: "yearly" },
     { loc: "/basvuru",                    priority: 0.6, changefreq: "yearly" },
     { loc: "/lgs-hazirlik",               priority: 0.9, changefreq: "weekly" },
+    { loc: "/yks-yolculugu",              priority: 0.9, changefreq: "weekly" },
     { loc: "/deneme-kampi",               priority: 0.9, changefreq: "weekly" },
     // Yasal Sayfalar — düzeltilmiş URL'ler
     { loc: "/mesafeli-hizmet-sozlesmesi", priority: 0.3, changefreq: "yearly" },
