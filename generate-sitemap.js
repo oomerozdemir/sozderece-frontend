@@ -47,7 +47,6 @@ async function generateSitemap() {
     { loc: "/",                           priority: 1.0, changefreq: "daily" },
     { loc: "/hakkimizda",                 priority: 0.8, changefreq: "yearly" },
     { loc: "/ekibimiz",                   priority: 0.7, changefreq: "yearly" },
-    { loc: "/paket-detay",                priority: 0.9, changefreq: "daily" },
     { loc: "/sss",                        priority: 0.7, changefreq: "monthly" },
     { loc: "/blog",                       priority: 0.9, changefreq: "weekly" },
     { loc: "/ogretmenler",                priority: 0.9, changefreq: "daily" },
@@ -139,7 +138,39 @@ async function generateSitemap() {
     console.warn("⚠️ Öğretmen verileri çekilemedi (Sunucu kapalı olabilir):", error.message);
   }
 
-  // 5. KAPANIŞ VE KAYIT
+  // 5. PAKETLER (API'den Çekme)
+  // ------------------------------------
+  // PackageDetail.jsx her paket için kendi canonical'ını "/paket-detay?slug=..." olarak
+  // veriyor; bare "/paket-detay" hiçbir zaman kendi canonical'ı olmadığından sitemap'te
+  // ayrıca listelenmiyor (aksi halde GSC "gönderilen URL canonical olarak seçilmedi" der).
+  try {
+    console.log("⏳ Paket verileri API'den çekiliyor...");
+
+    const response = await axios.get("https://sozderece-backend.onrender.com/api/packages", {
+      validateStatus: () => true,
+    });
+
+    if (response.status === 200 && response.data?.packages) {
+      let count = 0;
+      response.data.packages.forEach((pkg) => {
+        if (pkg.slug) {
+          pushUrl({
+            loc: `/paket-detay?slug=${pkg.slug}`,
+            changefreq: "daily",
+            priority: 0.9,
+          });
+          count++;
+        }
+      });
+      console.log(`✅ ${count} paket eklendi.`);
+    } else {
+      console.warn("⚠️ Paket API'sinden veri dönmedi veya hata kodu aldı:", response.status);
+    }
+  } catch (error) {
+    console.warn("⚠️ Paket verileri çekilemedi (Sunucu kapalı olabilir):", error.message);
+  }
+
+  // 6. KAPANIŞ VE KAYIT
   // ------------------------------------
   xml += `</urlset>\n`;
   

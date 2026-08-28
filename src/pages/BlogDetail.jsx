@@ -47,14 +47,14 @@ const BlogDetail = () => {
       }
     },
     "datePublished": post.date,
-    "description": post.summary || post.content?.substring(0, 150).replace(/<[^>]*>?/gm, '')
+    "description": post.description || post.content?.substring(0, 150).replace(/<[^>]*>?/gm, '')
   };
 
   return (
     <>
       <Seo
         title={post.title}
-        description={post.summary || post.content.substring(0, 150).replace(/<[^>]*>?/gm, '')}
+        description={post.description || post.content.substring(0, 150).replace(/<[^>]*>?/gm, '')}
         canonical={`/blog/${post.slug}`}
       />
 

@@ -34,7 +34,11 @@ const BlogList = () => {
       <div className="py-10 px-5 bg-[#fafafa] min-h-screen text-[#1a1a1a] max-[768px]:py-6 max-[768px]:px-3.5">
         <header className="text-center mb-[50px] max-[480px]:mb-8">
           <h1 className="text-[2rem] font-bold text-[#222] max-[768px]:text-[1.4rem] max-[480px]:text-[1.2rem]">Sözderece Blog</h1>
-          <p className="max-[480px]:text-[0.9rem] max-[480px]:px-2">YKS ve LGS sürecinde ihtiyacın olan tüm rehberlik yazıları burada.</p>
+          <p className="max-w-[640px] mx-auto mt-2 text-[#555] max-[480px]:text-[0.9rem] max-[480px]:px-2">
+            Sözderece koçlarının öğrencilerden en sık duyduğu sorulara yanıt bulacağın yer: tercih listesi nasıl kurulur,
+            hangi çalışma stratejileri gerçekten işe yarar, sınav öncesi son haftalarda neye odaklanmak gerekir gibi
+            konuları burada düzenli olarak paylaşıyoruz.
+          </p>
           <div>
             <input
               type="text"
