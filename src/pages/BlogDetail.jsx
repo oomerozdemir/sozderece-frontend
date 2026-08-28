@@ -15,6 +15,7 @@ const BlogDetail = () => {
   if (!post) {
     return (
       <div className="text-center py-[100px] px-5">
+        <Seo title="Yazı Bulunamadı" noindex />
         <h2>Yazı bulunamadı.</h2>
         <button onClick={() => navigate("/blog")} className="mt-5 py-2.5 px-5 cursor-pointer">
           Blog Listesine Dön
@@ -47,6 +48,7 @@ const BlogDetail = () => {
       }
     },
     "datePublished": post.date,
+    "dateModified": post.updatedDate || post.date,
     "description": post.description || post.content?.substring(0, 150).replace(/<[^>]*>?/gm, '')
   };
 
@@ -70,7 +72,12 @@ const BlogDetail = () => {
       <div className="max-w-[850px] mx-auto my-[50px] bg-white py-10 px-8 rounded-2xl shadow-[0_6px_18px_rgba(0,0,0,0.06)] leading-[1.8] max-[768px]:py-6 max-[768px]:px-4 max-[480px]:my-4 max-[480px]:rounded-none max-[480px]:shadow-none max-[480px]:px-3">
         <div>
           <h1 className="text-[2.2rem] font-bold mb-3 text-[#111] max-[768px]:text-[1.4rem] max-[480px]:text-[1.2rem]">{post.title}</h1>
-          <p className="text-[#777] text-sm mb-[25px]">{post.date} | <span style={{color: '#f39c12'}}>{post.category}</span></p>
+          <p className="text-[#777] text-sm mb-[25px]">
+            {post.date}
+            {post.updatedDate && post.updatedDate !== post.date && (
+              <span style={{ color: '#f39c12' }}> · Güncellendi: {post.updatedDate}</span>
+            )}
+          </p>
 
           <img
             src={post.image}

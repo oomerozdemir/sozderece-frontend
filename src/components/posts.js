@@ -6,6 +6,7 @@ export const blogPosts = [
     title: "YKS Tercih Döneminde Dikkat Edilmesi Gerekenler",
     description: "İlk tercih nasıl belirlenir, ÖSYM tercih modülü nasıl kullanılır, tercih yazılımına ne kadar güvenilir? YKS tercih döneminde bilinmesi gerekenler ve bir tercih koçunun farkı.",
     date: "2025-07-15",
+    updatedDate: "2026-08-28",
     tags: ["YKS", "tercih dönemi", "tercih modülü", "tercih koçu"],
     image: "/images/tercihDonemi.webp",
    content: `

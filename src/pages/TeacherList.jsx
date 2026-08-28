@@ -123,6 +123,11 @@ export default function TeachersList() {
       <Navbar />
 
       <div className="tl-page">
+        <div className="tl-page-header">
+          <h1 className="tl-page-title">Özel Ders Öğretmenleri</h1>
+          <p className="tl-page-subtitle">İhtiyacına uygun online veya yüz yüze özel ders öğretmenini filtrele, karşılaştır ve hemen iletişime geç.</p>
+        </div>
+
         <details ref={detailsRef} className="tl-filters-collapsible" open>
           <summary className="tl-filterbar">
             <div className="tl-filterbar-left">

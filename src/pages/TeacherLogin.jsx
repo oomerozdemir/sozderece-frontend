@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
+import Seo from "../components/Seo";
 import { isTokenValid, getRoleFromToken } from "../utils/auth";
 
 export default function TeacherLogin() {
@@ -36,6 +37,7 @@ export default function TeacherLogin() {
 
   return (
     <>
+      <Seo title="Öğretmen Girişi" noindex />
       <Navbar />
       <div className="tlogin">
         <div className="login-container tlogin-container">

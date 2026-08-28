@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
@@ -228,7 +228,7 @@ export default function YksYolculuguPage() {
       `}</style>
 
       <Seo
-        title="YKS Yolculuğu | Kişisel Öğrenci Koçluğu | Sözderece"
+        title="YKS Yolculuğu | Kişisel Öğrenci Koçluğu"
         description="YKS sürecinde günlük koç takibi, deneme analizi ve kişisel planlamayla hedef üniversitene ulaş. Sözderece YKS Koçluğu."
         canonical="/yks-yolculugu"
       />
@@ -650,6 +650,13 @@ export default function YksYolculuguPage() {
 
       <div className="py-4 text-center border-t border-[#e2e8f0]">
         <p className="font-nunito text-xs text-[#94a3b8]">
+          Tercih dönemine dair detaylı bir rehber mi arıyorsun?{" "}
+          <Link to="/blog/yks-tercih-dönemi" className="underline hover:text-page-navy transition-colors">
+            YKS Tercih Rehberi'ni oku
+          </Link>
+          .
+        </p>
+        <p className="font-nunito text-xs text-[#94a3b8] mt-1">
           Resmi YKS sınav takvimi için{" "}
           <a href="https://www.osym.gov.tr" target="_blank" rel="noopener noreferrer" className="underline hover:text-page-navy transition-colors">
             ÖSYM Resmi Sitesi

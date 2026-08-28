@@ -15,7 +15,7 @@ const IadeVeCaymaPolitikasi = () => {
       */}
       <Seo 
         title="İade ve Cayma Politikası" 
-        description="Sözderece Koçluk hizmetlerinde geçerli iade şartları, 14 günlük koşulsuz cayma hakkı, ücret iadesi prosedürleri ve hizmet iptal koşulları hakkında detaylı yasal bilgilendirme."
+        description="Sözderece Koçluk'ta 14 günlük koşulsuz cayma hakkı, ücret iadesi süreci ve hizmet iptal koşulları hakkında yasal bilgilendirme."
         canonical="/iade-ve-cayma-politikasi"
       />
 

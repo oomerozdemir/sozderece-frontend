@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
+import Seo from "../components/Seo";
 import { isValidName, isValidEmail, isValidPhone } from "../utils/validation";
 import { getRoleFromToken, isTokenValid } from "../utils/auth";
 import { TR_CITIES, TR_DISTRICTS } from "../data/tr-geo";
@@ -89,6 +90,7 @@ navigate("/ogretmen/panel/profil", { replace: true });
  
   return (
     <>
+      <Seo title="Özel Ders Öğretmeni Kaydı" noindex />
       <Navbar />
       <div className="max-w-[1100px] mx-auto my-5 mb-10 px-4">
         <header className="mb-4">

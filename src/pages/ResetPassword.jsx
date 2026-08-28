@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "../utils/axios";
+import Seo from "../components/Seo";
 
 
 const ResetPassword = () => {
@@ -28,10 +29,11 @@ const ResetPassword = () => {
     }
   };
 
-  if (!token) return <p>Geçersiz bağlantı.</p>;
+  if (!token) return <><Seo title="Geçersiz Bağlantı" noindex /><p>Geçersiz bağlantı.</p></>;
 
   return (
     <div className="flex justify-center items-center h-[50vh] bg-white">
+      <Seo title="Yeni Şifre Belirle" noindex />
       <form onSubmit={handleSubmit} className="w-full max-w-[400px] text-center px-6">
         <h2 className="text-[2rem] mb-8 text-[#100383] font-semibold tracking-wide">Yeni Şifre Belirle</h2>
         {message && <p className="text-green-600 text-sm mt-0 mb-2">{message}</p>}

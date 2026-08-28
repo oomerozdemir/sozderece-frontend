@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
@@ -576,6 +576,13 @@ export default function LgsHazirlikPage() {
 
       <div className="py-4 text-center border-t border-[#e2e8f0]">
         <p className="font-nunito text-xs text-[#94a3b8]">
+          LGS sonrası doğru liseyi nasıl seçeceğini mi merak ediyorsun?{" "}
+          <Link to="/blog/lgs-tercih-rehberi" className="underline hover:text-page-navy transition-colors">
+            LGS Tercih Rehberi'ni oku
+          </Link>
+          .
+        </p>
+        <p className="font-nunito text-xs text-[#94a3b8] mt-1">
           Resmi LGS sınav takvimi için{" "}
           <a href="https://www.meb.gov.tr" target="_blank" rel="noopener noreferrer" className="underline hover:text-page-navy transition-colors">
             Milli Eğitim Bakanlığı

@@ -162,14 +162,14 @@ const AboutComp = () => {
           <Link
             to="/ucretsiz-on-gorusme"
             className="bg-white text-black py-[14px] px-[28px] rounded-[10px] font-bold text-[1.1rem] no-underline transition max-[768px]:py-[10px] max-[768px]:px-[18px] max-[768px]:text-[0.9rem] max-[768px]:rounded-lg"
-            aria-label="Ücretsiz görüşme talep et"
+            aria-label="Ön analiz randevusu oluştur"
           >
-            Ücretsiz Görüşme Talep Et
+            Ön Analiz Randevusu Oluştur
           </Link>
         </div>
         <p className="max-w-[900px] mx-auto mt-[18px] mb-10 px-5 text-base leading-[1.6] text-center text-[#e5e7eb] max-[768px]:mt-3 max-[768px]:mb-7 max-[768px]:text-[0.95rem] max-[768px]:px-[14px]">
-          <a href="/sss" className="text-white font-semibold no-underline border-b-2 border-transparent transition mx-1 hover:text-[#fbbf24] hover:border-[rgba(251,191,36,0.9)]">Sıkça Sorulan Sorular</a> sayfasına göz atabilir veya{" "}
-          <a href="/paketler" className="text-white font-semibold no-underline border-b-2 border-transparent transition mx-1 hover:text-[#fbbf24] hover:border-[rgba(251,191,36,0.9)]">koçluk paketlerimizi</a> inceleyebilirsiniz.
+          <Link to="/sss" className="text-white font-semibold no-underline border-b-2 border-transparent transition mx-1 hover:text-[#fbbf24] hover:border-[rgba(251,191,36,0.9)]">Sıkça Sorulan Sorular</Link> sayfasına göz atabilir veya{" "}
+          <Link to="/paket-detay" className="text-white font-semibold no-underline border-b-2 border-transparent transition mx-1 hover:text-[#fbbf24] hover:border-[rgba(251,191,36,0.9)]">koçluk paketlerimizi</Link> inceleyebilirsiniz.
         </p>
       </section>
 

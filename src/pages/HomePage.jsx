@@ -924,7 +924,7 @@ export default function HomePage() {
   return (
     <div className="font-nunito">
       <Seo
-        title="YKS & LGS Online Öğrenci Koçluğu | Sözderece"
+        title="YKS & LGS Online Öğrenci Koçluğu"
         description="Günlük takip, dinamik program ve veli raporuyla YKS ve LGS sınavlarına hazırlanın. Sözderece Koçluk ile her gün yanındayız."
         canonical="/"
       />

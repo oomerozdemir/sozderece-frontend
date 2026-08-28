@@ -60,7 +60,7 @@ const BlogList = () => {
                 onClick={() => navigate(`/blog/${post.slug}`)}
               >
                 <div className="bg-gradient-to-t from-[rgba(0,0,0,0.65)] to-transparent p-5 w-full max-[480px]:p-3">
-                  <span className="text-xs text-yellow-300">{post.category}</span>
+                  <span className="text-xs text-yellow-300 font-semibold uppercase tracking-wide">{post.tags?.[0]}</span>
                   <h3 className="text-[1.3rem] font-semibold mb-2 max-[480px]:text-[1.1rem] max-[480px]:mb-1">{post.title}</h3>
                   <p className="text-[0.95rem] text-[#fbbf24] m-0 max-[480px]:text-[0.85rem]">{post.description}</p>
                   <span className="text-xs text-gray-300">{post.date}</span>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "../utils/axios";
+import Seo from "../components/Seo";
 
 const ForgotPassword = () => {
   const [input, setInput] = useState("");
@@ -26,6 +27,7 @@ const [isLoading, setIsLoading] = useState(false);
 
   return (
     <div className="flex justify-center items-center h-[50vh] bg-white">
+      <Seo title="Şifremi Unuttum" noindex />
       <form onSubmit={handleSubmit} className="w-full max-w-[400px] text-center px-6">
         <h2 className="text-[2rem] mb-8 text-[#100383] font-semibold tracking-wide">Şifremi Unuttum</h2>
 
