@@ -92,33 +92,10 @@ const Seo = ({
       <meta name="theme-color" content="#4F46E5" />
       <meta name="msapplication-TileColor" content="#4F46E5" />
       
-      {/* --- Structured Data (JSON-LD) --- */}
-      <script type="application/ld+json">
-        {JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          "name": siteName,
-          "url": siteUrl,
-          "logo": `${siteUrl}/images/hero-logo.webp`,
-          "description": currentDesc,
-          "address": {
-            "@type": "PostalAddress",
-            "addressCountry": "TR",
-            "addressLocality": "Türkiye"
-          },
-          "contactPoint": {
-            "@type": "ContactPoint",
-            "telephone": "+90-531-254-6701",
-            "contactType": "Customer Service",
-            "availableLanguage": "Turkish"
-          },
-          "sameAs": [
-            "https://www.instagram.com/sozderece/",
-            "https://www.linkedin.com/company/sözderece-koçluk"
-          ]
-        })}
-      </script>
-      
+      {/* Organization kimliği index.html'de sabit olarak tanımlı (her sayfada, JS'siz
+          crawler'lar dahil garanti mevcut) — burada tekrar etmiyoruz ki sayfa
+          hydrate olduğunda aynı Organization için iki ayrı JSON-LD bloğu oluşmasın. */}
+
       {/* Educational Service Structured Data */}
       <script type="application/ld+json">
         {JSON.stringify({

@@ -28,8 +28,9 @@ export default function AboutPage() {
         "availableLanguage": "Turkish"
       },
       "sameAs": [
-        "https://www.instagram.com/sozderecekocluk",
-        // Varsa diğer sosyal medya linkleri buraya eklenebilir
+        "https://www.instagram.com/sozderece/",
+        "https://www.tiktok.com/@sozderece.com",
+        "https://www.youtube.com/@sozderecekoclukk"
       ]
     }
   };
