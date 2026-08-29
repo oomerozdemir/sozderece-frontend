@@ -38,8 +38,8 @@ export default function AboutPage() {
   return (
     <>
       <Seo 
-        title="Hakkımızda - Biz Kimiz?" 
-        description="Sözderece Koçluk ekibini tanıyın. Derece öğrencisi koçlarımızla başarı hikayemiz, vizyonumuz ve öğrencilere yaklaşımımız hakkında bilgi alın."
+        title="Hakkımızda | Derece Öğrencisi Koçlar"
+        description="Sözderece'de koçların tamamı YKS/LGS'de derece yapmış öğrenciler. Kim olduğumuzu, koçluk sistemimizi ve öğrenciye yaklaşımımızı öğrenin."
         canonical="/hakkimizda"
       />
 

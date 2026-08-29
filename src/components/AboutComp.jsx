@@ -26,13 +26,12 @@ const AboutComp = () => {
         <div className="max-w-[800px] mx-auto">
           <h1 className="text-[2.5rem] mb-5 text-[#031083] max-[768px]:text-[1rem] max-[768px]:mb-3">Hakkımızda: YKS ve LGS Koçluğunda Sözderece Farkı</h1>
           <p className="text-[1.1rem] text-[#ccc] max-[768px]:text-[0.8rem] max-[768px]:leading-[1.5]">
-            Sözderece Koçluk olarak, her öğrencinin benzersiz bir öğrenme
-            yolculuğu olduğuna inanıyoruz. Koçluk sistemimizle öğrencilerimizin
-            bireysel potansiyellerini ortaya çıkarmalarına, hedeflerine kararlı
-            adımlarla ilerlemelerine ve potansiyellerini en üst seviyeye
-            taşımalarına destek oluyoruz. Amacımız, her öğrenciyi kendi
-            hedeflerine uygun şekilde yönlendirerek, başarıya giden yolda
-            güvenilir bir yol arkadaşı olmaktır.
+            Sözderece'yi kuran fikir basit: sınavı yeni kazanmış, süreci hâlâ
+            hatırlayan biriyle çalışmak, konuyu yıllar önce unutmuş biriyle
+            çalışmaktan farklı sonuç verir. Koçlarımızın tamamı YKS veya
+            LGS'de derece yapmış öğrenciler — sana sadece ne çalışman
+            gerektiğini değil, o sınava nasıl hazırlanman gerektiğini de
+            söylüyorlar, çünkü aynı masadan geçtiler.
           </p>
         </div>
       </section>
@@ -42,22 +41,24 @@ const AboutComp = () => {
         <div className="bg-white rounded-xl p-[30px] shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-[5px] hover:shadow-[0_6px_20px_rgba(0,0,0,0.1)] max-[768px]:p-[18px] max-[768px]:rounded-[10px]">
           <h2 className="text-[#1e1e50] text-[1.8rem] mb-[15px] max-[768px]:text-[1rem] max-[768px]:mb-[10px]">Misyonumuz</h2>
           <p className="text-base text-[#444] leading-[1.6] max-[768px]:text-[0.8rem] max-[768px]:leading-[1.5]">
-            Öğrencilerimizin bireysel potansiyellerini en üst düzeye çıkararak
-            onların hedeflerine ulaşmalarını sağlamak.
+            Bir öğrencinin sınava hazır olup olmadığını sınavdan bir ay önce
+            değil, ilk haftadan itibaren görmek. Haftalık deneme analizleriyle
+            nerede tıkandığını erken fark edip, programı ona göre değiştirmek.
           </p>
         </div>
         <div className="bg-white rounded-xl p-[30px] shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-[5px] hover:shadow-[0_6px_20px_rgba(0,0,0,0.1)] max-[768px]:p-[18px] max-[768px]:rounded-[10px]">
           <h2 className="text-[#1e1e50] text-[1.8rem] mb-[15px] max-[768px]:text-[1rem] max-[768px]:mb-[10px]">Vizyonumuz</h2>
           <p className="text-base text-[#444] leading-[1.6] max-[768px]:text-[0.8rem] max-[768px]:leading-[1.5]">
-            Eğitimde güvenilir ve fark yaratan bir platform olarak tüm
-            Türkiye'de öğrencilerimizin yanında olmak.
+            Büyük şehirde ya da taşrada yaşamanın, hangi koça ulaşabildiğini
+            belirlemediği bir sistem kurmak — Türkiye'nin her yerinden
+            öğrenciye aynı kalitede birebir koçluk sunmak.
           </p>
         </div>
         <div className="bg-white rounded-xl p-[30px] shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-[5px] hover:shadow-[0_6px_20px_rgba(0,0,0,0.1)] max-[768px]:p-[18px] max-[768px]:rounded-[10px]">
           <h2 className="text-[#1e1e50] text-[1.8rem] mb-[15px] max-[768px]:text-[1rem] max-[768px]:mb-[10px]">Değerlerimiz</h2>
           <p className="text-base text-[#444] leading-[1.6] max-[768px]:text-[0.8rem] max-[768px]:leading-[1.5]">
-            Samimiyet, ulaşılabilirlik, disiplin, bireye özel yaklaşım ve etik
-            ilkeler doğrultusunda çalışmak.
+            Bir koçu işe alırken önce derece yapıp yapmadığına bakıyoruz,
+            sonra iletişim becerisine. İkisi bir arada olmadan koçumuz olamaz.
           </p>
         </div>
       </section>
@@ -75,9 +76,10 @@ const AboutComp = () => {
         <div className="flex-[1_1_400px] max-[768px]:flex-[1_1_100%]">
           <h2 className="text-[2rem] text-[#1e1e50] mb-5 max-[768px]:text-[1rem] max-[768px]:mb-3">Koçluk Sistemimiz</h2>
           <p className="text-base leading-[1.6] text-[#444] mb-[25px] max-[768px]:text-[0.8rem] max-[768px]:leading-[1.6] max-[768px]:mb-4">
-            Öğrencilerimizin hedeflerini belirlemesine, plan yapmasına ve bu
-            plana sadık kalmasına yardımcı oluyoruz. Haftalık takipler, birebir
-            görüşmeler ve kişiye özel stratejilerle gelişimi sürekli kılıyoruz.
+            Satın alma sonrası 24 saat içinde eğitim danışmanımız arar,
+            seviyeni analiz eder ve sana bir koç atar — aynı gün ilk haftalık
+            programın hazır olur. İlk 5 gün içinde koçundan memnun kalmazsan
+            koşulsuz değiştirebilirsin; sonrasında da bu hak her zaman senindir.
           </p>
         </div>
 
@@ -85,19 +87,19 @@ const AboutComp = () => {
           <div className="flex items-start gap-[15px] max-[768px]:gap-[10px]">
             <FontAwesomeIcon icon={faUserFriends} className="text-[1.8rem] text-[#f97316] mt-1 max-[768px]:text-[1.2rem] max-[768px]:mt-0.5" />
             <p className="m-0 text-[#444] leading-[1.5] max-[768px]:text-[0.8rem] max-[768px]:leading-[1.45]">
-              Koçlarımız öğrencilere abi/abla şefkatiyle yaklaşır, güvenli bir
-              iletişim ortamı sunar.
+              Koçların yaş farkı genelde sadece birkaç yıl — öğretmen değil,
+              o yolu daha yeni yürümüş bir abi/abla gibi konuşurlar.
             </p>
           </div>
           <div className="flex items-start gap-[15px] max-[768px]:gap-[10px]">
             <FontAwesomeIcon icon={faHandshake} className="text-[1.8rem] text-[#f97316] mt-1 max-[768px]:text-[1.2rem] max-[768px]:mt-0.5" />
-            <p className="m-0 text-[#444] leading-[1.5] max-[768px]:text-[0.8rem] max-[768px]:leading-[1.45]">Her öğrenciyle birebir ilgileniriz; yol arkadaşlığı prensibimizdir.</p>
+            <p className="m-0 text-[#444] leading-[1.5] max-[768px]:text-[0.8rem] max-[768px]:leading-[1.45]">Her koç sınırlı sayıda öğrenciyle çalışır; kalabalık bir sınıfta kaybolmazsın.</p>
           </div>
           <div className="flex items-start gap-[15px] max-[768px]:gap-[10px]">
             <FontAwesomeIcon icon={faLightbulb} className="text-[1.8rem] text-[#f97316] mt-1 max-[768px]:text-[1.2rem] max-[768px]:mt-0.5" />
             <p className="m-0 text-[#444] leading-[1.5] max-[768px]:text-[0.8rem] max-[768px]:leading-[1.45]">
-              Motivasyon kaynağı olur, yalnız hissettikleri anlarda hep
-              yanlarında oluruz.
+              Verim düştüğünde ya da moralin bozulduğunda ilk fark eden koçun
+              olur, ders programı değil.
             </p>
           </div>
         </div>
@@ -107,9 +109,9 @@ const AboutComp = () => {
       <section className="bg-[#f9fafb] py-[60px] px-5 text-center rounded-2xl mt-[60px] max-w-[1200px] mx-auto w-full max-[768px]:py-9 max-[768px]:px-4 max-[768px]:mt-9 max-[768px]:rounded-xl">
         <h2 className="text-[2rem] mb-4 text-[#1f2937] max-[768px]:text-[1rem] max-[768px]:mb-[10px]">Koçluk Ekibimiz</h2>
         <p className="text-base text-[#374151] max-w-[700px] mx-auto mb-6 leading-[1.6] max-[768px]:text-[0.8rem] max-[768px]:leading-[1.55] max-[768px]:max-w-full max-[768px]:mb-4">
-          Sözderece Koçluk olarak, her biri alanında deneyimli, öğrenci odaklı
-          ve eğitim koçluğu konusunda uzmanlaşmış bir ekip ile çalışıyoruz.
-          Size en uygun yol haritasını birlikte planlıyoruz.
+          Her koçumuz kendi sınavında derece yapmış, hangi üniversitede
+          okuduğu ve sınavda kaçıncı sırayı aldığı ekip sayfasında yazıyor.
+          Kimin seninle çalışacağını görüp karar verebilirsin.
         </p>
 
         <Link to="/ekibimiz" className="inline-block bg-[#000ed3] text-white py-3 px-6 rounded-lg font-semibold no-underline transition hover:bg-[#ea580c] max-[768px]:py-[10px] max-[768px]:px-[18px] max-[768px]:text-[0.9rem]">
@@ -123,29 +125,32 @@ const AboutComp = () => {
           <FontAwesomeIcon icon={faLock} className="text-[2rem] text-[#0057b8] mb-[15px] max-[768px]:text-[1.4rem] max-[768px]:mb-[10px]" />
           <h3 className="text-[#0057b8] text-[1.4rem] mb-[10px] max-[768px]:text-[0.95rem] max-[768px]:mb-2">Gizlilik</h3>
           <p className="text-[#333] text-base max-[768px]:text-[0.8rem]">
-            Öğrencilerimizin tüm bilgileri gizlilik ilkemiz doğrultusunda
-            korunur.
+            Deneme sonuçların, ders kayıtların ve veli görüşmelerin sadece
+            senin koçunla ve KVKK'ya uygun şekilde saklanır, üçüncü kişiyle
+            paylaşılmaz.
           </p>
         </div>
         <div className="bg-[#f4f8ff] py-[30px] px-5 rounded-xl shadow-[0_6px_16px_rgba(0,0,0,0.06)] transition-transform hover:-translate-y-[5px] max-[768px]:py-[18px] max-[768px]:px-[14px] max-[768px]:rounded-[10px]">
           <FontAwesomeIcon icon={faEye} className="text-[2rem] text-[#0057b8] mb-[15px] max-[768px]:text-[1.4rem] max-[768px]:mb-[10px]" />
           <h3 className="text-[#0057b8] text-[1.4rem] mb-[10px] max-[768px]:text-[0.95rem] max-[768px]:mb-2">Şeffaflık</h3>
           <p className="text-[#333] text-base max-[768px]:text-[0.8rem]">
-            Tüm süreçlerde öğrencilerimize açık ve anlaşılır bir şekilde rehberlik ederiz.
+            Her hafta ne çalışıldığı, hangi konunun eksik kaldığı veliye
+            raporlanır — süreç sadece öğrenci ve koç arasında kapalı kapılar
+            ardında ilerlemez.
           </p>
         </div>
         <div className="bg-[#f4f8ff] py-[30px] px-5 rounded-xl shadow-[0_6px_16px_rgba(0,0,0,0.06)] transition-transform hover:-translate-y-[5px] max-[768px]:py-[18px] max-[768px]:px-[14px] max-[768px]:rounded-[10px]">
           <FontAwesomeIcon icon={faUserGraduate} className="text-[2rem] text-[#0057b8] mb-[15px] max-[768px]:text-[1.4rem] max-[768px]:mb-[10px]" />
           <h3 className="text-[#0057b8] text-[1.4rem] mb-[10px] max-[768px]:text-[0.95rem] max-[768px]:mb-2">Öğrenci Odaklılık</h3>
           <p className="text-[#333] text-base max-[768px]:text-[0.8rem]">
-            Her öğrencinin bireysel hedef ve ihtiyaçlarına göre özel çözümler
-            sunarız.
+            Program hazır bir şablon değil; öğrencinin sınıfına, sınavına ve
+            zayıf olduğu konulara göre her hafta yeniden şekillenir.
           </p>
         </div>
         <div className="bg-[#f4f8ff] py-[30px] px-5 rounded-xl shadow-[0_6px_16px_rgba(0,0,0,0.06)] transition-transform hover:-translate-y-[5px] max-[768px]:py-[18px] max-[768px]:px-[14px] max-[768px]:rounded-[10px]">
           <FontAwesomeIcon icon={faChartLine} className="text-[2rem] text-[#0057b8] mb-[15px] max-[768px]:text-[1.4rem] max-[768px]:mb-[10px]" />
           <h3 className="text-[#0057b8] text-[1.4rem] mb-[10px] max-[768px]:text-[0.95rem] max-[768px]:mb-2">Sürekli Gelişim</h3>
-          <p className="text-[#333] text-base max-[768px]:text-[0.8rem]">Kendimizi ve sistemimizi güncel tutarak en iyiyi hedefleriz.</p>
+          <p className="text-[#333] text-base max-[768px]:text-[0.8rem]">Her deneme analizinden sonra program gözden geçirilir; işe yaramayan yöntem bir sonraki haftaya taşınmaz.</p>
         </div>
       </div>
 
