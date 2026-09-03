@@ -212,12 +212,9 @@ const PackageDetail = () => {
           <div style={{ position: "absolute", bottom: -80, left: 40, width: 280, height: 280, borderRadius: "50%", background: "#FF6B35", filter: "blur(100px)", opacity: 0.14, pointerEvents: "none" }} />
 
           <div className="max-w-[880px] mx-auto px-5 py-16 max-[768px]:py-10 relative text-center" style={{ zIndex: 1 }}>
-            <span
-              className="inline-flex items-center gap-2 rounded-full mb-4"
-              style={{ background: "rgba(216,255,79,0.12)", border: "1px solid rgba(216,255,79,0.3)", padding: "7px 16px" }}
-            >
-              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#D8FF4F", display: "inline-block" }} />
-              <span className="font-fredoka text-lime text-xs font-bold tracking-[0.1em] uppercase">
+            <span className="inline-flex items-center gap-3 mb-4">
+              <span style={{ width: 22, height: 3, borderRadius: 2, background: "#D8FF4F", display: "inline-block" }} />
+              <span className="font-fredoka text-lime text-xs font-bold tracking-[0.14em] uppercase">
                 {isSpecialTutoring ? "Özel Ders" : "Paket Detayı"}
               </span>
             </span>

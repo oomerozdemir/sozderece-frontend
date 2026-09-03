@@ -231,16 +231,10 @@ const IletisimPage = () => {
 
               {/* SOL — Metin */}
               <div className="max-[960px]:text-center">
-                <motion.div {...fadeUp}>
-                  <span style={{
-                    display: "inline-flex", alignItems: "center", gap: 8,
-                    background: "rgba(216,255,79,0.12)", border: "1px solid rgba(216,255,79,0.3)",
-                    borderRadius: 999, padding: "7px 16px", marginBottom: 18,
-                  }}>
-                    <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#D8FF4F", display: "inline-block" }} />
-                    <span className="font-fredoka text-lime text-sm font-semibold tracking-[0.1em] uppercase">
-                      YKS / LGS 2027 Hazırlık
-                    </span>
+                <motion.div {...fadeUp} className="inline-flex items-center gap-3 mb-[18px] max-[960px]:justify-center">
+                  <span style={{ width: 26, height: 3, borderRadius: 2, background: "#D8FF4F", display: "inline-block" }} />
+                  <span className="font-fredoka text-lime text-sm font-bold tracking-[0.14em] uppercase">
+                    YKS / LGS 2027 Hazırlık
                   </span>
                 </motion.div>
 
