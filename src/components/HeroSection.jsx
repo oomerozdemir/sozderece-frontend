@@ -127,7 +127,7 @@ function DefaultSlide() {
           className="font-nunito font-bold text-[19px] max-[640px]:text-base leading-relaxed mb-10"
           style={{ maxWidth: 520, color: TEXT_65 }}
         >
-          Kişiye özel koçluk, haftalık takip ve deneme analizleriyle LGS & YKS'ye hazırlan. Sistematik, stressiz, sonuç odaklı.
+          Kişiye özel koçluk, günlük takip ve deneme analizleriyle LGS & YKS'ye hazırlan. Koçun sadece haftada bir görüşüp kaybolmaz — gün boyu arayabilir, yazabilirsin.
         </motion.p>
 
         <motion.div
@@ -279,7 +279,7 @@ function LgsSlide() {
           className="font-nunito font-bold text-[19px] max-[640px]:text-base leading-relaxed mb-10"
           style={{ maxWidth: 520, color: TEXT_65 }}
         >
-          Günlük takip, telefon yönetimi ve haftalık veli raporuyla LGS'ye kadar yanında biri olsun.
+          Günlük takip, telefon yönetimi ve haftalık veli raporuyla LGS'ye kadar yanında biri olsun — istediğin an arayıp ulaşabileceğin biri.
         </motion.p>
 
         <motion.div
@@ -436,7 +436,7 @@ function YksSlide() {
           className="font-nunito font-bold text-[19px] max-[640px]:text-base leading-relaxed mb-10"
           style={{ maxWidth: 520, color: TEXT_65 }}
         >
-          Günlük çalışma takibi, haftalık deneme analizi ve kişisel programla TYT-AYT'ye sistemli hazırlan.
+          Günlük çalışma takibi, haftalık deneme analizi ve kişisel programla TYT-AYT'ye sistemli hazırlan. Koçuna sadece haftada bir değil, gün boyu ulaşabilirsin.
         </motion.p>
 
         <motion.div
