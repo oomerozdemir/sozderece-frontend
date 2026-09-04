@@ -80,6 +80,8 @@ const AboutComp = () => {
             seviyeni analiz eder ve sana bir koç atar — aynı gün ilk haftalık
             programın hazır olur. İlk 5 gün içinde koçundan memnun kalmazsan
             koşulsuz değiştirebilirsin; sonrasında da bu hak her zaman senindir.
+            Ve koçun sadece haftada bir görüşüp kaybolmaz — gün boyu arayabilir,
+            görüntülü konuşabilir, yazabilirsin.
           </p>
         </div>
 

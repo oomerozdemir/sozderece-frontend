@@ -58,8 +58,8 @@ const shaderPurple2 = {
 const whyCards = [
   {
     icon: <FaWhatsapp />,
-    title: "Günlük WhatsApp Takibi",
-    desc: "Sabah planını, akşam özetini alıyorsun. Plato döneminde bile bir gün bile boşa gitmiyor.",
+    title: "Gün Boyu Ulaşılabilir Koç",
+    desc: "Sabit haftada bir görüşmeyle sınırlı değiliz. Günün her saatinde arayabilir, görüntülü konuşabilir, yazabilirsin — koçun gerçekten cevap verir.",
     accent: "#D8FF4F",
     shader: shaderLime,
   },
@@ -181,10 +181,11 @@ const testimonials = [
 ];
 
 const compRows = [
+  { feature: "Koça ulaşım", dershane: false, other: "haftada 1 görüşme", sozderece: "gün boyu ara/yaz" },
   { feature: "Günlük takip", dershane: false, other: false, sozderece: true },
   { feature: "Deneme analizi", dershane: false, other: "bazen", sozderece: true },
   { feature: "Dinamik program", dershane: false, other: false, sozderece: true },
-  { feature: "WhatsApp iletişim", dershane: false, other: "sınırlı", sozderece: true },
+  { feature: "WhatsApp iletişim", dershane: false, other: "sınırlı saatte", sozderece: true },
   { feature: "Veli bilgilendirmesi", dershane: false, other: false, sozderece: true },
   { feature: "Bire bir kişiselleştirme", dershane: false, other: "haftalık", sozderece: "günlük" },
 ];
@@ -200,11 +201,11 @@ const faqs = [
   },
   {
     q: "Haftada kaç kez görüşüyoruz?",
-    a: "Her gün WhatsApp üzerinden iletişimdeyiz. Bunun yanı sıra haftada bir kez 30-60 dakikalık online görüşme yapıyoruz. Acil durumlarda her zaman ulaşabilirsiniz.",
+    a: "Sabit, tek bir haftalık görüşmeyle sınırlı değiliz. Günün her saatinde arayabilir, görüntülü görüşebilir ve yazabilirsiniz. Bize geçen öğrencilerin en çok söylediği şey şu oluyor: eski koçluklarında haftada bir görüşüp bir daha ulaşamadıkları. Bizde koç gerçekten cevap verir.",
   },
   {
-    q: "Görüşme günümü değiştirebilir miyim?",
-    a: "Evet, koçunuzla birlikte uygun yeni gün ve saat belirliyorsunuz. Ders programınız değişirse görüşme gününüz de kolayca değişebilir.",
+    q: "Belirli bir görüşme günüm/saatim mi var?",
+    a: "Hayır, sizi tek bir güne sıkıştırmıyoruz. İhtiyaç duyduğunuz an arayabilir ya da yazabilirsiniz — koçunuz günün her saatinde ulaşılabilir.",
   },
   {
     q: "Satın aldım, şimdi ne olacak?",
@@ -220,7 +221,7 @@ const faqs = [
   },
   {
     q: "Görüşmelerde süre sınırı var mı?",
-    a: "Haftalık görüşmeler ortalama 30-60 dakika sürer. Konuya göre uzayabilir. Acil sorular için WhatsApp her zaman açık.",
+    a: "Hayır. Gerektiğinde 10 dakika sürebilir, gerektiğinde yarım saat. Kısıtlı bir 'haftalık görüşme penceresi'ne sıkışmıyoruz, ihtiyaca göre konuşuyoruz.",
   },
   {
     q: "LGS için veli ne kadar dahil oluyor?",
@@ -236,7 +237,7 @@ const faqs = [
   },
   {
     q: "Sizi diğer koçluklardan ayıran ne?",
-    a: "Günlük WhatsApp takibi, her deneme sonrası anlık analiz, dinamik program güncellemesi ve haftalık veli raporunu bir arada sunan çok az koçluk var. Biz sistemi bu şekilde kuruyoruz.",
+    a: "Bize gelen öğrencilerin en çok anlattığı şey şu: eski koçluğunda haftada bir görüntülü görüşüp o hafta bir daha koçuna ulaşamamak. Bizde koç gün boyu ulaşılabilir — arayabilir, görüntülü görüşebilir, yazabilirsin. Buna ek olarak günlük takip, her deneme sonrası anlık analiz, dinamik program güncellemesi ve haftalık veli raporunu bir arada sunan çok az koçluk var.",
   },
 ];
 

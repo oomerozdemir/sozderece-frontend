@@ -24,7 +24,11 @@ const faqs = [
   },
   {
     question: "Dershaneden veya özel dersten farkınız nedir?",
-    answer: "Dershane size sadece ders anlatır, biz ise 'nasıl çalışmanız gerektiğini' öğretiriz. Özel ders haftada 1-2 saattir, biz ise 7/24 yanınızdayız. Koçunuz sadece bir öğretmen değil, bu yollardan başarıyla geçmiş bir yol arkadaşıdır.",
+    answer: "Dershane size sadece ders anlatır, biz ise 'nasıl çalışmanız gerektiğini' öğretiriz. Özel ders haftada 1-2 saattir, biz ise gün boyu ulaşılabiliriz. Koçunuz sadece bir öğretmen değil, bu yollardan başarıyla geçmiş bir yol arkadaşıdır.",
+  },
+  {
+    question: "Koçuma sadece belirli gün/saatlerde mi ulaşabiliyorum?",
+    answer: "Hayır. Birçok koçlukta öğrenci haftada bir görüntülü görüşür, o hafta bir daha koçuna ulaşamaz — bize geçen öğrencilerin en sık şikayeti tam olarak bu. Bizde böyle bir sınır yok: günün her saatinde arayabilir, görüntülü görüşebilir ve yazabilirsiniz.",
   },
   {
     question: "Memnun kalmazsam koçumu değiştirebilir miyim?",
