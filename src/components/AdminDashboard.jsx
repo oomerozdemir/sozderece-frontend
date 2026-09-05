@@ -833,6 +833,12 @@ const AdminDashboard = () => {
                             </div>
                           </details>
 
+                          {order.status === "failed" && order.failReason && (
+                            <div className="mb-3 px-3 py-2 rounded-xl bg-[#fef2f2] border border-[#fecaca] text-xs text-[#991b1b]">
+                              <strong>Red sebebi:</strong> {order.failReason}
+                            </div>
+                          )}
+
                           {/* Bitiş Tarihi */}
                           <div className="flex flex-wrap items-center gap-3 mb-3">
                             <label className="text-xs font-bold text-[#475569]">📅 Bitiş Tarihi:</label>
