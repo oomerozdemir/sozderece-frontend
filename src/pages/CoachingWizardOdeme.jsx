@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -110,11 +110,7 @@ export default function CoachingWizardOdeme() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [pkg, setPkg] = useState(null);
   const [pkgLoaded, setPkgLoaded] = useState(false);
-  const [payTrFields, setPayTrFields] = useState(null);
-  const [payTrEndpoint, setPayTrEndpoint] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const formRef = useRef(null);
-  const [cardData, setCardData] = useState({ cc_owner: "", card_number: "", expiry_month: "", expiry_year: "", cvv: "" });
 
   const [openSection, setOpenSection] = useState("student");
   const [studentDone, setStudentDone] = useState(false);
@@ -173,16 +169,6 @@ export default function CoachingWizardOdeme() {
       .catch(() => {})
       .finally(() => setPkgLoaded(true));
   }, [slug]);
-
-  // PayTR alanları hazır olunca gizli formu native DOM submit ile PayTR'ye
-  // gönderir — tarayıcı PayTR'nin 3D Secure sayfasına tam sayfa yönlenir,
-  // işlem bitince merchant_ok_url/fail_url'e geri döner (bkz. SubscriptionStart.jsx
-  // ile aynı desen).
-  useEffect(() => {
-    if (payTrFields && formRef.current) {
-      formRef.current.submit();
-    }
-  }, [payTrFields]);
 
   const plans = Array.isArray(pkg?.plans) ? pkg.plans : [];
   const activePlan = planIndex !== null && plans[planIndex] ? plans[planIndex] : null;
@@ -294,9 +280,6 @@ export default function CoachingWizardOdeme() {
       return;
     }
     if (!isAgreed) newErrors.agreement = "Devam etmeden önce sözleşmeyi onaylamalısın.";
-    if (!cardData.cc_owner || !cardData.card_number || !cardData.expiry_month || !cardData.expiry_year || !cardData.cvv) {
-      newErrors.card = "Tüm kart bilgilerini doldurun.";
-    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -329,13 +312,11 @@ export default function CoachingWizardOdeme() {
         sessionId: getStoredSessionId(),
       });
 
-      if (response.data?.fields) {
+      if (response.data?.token) {
         // Gerçek ödenen tutarı /order-success'e taşımak için sessionStorage'a
-        // yazılıyor (PayTR'nin tam sayfa yönlendirmesinde hayatta kalır).
+        // yazılıyor (PayTR iframe akışında da hayatta kalır).
         sessionStorage.setItem("lastOrderAmount", String(payable));
-        setPayTrEndpoint(response.data.paytrEndpoint);
-        setPayTrFields(response.data.fields);
-        // Form gönderimi payTrFields useEffect'inde otomatik tetiklenecek
+        navigate(`/payment/iframe/${response.data.token}`);
       } else {
         alert("Ödeme başlatılamadı.");
         setSubmitting(false);
@@ -383,24 +364,7 @@ export default function CoachingWizardOdeme() {
       <WizardStepBar currentStep={3} steps={WIZARD_STEPS} />
 
       <main className="flex-1">
-        {payTrFields ? (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-md mx-auto px-4 py-24 text-center">
-            <div className="inline-block w-10 h-10 border-4 border-[#f1f5f9] border-t-page-navy rounded-full animate-spin mb-4" />
-            <p className="text-[#64748b] font-nunito">PayTR güvenli ödeme sayfasına yönlendiriliyorsunuz…</p>
-            {/* Bu form doğrudan PayTR'ye POST eder — action PayTR'nin kendi
-                endpoint'i. Kart alanları BİZİM sunucumuza hiç gitmiyor. */}
-            <form ref={formRef} action={payTrEndpoint || undefined} method="post" style={{ display: "none" }}>
-              {Object.entries(payTrFields).map(([key, value]) => (
-                <input key={key} type="hidden" name={key} value={value} />
-              ))}
-              <input type="hidden" name="cc_owner" value={cardData.cc_owner} />
-              <input type="hidden" name="card_number" value={cardData.card_number} />
-              <input type="hidden" name="expiry_month" value={cardData.expiry_month} />
-              <input type="hidden" name="expiry_year" value={cardData.expiry_year} />
-              <input type="hidden" name="cvv" value={cardData.cvv} />
-            </form>
-          </motion.div>
-        ) : !pkgLoaded ? (
+        {!pkgLoaded ? (
           <p className="text-center text-[#64748b] font-nunito py-16">Yükleniyor…</p>
         ) : !pkg ? (
           <div className="text-center py-16">
@@ -603,61 +567,10 @@ export default function CoachingWizardOdeme() {
                     style={{ overflow: "hidden" }}
                   >
                   <div className="flex flex-col gap-4 mt-5">
-                    <p className="font-nunito text-xs text-[#94a3b8] -mt-1 flex items-center gap-1.5">
-                      <FaLock size={10} /> Kart bilgilerin doğrudan PayTR'nin güvenli sistemine iletilir, sunucumuzda hiç saklanmaz.
+                    <p className="font-nunito text-sm text-[#475569] flex items-start gap-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-xl p-4">
+                      <FaLock size={14} className="mt-0.5 flex-shrink-0 text-[#059669]" />
+                      Kart bilgilerini bir sonraki adımda, PayTR'nin 256-bit SSL korumalı güvenli ödeme sayfasında gireceksin. Kart numaran hiçbir zaman bizim sunucumuza uğramaz.
                     </p>
-                    <input
-                      type="text"
-                      autoComplete="cc-name"
-                      placeholder="Kart Üzerindeki İsim"
-                      value={cardData.cc_owner}
-                      onChange={(e) => setCardData({ ...cardData, cc_owner: e.target.value })}
-                      className={inputBase}
-                    />
-                    <input
-                      type="text"
-                      autoComplete="cc-number"
-                      inputMode="numeric"
-                      placeholder="Kart Numarası"
-                      value={cardData.card_number}
-                      onChange={(e) => setCardData({ ...cardData, card_number: e.target.value.replace(/\D/g, "") })}
-                      className={inputBase}
-                    />
-                    <div className="flex gap-3">
-                      <select
-                        autoComplete="cc-exp-month"
-                        value={cardData.expiry_month}
-                        onChange={(e) => setCardData({ ...cardData, expiry_month: e.target.value })}
-                        className={`${inputBase} flex-1`}
-                      >
-                        <option value="">Ay</option>
-                        {Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0")).map((m) => (
-                          <option key={m} value={m}>{m}</option>
-                        ))}
-                      </select>
-                      <select
-                        autoComplete="cc-exp-year"
-                        value={cardData.expiry_year}
-                        onChange={(e) => setCardData({ ...cardData, expiry_year: e.target.value })}
-                        className={`${inputBase} flex-1`}
-                      >
-                        <option value="">Yıl</option>
-                        {Array.from({ length: 12 }, (_, i) => String(new Date().getFullYear() % 100 + i)).map((y) => (
-                          <option key={y} value={y}>{y}</option>
-                        ))}
-                      </select>
-                      <input
-                        type="text"
-                        autoComplete="cc-csc"
-                        inputMode="numeric"
-                        placeholder="CVV"
-                        value={cardData.cvv}
-                        onChange={(e) => setCardData({ ...cardData, cvv: e.target.value.replace(/\D/g, "") })}
-                        className={`${inputBase} flex-1`}
-                        maxLength={4}
-                      />
-                    </div>
-                    {errors.card && <span className="text-red-500 text-xs">{errors.card}</span>}
 
                     <label className="flex items-start gap-2 font-nunito text-sm text-[#475569] cursor-pointer">
                       <input type="checkbox" checked={isAgreed} onChange={() => setIsAgreed(!isAgreed)} className="w-4 h-4 mt-0.5 accent-page-navy" />

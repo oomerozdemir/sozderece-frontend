@@ -126,7 +126,9 @@ function App() {
             {/* PrivateRoute YOK: misafir bir alıcı ödemeyi bitirdiğinde token'ı olmaz,
                 korumalı olsaydı var olmayan bir /login rotasına düşüp 404 görürdü. */}
             <Route path="/order-success" element={<OrderSuccessPage />} />
-            <Route path="/payment/iframe/:token" element={<PrivateRoute><PaymentIframePage /></PrivateRoute>} />
+            {/* PrivateRoute YOK: misafir checkout akışı (CoachingWizardOdeme) burada
+                da token'sız düşer, aynı order-success mantığı geçerli. */}
+            <Route path="/payment/iframe/:token" element={<PaymentIframePage />} />
 
             {/* ÖĞRETMEN: panel (yalnızca teacher rolü) */}
             <Route

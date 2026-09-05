@@ -1,7 +1,7 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import { FaUserGraduate } from "react-icons/fa";
 import { isValidEmail, isValidName, isValidPhone, isValidPostalCode, isValidAddress, isValidTcNo } from "../utils/validation";
 import { lineTL, computeCartTotals, computeCouponDiscount, computeFinalCalculations } from "../utils/checkoutPricing";
@@ -36,28 +36,16 @@ const DEFAULT_SETTINGS = {
 const PaymentPage = () => {
   const { cart } = useCart();
   const location = useLocation();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
-  const [payTrFields, setPayTrFields] = useState(null);
-  const [payTrEndpoint, setPayTrEndpoint] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const formRef = useRef(null);
-  const [cardData, setCardData] = useState({ cc_owner: "", card_number: "", expiry_month: "", expiry_year: "", cvv: "" });
 
   useEffect(() => {
     axios.get("/api/settings/payment-page")
       .then((r) => setSettings({ ...DEFAULT_SETTINGS, ...r.data }))
       .catch(() => {});
   }, []);
-
-  // PayTR alanları hazır olunca gizli formu native DOM submit ile PayTR'ye
-  // gönderir — tarayıcı PayTR'nin 3D Secure sayfasına tam sayfa yönlenir,
-  // işlem bitince merchant_ok_url/fail_url'e geri döner.
-  useEffect(() => {
-    if (payTrFields && formRef.current) {
-      formRef.current.submit();
-    }
-  }, [payTrFields]);
 
   // çoklu id desteği
   const requestIds = useMemo(() => {
@@ -163,9 +151,6 @@ const PaymentPage = () => {
     if (formData.postalCode && !isValidPostalCode(formData.postalCode)) newErrors.postalCode = "5 haneli posta kodu girin.";
     if (!formData.sinif) newErrors.sinif = "Sınıf seçimi zorunludur.";
     if (!formData.alan) newErrors.alan = "Alan seçimi zorunludur.";
-    if (!cardData.cc_owner || !cardData.card_number || !cardData.expiry_month || !cardData.expiry_year || !cardData.cvv) {
-      newErrors.card = "Tüm kart bilgilerini doldurun.";
-    }
     if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
 
     setSubmitting(true);
@@ -197,13 +182,11 @@ const PaymentPage = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (response.data?.fields) {
+      if (response.data?.token) {
         // Gerçek ödenen tutarı /order-success'e taşımak için sessionStorage'a
-        // yazılıyor (PayTR'nin tam sayfa yönlendirmesinde hayatta kalır).
+        // yazılıyor (PayTR iframe akışında da hayatta kalır).
         sessionStorage.setItem("lastOrderAmount", String(payable));
-        setPayTrEndpoint(response.data.paytrEndpoint);
-        setPayTrFields(response.data.fields);
-        // Form gönderimi payTrFields useEffect'inde otomatik tetiklenecek
+        navigate(`/payment/iframe/${response.data.token}`);
       } else {
         alert("Ödeme başlatılamadı.");
         setSubmitting(false);
@@ -260,24 +243,7 @@ const PaymentPage = () => {
       </header>
 
       <main className="flex-1">
-        {payTrFields ? (
-          <div className="max-w-md mx-auto px-4 py-24 text-center">
-            <div className="inline-block w-10 h-10 border-4 border-[#f1f5f9] border-t-[#f35900] rounded-full animate-spin mb-4" />
-            <p className="text-[#64748b]">PayTR güvenli ödeme sayfasına yönlendiriliyorsunuz…</p>
-            {/* Bu form doğrudan PayTR'ye POST eder — action PayTR'nin kendi
-                endpoint'i. Kart alanları BİZİM sunucumuza hiç gitmiyor. */}
-            <form ref={formRef} action={payTrEndpoint || undefined} method="post" style={{ display: "none" }}>
-              {Object.entries(payTrFields).map(([key, value]) => (
-                <input key={key} type="hidden" name={key} value={value} />
-              ))}
-              <input type="hidden" name="cc_owner" value={cardData.cc_owner} />
-              <input type="hidden" name="card_number" value={cardData.card_number} />
-              <input type="hidden" name="expiry_month" value={cardData.expiry_month} />
-              <input type="hidden" name="expiry_year" value={cardData.expiry_year} />
-              <input type="hidden" name="cvv" value={cardData.cvv} />
-            </form>
-          </div>
-        ) : (
+        {(
           /* ── Form + Sidebar görünümü ── */
           <div className="flex gap-8 p-8 max-w-[1200px] mx-auto max-[768px]:flex-col-reverse max-[768px]:p-4 max-[768px]:gap-5">
 
@@ -374,62 +340,9 @@ const PaymentPage = () => {
                 </div>
               </div>
 
-              <h3 className="text-[#f35900] font-semibold m-0 mt-2">Kart Bilgileri</h3>
-              <p className="text-xs text-[#94a3b8] -mt-2">
-                Kart bilgilerin doğrudan PayTR'nin güvenli sistemine iletilir, sunucumuzda hiç saklanmaz.
+              <p className="text-sm text-[#475569] flex items-start gap-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-xl p-4 mt-2">
+                Kart bilgilerini bir sonraki adımda, PayTR'nin 256-bit SSL korumalı güvenli ödeme sayfasında gireceksin. Kart numaran hiçbir zaman bizim sunucumuza uğramaz.
               </p>
-              <input
-                type="text"
-                autoComplete="cc-name"
-                placeholder="Kart Üzerindeki İsim"
-                value={cardData.cc_owner}
-                onChange={(e) => setCardData({ ...cardData, cc_owner: e.target.value })}
-                className={inputBase}
-              />
-              <input
-                type="text"
-                autoComplete="cc-number"
-                inputMode="numeric"
-                placeholder="Kart Numarası"
-                value={cardData.card_number}
-                onChange={(e) => setCardData({ ...cardData, card_number: e.target.value.replace(/\D/g, "") })}
-                className={inputBase}
-              />
-              <div className="flex gap-3">
-                <select
-                  autoComplete="cc-exp-month"
-                  value={cardData.expiry_month}
-                  onChange={(e) => setCardData({ ...cardData, expiry_month: e.target.value })}
-                  className={`${inputBase} flex-1`}
-                >
-                  <option value="">Ay</option>
-                  {Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0")).map((m) => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-                <select
-                  autoComplete="cc-exp-year"
-                  value={cardData.expiry_year}
-                  onChange={(e) => setCardData({ ...cardData, expiry_year: e.target.value })}
-                  className={`${inputBase} flex-1`}
-                >
-                  <option value="">Yıl</option>
-                  {Array.from({ length: 12 }, (_, i) => String(new Date().getFullYear() % 100 + i)).map((y) => (
-                    <option key={y} value={y}>{y}</option>
-                  ))}
-                </select>
-                <input
-                  type="text"
-                  autoComplete="cc-csc"
-                  inputMode="numeric"
-                  placeholder="CVV"
-                  value={cardData.cvv}
-                  onChange={(e) => setCardData({ ...cardData, cvv: e.target.value.replace(/\D/g, "") })}
-                  className={`${inputBase} flex-1`}
-                  maxLength={4}
-                />
-              </div>
-              {errors.card && <span className="text-red-500 text-xs mt-0.5 block">{errors.card}</span>}
 
               <button
                 type="submit"
