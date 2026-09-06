@@ -212,12 +212,9 @@ export default function CoachingWizardOdeme() {
 
   const handleApplyCoupon = async () => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setCouponMessage("Kupon kodu kullanmak için giriş yapmanız gerekiyor.");
-        return;
-      }
-      const res = await axios.post("/api/coupon/validate", { code: couponCode });
+      // Misafir checkout'ta giriş şartı yok — backend req.body.email ile
+      // aynı kontrolleri (daha önce kullanılmış mı / ilk sipariş mi) yapıyor.
+      const res = await axios.post("/api/coupon/validate", { code: couponCode, email: formData.email });
       const data = res.data;
       if (data.validPackages && data.validPackages.length > 0) {
         const hasValidItem = cart.some((item) => data.validPackages.includes(item.slug));
