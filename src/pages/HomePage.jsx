@@ -178,6 +178,61 @@ const testimonials = [
     after: "96 NET",
     stars: 5,
   },
+  {
+    quote:
+      "Zeynep Hanım öyle iyi ilgilendi ki bir ayda 7. sınıf eksiklerinin çoğunu kapattık. Sekizinci sınıfta çok daha güzelini bekliyoruz.",
+    name: "Nermin H.",
+    role: "VELİ",
+    badge: "LGS 2027",
+    badgeColor: "#7340C8",
+    avatar: "N",
+    avatarBg: "#7340C8",
+    year: "7. Sınıf Velisi",
+    before: null,
+    after: null,
+    stars: 5,
+  },
+  {
+    quote: "Koçumdan çok memnunum, bana ders çalışmayı sevdirdi.",
+    name: "Nisa",
+    role: "ÖĞRENCİ",
+    badge: "YKS 2027",
+    badgeColor: "#1C1B8A",
+    avatar: "N",
+    avatarBg: "#1C1B8A",
+    year: "YKS 2027",
+    before: null,
+    after: null,
+    stars: 5,
+  },
+  {
+    quote:
+      "Ders çalışan biri değilim ama beni gerçekten ilerletti. Oldukça verimli ilerliyorum, iyi ki sizsiniz.",
+    name: "Eylül",
+    role: "ÖĞRENCİ",
+    badge: "YKS 2027",
+    badgeColor: "#FF6B35",
+    avatar: "E",
+    avatarBg: "#FF6B35",
+    year: "YKS 2027",
+    before: null,
+    after: null,
+    stars: 5,
+  },
+  {
+    quote:
+      "Koçum ve süreçten gerçekten memnunum. İlgi alaka sürekli böyle devam edecekse çok beğendim.",
+    name: "Öykü",
+    role: "ÖĞRENCİ",
+    badge: "YKS 2027",
+    badgeColor: "#7340C8",
+    avatar: "Ö",
+    avatarBg: "#7340C8",
+    year: "YKS 2027",
+    before: null,
+    after: null,
+    stars: 5,
+  },
 ];
 
 const compRows = [
@@ -511,10 +566,14 @@ function TestimonialsColumn({ items, duration, className }) {
   );
 }
 
+// Diziyi n kadar sola kaydırır — her sütun aynı yorumları farklı bir
+// sırayla gösterip tekdüzeliği kırar (dizi uzunluğu değişse de çalışır).
+const rotate = (arr, n) => arr.slice(n % arr.length).concat(arr.slice(0, n % arr.length));
+
 function TestimonialsSection() {
   const col1 = testimonials;
-  const col2 = [testimonials[1], testimonials[2], testimonials[0]];
-  const col3 = [testimonials[2], testimonials[0], testimonials[1]];
+  const col2 = rotate(testimonials, Math.ceil(testimonials.length / 3));
+  const col3 = rotate(testimonials, Math.ceil((testimonials.length * 2) / 3));
 
   return (
     <section className="relative overflow-hidden py-24 px-5 bg-white">
