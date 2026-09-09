@@ -49,6 +49,9 @@ const InstructorApplicationPage = lazy(() => import("./pages/InstructorApplicati
 const CampRouteHandler = lazy(() => import("./pages/CampRouteHandler"));
 const LgsHazirlikPage = lazy(() => import("./pages/LgsHazirlikPage"));
 const YksYolculuguPage = lazy(() => import("./pages/YksYolculuguPage"));
+// Lansman teklif sayfası — sadece navbar'dan yönlendiriliyor, başka hiçbir
+// yerde linklenmiyor (bkz. navbar.jsx DEFAULT_NAV_LINKS).
+const MomentumTeklifPage = lazy(() => import("./pages/MomentumTeklifPage"));
 
 // "Hemen Başla" sihirbazı: Alan → Paket → Ödeme (misafir-öncelikli, PrivateRoute yok)
 const CoachingWizardAlan = lazy(() => import("./pages/CoachingWizardAlan.jsx"));
@@ -160,6 +163,7 @@ function App() {
             <Route path="/unauthorized" element={<div>Erişim izniniz yok.</div>} />
             <Route path="/lgs-hazirlik" element={<LgsHazirlikPage />} />
             <Route path="/yks-yolculugu" element={<YksYolculuguPage />} />
+            <Route path="/14-gunde-calisma-aliskanligi-kazan" element={<MomentumTeklifPage />} />
             {/* Dinamik kamp sayfası — slug admin panelinden değiştirilebilir */}
             <Route path="/:campSlug" element={<CampRouteHandler />} />
             <Route path="*" element={<NotFound />} />

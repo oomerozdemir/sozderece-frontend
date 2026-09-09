@@ -160,7 +160,11 @@ export default function CoachingWizardOdeme() {
 
   useEffect(() => {
     if (!slug) return;
-    axios.get("/api/packages")
+    // ?all=true: vitrine kapalı (hidden) paketler de dahil — sınırlı
+    // kontenjanlı/lansman tekliflerinde paket bilinçli olarak "hidden"
+    // tutuluyor (ana vitrinde/paket seçim adımında çıkmasın diye), ama
+    // doğrudan slug ile deep-link verildiğinde burada hâlâ çözülebilmeli.
+    axios.get("/api/packages?all=true")
       .then((r) => {
         if (r.data.success) {
           setPkg(r.data.packages.find((p) => p.slug === slug) || null);

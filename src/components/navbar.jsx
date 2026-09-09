@@ -21,6 +21,9 @@ const DEFAULT_NAV_LINKS = [
   { name: "LGS 2027", path: "/lgs-hazirlik" },
   { name: "Paketler", path: "/paket-detay" },
   ...(SHOW_OGRETMEN ? [{ name: "Özel Ders", path: "/ogretmenler" }] : []),
+  // Sınırlı kontenjanlı lansman teklifi — bilinçli olarak SADECE navbar'dan
+  // yönlendiriliyor (anasayfa, footer vb. hiçbir yerde linklenmiyor).
+  { name: "14 Günlük Program", path: "/14-gunde-calisma-aliskanligi-kazan" },
 ];
 
 export default function Navbar() {
