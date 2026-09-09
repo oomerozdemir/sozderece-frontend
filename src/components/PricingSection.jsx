@@ -22,31 +22,47 @@ const STATIC_FEATURES = [
   'Sıfırdan Başlayanlara Özel "Masaya Oturma Disiplini" Rutinleri',
 ];
 
-function PriceDisplay({ pkg, activePlan }) {
-  if (!pkg) {
-    return (
-      <div className="font-fredoka font-bold text-lime text-[52px] leading-none">
-        Görüşme al →
+const PLAN_BADGE_COLORS = {
+  green: { bg: "#dcfce7", text: "#166534" },
+  blue: { bg: "#dbeafe", text: "#1d4ed8" },
+  orange: { bg: "#ffedd5", text: "#c2410c" },
+  red: { bg: "#fee2e2", text: "#b91c1c" },
+};
+
+const FEATURES_VISIBLE = 6;
+
+function OldPrice({ text }) {
+  if (!text) return null;
+  return (
+    <div className="font-nunito font-bold text-sm mb-1 text-[#94a3b8]" style={{ textDecoration: "line-through" }}>
+      {text}
+    </div>
+  );
+}
+
+function Amount({ amount, duration }) {
+  return (
+    <div>
+      <div className="flex items-start gap-1">
+        <span className="font-fredoka font-bold text-[18px] mt-2" style={{ color: "rgba(28,27,138,0.55)" }}>₺</span>
+        <span className="font-fredoka font-bold text-page-navy leading-none" style={{ fontSize: "clamp(36px,3.4vw,44px)", letterSpacing: -1.5 }}>
+          {amount}
+        </span>
       </div>
-    );
-  }
+      {duration && <div className="font-nunito font-bold text-xs mt-1 text-[#94a3b8]">{duration}</div>}
+    </div>
+  );
+}
+
+function PriceDisplay({ pkg, activePlan }) {
+  if (!pkg) return null;
 
   if (activePlan) {
     const priceStr = (activePlan.priceText || `${activePlan.price}₺`).replace(/₺/g, "").trim();
     return (
       <div>
-        {activePlan.oldPriceText && (
-          <div className="font-nunito font-bold text-sm mb-1" style={{ color: "rgba(216,255,79,0.45)", textDecoration: "line-through" }}>
-            {activePlan.oldPriceText}
-          </div>
-        )}
-        <div className="flex items-start gap-1">
-          <span className="font-fredoka font-bold text-[22px] mt-3" style={{ color: "rgba(216,255,79,0.75)" }}>₺</span>
-          <span className="font-fredoka font-bold text-lime leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{priceStr}</span>
-        </div>
-        {activePlan.durationText && (
-          <div className="font-nunito font-bold text-sm mt-1" style={{ color: "rgba(255,255,255,0.5)" }}>{activePlan.durationText}</div>
-        )}
+        <OldPrice text={activePlan.oldPriceText} />
+        <Amount amount={priceStr} duration={activePlan.durationText} />
       </div>
     );
   }
@@ -59,14 +75,9 @@ function PriceDisplay({ pkg, activePlan }) {
     const days = getExamDaysLeft(pkg);
     return (
       <div>
-        <div className="font-nunito font-bold text-sm mb-1" style={{ color: "rgba(216,255,79,0.45)", textDecoration: "line-through" }}>
-          {pkg.priceText || `${pkg.price}₺`}
-        </div>
-        <div className="flex items-start gap-1">
-          <span className="font-fredoka font-bold text-[22px] mt-3" style={{ color: "rgba(216,255,79,0.75)" }}>₺</span>
-          <span className="font-fredoka font-bold text-lime leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{price}</span>
-        </div>
-        <span className="inline-block mt-2 font-nunito font-bold text-[12px] px-3 py-1 rounded-full text-lime" style={{ background: "rgba(216,255,79,0.15)" }}>
+        <OldPrice text={pkg.priceText || `${pkg.price}₺`} />
+        <Amount amount={price} />
+        <span className="inline-block mt-2 font-nunito font-bold text-[11px] px-2.5 py-1 rounded-full" style={{ background: "#dbeafe", color: "#1d4ed8" }}>
           Sınava {days} gün, indirimli
         </span>
       </div>
@@ -76,14 +87,9 @@ function PriceDisplay({ pkg, activePlan }) {
   if (promoActive) {
     return (
       <div>
-        <div className="font-nunito font-bold text-sm mb-1" style={{ color: "rgba(216,255,79,0.45)", textDecoration: "line-through" }}>
-          {pkg.priceText || `${pkg.price}₺`}
-        </div>
-        <div className="flex items-start gap-1">
-          <span className="font-fredoka font-bold text-[22px] mt-3" style={{ color: "rgba(216,255,79,0.75)" }}>₺</span>
-          <span className="font-fredoka font-bold text-lime leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{pkg.promoPrice}</span>
-        </div>
-        <span className="inline-block mt-2 font-nunito font-bold text-[12px] px-3 py-1 rounded-full text-lime" style={{ background: "rgba(216,255,79,0.15)" }}>
+        <OldPrice text={pkg.priceText || `${pkg.price}₺`} />
+        <Amount amount={pkg.promoPrice} />
+        <span className="inline-block mt-2 font-nunito font-bold text-[11px] px-2.5 py-1 rounded-full" style={{ background: "#ffedd5", color: "#c2410c" }}>
           {pkg.promoLabel || `${formatPromoEndDate(pkg.promoEndDate)} tarihine kadar`}
         </span>
       </div>
@@ -94,31 +100,153 @@ function PriceDisplay({ pkg, activePlan }) {
   const priceNum = priceStr.replace(/₺/g, "").trim();
   return (
     <div>
-      {pkg.oldPriceText && (
-        <div className="font-nunito font-bold text-sm mb-1" style={{ color: "rgba(216,255,79,0.45)", textDecoration: "line-through" }}>
-          {pkg.oldPriceText}
-        </div>
-      )}
-      <div className="flex items-start gap-1">
-        <span className="font-fredoka font-bold text-[22px] mt-3" style={{ color: "rgba(216,255,79,0.75)" }}>₺</span>
-        <span className="font-fredoka font-bold text-lime leading-none" style={{ fontSize: "clamp(60px,6vw,80px)", letterSpacing: -3 }}>{priceNum}</span>
-      </div>
+      <OldPrice text={pkg.oldPriceText} />
+      <Amount amount={priceNum} />
     </div>
   );
 }
 
-const popIn = {
-  initial: { opacity: 0, scale: 0.84 },
-  whileInView: { opacity: 1, scale: 1 },
-  viewport: { once: true },
-};
+function PackageCard({ pkg, index }) {
+  const [activePlanIdx, setActivePlanIdx] = useState(0);
+  const [expanded, setExpanded] = useState(false);
+
+  const plans = Array.isArray(pkg.plans) ? pkg.plans : [];
+  const hasPlanTabs = plans.length > 1;
+  const activePlan = hasPlanTabs ? plans[activePlanIdx] : null;
+  const planBadgeStyle = activePlan?.badge ? (PLAN_BADGE_COLORS[activePlan.badgeColor] || PLAN_BADGE_COLORS.green) : null;
+
+  const allFeatures =
+    pkg.features && pkg.features.filter((f) => f.included).length >= 3
+      ? pkg.features.filter((f) => f.included).map((f) => f.label)
+      : STATIC_FEATURES;
+  const shownFeatures = expanded ? allFeatures : allFeatures.slice(0, FEATURES_VISIBLE);
+  const remaining = allFeatures.length - FEATURES_VISIBLE;
+
+  const ctaLabel = activePlan?.ctaLabel || pkg.ctaLabel || "Paketi Satın Al →";
+  const ctaHref =
+    activePlan?.ctaHref ||
+    pkg.ctaHref ||
+    (hasPlanTabs
+      ? `/hemen-basla?slug=${encodeURIComponent(pkg.slug)}&plan=${activePlanIdx}`
+      : `/hemen-basla?slug=${encodeURIComponent(pkg.slug)}`);
+
+  const videoEmbedUrl = pkg.videoUrl ? toYouTubeEmbed(pkg.videoUrl) : null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: Math.min(index, 4) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      className="relative flex flex-col h-full rounded-[28px] bg-white"
+      style={{ border: "1px solid #ECEAF5", boxShadow: "0 10px 30px rgba(28,27,138,0.08)", padding: "32px 28px" }}
+    >
+      {pkg.badge && (
+        <span
+          className="absolute -top-3 right-7 font-fredoka font-bold text-[12px] px-3 py-1.5 rounded-full whitespace-nowrap"
+          style={{ background: "#1C1B8A", color: "#D8FF4F", boxShadow: "0 4px 12px rgba(28,27,138,0.3)" }}
+        >
+          {pkg.badge}
+        </span>
+      )}
+
+      <h3 className="font-fredoka font-bold text-page-navy text-xl leading-snug mb-4 pr-2">{pkg.name}</h3>
+
+      {hasPlanTabs && (
+        <div className="flex gap-1 rounded-full p-1 mb-4" style={{ background: "#F4F2FA" }}>
+          {plans.map((plan, i) => (
+            <button
+              key={i}
+              onClick={() => setActivePlanIdx(i)}
+              className="flex-1 font-fredoka font-bold text-[12px] px-3 py-2 rounded-full border-none cursor-pointer transition-all duration-200"
+              style={{
+                background: activePlanIdx === i ? "#fff" : "transparent",
+                color: activePlanIdx === i ? "#1C1B8A" : "#8B87A6",
+                boxShadow: activePlanIdx === i ? "0 2px 8px rgba(28,27,138,0.12)" : "none",
+              }}
+            >
+              {plan.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <PriceDisplay pkg={pkg} activePlan={activePlan} />
+
+      {planBadgeStyle && (
+        <span
+          className="inline-block self-start mt-2 font-nunito font-bold text-[11px] px-2.5 py-1 rounded-full"
+          style={{ background: planBadgeStyle.bg, color: planBadgeStyle.text }}
+        >
+          {activePlan.badge}
+        </span>
+      )}
+
+      {pkg.subtitle && (
+        <div className="font-nunito text-[#64748b] text-sm leading-relaxed mt-3 mb-5">{pkg.subtitle}</div>
+      )}
+
+      <div className="flex flex-col gap-2.5 mb-2" style={{ marginTop: pkg.subtitle ? 0 : 20 }}>
+        {shownFeatures.map((f, i) => (
+          <div key={i} className="flex items-start gap-2.5">
+            <span
+              className="flex-shrink-0 flex items-center justify-center rounded-full text-[10px] font-bold mt-0.5"
+              style={{ width: 18, height: 18, background: "#ede8fa", color: "#1C1B8A" }}
+            >
+              ✓
+            </span>
+            <span className="font-nunito font-semibold text-[13px] text-[#334155] leading-snug">{f}</span>
+          </div>
+        ))}
+      </div>
+
+      {remaining > 0 && (
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          className="self-start font-nunito font-bold text-[12px] text-accent-orange hover:underline mb-2 mt-1"
+        >
+          {expanded ? "Daha az göster" : `+${remaining} özellik daha`}
+        </button>
+      )}
+
+      <div className="flex-1" />
+
+      <Link
+        to={ctaHref}
+        className="block text-center no-underline font-fredoka font-bold text-[15px] rounded-full mt-5 transition-transform hover:scale-105"
+        style={{ background: "#1C1B8A", color: "#D8FF4F", padding: "14px" }}
+      >
+        {ctaLabel}
+      </Link>
+      <Link
+        to={`/paket-detay?slug=${encodeURIComponent(pkg.slug)}`}
+        className="block text-center no-underline font-nunito font-bold text-[13px] text-[#8B87A6] hover:text-page-navy mt-3 transition-colors"
+      >
+        Paketi İncele
+      </Link>
+
+      {videoEmbedUrl && (
+        <div className="rounded-2xl overflow-hidden mt-5" style={{ border: "1px solid #ECEAF5" }}>
+          <div className="aspect-video">
+            <iframe
+              src={videoEmbedUrl}
+              title={`${pkg.name} Tanıtımı`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
+              style={{ border: 0, display: "block" }}
+            />
+          </div>
+        </div>
+      )}
+    </motion.div>
+  );
+}
 
 export default function PricingSection() {
   const [tab, setTab] = useState("yks");
   const [packages, setPackages] = useState([]);
   const [video, setVideo] = useState(null);
-  const [primaryIdx, setPrimaryIdx] = useState(0);
-  const [activePlanIdx, setActivePlanIdx] = useState(0);
 
   useEffect(() => {
     // Tek URL kaynağı: paylaşılan axios instance (bkz. utils/axios.js) —
@@ -136,50 +264,20 @@ export default function PricingSection() {
   const activeVideo = video?.[tab === "lgs" ? "lgs" : "yks"];
   const videoEmbedUrl = activeVideo?.enabled && activeVideo?.videoUrl ? toYouTubeEmbed(activeVideo.videoUrl) : null;
 
-  useEffect(() => { setPrimaryIdx(0); setActivePlanIdx(0); }, [tab]);
-
   const yksPackages = packages.filter((p) => p.type !== "lgs");
   const lgsPackages = packages.filter((p) => p.type !== "yks");
   const visible = tab === "lgs" ? lgsPackages : yksPackages;
-  const primary = visible[primaryIdx] ?? null;
-
-  const plans = Array.isArray(primary?.plans) ? primary.plans : [];
-  const hasPlanTabs = plans.length > 1;
-  const activePlan = hasPlanTabs ? plans[activePlanIdx] : null;
-
-  const features =
-    primary?.features && primary.features.filter((f) => f.included).length >= 3
-      ? primary.features.filter((f) => f.included).map((f) => f.label).slice(0, 6)
-      : STATIC_FEATURES;
 
   return (
     <section id="paketler" className="relative overflow-hidden bg-white">
       <style>{`
-        @keyframes pricingFloat1 { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-14px) rotate(5deg)} }
-        @keyframes pricingFloat2 { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-10px) rotate(-6deg)} }
-
-        .bento-grid {
+        .pkg-grid {
           display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
-          grid-template-rows: auto auto;
-          gap: 20px;
-        }
-        .bento-c1 { grid-column: 1; grid-row: 1; }
-        .bento-c2 { grid-column: 2; grid-row: 1 / 3; }
-        .bento-c3 { grid-column: 3; grid-row: 1; }
-        .bento-c4 { grid-column: 1; grid-row: 2; }
-        .bento-c5 { grid-column: 3; grid-row: 2; }
-
-        @media (max-width: 960px) {
-          .bento-grid { grid-template-columns: 1fr 1fr; grid-template-rows: unset; }
-          .bento-c1, .bento-c2, .bento-c3, .bento-c4, .bento-c5 {
-            grid-column: auto; grid-row: auto;
-          }
-          .bento-c2 { grid-column: 1 / -1; }
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 24px;
+          align-items: stretch;
         }
         @media (max-width: 580px) {
-          .bento-grid { grid-template-columns: 1fr; }
-          .bento-c2 { grid-column: auto; }
           .pricing-header { flex-direction: column !important; gap: 24px !important; }
           .pricing-section-pad { padding-left: 20px !important; padding-right: 20px !important; }
         }
@@ -265,7 +363,7 @@ export default function PricingSection() {
           </div>
         </motion.div>
 
-        {/* Bento grid */}
+        {/* Paket kartları — sekmedeki her paket için ayrı kart, yeni paket eklendikçe otomatik çoğalır */}
         <AnimatePresence mode="wait">
           <motion.div
             key={tab}
@@ -274,186 +372,63 @@ export default function PricingSection() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="bento-grid">
-
-              {/* Hücre 1 — Fiyat (koyu mor) */}
-              <motion.div
-                {...popIn}
-                transition={{ duration: 0.55, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-                className="bento-c1"
-              >
-                <div
-                  className="rounded-[28px] relative overflow-hidden flex flex-col h-full"
-                  style={{ background: "#1C1B8A", padding: "44px 40px", boxShadow: "0 16px 40px rgba(28,27,138,0.25)", minHeight: 260 }}
-                >
-                  <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#4a1da0", filter: "blur(60px)", opacity: 0.5, top: -60, right: -40 }} />
-                  <div className="font-fredoka font-semibold text-lime text-[13px] uppercase relative mb-3" style={{ letterSpacing: 3 }}>
-                    {tab === "yks" ? "YKS" : "LGS"} Koçluk Paketi
-                  </div>
-                  {hasPlanTabs && (
-                    <div className="flex gap-1 rounded-full p-1 mb-3 relative" style={{ background: "rgba(255,255,255,0.1)" }}>
-                      {plans.map((plan, i) => (
-                        <button
-                          key={i}
-                          onClick={() => setActivePlanIdx(i)}
-                          className="font-fredoka font-bold text-[12px] px-4 py-1.5 rounded-full border-none cursor-pointer transition-all duration-200 flex-1 text-center"
-                          style={{
-                            background: activePlanIdx === i ? "#D8FF4F" : "transparent",
-                            color: activePlanIdx === i ? "#1C1B8A" : "rgba(255,255,255,0.65)",
-                          }}
-                        >
-                          {plan.label}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  <div className="relative">
-                    <PriceDisplay pkg={primary} activePlan={activePlan} />
-                  </div>
-                  <div className="font-nunito font-bold text-sm mt-2 relative" style={{ color: "rgba(255,255,255,0.55)" }}>
-                    {primary?.subtitle || "4 Haftalık Program"}
-                  </div>
-                  <div className="mt-3 relative">
-                    <span className="font-fredoka font-semibold text-xs px-3 py-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)", letterSpacing: 0.5 }}>
-                      Kredi kartına taksit imkânı
-                    </span>
-                  </div>
-                  <Link
-                    to={primary
-                      ? hasPlanTabs
-                        ? `/hemen-basla?slug=${encodeURIComponent(primary.slug)}&plan=${activePlanIdx}`
-                        : `/hemen-basla?slug=${encodeURIComponent(primary.slug)}`
-                      : "/paket-detay"}
-                    className="block text-center no-underline font-fredoka font-bold text-base rounded-full mt-5 relative transition-transform hover:scale-105"
-                    style={{
-                      background: "#D8FF4F",
-                      color: "#1C1B8A",
-                      padding: "14px",
-                      boxShadow: "0 6px 18px rgba(216,255,79,0.3)",
-                    }}
-                  >
-                    {activePlan?.ctaLabel || "Paketi Satın Al →"}
-                  </Link>
-                </div>
-              </motion.div>
-
-              {/* Hücre 2 — Özellik pill'leri (çift satır) */}
-              <motion.div
-                {...popIn}
-                transition={{ duration: 0.55, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                className="bento-c2"
-              >
-                <div className="rounded-[28px] h-full" style={{ background: "#f4f2fa", padding: "36px 32px" }}>
-                  <div className="font-fredoka font-bold text-page-navy text-base mb-5" style={{ letterSpacing: 0.3 }}>
-                    Pakete Dahil…
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    {features.map((f, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, scale: 0.85 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.4, delay: 0.25 + i * 0.07, ease: [0.22, 1, 0.36, 1] }}
-                      >
-                        <div
-                          className="inline-flex items-center gap-2 rounded-full font-nunito font-bold text-[13px] leading-snug"
-                          style={{
-                            background: i % 2 === 0 ? "#ede8fa" : "#fff0ea",
-                            color: i % 2 === 0 ? "#1C1B8A" : "#FF6B35",
-                            padding: "10px 18px",
-                          }}
-                        >
-                          <span style={{ opacity: 0.7 }}>✓</span>
-                          {f}
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Hücre 3 — CTA (turuncu) */}
-              <motion.div
-                {...popIn}
-                transition={{ duration: 0.55, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                className="bento-c3"
-              >
-                <div
-                  className="rounded-[28px] flex flex-col justify-between relative overflow-hidden h-full"
-                  style={{ background: "#FF6B35", padding: "40px 32px", boxShadow: "0 16px 40px rgba(255,107,53,0.35)", minHeight: 260 }}
-                >
-                  <div className="absolute rounded-full pointer-events-none" style={{ width: 180, height: 180, background: "rgba(255,255,255,0.1)", bottom: -60, right: -60 }} />
-                  <div>
-                    <div className="font-fredoka font-bold text-white text-[28px] leading-[1.2] mb-3">
-                      Ücretsiz<br />Tanışma<br />Görüşmesi
-                    </div>
-                    <div className="font-nunito font-bold text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
-                      İlk görüşme tamamen ücretsiz. Kota dolmadan yerini al.
-                    </div>
-                  </div>
-                  <a
-                    href="/ucretsiz-on-gorusme"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="block text-center no-underline font-fredoka font-bold text-lg rounded-full mt-7 transition-transform hover:scale-105"
-                    style={{
-                      background: "#ffffff",
-                      color: "#FF6B35",
-                      padding: "16px",
-                      boxShadow: "0 6px 18px rgba(0,0,0,0.15)",
-                      animation: "pricingFloat2 3s ease-in-out infinite",
-                    }}
-                  >
-                    Hemen Başla →
-                  </a>
-                </div>
-              </motion.div>
-
-              {/* Hücre 4 — Garanti (sarı) */}
-              <motion.div
-                {...popIn}
-                transition={{ duration: 0.5, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                className="bento-c4"
-              >
-                <div className="rounded-[28px] flex flex-col justify-center gap-2 h-full" style={{ background: "#D8FF4F", padding: "28px 32px" }}>
-                  <div className="text-[36px] leading-none">🛡️</div>
-                  <div className="font-fredoka font-bold text-page-navy text-xl leading-snug">
-                    14 Gün Koşulsuz İade
-                  </div>
-                  <div className="font-nunito font-bold text-sm" style={{ color: "rgba(28,27,138,0.65)" }}>
-                    Program sana uymazsa tam iade alırsın
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Hücre 5 — Karşılaştır (mor pastel) */}
-              <motion.div
-                {...popIn}
-                transition={{ duration: 0.5, delay: 0.42, ease: [0.22, 1, 0.36, 1] }}
-                className="bento-c5"
-              >
-                <Link to="/paket-detay" className="no-underline block h-full">
-                  <div className="rounded-[28px] flex items-center justify-between h-full transition-opacity hover:opacity-80" style={{ background: "#ede8fa", padding: "28px 32px" }}>
-                    <div>
-                      <div className="font-fredoka font-bold text-page-navy text-lg">Tüm paketleri</div>
-                      <div className="font-fredoka font-bold text-page-navy text-lg">karşılaştır</div>
-                    </div>
-                    <div
-                      className="flex items-center justify-center flex-shrink-0 rounded-full"
-                      style={{ width: 44, height: 44, background: "#1C1B8A", animation: "pricingFloat1 3s ease-in-out infinite" }}
-                    >
-                      <span className="text-lime text-xl">→</span>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-
-            </div>
+            {visible.length > 0 ? (
+              <div className="pkg-grid">
+                {visible.map((pkg, i) => (
+                  <PackageCard key={pkg.slug} pkg={pkg} index={i} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16 font-nunito font-bold text-[#94a3b8]">
+                Bu kategoride şu an vitrine açık paket yok.
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
 
-        {/* Tanıtım videosu */}
+        {/* Alt şerit — ücretsiz görüşme, iade güvencesi, tüm paketleri karşılaştır */}
+        <div className="grid grid-cols-3 gap-5 mt-8 max-[820px]:grid-cols-1">
+          <a
+            href="/ucretsiz-on-gorusme"
+            target="_blank"
+            rel="noreferrer"
+            className="no-underline block rounded-[24px] p-6 transition-transform hover:scale-[1.02]"
+            style={{ background: "#FF6B35", boxShadow: "0 10px 26px rgba(255,107,53,0.25)" }}
+          >
+            <div className="font-fredoka font-bold text-white text-lg mb-1">Ücretsiz Tanışma Görüşmesi</div>
+            <div className="font-nunito font-semibold text-sm" style={{ color: "rgba(255,255,255,0.85)" }}>
+              İlk görüşme tamamen ücretsiz, kota dolmadan yerini al →
+            </div>
+          </a>
+
+          <div className="rounded-[24px] p-6 flex items-center gap-3" style={{ background: "#D8FF4F" }}>
+            <span className="text-[28px] flex-shrink-0">🛡️</span>
+            <div>
+              <div className="font-fredoka font-bold text-page-navy text-base">14 Gün Koşulsuz İade</div>
+              <div className="font-nunito font-semibold text-xs" style={{ color: "rgba(28,27,138,0.65)" }}>
+                Program sana uymazsa tam iade alırsın
+              </div>
+            </div>
+          </div>
+
+          <Link
+            to="/paket-detay"
+            className="no-underline block rounded-[24px] p-6 flex items-center justify-between transition-transform hover:scale-[1.02]"
+            style={{ background: "#ede8fa" }}
+          >
+            <div className="font-fredoka font-bold text-page-navy text-base leading-snug">
+              Tüm paketleri<br />karşılaştır
+            </div>
+            <span
+              className="flex items-center justify-center flex-shrink-0 rounded-full"
+              style={{ width: 40, height: 40, background: "#1C1B8A", color: "#D8FF4F" }}
+            >
+              →
+            </span>
+          </Link>
+        </div>
+
+        {/* Tanıtım videosu (sekme geneli) */}
         {videoEmbedUrl && (
           <motion.div
             initial={{ opacity: 0, y: 30 }}

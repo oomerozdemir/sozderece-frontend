@@ -46,6 +46,8 @@ const emptyForm = {
   examDiscountRate: "5",
   plans: [],
   billingCycle: "once",
+  badge: "",
+  videoUrl: "",
 };
 
 const emptyVideoSettings = {
@@ -150,6 +152,8 @@ const AdminPackagePage = () => {
       examDiscountRate: pkg.examDiscountRate ?? "5",
       plans: Array.isArray(pkg.plans) ? pkg.plans : [],
       billingCycle: pkg.billingCycle || "once",
+      badge: pkg.badge || "",
+      videoUrl: pkg.videoUrl || "",
     });
     setShowForm(true);
   };
@@ -340,6 +344,11 @@ const AdminPackagePage = () => {
                   {(!Array.isArray(pkg.plans) || pkg.plans.length === 0) && pkg.billingCycle === "monthly" && (
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#fef3c7] text-[#92400e]">
                       🔁 Aylık Abonelik
+                    </span>
+                  )}
+                  {pkg.badge && (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#ede8fa] text-[#4c1d95]">
+                      {pkg.badge}
                     </span>
                   )}
                 </div>
@@ -594,6 +603,50 @@ const AdminPackagePage = () => {
                     onChange={(e) => setForm({ ...form, ctaHref: e.target.value })}
                   />
                 </div>
+              </div>
+
+              {/* Vitrin Kartı — çoklu paket kartı görünümü */}
+              <div className="border border-[#e0e7ff] bg-[#f5f3ff] rounded-xl p-4 space-y-3">
+                <div>
+                  <label className="block text-xs font-black text-[#4c1d95] mb-0.5">Vitrin Kartı</label>
+                  <p className="text-[11px] text-[#7c3aed]">Ana sayfadaki paket kartları vitrininde (birden fazla paket yan yana) bu kartla ilgili ekstra alanlar.</p>
+                </div>
+                <div className="grid grid-cols-2 gap-3 max-[560px]:grid-cols-1">
+                  <div>
+                    <label className="block text-xs font-bold text-[#475569] mb-1.5">Öne Çıkarma Rozeti</label>
+                    <input
+                      className={inputCls}
+                      placeholder="👍 En Popüler"
+                      value={form.badge}
+                      onChange={(e) => setForm({ ...form, badge: e.target.value })}
+                    />
+                    <p className="text-[10px] text-[#94a3b8] mt-1">Boş bırakılırsa kartın üstünde rozet gösterilmez.</p>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-[#475569] mb-1.5">Kart Videosu (YouTube)</label>
+                    <input
+                      className={inputCls}
+                      placeholder="https://www.youtube.com/watch?v=..."
+                      value={form.videoUrl}
+                      onChange={(e) => setForm({ ...form, videoUrl: e.target.value })}
+                    />
+                    <p className="text-[10px] text-[#94a3b8] mt-1">Boş bırakılırsa kartın altında video gösterilmez.</p>
+                  </div>
+                </div>
+                {form.videoUrl && toYouTubeEmbed(form.videoUrl) && (
+                  <div className="rounded-xl overflow-hidden border border-[#ddd6fe]">
+                    <div className="aspect-video bg-[#0f172a]">
+                      <iframe
+                        src={toYouTubeEmbed(form.videoUrl)}
+                        title="Kart Videosu Önizleme"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full"
+                        style={{ border: 0 }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Not & Ücretsiz Ders */}
