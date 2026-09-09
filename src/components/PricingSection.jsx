@@ -273,7 +273,8 @@ export default function PricingSection() {
       <style>{`
         .pkg-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(280px, 400px));
+          justify-content: center;
           gap: 24px;
           align-items: stretch;
         }
@@ -385,48 +386,6 @@ export default function PricingSection() {
             )}
           </motion.div>
         </AnimatePresence>
-
-        {/* Alt şerit — ücretsiz görüşme, iade güvencesi, tüm paketleri karşılaştır */}
-        <div className="grid grid-cols-3 gap-5 mt-8 max-[820px]:grid-cols-1">
-          <a
-            href="/ucretsiz-on-gorusme"
-            target="_blank"
-            rel="noreferrer"
-            className="no-underline block rounded-[24px] p-6 transition-transform hover:scale-[1.02]"
-            style={{ background: "#FF6B35", boxShadow: "0 10px 26px rgba(255,107,53,0.25)" }}
-          >
-            <div className="font-fredoka font-bold text-white text-lg mb-1">Ücretsiz Tanışma Görüşmesi</div>
-            <div className="font-nunito font-semibold text-sm" style={{ color: "rgba(255,255,255,0.85)" }}>
-              İlk görüşme tamamen ücretsiz, kota dolmadan yerini al →
-            </div>
-          </a>
-
-          <div className="rounded-[24px] p-6 flex items-center gap-3" style={{ background: "#D8FF4F" }}>
-            <span className="text-[28px] flex-shrink-0">🛡️</span>
-            <div>
-              <div className="font-fredoka font-bold text-page-navy text-base">14 Gün Koşulsuz İade</div>
-              <div className="font-nunito font-semibold text-xs" style={{ color: "rgba(28,27,138,0.65)" }}>
-                Program sana uymazsa tam iade alırsın
-              </div>
-            </div>
-          </div>
-
-          <Link
-            to="/paket-detay"
-            className="no-underline block rounded-[24px] p-6 flex items-center justify-between transition-transform hover:scale-[1.02]"
-            style={{ background: "#ede8fa" }}
-          >
-            <div className="font-fredoka font-bold text-page-navy text-base leading-snug">
-              Tüm paketleri<br />karşılaştır
-            </div>
-            <span
-              className="flex items-center justify-center flex-shrink-0 rounded-full"
-              style={{ width: 40, height: 40, background: "#1C1B8A", color: "#D8FF4F" }}
-            >
-              →
-            </span>
-          </Link>
-        </div>
 
         {/* Tanıtım videosu (sekme geneli) */}
         {videoEmbedUrl && (
