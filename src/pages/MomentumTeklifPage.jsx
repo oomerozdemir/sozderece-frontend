@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { FaCheck, FaTimes, FaWhatsapp, FaLock } from "react-icons/fa";
 import TopBar from "../components/TopBar";
 import Navbar from "../components/navbar";
-import Footer from "../components/Footer";
 import Seo from "../components/Seo";
 
 // Bu teklif/lansman sayfası, "14 Günde Çalışma Alışkanlığı Kazan Teklif
@@ -504,8 +503,6 @@ export default function MomentumTeklifPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 }
