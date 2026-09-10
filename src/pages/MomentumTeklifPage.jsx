@@ -289,11 +289,11 @@ export default function MomentumTeklifPage() {
           </div>
         </section>
 
-        {/* ── Büyük Vizyon Paragrafı ── */}
+        {/* ── Vizyonumuz ── */}
         <section className="py-16 px-6">
           <div className="max-w-[720px] mx-auto">
             <motion.div {...fadeUp}>
-              <Eyebrow>Büyük Vizyon Paragrafı (Kimlik + Misyon)</Eyebrow>
+              <Eyebrow>Vizyonumuz</Eyebrow>
             </motion.div>
             <motion.p {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.05 }} className="font-nunito text-[#334155] text-lg leading-relaxed">
               Bu programda, hazır çalışma programlarına bağlı kalmak yerine kendi çalışma
