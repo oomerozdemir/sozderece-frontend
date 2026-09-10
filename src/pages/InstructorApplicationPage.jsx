@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   FaCheck,
@@ -75,6 +75,19 @@ const emptyForm = {
   message: "",
 };
 
+// Boş bırakılan alanı ekranda ortala + odakla; hata mesajı formun tepesinde
+// kalıp kullanıcı fark etmediği için (sayfa uzun, gönder butonu altta).
+function focusField(id) {
+  if (typeof document === "undefined") return;
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: "smooth", block: "center" });
+  // Radyo/label gibi odaklanamayan öğelerde focus sessizce yok sayılır.
+  if (typeof el.focus === "function") {
+    try { el.focus({ preventScroll: true }); } catch { /* noop */ }
+  }
+}
+
 export default function InstructorApplicationPage() {
   const [formData, setFormData] = useState(emptyForm);
   const [cvFile, setCvFile] = useState(null);
@@ -82,8 +95,19 @@ export default function InstructorApplicationPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const errorBoxRef = useRef(null);
 
   const age = useMemo(() => calcAge(formData.birthDate), [formData.birthDate]);
+
+  const fail = (msg, focusId) => {
+    setError(msg);
+    // Hata kutusu bir sonraki render'da DOM'a giriyor — önce onu, alanı yoksa
+    // yine de görünür kılmak için scroll ediyoruz.
+    setTimeout(() => {
+      if (focusId) focusField(focusId);
+      else errorBoxRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 60);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -124,26 +148,27 @@ export default function InstructorApplicationPage() {
 
   const removeSample = (idx) => setSampleFiles((p) => p.filter((_, i) => i !== idx));
 
-  const validate = () => {
-    if (!formData.firstName.trim()) return "Ad alanı zorunludur.";
-    if (!formData.lastName.trim()) return "Soyad alanı zorunludur.";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return "Geçerli bir e-posta adresi giriniz.";
-    if (!/^(05)([0-9]{9})$/.test(formData.phone.replace(/\s/g, ""))) return "Telefon 05XX XXX XX XX formatında olmalı.";
-    if (!formData.birthDate) return "Doğum tarihi zorunludur.";
-    if (!formData.category) return "Lütfen bir kategori seçiniz.";
-    if (!formData.university.trim()) return "Üniversite bilgisi zorunludur.";
-    if (!formData.department.trim()) return "Bölüm bilgisi zorunludur.";
+  // İlk boş/hatalı alanı sırayla bulur — [mesaj, odaklanılacak DOM id'si].
+  const findFirstError = () => {
+    if (!formData.firstName.trim()) return ["Ad alanı zorunludur.", "firstName"];
+    if (!formData.lastName.trim()) return ["Soyad alanı zorunludur.", "lastName"];
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return ["Geçerli bir e-posta adresi giriniz.", "email"];
+    if (!/^(05)([0-9]{9})$/.test(formData.phone.replace(/\s/g, ""))) return ["Telefon 05XX XXX XX XX formatında olmalı.", "phone"];
+    if (!formData.birthDate) return ["Doğum tarihi zorunludur.", "birthDate"];
+    if (!formData.category) return ["Lütfen bir kategori seçiniz.", "category-section"];
+    if (!formData.university.trim()) return ["Üniversite bilgisi zorunludur.", "university"];
+    if (!formData.department.trim()) return ["Bölüm bilgisi zorunludur.", "department"];
     if (formData.experience.trim().length < 30)
-      return "Deneyimini biraz daha ayrıntılı anlat (en az birkaç cümle).";
-    if (!cvFile) return "Lütfen CV'ni yükle.";
-    return "";
+      return ["Deneyimini biraz daha ayrıntılı anlat (en az birkaç cümle).", "experience"];
+    if (!cvFile) return ["Lütfen CV'ni yükle.", "cv-section"];
+    return null;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const v = validate();
+    const v = findFirstError();
     if (v) {
-      setError(v);
+      fail(v[0], v[1]);
       return;
     }
     setLoading(true);
@@ -164,7 +189,7 @@ export default function InstructorApplicationPage() {
         setShowSuccess(true);
       }
     } catch (err) {
-      setError(
+      fail(
         err.response?.data?.message ||
           "Başvuru gönderilirken bir hata oluştu. Lütfen tekrar deneyiniz."
       );
@@ -256,7 +281,11 @@ export default function InstructorApplicationPage() {
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               {error && (
-                <div className="flex items-center gap-2 py-3 px-4 bg-[#fef2f2] border border-[#fecaca] text-[#dc2626] text-sm rounded-xl font-nunito">
+                <div
+                  ref={errorBoxRef}
+                  role="alert"
+                  className="flex items-center gap-2 py-3 px-4 bg-[#fef2f2] border border-[#fecaca] text-[#dc2626] text-sm rounded-xl font-nunito scroll-mt-24"
+                >
                   <FaExclamationTriangle size={13} className="flex-shrink-0" />
                   {error}
                 </div>
@@ -314,7 +343,7 @@ export default function InstructorApplicationPage() {
                 <h3 className="font-fredoka font-bold text-page-navy text-lg m-0 mb-4">
                   Eğitim <span className="text-[#ef4444]">*</span>
                 </h3>
-                <div className="flex flex-col gap-2.5 mb-4">
+                <div id="category-section" className="flex flex-col gap-2.5 mb-4 scroll-mt-24">
                   {CATEGORIES.map((cat) => {
                     const active = formData.category === cat.value;
                     return (
@@ -431,7 +460,7 @@ export default function InstructorApplicationPage() {
                 </div>
 
                 {/* CV */}
-                <div>
+                <div id="cv-section" className="scroll-mt-24">
                   <label className="block font-nunito font-bold text-[#334155] mb-1.5 text-sm">
                     CV <span className="text-[#ef4444]">*</span>
                   </label>
