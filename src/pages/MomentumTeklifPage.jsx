@@ -219,7 +219,7 @@ export default function MomentumTeklifPage() {
     <div className="min-h-screen flex flex-col bg-white">
       <Seo
         title="14 Günde Çalışma Alışkanlığı Kazan"
-        description="Kendi çalışma düzenini kurmak ve çalışma alışkanlığı kazanmaya başlamak isteyen LGS ve YKS öğrencileri için 14 günlük butik program. Sadece 15 öğrenci."
+        description="Kendi çalışma düzenini kurmak ve çalışma alışkanlığı kazanmaya başlamak isteyen LGS ve YKS öğrencileri için 14 günlük butik program. Sadece 10 öğrenci."
       />
       <TopBar />
       <Navbar />
@@ -259,7 +259,7 @@ export default function MomentumTeklifPage() {
                 ● {statusBadge.text}
               </span>
               <p className="font-nunito text-sm text-[#64748b] mt-3">
-                Sadece 15 öğrenci · 1.250 TL tek çekim
+                Sadece 10 öğrenci · 1.250 TL tek çekim
               </p>
             </motion.div>
           </div>
@@ -277,12 +277,12 @@ export default function MomentumTeklifPage() {
               className="bg-white rounded-[24px] p-8 border border-[#ECEAF5] space-y-4"
               style={{ boxShadow: "0 10px 30px rgba(28,27,138,0.06)" }}
             >
-              <p className="font-fredoka font-bold text-page-navy text-lg m-0">Sadece 15 öğrenci alacağım.</p>
+              <p className="font-fredoka font-bold text-page-navy text-lg m-0">Sadece 10 öğrenci alacağım.</p>
               <p className="font-nunito text-[#334155] text-base m-0">
                 Kayıtlar <strong>11 Eylül 2026 Cuma günü</strong> açılacak.
               </p>
               <p className="font-nunito text-[#334155] text-base m-0">
-                Alımlar <strong>17 Eylül 2026 Perşembe günü</strong> veya <strong>15 kişilik kontenjan dolduğunda</strong> kapanacak.
+                Alımlar <strong>17 Eylül 2026 Perşembe günü</strong> veya <strong>10 kişilik kontenjan dolduğunda</strong> kapanacak.
                 Hangisi önce gerçekleşirse kayıtlar sona erecek.
               </p>
             </motion.div>
