@@ -23,6 +23,17 @@ const STATUS_META = {
 const STATUS_OPTIONS = ["PENDING", "REVIEWED", "ACCEPTED", "REJECTED"];
 const LIMIT = 20;
 
+// samplePrograms DB'de JSON dizi string olarak tutuluyor
+const parseSamples = (raw) => {
+  if (!raw) return [];
+  try {
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.filter(Boolean) : [];
+  } catch {
+    return [];
+  }
+};
+
 const AdminInstructorApplicationsPage = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -107,7 +118,8 @@ const AdminInstructorApplicationsPage = () => {
                   <th className="px-4 py-3 text-left">İletişim</th>
                   <th className="px-4 py-3 text-left">Kategori</th>
                   <th className="px-4 py-3 text-left">Üniversite / Bölüm</th>
-                  <th className="px-4 py-3 text-left">CV</th>
+                  <th className="px-4 py-3 text-left">Dosyalar</th>
+                  <th className="px-4 py-3 text-left">Deneyim / Not</th>
                   <th className="px-4 py-3 text-left">Tarih</th>
                   <th className="px-4 py-3 text-left">Durum</th>
                 </tr>
@@ -131,12 +143,35 @@ const AdminInstructorApplicationsPage = () => {
                       {a.department && <div className="text-xs text-[#94a3b8]">{a.department}</div>}
                     </td>
                     <td className="px-4 py-3">
-                      {a.cvUrl ? (
-                        <a href={a.cvUrl} target="_blank" rel="noopener noreferrer" className="text-brand-navy font-bold text-xs hover:underline">
-                          CV Görüntüle
-                        </a>
+                      <div className="flex flex-col gap-1">
+                        {a.cvUrl ? (
+                          <a href={a.cvUrl} target="_blank" rel="noopener noreferrer" className="text-brand-navy font-bold text-xs hover:underline">
+                            CV Görüntüle
+                          </a>
+                        ) : (
+                          <span className="text-xs text-[#cbd5e1]">CV yok</span>
+                        )}
+                        {parseSamples(a.samplePrograms).map((url, idx) => (
+                          <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className="text-[#475569] text-xs hover:text-brand-navy hover:underline">
+                            Örnek Program {idx + 1}
+                          </a>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 max-w-[280px]">
+                      {a.experience ? (
+                        <details className="text-xs text-[#475569]">
+                          <summary className="cursor-pointer text-brand-navy font-semibold">Deneyim</summary>
+                          <p className="mt-1 whitespace-pre-wrap leading-relaxed">{a.experience}</p>
+                        </details>
                       ) : (
                         <span className="text-xs text-[#cbd5e1]">—</span>
+                      )}
+                      {a.message && (
+                        <details className="text-xs text-[#475569] mt-1">
+                          <summary className="cursor-pointer text-[#64748b] font-semibold">Not</summary>
+                          <p className="mt-1 whitespace-pre-wrap leading-relaxed">{a.message}</p>
+                        </details>
                       )}
                     </td>
                     <td className="px-4 py-3 text-[#94a3b8] text-xs whitespace-nowrap">

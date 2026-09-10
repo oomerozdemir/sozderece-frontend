@@ -1,174 +1,169 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import {
+  FaCheck,
+  FaUserGraduate,
+  FaFileUpload,
+  FaTimes,
+  FaExclamationTriangle,
+} from "react-icons/fa";
 import axios from "../utils/axios";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
 import Seo from "../components/Seo";
 
-const inputCls = "w-full py-3 px-4 border-2 border-[#e2e8f0] rounded-lg text-[15px] font-[inherit] transition-all outline-none focus:border-brand-navy focus:shadow-[0_0_0_3px_rgba(16,4,129,0.1)] bg-white max-[480px]:text-sm max-[480px]:py-[10px] max-[480px]:px-[14px]";
+const inputCls =
+  "w-full py-3 px-4 border border-[#e2e8f0] rounded-xl text-[15px] bg-white transition-all outline-none focus:border-page-navy focus:shadow-[0_0_0_3px_rgba(28,27,138,0.1)] placeholder:text-[#aaa] text-[#0f172a] font-nunito";
 
-const InstructorApplicationPage = () => {
-  // Form state
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    birthDate: "",
-    category: "",
-    university: "",
-    department: "",
-    ranking: "",
-    message: "",
-  });
+const CATEGORIES = [
+  { value: "PDR_GRADUATE", label: "PDR Mezunu", desc: "Rehberlik ve Psikolojik Danışmanlık bölümünü bitirdim." },
+  { value: "PDR_STUDENT", label: "PDR Öğrencisi", desc: "Hâlen PDR bölümünde okuyorum." },
+  { value: "UNIVERSITY_STUDENT", label: "Üniversite Öğrencisi / Mezunu", desc: "Farklı bir bölümde okuyorum ya da mezunum (derece öğrencisi dahil)." },
+];
 
+const CRITERIA = [
+  { title: "27 yaş altı", desc: "Öğrencilerle yakın bir yaş bandında, güncel sınav deneyimine sahip." },
+  { title: "Güçlü iletişim", desc: "Öğrenciyle sağlıklı, güven veren bir bağ kurabilmek." },
+  { title: "YKS / LGS'ye hâkimiyet", desc: "Sürecin işleyişini, konuları ve deneme kültürünü içeriden bilmek." },
+  { title: "Takip deneyimi", desc: "Koçluk ya da öğrenci takibi konusunda daha önce çalışmış olmak." },
+  { title: "PDR / derece avantajı", desc: "PDR öğrencisi/mezunu veya derece öğrencisi olmak öne çıkarır." },
+  { title: "Düzen ve ekip uyumu", desc: "Sorumluluk sahibi, düzenli ve ekip çalışmasına yatkın olmak." },
+];
+
+const CV_TYPES = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+const SAMPLE_TYPES = [...CV_TYPES, "image/jpeg", "image/png", "image/webp"];
+const MAX_MB = 5;
+const MAX_SAMPLES = 5;
+
+function calcAge(birthDate) {
+  if (!birthDate) return null;
+  const b = new Date(birthDate);
+  if (Number.isNaN(b.getTime())) return null;
+  const now = new Date();
+  let age = now.getFullYear() - b.getFullYear();
+  const m = now.getMonth() - b.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < b.getDate())) age--;
+  return age;
+}
+
+function Eyebrow({ children }) {
+  return (
+    <div className="flex items-center gap-2 mb-3">
+      <span className="inline-block w-6 h-[3px] rounded-full" style={{ background: "#FF6B35" }} />
+      <span className="font-fredoka font-bold text-[12px] uppercase text-accent-orange" style={{ letterSpacing: 3 }}>
+        {children}
+      </span>
+    </div>
+  );
+}
+
+const emptyForm = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  birthDate: "",
+  category: "",
+  university: "",
+  department: "",
+  ranking: "",
+  experience: "",
+  message: "",
+};
+
+export default function InstructorApplicationPage() {
+  const [formData, setFormData] = useState(emptyForm);
   const [cvFile, setCvFile] = useState(null);
+  const [sampleFiles, setSampleFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
 
-  // Category options
-  const categories = [
-    { value: "PDR_GRADUATE", label: "PDR Mezunu" },
-    { value: "PDR_STUDENT", label: "PDR Öğrencisi" },
-    { value: "UNIVERSITY_STUDENT", label: "Üniversite Öğrencisi" },
-  ];
+  const age = useMemo(() => calcAge(formData.birthDate), [formData.birthDate]);
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    setError(""); // Clear error on input
+    setFormData((p) => ({ ...p, [name]: value }));
+    setError("");
   };
 
-  // Handle file upload
-  const handleFileChange = (e) => {
+  const handleCvChange = (e) => {
     const file = e.target.files[0];
-
-    if (file) {
-      // File size validation (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setError("CV dosyası 5MB'dan küçük olmalıdır.");
-        return;
-      }
-
-      // File type validation
-      const allowedTypes = [
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      ];
-
-      if (!allowedTypes.includes(file.type)) {
-        setError("CV dosyası PDF veya Word formatında olmalıdır.");
-        return;
-      }
-
-      setCvFile(file);
-      setError("");
-    }
+    if (!file) return;
+    if (file.size > MAX_MB * 1024 * 1024) return setError(`CV dosyası ${MAX_MB}MB'dan küçük olmalı.`);
+    if (!CV_TYPES.includes(file.type)) return setError("CV PDF veya Word formatında olmalı.");
+    setCvFile(file);
+    setError("");
   };
 
-  // Remove uploaded file
-  const removeFile = () => {
-    setCvFile(null);
+  const handleSampleChange = (e) => {
+    const incoming = Array.from(e.target.files || []);
+    let next = [...sampleFiles];
+    for (const f of incoming) {
+      if (next.length >= MAX_SAMPLES) {
+        setError(`En fazla ${MAX_SAMPLES} örnek program yükleyebilirsin.`);
+        break;
+      }
+      if (f.size > MAX_MB * 1024 * 1024) {
+        setError(`"${f.name}" ${MAX_MB}MB'dan büyük.`);
+        continue;
+      }
+      if (!SAMPLE_TYPES.includes(f.type)) {
+        setError(`"${f.name}" PDF, Word veya resim olmalı.`);
+        continue;
+      }
+      next.push(f);
+    }
+    setSampleFiles(next);
+    e.target.value = "";
   };
 
-  // Form validation
-  const validateForm = () => {
-    if (!formData.firstName.trim()) {
-      setError("Ad alanı zorunludur.");
-      return false;
-    }
+  const removeSample = (idx) => setSampleFiles((p) => p.filter((_, i) => i !== idx));
 
-    if (!formData.lastName.trim()) {
-      setError("Soyad alanı zorunludur.");
-      return false;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      setError("Geçerli bir e-posta adresi giriniz.");
-      return false;
-    }
-
-    const phoneRegex = /^(05)([0-9]{9})$/;
-    const cleanPhone = formData.phone.replace(/\s/g, "");
-    if (!phoneRegex.test(cleanPhone)) {
-      setError("Telefon numarası 05XX XXX XX XX formatında olmalıdır.");
-      return false;
-    }
-
-    if (!formData.category) {
-      setError("Lütfen bir kategori seçiniz.");
-      return false;
-    }
-
-    if (formData.category === "UNIVERSITY_STUDENT") {
-      if (!formData.university.trim()) {
-        setError("Üniversite öğrencileri için üniversite bilgisi zorunludur.");
-        return false;
-      }
-      if (!formData.department.trim()) {
-        setError("Üniversite öğrencileri için bölüm bilgisi zorunludur.");
-        return false;
-      }
-    }
-
-    return true;
+  const validate = () => {
+    if (!formData.firstName.trim()) return "Ad alanı zorunludur.";
+    if (!formData.lastName.trim()) return "Soyad alanı zorunludur.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return "Geçerli bir e-posta adresi giriniz.";
+    if (!/^(05)([0-9]{9})$/.test(formData.phone.replace(/\s/g, ""))) return "Telefon 05XX XXX XX XX formatında olmalı.";
+    if (!formData.birthDate) return "Doğum tarihi zorunludur.";
+    if (!formData.category) return "Lütfen bir kategori seçiniz.";
+    if (!formData.university.trim()) return "Üniversite bilgisi zorunludur.";
+    if (!formData.department.trim()) return "Bölüm bilgisi zorunludur.";
+    if (formData.experience.trim().length < 30)
+      return "Deneyimini biraz daha ayrıntılı anlat (en az birkaç cümle).";
+    if (!cvFile) return "Lütfen CV'ni yükle.";
+    return "";
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-
-    if (!validateForm()) {
+    const v = validate();
+    if (v) {
+      setError(v);
       return;
     }
-
     setLoading(true);
-
+    setError("");
     try {
-      // Prepare FormData for file upload
       const submitData = new FormData();
-
-      Object.keys(formData).forEach((key) => {
-        if (formData[key]) {
-          submitData.append(key, formData[key]);
-        }
+      Object.entries(formData).forEach(([k, val]) => {
+        if (val) submitData.append(k, val);
       });
+      if (cvFile) submitData.append("cv", cvFile);
+      sampleFiles.forEach((f) => submitData.append("samplePrograms", f));
 
-      if (cvFile) {
-        submitData.append("cv", cvFile);
-      }
-
-   const response = await axios.post("/api/v1/applications/apply", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-});
-
-      if (response.data.success) {
-        // Reset form
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          birthDate: "",
-          category: "",
-          university: "",
-          department: "",
-          ranking: "",
-          message: "",
-        });
+      const res = await axios.post("/api/v1/applications/apply", submitData);
+      if (res.data.success) {
+        setFormData(emptyForm);
         setCvFile(null);
+        setSampleFiles([]);
         setShowSuccess(true);
       }
     } catch (err) {
-      console.error("Başvuru hatası:", err);
       setError(
         err.response?.data?.message ||
           "Başvuru gönderilirken bir hata oluştu. Lütfen tekrar deneyiniz."
@@ -178,321 +173,373 @@ const InstructorApplicationPage = () => {
     }
   };
 
-  // Check if university fields should be shown
-  const showUniversityFields = formData.category === "UNIVERSITY_STUDENT";
-
   return (
     <>
       <Seo
-        title="Sözderece'de Koç Başvurusu"
-        description="Üniversite öğrencisi misin? Sözderece Koçluk bünyesinde LGS ve YKS öğrencilerine koçluk yap. Başvuru formu ile hemen başvur."
+        title="Öğrenci Koçu Başvurusu"
+        description="Sözderece Koçluk bünyesinde LGS ve YKS öğrencilerine koçluk yap. Aradığımız kriterleri incele, örnek programların ve CV'nle başvur."
         canonical="/basvuru"
       />
       <Navbar />
 
-      <motion.div
-        className="min-h-screen bg-gradient-to-br from-[#f8fafc] to-[#e2e8f0] py-10 px-5 max-[768px]:py-5 max-[768px]:px-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="max-w-[800px] mx-auto bg-white rounded-2xl shadow-[0_4px_24px_rgba(16,4,129,0.08)] overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-br from-brand-navy to-accent-orange py-10 px-[30px] text-center text-white max-[768px]:py-[30px] max-[768px]:px-5">
-            <h1 className="text-[32px] font-bold m-0 mb-3 max-[768px]:text-2xl max-[480px]:text-xl">🎓 Öğrenci Koçu Başvuru Formu</h1>
-            <p className="text-base m-0 opacity-[0.95] leading-[1.6] max-[768px]:text-sm">
-              Sözderece ailesine katılmak için başvuru formunu doldurun.
-              <br />
-              Başvurunuzu değerlendirip en kısa sürede size dönüş yapacağız.
-            </p>
+      <main className="bg-white">
+        {/* ── Hero ── */}
+        <section className="relative overflow-hidden" style={{ borderBottom: "1px solid #F0EFF5" }}>
+          <div className="absolute top-0 right-0" style={{ width: 300, height: 300, background: "#ede8fa", borderRadius: "0 0 0 100%", opacity: 0.6 }} />
+          <div className="max-w-[760px] mx-auto px-6 py-16 text-center relative" style={{ zIndex: 1 }}>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex justify-center">
+              <Eyebrow>Koç Başvurusu</Eyebrow>
+            </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.05 }}
+              className="font-fredoka font-bold text-page-navy m-0"
+              style={{ fontSize: "clamp(30px, 4.5vw, 48px)", letterSpacing: -1, lineHeight: 1.1 }}
+            >
+              Öğrenci Koçu Ol
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="font-nunito text-[#475569] mt-4"
+              style={{ fontSize: "clamp(15px, 1.5vw, 18px)", lineHeight: 1.6 }}
+            >
+              Sözderece'de öğrenciyle gün boyu iletişimde olan, onun sürecine gerçekten
+              dokunan koçlarla çalışıyoruz. Aşağıdaki kriterleri okuyup formu doldur;
+              örnek programların ve CV'nle birlikte başvurunu değerlendireceğiz.
+            </motion.p>
           </div>
+        </section>
 
-          {/* Form */}
-          <div className="py-10 px-[30px] max-[768px]:py-6 max-[768px]:px-5">
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-              {/* Error Message */}
+        {/* ── Aradığımız Kriterler ── */}
+        <section className="py-14 px-6" style={{ background: "#F8F7FC" }}>
+          <div className="max-w-[900px] mx-auto">
+            <Eyebrow>Aradığımız Kriterler</Eyebrow>
+            <h2 className="font-fredoka font-bold text-page-navy m-0 mb-6" style={{ fontSize: "clamp(24px, 3vw, 32px)" }}>
+              Koçlarımızda ne arıyoruz?
+            </h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {CRITERIA.map((c, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                  className="bg-white rounded-2xl p-5 border border-[#ECEAF5] flex items-start gap-3"
+                >
+                  <span
+                    className="flex-shrink-0 flex items-center justify-center rounded-full mt-0.5"
+                    style={{ width: 24, height: 24, background: "#ede8fa", color: "#1C1B8A" }}
+                  >
+                    <FaCheck size={11} />
+                  </span>
+                  <div>
+                    <p className="font-fredoka font-bold text-page-navy text-[15px] m-0 mb-1">{c.title}</p>
+                    <p className="font-nunito text-[#64748b] text-sm leading-relaxed m-0">{c.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Form ── */}
+        <section className="py-16 px-6">
+          <div className="max-w-[760px] mx-auto">
+            <Eyebrow>Başvuru Formu</Eyebrow>
+            <h2 className="font-fredoka font-bold text-page-navy m-0 mb-6" style={{ fontSize: "clamp(24px, 3vw, 32px)" }}>
+              Başvurunu gönder
+            </h2>
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               {error && (
-                <div className="flex items-center gap-2 py-3 px-4 bg-[#fef2f2] border border-[#fecaca] text-[#dc2626] text-sm rounded-lg mb-5">
-                  <span>⚠️</span>
+                <div className="flex items-center gap-2 py-3 px-4 bg-[#fef2f2] border border-[#fecaca] text-[#dc2626] text-sm rounded-xl font-nunito">
+                  <FaExclamationTriangle size={13} className="flex-shrink-0" />
                   {error}
                 </div>
               )}
 
-              {/* Personal Information */}
-              <div className="p-6 bg-[#f8fafc] rounded-xl border border-[#e2e8f0] max-[768px]:p-5">
-                <h2 className="text-xl text-brand-navy m-0 mb-5 pb-3 border-b-2 border-accent-orange font-semibold max-[768px]:text-lg">Kişisel Bilgiler</h2>
-
-                <div className="grid grid-cols-2 gap-4 max-[768px]:grid-cols-1 max-[768px]:gap-0">
-                  <div className="mb-5 last:mb-0">
-                    <label htmlFor="firstName" className="block font-semibold text-[#334155] mb-2 text-sm">
-                      Ad <span className="text-[#ef4444] ml-1">*</span>
+              {/* Kişisel Bilgiler */}
+              <div className="bg-[#f8fafc] rounded-2xl border border-[#ECEAF5] p-6 max-[560px]:p-4">
+                <h3 className="font-fredoka font-bold text-page-navy text-lg m-0 mb-4">Kişisel Bilgiler</h3>
+                <div className="grid grid-cols-2 gap-4 max-[560px]:grid-cols-1">
+                  <div>
+                    <label htmlFor="firstName" className="block font-nunito font-bold text-[#334155] mb-1.5 text-sm">
+                      Ad <span className="text-[#ef4444]">*</span>
                     </label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      placeholder="Adınız"
-                      className={inputCls}
-                      required
-                    />
+                    <input id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="Adın" className={inputCls} />
                   </div>
-
-                  <div className="mb-5 last:mb-0">
-                    <label htmlFor="lastName" className="block font-semibold text-[#334155] mb-2 text-sm">
-                      Soyad <span className="text-[#ef4444] ml-1">*</span>
+                  <div>
+                    <label htmlFor="lastName" className="block font-nunito font-bold text-[#334155] mb-1.5 text-sm">
+                      Soyad <span className="text-[#ef4444]">*</span>
                     </label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      placeholder="Soyadınız"
-                      className={inputCls}
-                      required
-                    />
+                    <input id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Soyadın" className={inputCls} />
                   </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 max-[768px]:grid-cols-1 max-[768px]:gap-0">
-                  <div className="mb-5 last:mb-0">
-                    <label htmlFor="email" className="block font-semibold text-[#334155] mb-2 text-sm">
-                      E-posta <span className="text-[#ef4444] ml-1">*</span>
+                  <div>
+                    <label htmlFor="email" className="block font-nunito font-bold text-[#334155] mb-1.5 text-sm">
+                      E-posta <span className="text-[#ef4444]">*</span>
                     </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="ornek@email.com"
-                      className={inputCls}
-                      required
-                    />
+                    <input id="email" type="email" name="email" value={formData.email} onChange={handleChange} placeholder="ornek@email.com" className={inputCls} />
                   </div>
-
-                  <div className="mb-5 last:mb-0">
-                    <label htmlFor="phone" className="block font-semibold text-[#334155] mb-2 text-sm">
-                      Telefon <span className="text-[#ef4444] ml-1">*</span>
+                  <div>
+                    <label htmlFor="phone" className="block font-nunito font-bold text-[#334155] mb-1.5 text-sm">
+                      Telefon <span className="text-[#ef4444]">*</span>
                     </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      placeholder="05XX XXX XX XX"
-                      className={inputCls}
-                      required
-                    />
+                    <input id="phone" type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="05XX XXX XX XX" className={inputCls} />
                   </div>
-                </div>
-
-                <div className="mb-5 last:mb-0">
-                  <label htmlFor="birthDate" className="block font-semibold text-[#334155] mb-2 text-sm">Doğum Tarihi</label>
-                  <input
-                    type="date"
-                    id="birthDate"
-                    name="birthDate"
-                    value={formData.birthDate}
-                    onChange={handleChange}
-                    className={inputCls}
-                  />
-                </div>
-              </div>
-
-              {/* Category Selection */}
-              <div className="p-6 bg-[#f8fafc] rounded-xl border border-[#e2e8f0] max-[768px]:p-5">
-                <h2 className="text-xl text-brand-navy m-0 mb-5 pb-3 border-b-2 border-accent-orange font-semibold max-[768px]:text-lg">Kategori Seçimi <span className="text-[#ef4444] ml-1">*</span></h2>
-
-                <div className="flex flex-col gap-3">
-                  {categories.map((cat) => (
-                    <div
-                      key={cat.value}
-                      className="flex items-center py-[14px] px-[18px] bg-white border-2 border-[#e2e8f0] rounded-lg cursor-pointer transition hover:border-brand-navy hover:bg-[#f8fafc] max-[768px]:py-3 max-[768px]:px-[14px]"
-                      onClick={() =>
-                        setFormData((prev) => ({ ...prev, category: cat.value }))
-                      }
-                    >
-                      <input
-                        type="radio"
-                        id={cat.value}
-                        name="category"
-                        value={cat.value}
-                        checked={formData.category === cat.value}
-                        onChange={handleChange}
-                        className="peer w-5 h-5 mr-3 cursor-pointer accent-brand-navy"
-                      />
-                      <label
-                        htmlFor={cat.value}
-                        className={`m-0 cursor-pointer font-medium flex-1 transition-colors ${formData.category === cat.value ? "text-brand-navy font-semibold" : "text-[#475569]"}`}
+                  <div className="col-span-2 max-[560px]:col-span-1">
+                    <label htmlFor="birthDate" className="block font-nunito font-bold text-[#334155] mb-1.5 text-sm">
+                      Doğum Tarihi <span className="text-[#ef4444]">*</span>
+                    </label>
+                    <input id="birthDate" type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} className={inputCls} />
+                    {age !== null && (
+                      <p
+                        className={`font-nunito text-xs mt-1.5 flex items-center gap-1.5 ${
+                          age >= 27 ? "text-[#b45309]" : "text-[#059669]"
+                        }`}
                       >
-                        {cat.label}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Conditional University Fields */}
-                {showUniversityFields && (
-                  <div className="mt-4 pt-4 border-t border-dashed border-[#cbd5e1] animate-slide-down">
-                    <div className="mb-5 last:mb-0">
-                      <label htmlFor="university" className="block font-semibold text-[#334155] mb-2 text-sm">
-                        Üniversite <span className="text-[#ef4444] ml-1">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        id="university"
-                        name="university"
-                        value={formData.university}
-                        onChange={handleChange}
-                        placeholder="Üniversite adı"
-                        className={inputCls}
-                        required={showUniversityFields}
-                      />
-                    </div>
-
-                    <div className="mb-5 last:mb-0">
-                      <label htmlFor="department" className="block font-semibold text-[#334155] mb-2 text-sm">
-                        Bölüm <span className="text-[#ef4444] ml-1">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        id="department"
-                        name="department"
-                        value={formData.department}
-                        onChange={handleChange}
-                        placeholder="Bölüm adı"
-                        className={inputCls}
-                        required={showUniversityFields}
-                      />
-                    </div>
-
-                    <div className="mb-5 last:mb-0">
-                      <label htmlFor="ranking" className="block font-semibold text-[#334155] mb-2 text-sm">YKS Derecesi</label>
-                      <input
-                        type="text"
-                        id="ranking"
-                        name="ranking"
-                        value={formData.ranking}
-                        onChange={handleChange}
-                        placeholder="Örn: 1234"
-                        className={inputCls}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Additional Information */}
-              <div className="p-6 bg-[#f8fafc] rounded-xl border border-[#e2e8f0] max-[768px]:p-5">
-                <h2 className="text-xl text-brand-navy m-0 mb-5 pb-3 border-b-2 border-accent-orange font-semibold max-[768px]:text-lg">Ek Bilgiler</h2>
-
-                <div className="mb-5 last:mb-0">
-                  <label htmlFor="message" className="block font-semibold text-[#334155] mb-2 text-sm">Mesajınız</label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    placeholder="Kendinizden bahsedin, neden bizle çalışmak istiyorsunuz?"
-                    rows="5"
-                    className={`${inputCls} resize-y min-h-[120px] leading-[1.6]`}
-                  />
-                </div>
-
-                {/* CV Upload */}
-                <div className="mb-5 last:mb-0">
-                  <label className="block font-semibold text-[#334155] mb-2 text-sm">CV Yükle (Opsiyonel)</label>
-                  <div className="relative">
-                    <div
-                      className={`border-2 border-dashed rounded-xl py-8 px-6 text-center transition cursor-pointer max-[480px]:py-6 max-[480px]:px-4 ${cvFile ? "border-[#10b981] bg-[#ecfdf5]" : "border-[#cbd5e1] bg-white hover:border-brand-navy hover:bg-[#f8fafc]"}`}
-                      onClick={() => document.getElementById("cv-upload").click()}
-                    >
-                      <div className={`text-5xl mb-3 max-[480px]:text-[36px] ${cvFile ? "text-[#10b981]" : "text-[#94a3b8]"}`}>
-                        {cvFile ? "📄" : "☁️"}
-                      </div>
-                      <div className={`text-[15px] mb-2 ${cvFile ? "text-[#059669] font-semibold" : "text-[#64748b]"}`}>
-                        {cvFile ? cvFile.name : "CV dosyanızı yüklemek için tıklayın"}
-                      </div>
-                      <div className="text-[13px] text-[#94a3b8]">
-                        PDF veya Word formatı • Maks 5MB
-                      </div>
-                      <input
-                        type="file"
-                        id="cv-upload"
-                        className="hidden"
-                        accept=".pdf,.doc,.docx"
-                        onChange={handleFileChange}
-                      />
-                    </div>
-                    {cvFile && (
-                      <button
-                        type="button"
-                        className="mt-3 bg-[#ef4444] text-white border-0 py-2 px-4 rounded-md text-[13px] cursor-pointer transition hover:bg-[#dc2626]"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeFile();
-                        }}
-                      >
-                        Dosyayı Kaldır
-                      </button>
+                        {age >= 27 ? <FaExclamationTriangle size={11} /> : <FaCheck size={11} />}
+                        Yaşın: {age}. {age >= 27 && "Koçlarımızda 27 yaş altı arıyoruz; yine de başvurabilirsin, ekip değerlendirir."}
+                      </p>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* Submit Button */}
-              <div className="mt-8 text-center">
-                <button
-                  type="submit"
-                  className="bg-gradient-to-br from-brand-navy to-accent-orange text-white border-0 py-4 px-12 text-base font-semibold rounded-lg cursor-pointer transition shadow-[0_4px_12px_rgba(16,4,129,0.2)] inline-flex items-center gap-2.5 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(16,4,129,0.3)] disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none max-[768px]:w-full max-[768px]:justify-center max-[768px]:py-[14px] max-[768px]:px-6"
-                  disabled={loading}
-                >
-                  {loading && (
-                    <span className="inline-block w-[18px] h-[18px] border-[3px] border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                  )}
-                  {loading ? "Gönderiliyor..." : "Başvuruyu Gönder"}
-                </button>
+              {/* Eğitim & Kategori */}
+              <div className="bg-[#f8fafc] rounded-2xl border border-[#ECEAF5] p-6 max-[560px]:p-4">
+                <h3 className="font-fredoka font-bold text-page-navy text-lg m-0 mb-4">
+                  Eğitim <span className="text-[#ef4444]">*</span>
+                </h3>
+                <div className="flex flex-col gap-2.5 mb-4">
+                  {CATEGORIES.map((cat) => {
+                    const active = formData.category === cat.value;
+                    return (
+                      <button
+                        type="button"
+                        key={cat.value}
+                        onClick={() => setFormData((p) => ({ ...p, category: cat.value }))}
+                        className={`text-left flex items-start gap-3 py-3.5 px-4 rounded-xl border-2 transition-colors ${
+                          active ? "border-page-navy bg-white" : "border-[#e2e8f0] bg-white hover:border-[#c7d2fe]"
+                        }`}
+                      >
+                        <span
+                          className="flex-shrink-0 flex items-center justify-center rounded-full mt-0.5 border-2"
+                          style={{
+                            width: 18,
+                            height: 18,
+                            borderColor: active ? "#1C1B8A" : "#cbd5e1",
+                            background: active ? "#1C1B8A" : "transparent",
+                          }}
+                        >
+                          {active && <FaCheck size={8} className="text-white" />}
+                        </span>
+                        <span>
+                          <span className={`block font-nunito font-bold text-sm ${active ? "text-page-navy" : "text-[#334155]"}`}>{cat.label}</span>
+                          <span className="block font-nunito text-xs text-[#64748b] mt-0.5">{cat.desc}</span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 max-[560px]:grid-cols-1">
+                  <div>
+                    <label htmlFor="university" className="block font-nunito font-bold text-[#334155] mb-1.5 text-sm">
+                      Üniversite <span className="text-[#ef4444]">*</span>
+                    </label>
+                    <input id="university" name="university" value={formData.university} onChange={handleChange} placeholder="Okuduğun / bitirdiğin üniversite" className={inputCls} />
+                  </div>
+                  <div>
+                    <label htmlFor="department" className="block font-nunito font-bold text-[#334155] mb-1.5 text-sm">
+                      Bölüm <span className="text-[#ef4444]">*</span>
+                    </label>
+                    <input id="department" name="department" value={formData.department} onChange={handleChange} placeholder="Bölümün" className={inputCls} />
+                  </div>
+                  <div className="col-span-2 max-[560px]:col-span-1">
+                    <label htmlFor="ranking" className="block font-nunito font-bold text-[#334155] mb-1.5 text-sm">
+                      YKS Sıralaman / Dereceniz <span className="text-[#94a3b8] font-normal">(opsiyonel)</span>
+                    </label>
+                    <input id="ranking" name="ranking" value={formData.ranking} onChange={handleChange} placeholder="Örn: TYT 2.500 · AYT 1.800 ya da bölüm 1.'si" className={inputCls} />
+                  </div>
+                </div>
               </div>
+
+              {/* Deneyim & Örnek Çalışmalar */}
+              <div className="bg-[#f8fafc] rounded-2xl border border-[#ECEAF5] p-6 max-[560px]:p-4">
+                <h3 className="font-fredoka font-bold text-page-navy text-lg m-0 mb-4">Deneyim & Örnek Çalışmalar</h3>
+
+                <div className="mb-4">
+                  <label htmlFor="experience" className="block font-nunito font-bold text-[#334155] mb-1.5 text-sm">
+                    Koçluk / öğrenci takibi deneyimin <span className="text-[#ef4444]">*</span>
+                  </label>
+                  <textarea
+                    id="experience"
+                    name="experience"
+                    value={formData.experience}
+                    onChange={handleChange}
+                    rows={5}
+                    placeholder="Kaç öğrenciyle, ne kadar süre çalıştın? Hangi sınav grubu (LGS/TYT/AYT)? Nasıl bir takip yöntemi kullandın, hangi sonuçları aldın?"
+                    className={`${inputCls} resize-y min-h-[120px] leading-relaxed`}
+                  />
+                </div>
+
+                {/* Örnek Programlar */}
+                <div className="mb-4">
+                  <label className="block font-nunito font-bold text-[#334155] mb-1.5 text-sm">
+                    Örnek Program(lar) <span className="text-[#94a3b8] font-normal">(en fazla {MAX_SAMPLES} dosya)</span>
+                  </label>
+                  <p className="font-nunito text-xs text-[#64748b] mb-2">
+                    Daha önce hazırladığın haftalık/aylık örnek çalışma programları. PDF, Word veya görsel.
+                  </p>
+                  <label
+                    htmlFor="sample-upload"
+                    className="flex flex-col items-center justify-center border-2 border-dashed border-[#cbd5e1] rounded-xl py-7 px-5 text-center cursor-pointer bg-white hover:border-page-navy hover:bg-[#f8fafc] transition-colors"
+                  >
+                    <FaFileUpload size={24} className="text-[#94a3b8] mb-2" />
+                    <span className="font-nunito text-sm text-[#64748b]">Dosya seçmek için tıkla</span>
+                    <span className="font-nunito text-xs text-[#94a3b8] mt-1">PDF / Word / Görsel • dosya başına maks {MAX_MB}MB</span>
+                    <input
+                      id="sample-upload"
+                      type="file"
+                      multiple
+                      accept=".pdf,.doc,.docx,image/jpeg,image/png,image/webp"
+                      className="hidden"
+                      onChange={handleSampleChange}
+                    />
+                  </label>
+                  {sampleFiles.length > 0 && (
+                    <ul className="mt-3 flex flex-col gap-2">
+                      {sampleFiles.map((f, i) => (
+                        <li key={i} className="flex items-center justify-between gap-3 bg-white border border-[#e2e8f0] rounded-lg px-3 py-2">
+                          <span className="font-nunito text-sm text-[#334155] truncate">📄 {f.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeSample(i)}
+                            className="flex-shrink-0 text-[#ef4444] hover:text-[#dc2626]"
+                            aria-label="Dosyayı kaldır"
+                          >
+                            <FaTimes size={13} />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                {/* CV */}
+                <div>
+                  <label className="block font-nunito font-bold text-[#334155] mb-1.5 text-sm">
+                    CV <span className="text-[#ef4444]">*</span>
+                  </label>
+                  <p className="font-nunito text-xs text-[#64748b] mb-2">
+                    Derece / sıralama bilgin, okuduğun okul ve geçmiş deneyimlerin. PDF veya Word.
+                  </p>
+                  <label
+                    htmlFor="cv-upload"
+                    className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl py-7 px-5 text-center cursor-pointer transition-colors ${
+                      cvFile ? "border-[#10b981] bg-[#ecfdf5]" : "border-[#cbd5e1] bg-white hover:border-page-navy hover:bg-[#f8fafc]"
+                    }`}
+                  >
+                    <FaUserGraduate size={24} className={cvFile ? "text-[#10b981] mb-2" : "text-[#94a3b8] mb-2"} />
+                    <span className={`font-nunito text-sm ${cvFile ? "text-[#059669] font-bold" : "text-[#64748b]"}`}>
+                      {cvFile ? cvFile.name : "CV dosyanı yüklemek için tıkla"}
+                    </span>
+                    <span className="font-nunito text-xs text-[#94a3b8] mt-1">PDF / Word • maks {MAX_MB}MB</span>
+                    <input
+                      id="cv-upload"
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      className="hidden"
+                      onChange={handleCvChange}
+                    />
+                  </label>
+                  {cvFile && (
+                    <button
+                      type="button"
+                      onClick={() => setCvFile(null)}
+                      className="mt-2 font-nunito text-xs text-[#ef4444] hover:underline"
+                    >
+                      CV'yi kaldır
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Ek Not */}
+              <div className="bg-[#f8fafc] rounded-2xl border border-[#ECEAF5] p-6 max-[560px]:p-4">
+                <label htmlFor="message" className="block font-fredoka font-bold text-page-navy text-lg mb-3">
+                  Eklemek istediğin bir şey var mı? <span className="font-nunito text-sm text-[#94a3b8] font-normal">(opsiyonel)</span>
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  rows={4}
+                  placeholder="Neden Sözderece'de koçluk yapmak istiyorsun? Uygun olduğun günler / saatler..."
+                  className={`${inputCls} resize-y min-h-[100px] leading-relaxed`}
+                />
+              </div>
+
+              <motion.button
+                whileHover={{ scale: loading ? 1 : 1.01 }}
+                whileTap={{ scale: loading ? 1 : 0.98 }}
+                type="submit"
+                disabled={loading}
+                className="mt-2 py-4 font-fredoka font-bold text-white rounded-2xl text-base w-full disabled:opacity-60 flex items-center justify-center gap-2"
+                style={{ background: "#1C1B8A", boxShadow: "0 10px 26px rgba(28,27,138,0.25)" }}
+              >
+                {loading ? (
+                  <>
+                    <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    Gönderiliyor…
+                  </>
+                ) : (
+                  "Başvuruyu Gönder →"
+                )}
+              </motion.button>
             </form>
           </div>
-        </div>
+        </section>
+      </main>
 
-        {/* Success Modal */}
-        {showSuccess && (
-          <div
-            className="fixed inset-0 bg-black/60 flex items-center justify-center z-[1000] p-5"
-            onClick={() => setShowSuccess(false)}
+      {showSuccess && (
+        <div
+          className="fixed inset-0 bg-black/60 flex items-center justify-center z-[1000] p-5"
+          onClick={() => setShowSuccess(false)}
+        >
+          <motion.div
+            className="bg-white rounded-3xl p-9 max-w-[460px] w-full text-center shadow-[0_20px_60px_rgba(0,0,0,0.3)]"
+            initial={{ scale: 0.85, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            onClick={(e) => e.stopPropagation()}
           >
-            <motion.div
-              className="bg-white rounded-2xl py-10 px-10 max-w-[500px] w-full text-center shadow-[0_20px_60px_rgba(0,0,0,0.3)] max-[768px]:py-[30px] max-[768px]:px-5"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              onClick={(e) => e.stopPropagation()}
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+              style={{ background: "#ecfdf5", color: "#059669" }}
             >
-              <div className="text-[64px] mb-4">✅</div>
-              <h2 className="text-[24px] text-brand-navy m-0 mb-3 max-[768px]:text-xl">Başvurunuz Alındı!</h2>
-              <p className="text-base text-[#64748b] leading-[1.6] m-0 mb-6 max-[768px]:text-sm">
-                Teşekkür ederiz! Başvurunuz başarıyla iletildi. Ekibimiz en kısa
-                sürede değerlendirip size dönüş yapacaktır.
-              </p>
-              <button
-                className="bg-brand-navy text-white border-0 py-3 px-8 rounded-lg text-[15px] font-semibold cursor-pointer transition hover:bg-[#0a0351]"
-                onClick={() => setShowSuccess(false)}
-              >
-                Kapat
-              </button>
-            </motion.div>
-          </div>
-        )}
-      </motion.div>
+              <FaCheck size={26} />
+            </div>
+            <h2 className="font-fredoka font-bold text-page-navy text-xl m-0 mb-2">Başvurun alındı!</h2>
+            <p className="font-nunito text-[#64748b] text-sm leading-relaxed m-0 mb-6">
+              Teşekkürler. Başvurunu ekibimiz değerlendirip en kısa sürede sana dönüş yapacak.
+            </p>
+            <button
+              onClick={() => setShowSuccess(false)}
+              className="font-fredoka font-bold text-white rounded-xl py-3 px-8 text-sm"
+              style={{ background: "#1C1B8A" }}
+            >
+              Kapat
+            </button>
+          </motion.div>
+        </div>
+      )}
 
       <Footer />
     </>
   );
-};
-
-export default InstructorApplicationPage;
+}
