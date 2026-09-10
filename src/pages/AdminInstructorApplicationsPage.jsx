@@ -23,7 +23,8 @@ const STATUS_META = {
 const STATUS_OPTIONS = ["PENDING", "REVIEWED", "ACCEPTED", "REJECTED"];
 const LIMIT = 20;
 
-// samplePrograms DB'de JSON dizi string olarak tutuluyor
+// samplePrograms API'den JSON dizi string olarak geliyor; içinde artık
+// backend'in ürettiği taze imzalı download URL'leri var.
 const parseSamples = (raw) => {
   if (!raw) return [];
   try {
@@ -33,12 +34,6 @@ const parseSamples = (raw) => {
     return [];
   }
 };
-
-// Cloudinary raw dosyasını orijinal formatında indirtir (fl_attachment).
-const toDownloadUrl = (url) =>
-  typeof url === "string" && url.includes("/upload/")
-    ? url.replace("/upload/", "/upload/fl_attachment/")
-    : url;
 
 const AdminInstructorApplicationsPage = () => {
   const [applications, setApplications] = useState([]);
@@ -151,15 +146,15 @@ const AdminInstructorApplicationsPage = () => {
                     <td className="px-4 py-3">
                       <div className="flex flex-col gap-1">
                         {a.cvUrl ? (
-                          <a href={toDownloadUrl(a.cvUrl)} target="_blank" rel="noopener noreferrer" className="text-brand-navy font-bold text-xs hover:underline">
-                            CV İndir
+                          <a href={a.cvUrl} target="_blank" rel="noopener noreferrer" className="text-brand-navy font-bold text-xs hover:underline">
+                            CV Görüntüle
                           </a>
                         ) : (
                           <span className="text-xs text-[#cbd5e1]">CV yok</span>
                         )}
                         {parseSamples(a.samplePrograms).map((url, idx) => (
-                          <a key={idx} href={toDownloadUrl(url)} target="_blank" rel="noopener noreferrer" className="text-[#475569] text-xs hover:text-brand-navy hover:underline">
-                            Örnek Program {idx + 1} indir
+                          <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className="text-[#475569] text-xs hover:text-brand-navy hover:underline">
+                            Örnek Program {idx + 1}
                           </a>
                         ))}
                       </div>
