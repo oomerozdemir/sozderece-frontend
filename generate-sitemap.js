@@ -8,6 +8,17 @@ const RAW_BASE = "https://sozderecekocluk.com";
 const BASE_URL = RAW_BASE.replace(/\/+$/, ""); // Sondaki slash'ı temizle
 const API_BASE = `${BASE_URL}/api/v1`;
 
+// Öğretmen pazaryeri bayrağını src/config/features.js'ten metin olarak oku
+// (import yerine — CJS/ESM karışıklığını bypass etmek için, posts.js ile aynı yöntem).
+// Kapalıyken /ogretmenler ve /ogretmenler/<slug> URL'leri sitemap'e HİÇ eklenmiyor.
+let SHOW_OGRETMEN = false;
+try {
+  const featuresSrc = fs.readFileSync(path.join(__dirname, "src", "config", "features.js"), "utf8");
+  SHOW_OGRETMEN = /export const SHOW_OGRETMEN\s*=\s*true/.test(featuresSrc);
+} catch {
+  /* dosya yoksa güvenli varsayılan: kapalı */
+}
+
 // XML Karakterlerini Temizleme (Hata Önleyici)
 const escapeXml = (unsafe) => {
   if (typeof unsafe !== 'string') return unsafe;
@@ -49,7 +60,7 @@ async function generateSitemap() {
     { loc: "/ekibimiz",                   priority: 0.7, changefreq: "yearly" },
     { loc: "/sss",                        priority: 0.7, changefreq: "monthly" },
     { loc: "/blog",                       priority: 0.9, changefreq: "weekly" },
-    { loc: "/ogretmenler",                priority: 0.9, changefreq: "daily" },
+    ...(SHOW_OGRETMEN ? [{ loc: "/ogretmenler", priority: 0.9, changefreq: "daily" }] : []),
     { loc: "/ucretsiz-on-gorusme",        priority: 0.8, changefreq: "yearly" },
     { loc: "/basvuru",                    priority: 0.6, changefreq: "yearly" },
     { loc: "/lgs-hazirlik",               priority: 0.9, changefreq: "weekly" },
@@ -99,9 +110,9 @@ async function generateSitemap() {
     console.error("❌ Blog yazıları işlenirken hata:", error.message);
   }
 
-  // 4. ÖĞRETMENLER (API'den Çekme)
+  // 4. ÖĞRETMENLER (API'den Çekme) — sadece pazaryeri açıkken
   // ------------------------------------
-  try {
+  if (SHOW_OGRETMEN) try {
     console.log("⏳ Öğretmen verileri API'den çekiliyor...");
     
     // Axios kullanarak veriyi çekiyoruz (Fetch polyfill gerekmez)

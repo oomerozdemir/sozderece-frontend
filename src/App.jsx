@@ -7,6 +7,8 @@ import RoleRoute from "./components/RoleRoutes.jsx";
 import VisitorTracker from "./components/VisitorTracker.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import CookieConsent from "./components/CookieConsent.jsx";
+import FeatureUnavailable from "./components/FeatureUnavailable.jsx";
+import { SHOW_OGRETMEN } from "./config/features";
 
 import "./cssFiles/index.css";
 import "slick-carousel/slick/slick.css";
@@ -136,12 +138,15 @@ function App() {
             {/* ÖĞRETMEN: panel (yalnızca teacher rolü) */}
             <Route
               path="/ogretmen/panel/profil"element={<RequireTeacher><TeacherPanel /></RequireTeacher>}/>
-            <Route path="/ogretmenler" element={<TeachersList />} />
-            <Route path="/ogretmenler/:slug" element={<TeacherDetail />} />
-
+            {/* Öğretmen pazaryeri kapalıyken (SHOW_OGRETMEN=false) bu rotalar
+                zengin içerik yerine noindex'li bir "aktif değil" sayfası
+                gösteriyor — Google bu URL'leri (ör. /ogretmenler) yeniden
+                tarayıp sonuçlardan düşürebilsin diye. */}
+            <Route path="/ogretmenler" element={SHOW_OGRETMEN ? <TeachersList /> : <FeatureUnavailable />} />
+            <Route path="/ogretmenler/:slug" element={SHOW_OGRETMEN ? <TeacherDetail /> : <FeatureUnavailable />} />
 
             {/* Öğrenci → Öğretmenden ders talebi formu */}
-            <Route path="/ogretmenler/:slug/talep" element={<LessonRequest />} />
+            <Route path="/ogretmenler/:slug/talep" element={SHOW_OGRETMEN ? <LessonRequest /> : <FeatureUnavailable />} />
 
             {/* Paket seçim sayfası (talep sonrası) */}
             <Route path="/paket-sec" element={<PackageSelect />} />
