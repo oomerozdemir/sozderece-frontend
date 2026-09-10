@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Button from "./ui/Button";
 import { FaInstagram, FaFacebook, FaGoogle, FaTiktok, FaWhatsapp, FaEnvelope, FaTwitter, FaYoutube, FaGlobe, FaLink } from "react-icons/fa";
 import {
-  FaChartPie, FaChalkboardTeacher, FaBoxOpen, FaUserCheck, FaClipboardList, FaShoppingCart,
+  FaChartPie, FaChalkboardTeacher, FaBoxOpen, FaUserCheck, FaShoppingCart,
   FaSyncAlt, FaUsers, FaFire, FaCreditCard, FaGraduationCap, FaUniversity, FaPhoneAlt,
   FaFileAlt, FaListUl, FaSearch, FaFilter, FaChevronDown, FaChevronUp, FaDownload,
 } from "react-icons/fa";
@@ -19,7 +19,6 @@ import {
 } from "chart.js";
 import AdminCoachPage from "../pages/AdminCoachPage";
 import AdminTeacherApprovals from "../pages/AdminTeacherApprovels";
-import AdminTeacherRequests from "../pages/AdminTeacherRequests";
 import AdminPackagePage from "../pages/AdminPackagePage";
 import AdminCampPage from "../pages/AdminCampPage";
 import AdminPaymentSettings from "../pages/AdminPaymentSettings";
@@ -406,7 +405,6 @@ const AdminDashboard = () => {
       items: [
         { key: "coaches", label: "Koçlar", icon: FaChalkboardTeacher },
         { key: "teacher-approvals", label: "Öğretmen Onayları", icon: FaUserCheck },
-        { key: "teacher-requests", label: "Talep Özeti", icon: FaClipboardList },
         { key: "users", label: "Kullanıcılar", icon: FaUsers },
       ],
     },
@@ -531,7 +529,6 @@ const AdminDashboard = () => {
         {view === "coaches"           && <AdminCoachPage />}
         {view === "packages"          && <AdminPackagePage />}
         {view === "teacher-approvals" && <AdminTeacherApprovals />}
-        {view === "teacher-requests"  && <AdminTeacherRequests />}
         {view === "camp"              && <AdminCampPage />}
         {view === "payment-settings"  && <AdminPaymentSettings />}
         {view === "lgs"               && <AdminLgsPage />}
