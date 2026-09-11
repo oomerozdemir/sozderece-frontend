@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaShieldAlt, FaCheck, FaCheckCircle, FaSyncAlt, FaCreditCard,
-  FaUserGraduate, FaMapMarkerAlt, FaLock, FaTag,
+  FaUserGraduate, FaMapMarkerAlt, FaLock, FaTag, FaInfoCircle,
 } from "react-icons/fa";
 import axios from "../utils/axios";
 import {
@@ -200,6 +200,15 @@ export default function CoachingWizardOdeme() {
       },
     ];
   }, [pkg, activePlan]);
+
+  // Paketin kendi "features" listesi varsa (admin panelde girilmiş, gerçek
+  // içerik) sitedeki genel "Dahil Olanlar" varsayılanı yerine onu göster —
+  // ör. kısa/özel programlarda (14 Günlük Program gibi) generic liste
+  // ("Rehberlik Videoları" vb.) yanlış bilgi vermesin diye.
+  const packageIncludes = Array.isArray(pkg?.features)
+    ? pkg.features.filter((f) => f.included).map((f) => f.label)
+    : [];
+  const includesList = packageIncludes.length > 0 ? packageIncludes : (settings.includes || []);
 
   const { total, eligibleTutoringTotal } = useMemo(() => computeCartTotals(cart), [cart]);
   const calculatedDiscountValue = useMemo(() => computeCouponDiscount(cart, couponData), [cart, couponData]);
@@ -656,11 +665,11 @@ export default function CoachingWizardOdeme() {
                   ))}
                 </ul>
 
-                {(settings.includes || []).length > 0 && (
+                {includesList.length > 0 && (
                   <div className="bg-[#f8fafc] rounded-xl p-4 border border-[#e2e8f0]">
                     <p className="font-nunito text-xs font-black text-[#0f172a] uppercase tracking-wide mb-3">Dahil Olanlar</p>
                     <ul className="space-y-2">
-                      {(settings.includes || []).map((item, i) => (
+                      {includesList.map((item, i) => (
                         <li key={i} className="flex items-start gap-2 font-nunito text-sm text-[#374151]">
                           <FaCheckCircle className="text-accent-orange flex-shrink-0 mt-0.5" size={13} />
                           {item}
@@ -741,11 +750,27 @@ export default function CoachingWizardOdeme() {
                   </div>
                 </div>
 
-                {settings.guaranteeText && (
-                  <div className="flex items-start gap-2 p-3 bg-[#ecfdf5] rounded-xl border border-[#a7f3d0]">
-                    <FaCheckCircle className="text-[#059669] flex-shrink-0 mt-0.5" size={13} />
-                    <p className="font-nunito text-xs text-[#065f46] leading-relaxed">{settings.guaranteeText}</p>
+                {pkg?.noRefund ? (
+                  // Bu paket için iade/cayma hakkı yok (ör. kısa süreli dijital
+                  // içerik programları) — yeşil "güvence" kutusu yerine nötr,
+                  // bilgilendirici bir kutu; yanlışlıkla "iade var" izlenimi
+                  // vermesin diye rengi de amber.
+                  <div className="flex items-start gap-2 p-3 bg-[#fffbeb] rounded-xl border border-[#fde68a]">
+                    <FaInfoCircle className="text-[#b45309] flex-shrink-0 mt-0.5" size={13} />
+                    <p className="font-nunito text-xs text-[#92400e] leading-relaxed">
+                      {pkg.guaranteeText ||
+                        "Bu program dijital içerik ve destek süreci içerdiği için iade garantisi sunulmaz."}
+                    </p>
                   </div>
+                ) : (
+                  (pkg?.guaranteeText || settings.guaranteeText) && (
+                    <div className="flex items-start gap-2 p-3 bg-[#ecfdf5] rounded-xl border border-[#a7f3d0]">
+                      <FaCheckCircle className="text-[#059669] flex-shrink-0 mt-0.5" size={13} />
+                      <p className="font-nunito text-xs text-[#065f46] leading-relaxed">
+                        {pkg?.guaranteeText || settings.guaranteeText}
+                      </p>
+                    </div>
+                  )
                 )}
               </div>
             </motion.div>

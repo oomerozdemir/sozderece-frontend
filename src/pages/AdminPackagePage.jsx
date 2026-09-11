@@ -48,6 +48,8 @@ const emptyForm = {
   billingCycle: "once",
   badge: "",
   videoUrl: "",
+  guaranteeText: "",
+  noRefund: false,
 };
 
 const emptyVideoSettings = {
@@ -154,6 +156,8 @@ const AdminPackagePage = () => {
       billingCycle: pkg.billingCycle || "once",
       badge: pkg.badge || "",
       videoUrl: pkg.videoUrl || "",
+      guaranteeText: pkg.guaranteeText || "",
+      noRefund: pkg.noRefund || false,
     });
     setShowForm(true);
   };
@@ -793,6 +797,39 @@ const AdminPackagePage = () => {
                 <label htmlFor="hidden-toggle" className="text-sm font-semibold text-[#475569] cursor-pointer">
                   Vitrinde gizle (müşteriler göremez)
                 </label>
+              </div>
+
+              {/* Ödeme Sayfası Güvence Kutusu */}
+              <div className="border border-[#fecdd3] bg-[#fff1f2] rounded-xl p-4 space-y-3">
+                <div>
+                  <label className="block text-xs font-black text-[#9f1239] mb-0.5">Ödeme Sayfası Güvence Kutusu</label>
+                  <p className="text-[11px] text-[#e11d48]">
+                    Bu paket için ödeme adımında (CoachingWizardOdeme) gösterilen iade/güvence metnini özelleştirir.
+                    Boş bırakılırsa sitedeki genel varsayılan metin ("14 gün koşulsuz cayma hakkı…") kullanılır.
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-[#475569] mb-1.5">Güvence / İade Metni</label>
+                  <textarea
+                    className={`${inputCls} resize-none`}
+                    rows={2}
+                    placeholder="Program dijital içerik olduğu için iade garantisi sunulmaz..."
+                    value={form.guaranteeText}
+                    onChange={(e) => setForm({ ...form, guaranteeText: e.target.value })}
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="no-refund-toggle"
+                    checked={form.noRefund}
+                    onChange={(e) => setForm({ ...form, noRefund: e.target.checked })}
+                    className="w-4 h-4 accent-[#e11d48]"
+                  />
+                  <label htmlFor="no-refund-toggle" className="text-sm font-semibold text-[#475569] cursor-pointer">
+                    İade yok — kutuyu yeşil "güvence" yerine nötr bir bilgilendirme olarak göster
+                  </label>
+                </div>
               </div>
 
               {/* Süre Planları (Sekmeli Fiyatlandırma) */}
