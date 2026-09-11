@@ -293,7 +293,7 @@ export default function MomentumTeklifPage() {
         <section className="py-16 px-6">
           <div className="max-w-[720px] mx-auto">
             <motion.div {...fadeUp}>
-              <Eyebrow>Vizyonumuz</Eyebrow>
+              <SectionTitle>Sana Hazır Bir Program Vermekten Daha Fazlasını Hedefliyoruz</SectionTitle>
             </motion.div>
             <motion.p {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.05 }} className="font-nunito text-[#334155] text-lg leading-relaxed">
               Bu programda, hazır çalışma programlarına bağlı kalmak yerine kendi çalışma
@@ -311,7 +311,7 @@ export default function MomentumTeklifPage() {
         <section className="py-16 px-6" style={{ background: "#F8F7FC" }}>
           <div className="max-w-[820px] mx-auto">
             <motion.div {...fadeUp}>
-              <SectionTitle>Hedeflenen Çıktılar</SectionTitle>
+              <SectionTitle>14 Günün Sonunda Neler Değişecek?</SectionTitle>
             </motion.div>
             <div className="grid gap-4 md:grid-cols-2">
               {CIKTILAR.map((c, i) => (
@@ -340,7 +340,7 @@ export default function MomentumTeklifPage() {
         <section className="py-16 px-6">
           <div className="max-w-[900px] mx-auto">
             <motion.div {...fadeUp}>
-              <SectionTitle>Kimin için ve Kimin için değil</SectionTitle>
+              <SectionTitle>Bu program sana uygun mu?</SectionTitle>
             </motion.div>
             <div className="grid gap-6 md:grid-cols-2">
               <motion.div
