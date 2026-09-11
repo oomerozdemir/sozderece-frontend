@@ -259,7 +259,7 @@ export default function MomentumTeklifPage() {
                 ● {statusBadge.text}
               </span>
               <p className="font-nunito text-sm text-[#64748b] mt-3">
-                Sadece 10 öğrenci · 1.250 TL tek çekim
+                Sadece 10 öğrenci
               </p>
             </motion.div>
           </div>
