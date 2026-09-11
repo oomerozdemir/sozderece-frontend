@@ -649,7 +649,7 @@ export default function CoachingWizardOdeme() {
                     </div>
                   </div>
                 </div>
-                <p className="font-nunito text-white/70 text-xs">Sözderece öğrencileri YKS'de hedeflerine ulaşıyor.</p>
+                <p className="font-nunito text-white/70 text-xs">Sözderece öğrencileri YKS ve LGS'de hedeflerine ulaşıyor.</p>
               </div>
 
               <div className="bg-white rounded-2xl border border-[#e2e8f0] shadow-[0_2px_12px_rgba(0,0,0,0.05)] p-6 flex flex-col gap-4">

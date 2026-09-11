@@ -381,7 +381,7 @@ const PaymentPage = () => {
                     </div>
                   </div>
                 </div>
-                <p className="text-white/70 text-xs">Sözderece öğrencileri YKS'de hedeflerine ulaşıyor.</p>
+                <p className="text-white/70 text-xs">Sözderece öğrencileri YKS ve LGS'de hedeflerine ulaşıyor.</p>
               </div>
 
               {/* Sepet özeti */}
