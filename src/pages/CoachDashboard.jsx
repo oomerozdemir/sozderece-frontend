@@ -1,9 +1,11 @@
 import Navbar from "../components/navbar";
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
+import StudentPanelEditor from "./coach/StudentPanelEditor";
 
 const CoachDashboard = () => {
   const [students, setStudents] = useState([]);
+  const [editingStudent, setEditingStudent] = useState(null);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -58,6 +60,13 @@ const CoachDashboard = () => {
                   ) : (
                     <p className="mt-2 italic text-gray-400">📭 Sipariş bilgisi bulunamadı.</p>
                   )}
+
+                  <button
+                    onClick={() => setEditingStudent(student)}
+                    className="mt-4 w-full py-2.5 bg-brand-navy text-white rounded-xl text-xs font-black hover:opacity-90 transition-opacity"
+                  >
+                    🗓️ Program / Deneme Girişi
+                  </button>
                 </div>
               );
             })}
@@ -66,6 +75,10 @@ const CoachDashboard = () => {
           <p className="text-slate-500 italic">Henüz size atanmış öğrenci bulunmamaktadır.</p>
         )}
       </div>
+
+      {editingStudent && (
+        <StudentPanelEditor student={editingStudent} onClose={() => setEditingStudent(null)} />
+      )}
     </>
   );
 };

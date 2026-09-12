@@ -7,6 +7,7 @@ import {
   FaChartPie, FaChalkboardTeacher, FaBoxOpen, FaUserCheck, FaShoppingCart,
   FaSyncAlt, FaUsers, FaFire, FaCreditCard, FaGraduationCap, FaUniversity, FaPhoneAlt,
   FaFileAlt, FaListUl, FaSearch, FaFilter, FaChevronDown, FaChevronUp, FaDownload,
+  FaBookOpen, FaBullhorn,
 } from "react-icons/fa";
 import { Bar } from "react-chartjs-2";
 import {
@@ -20,6 +21,8 @@ import {
 import AdminCoachPage from "../pages/AdminCoachPage";
 import AdminTeacherApprovals from "../pages/AdminTeacherApprovels";
 import AdminPackagePage from "../pages/AdminPackagePage";
+import AdminResourcePage from "../pages/AdminResourcePage";
+import AdminAnnouncementPage from "../pages/AdminAnnouncementPage";
 import AdminCampPage from "../pages/AdminCampPage";
 import AdminPaymentSettings from "../pages/AdminPaymentSettings";
 import AdminLgsPage from "../pages/AdminLgsPage";
@@ -437,6 +440,13 @@ const AdminDashboard = () => {
         { key: "navbar", label: "Navbar", icon: FaListUl },
       ],
     },
+    {
+      title: "🧪 Öğrenci Paneli (Beta)",
+      items: [
+        { key: "resources", label: "Kaynak Kütüphanesi", icon: FaBookOpen },
+        { key: "announcements", label: "Gündem / Duyurular", icon: FaBullhorn },
+      ],
+    },
   ];
 
   const sidebarItemCls = (key) =>
@@ -540,6 +550,8 @@ const AdminDashboard = () => {
         {/* ── Sub-page Views ── */}
         {view === "coaches"           && <AdminCoachPage />}
         {view === "packages"          && <AdminPackagePage />}
+        {view === "resources"         && <AdminResourcePage />}
+        {view === "announcements"     && <AdminAnnouncementPage />}
         {view === "teacher-approvals" && <AdminTeacherApprovals />}
         {view === "camp"              && <AdminCampPage />}
         {view === "payment-settings"  && <AdminPaymentSettings />}
@@ -1222,6 +1234,19 @@ const AdminDashboard = () => {
                       </select>
                     </div>
                   )}
+
+                  <div className="flex items-center gap-2.5 pt-1 border-t border-[#e2e8f0] mt-1">
+                    <input
+                      type="checkbox"
+                      id="panel-beta-toggle"
+                      checked={!!editingUser.panelBetaAccess}
+                      onChange={(e) => updateUserField("panelBetaAccess", e.target.checked)}
+                      className="w-4 h-4 accent-brand-navy"
+                    />
+                    <label htmlFor="panel-beta-toggle" className="text-xs font-bold text-[#475569] cursor-pointer">
+                      🧪 Yeni Öğrenci Paneli (Beta) — sadece bu öğrenci görsün
+                    </label>
+                  </div>
                 </div>
               )}
             </div>
