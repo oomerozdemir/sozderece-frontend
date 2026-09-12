@@ -5,6 +5,8 @@ import { FaCheck, FaTimes, FaWhatsapp, FaLock } from "react-icons/fa";
 import TopBar from "../components/TopBar";
 import Navbar from "../components/navbar";
 import Seo from "../components/Seo";
+import axios from "../utils/axios";
+import { getStoredVisitorId, getStoredSessionId } from "../components/VisitorTracker";
 
 // Bu teklif/lansman sayfası, "14 Günde Çalışma Alışkanlığı Kazan Teklif
 // Dokümanı" (Word/PDF) metnine BİREBİR sadık kalınarak hazırlandı — başlıklar,
@@ -207,6 +209,18 @@ const ADIMLAR = [
 
 export default function MomentumTeklifPage() {
   const { phase, now } = usePhase();
+
+  // Admin panelde "kaç kişi görüntüledi" sorusuna cevap vermek için — sayfa
+  // her açıldığında bir kayıt düşer (bkz. GET /api/admin/pageviews).
+  useEffect(() => {
+    axios
+      .post("/api/tracking/pageview", {
+        path: "/14-gunde-calisma-aliskanligi-kazan",
+        visitorId: getStoredVisitorId(),
+        sessionId: getStoredSessionId(),
+      })
+      .catch(() => {});
+  }, []);
 
   const statusBadge =
     phase === "before"

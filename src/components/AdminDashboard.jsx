@@ -131,6 +131,7 @@ const AdminDashboard = () => {
   const [expandedOrderId, setExpandedOrderId] = useState(null);
   const [abandonedCarts, setAbandonedCarts] = useState(null);
   const [abandonedLoading, setAbandonedLoading] = useState(false);
+  const [momentumStats, setMomentumStats] = useState(null); // 14 Günlük Program sayfa görüntülenmesi
   const filteredOrders = orders.filter((order) => {
     const term = searchTerm.trim().toLowerCase();
     const matchesSearch =
@@ -221,6 +222,17 @@ const AdminDashboard = () => {
       }
     };
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    axios
+      .get("/api/admin/pageviews", {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { path: "/14-gunde-calisma-aliskanligi-kazan" },
+      })
+      .then((res) => setMomentumStats(res.data))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -563,6 +575,34 @@ const AdminDashboard = () => {
             <div className="bg-white rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#f1f5f9]">
               <h2 className="text-base font-black text-[#0f172a] mb-4">📊 Aylık Sipariş Grafiği</h2>
               <Bar data={monthlyOrderData} options={{ responsive: true, plugins: { legend: { display: false } } }} />
+            </div>
+
+            {/* 14 Günlük Program — sayfa görüntülenmesi */}
+            <div className="bg-white rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#f1f5f9] col-span-2 max-[768px]:col-span-1">
+              <h2 className="text-base font-black text-[#0f172a] mb-1">🚀 14 Günlük Program Sayfası</h2>
+              <p className="text-xs text-[#94a3b8] mb-4">/14-gunde-calisma-aliskanligi-kazan teklif sayfasının görüntülenme istatistikleri</p>
+              {!momentumStats ? (
+                <p className="text-sm text-[#94a3b8]">Yükleniyor…</p>
+              ) : (
+                <div className="grid grid-cols-3 gap-3 max-[560px]:grid-cols-1">
+                  <div className="p-4 bg-[#eff6ff] rounded-xl border border-[#bfdbfe] text-center">
+                    <p className="text-xs font-semibold text-[#3b82f6]">Toplam Görüntülenme</p>
+                    <p className="text-2xl font-black text-[#1d4ed8] mt-1">{momentumStats.totalViews}</p>
+                  </div>
+                  <div className="p-4 bg-[#ecfdf5] rounded-xl border border-[#a7f3d0] text-center">
+                    <p className="text-xs font-semibold text-[#059669]">Tekil Ziyaretçi</p>
+                    <p className="text-2xl font-black text-[#065f46] mt-1">{momentumStats.uniqueVisitors}</p>
+                  </div>
+                  <div className="p-4 bg-[#f8fafc] rounded-xl border border-[#f1f5f9] text-center">
+                    <p className="text-xs font-semibold text-[#64748b]">Son Görüntülenme</p>
+                    <p className="text-sm font-black text-[#0f172a] mt-1.5">
+                      {momentumStats.lastViewedAt
+                        ? new Date(momentumStats.lastViewedAt).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })
+                        : "—"}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
