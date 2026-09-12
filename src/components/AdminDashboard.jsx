@@ -603,6 +603,37 @@ const AdminDashboard = () => {
                   </div>
                 </div>
               )}
+
+              {momentumStats?.sources?.length > 0 && (
+                <div className="mt-5 grid grid-cols-2 gap-5 max-[640px]:grid-cols-1">
+                  <div>
+                    <p className="text-xs font-black text-[#0f172a] uppercase tracking-wide mb-2">Nereden Geldiler</p>
+                    <div className="space-y-1.5">
+                      {momentumStats.sources.map((s) => (
+                        <div key={s.key} className="flex items-center justify-between px-3 py-2 bg-[#f8fafc] rounded-lg border border-[#f1f5f9]">
+                          <span className="text-xs font-semibold text-[#334155]">{s.label}</span>
+                          <span className="text-xs font-black text-[#0f172a]">
+                            {s.visits} görüntülenme <span className="text-[#94a3b8] font-semibold">· {s.uniqueVisitors} kişi</span>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {momentumStats.devices?.length > 0 && (
+                    <div>
+                      <p className="text-xs font-black text-[#0f172a] uppercase tracking-wide mb-2">Cihaz</p>
+                      <div className="space-y-1.5">
+                        {momentumStats.devices.map((d) => (
+                          <div key={d.label} className="flex items-center justify-between px-3 py-2 bg-[#f8fafc] rounded-lg border border-[#f1f5f9]">
+                            <span className="text-xs font-semibold text-[#334155]">{d.label}</span>
+                            <span className="text-xs font-black text-[#0f172a]">{d.count}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
