@@ -14,8 +14,6 @@ import {
   FaInstagram,
 } from "react-icons/fa";
 
-const WA_LINK = "https://wa.me/905312546701?text=S%C4%B0STEM";
-
 const DEFAULT_NAV_LINKS = [
   { name: "YKS 2027", path: "/yks-yolculugu" },
   { name: "LGS 2027", path: "/lgs-hazirlik" },
@@ -291,14 +289,15 @@ export default function Navbar() {
           )}
 
           <div className="mt-6">
-            <a
-              href={WA_LINK}
+            <Link
+              to="/ucretsiz-on-gorusme"
               target="_blank"
               rel="noreferrer"
+              onClick={() => setMenuOpen(false)}
               className="block w-full bg-lime text-page-dark font-nunito font-black text-base py-4 rounded-2xl text-center no-underline shadow-[0_4px_20px_rgba(216,255,79,0.25)]"
             >
-              DM'ye SİSTEM Yaz →
-            </a>
+              Hemen Rezervasyon Yap →
+            </Link>
             <a
               href="https://www.instagram.com/sozderece/"
               target="_blank"
