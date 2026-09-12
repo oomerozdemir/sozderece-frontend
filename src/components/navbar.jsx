@@ -213,14 +213,6 @@ export default function Navbar() {
         <div
           className="hidden max-[960px]:flex items-center gap-3"
         >
-          <Link
-            to="/ucretsiz-on-gorusme"
-            target="_blank"
-            rel="noreferrer"
-            className="bg-lime text-page-dark font-nunito font-black text-xs py-2 px-4 rounded-full no-underline"
-          >
-            SİSTEM
-          </Link>
           <button
             className="bg-transparent border-0 text-white text-xl cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}
