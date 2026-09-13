@@ -45,6 +45,12 @@ export default function StudentPanel() {
 
       <div className="max-w-[1200px] mx-auto px-5 py-10 max-[768px]:py-6">
         <div className="mb-7">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="inline-block w-5 h-[3px] rounded-full" style={{ background: "#FF6B35" }} />
+            <span className="font-fredoka font-bold text-[11px] uppercase text-accent-orange" style={{ letterSpacing: 3 }}>
+              PANELİM / {active.label}
+            </span>
+          </div>
           <h1 className="font-fredoka font-bold text-page-navy text-2xl max-[640px]:text-xl">
             Merhaba, {student?.name || "Öğrenci"} 👋
           </h1>
@@ -79,7 +85,7 @@ export default function StudentPanel() {
 
           {/* İçerik */}
           <div className="min-w-0">
-            <ActiveComponent student={student} />
+            <ActiveComponent student={student} onNavigate={setTab} />
           </div>
         </div>
       </div>
