@@ -1,11 +1,26 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
 import { Helmet } from "react-helmet";
 import axios from "../utils/axios";
+import TopBar from "../components/TopBar";
 import Navbar from "../components/navbar";
+import Footer from "../components/Footer";
 import Button from "../components/ui/Button";
 import { isTokenValid, getRoleFromToken } from "../utils/auth";
+
+const inputCls =
+  "w-full py-3.5 px-4 border border-[#e2e8f0] rounded-xl text-base bg-white outline-none focus:border-page-navy focus:shadow-[0_0_0_3px_rgba(28,27,138,0.1)] placeholder:text-[#aaa] text-[#0f172a] transition-colors font-nunito";
+
+function Eyebrow({ children }) {
+  return (
+    <div className="flex items-center justify-center gap-2 mb-3">
+      <span className="inline-block w-6 h-[3px] rounded-full" style={{ background: "#FF6B35" }} />
+      <span className="font-fredoka font-bold text-[12px] uppercase text-accent-orange" style={{ letterSpacing: 3 }}>
+        {children}
+      </span>
+    </div>
+  );
+}
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -138,147 +153,133 @@ const LoginPage = () => {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
+      <TopBar />
       <Navbar />
 
-      {/* İki sütun: sol öğretmen CTA, sağ öğrenci OTP girişi */}
-      <div className="flex justify-center items-center min-h-[50vh] bg-white max-[900px]:min-h-0">
-        <div className="w-full py-8 px-4 flex justify-center max-[480px]:py-4 max-[480px]:px-3">
-          <div className="w-full max-w-[1000px] grid grid-cols-2 gap-7 items-stretch max-[900px]:grid-cols-1 max-[480px]:gap-4">
-            {/* SOL — Öğretmen CTA */}
-            <aside className="bg-gradient-to-b from-[#f7f8ff] to-white border border-gray-200 rounded-2xl p-6 shadow-[0_8px_18px_rgba(0,0,0,0.06)]">
-              <h3 className="text-page-navy text-[1.4rem] font-bold mt-0 mb-2.5">Özel ders vermek ister misin?</h3>
-              <p className="text-gray-700 mt-0 mb-4">
-                Profilini oluştur, fiyatını belirle ve öğrencilerle buluş.
-              </p>
-              <ul className="mt-0 mb-[18px] pl-[18px] text-gray-800 leading-[1.45]">
-                <li>🔹 Şehir / ilçe & sınıf filtreleri</li>
-                <li>🔹 Online / yüz yüze seçenekleri</li>
-                <li>🔹 Kişisel profil sayfası</li>
-              </ul>
-
-              <Button to="/ogretmen/kayit" variant="secondary" fullWidth>
-                Özel ders vermek için <strong>&nbsp;kayıt ol</strong>
-              </Button>
-
-              <div className="mt-2.5 text-center text-gray-600">
-                Zaten öğretmen misin?{" "}
-                <Button to="/ogretmen/giris" variant="link">
-                  Giriş yap
-                </Button>
-              </div>
-            </aside>
-
-            {/* SAĞ — Öğrenci OTP Girişi */}
-            <section className="bg-white border border-gray-200 rounded-2xl px-2 py-4 shadow-[0_8px_18px_rgba(0,0,0,0.04)]">
-              <form className="w-full max-w-[400px] text-center px-6 mx-auto max-[480px]:px-3" onSubmit={(e) => e.preventDefault()}>
-                {step === "checking" && <h2 className="text-[2rem] mb-8 text-page-navy font-semibold tracking-wide max-[480px]:text-[1.5rem] max-[480px]:mb-5">Yönlendiriliyor…</h2>}
-                {step !== "checking" && <h2 className="text-[2rem] mb-8 text-page-navy font-semibold tracking-wide max-[480px]:text-[1.5rem] max-[480px]:mb-5">E-posta ile Giriş</h2>}
-
-                {!!error && <p className="text-red-500 text-sm mt-0 mb-2">{error}</p>}
-
-                {step === "email" && (
-                  <>
-                    {/* Bu cihazda remember varsa Tek Tıkla Giriş */}
-                    {hasRemember && (
-                      <div className="mb-2.5 text-center">
-                        <Button onClick={oneTapLogin} disabled={loading} variant="secondary" fullWidth>
-                          Tek tıkla giriş yap
-                        </Button>
-                        <div className="text-[0.9rem] text-gray-500 mt-1.5">
-                          Bu cihazda kayıtlı oturum bulundu.
-                        </div>
-                      </div>
-                    )}
-
-                    <input
-                      type="email"
-                      placeholder="E-posta adresiniz"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="w-full border-0 border-b-2 border-black py-3 px-2 text-base mb-4 bg-transparent text-black focus:outline-none focus:border-gray-800"
-                    />
-                    <label className="flex items-center gap-2 my-2 mb-3 text-[0.95rem] text-gray-900 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={remember}
-                        onChange={(e) => setRemember(e.target.checked)}
-                        className="w-4 h-4 m-0 p-0 accent-page-navy"
-                      />
-                      Beni Hatırla
-                    </label>
-                    <Button
-                      onClick={sendCode}
-                      disabled={!email.includes("@") || loading || resendIn > 0}
-                      variant="secondary"
-                      fullWidth
-                    >
-                      {loading
-                        ? "Gönderiliyor..."
-                        : resendIn > 0
-                        ? `Tekrar gönder (${resendIn})`
-                        : "Giriş Yap"}
-                    </Button>
-                  </>
-                )}
-
-                {step === "code" && (
-                  <>
-                    <input
-                      type="text"
-                      placeholder="E-postanıza gelen kod"
-                      value={code}
-                      onChange={(e) => setCode(e.target.value)}
-                      maxLength={8}
-                      required
-                      className="w-full border-0 border-b-2 border-black py-3 px-2 text-base mb-6 bg-transparent text-black focus:outline-none focus:border-gray-800"
-                    />
-                    <Button onClick={verify} disabled={code.trim().length < 4 || loading} variant="secondary" fullWidth>
-                      {loading ? "Doğrulanıyor..." : "Doğrula ve Giriş Yap"}
-                    </Button>
-
-                    <div className="mt-2">
-                      <Button onClick={sendCode} disabled={loading || resendIn > 0} variant="link">
-                        {resendIn > 0
-                          ? `Kodu tekrar gönder (${resendIn})`
-                          : "Kodu tekrar gönder"}
-                      </Button>
-                    </div>
-                    <div className="mt-2">
-                      <Button
-                        onClick={() => {
-                          setStep("email");
-                          setCode("");
-                          setError("");
-                        }}
-                        variant="link"
-                      >
-                        E-postayı değiştir
-                      </Button>
-                    </div>
-                  </>
-                )}
-              </form>
-            </section>
+      <main className="min-h-[65vh] flex items-center justify-center bg-white px-4 py-16 max-[480px]:py-10">
+        <div className="w-full max-w-[420px]">
+          <div className="text-center mb-7">
+            <Eyebrow>Giriş Yap</Eyebrow>
+            <h1
+              className="font-fredoka font-bold text-page-navy m-0"
+              style={{ fontSize: "clamp(26px, 3.5vw, 34px)", letterSpacing: -0.5 }}
+            >
+              Tekrar Hoş Geldin
+            </h1>
+            <p className="font-nunito text-[#64748b] text-sm mt-2">
+              E-posta adresine gönderilecek kodla saniyeler içinde giriş yap.
+            </p>
           </div>
-        </div>
-      </div>
 
-      {/* FOOTER */}
-      <footer className="mt-[80px] pt-10 px-5 pb-5 border-t border-gray-300 text-center bg-[#fafafa] max-[480px]:mt-10">
-        <div className="flex justify-center gap-4 mb-5 text-[1.6rem]">
-          <a href="https://www.instagram.com/sozderece/" className="text-page-navy border border-page-navy rounded-full p-2.5 w-11 h-11 flex items-center justify-center transition-all hover:bg-accent-orange hover:border-accent-orange hover:text-white"><FaInstagram /></a>
-          <span className="text-page-navy border border-page-navy rounded-full p-2.5 w-11 h-11 flex items-center justify-center transition-all hover:bg-accent-orange hover:border-accent-orange hover:text-white"><FaTiktok /></span>
-          <span className="text-page-navy border border-page-navy rounded-full p-2.5 w-11 h-11 flex items-center justify-center transition-all hover:bg-accent-orange hover:border-accent-orange hover:text-white"><FaYoutube /></span>
+          <div
+            className="bg-white rounded-[28px] border border-[#ECEAF5] p-7 max-[480px]:p-5"
+            style={{ boxShadow: "0 10px 30px rgba(28,27,138,0.08)" }}
+          >
+            <form className="w-full" onSubmit={(e) => e.preventDefault()}>
+              {step === "checking" && (
+                <p className="text-center font-nunito text-[#64748b] text-sm py-6">Yönlendiriliyor…</p>
+              )}
+
+              {!!error && (
+                <p className="text-center font-nunito text-red-500 text-sm mb-3">{error}</p>
+              )}
+
+              {step === "email" && (
+                <div className="flex flex-col gap-3.5">
+                  {hasRemember && (
+                    <div className="mb-1 text-center">
+                      <Button onClick={oneTapLogin} disabled={loading} variant="secondary" fullWidth>
+                        Tek tıkla giriş yap
+                      </Button>
+                      <p className="font-nunito text-xs text-[#94a3b8] mt-2">
+                        Bu cihazda kayıtlı oturum bulundu.
+                      </p>
+                    </div>
+                  )}
+
+                  <input
+                    type="email"
+                    placeholder="E-posta adresin"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className={inputCls}
+                  />
+                  <label className="flex items-center gap-2 font-nunito text-sm text-[#475569] cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={remember}
+                      onChange={(e) => setRemember(e.target.checked)}
+                      className="w-4 h-4 accent-page-navy"
+                    />
+                    Beni hatırla
+                  </label>
+                  <Button
+                    onClick={sendCode}
+                    disabled={!email.includes("@") || loading || resendIn > 0}
+                    variant="secondary"
+                    size="lg"
+                    fullWidth
+                  >
+                    {loading
+                      ? "Gönderiliyor..."
+                      : resendIn > 0
+                      ? `Tekrar gönder (${resendIn})`
+                      : "Giriş Yap →"}
+                  </Button>
+                </div>
+              )}
+
+              {step === "code" && (
+                <div className="flex flex-col gap-3.5">
+                  <p className="font-nunito text-sm text-[#64748b] -mt-1">
+                    <strong className="text-[#0f172a]">{email}</strong> adresine gönderdiğimiz kodu gir.
+                  </p>
+                  <input
+                    type="text"
+                    placeholder="E-postana gelen kod"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    maxLength={8}
+                    required
+                    className={`${inputCls} text-center tracking-[0.3em] font-bold`}
+                  />
+                  <Button onClick={verify} disabled={code.trim().length < 4 || loading} variant="secondary" size="lg" fullWidth>
+                    {loading ? "Doğrulanıyor..." : "Doğrula ve Giriş Yap"}
+                  </Button>
+
+                  <div className="flex items-center justify-center gap-4 mt-1">
+                    <Button onClick={sendCode} disabled={loading || resendIn > 0} variant="link" size="sm">
+                      {resendIn > 0 ? `Kodu tekrar gönder (${resendIn})` : "Kodu tekrar gönder"}
+                    </Button>
+                    <span className="text-[#e2e8f0]">|</span>
+                    <Button
+                      onClick={() => {
+                        setStep("email");
+                        setCode("");
+                        setError("");
+                      }}
+                      variant="link"
+                      size="sm"
+                    >
+                      E-postayı değiştir
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </form>
+          </div>
+
+          <p className="text-center font-nunito text-sm text-[#94a3b8] mt-6">
+            Hesabın yok mu? Paket satın aldığında otomatik oluşturuluyor —{" "}
+            <a href="/paket-detay" className="text-page-navy font-bold underline">
+              paketleri incele
+            </a>
+          </p>
         </div>
-        <div className="flex justify-center flex-wrap gap-4 mb-4 text-[0.9rem] max-[480px]:gap-2 max-[480px]:text-[0.8rem]">
-          <a href="/hakkimizda" className="text-gray-800 no-underline transition-colors hover:text-accent-orange">Hakkımızda</a>
-          <a href="/mesafeli-hizmet-sozlesmesi" className="text-gray-800 no-underline transition-colors hover:text-accent-orange">Mesafeli Hizmet Sözleşmesi</a>
-          <a href="/gizlilik-politikasi-kvkk" className="text-gray-800 no-underline transition-colors hover:text-accent-orange">Gizlilik ve KVKK</a>
-          <a href="/iade-ve-cayma-politikasi" className="text-gray-800 no-underline transition-colors hover:text-accent-orange">İade ve Cayma Politikası</a>
-        </div>
-        <div className="text-sm text-gray-500">© 2025 Sözderece Koçluk Her Hakkı Saklıdır</div>
-      </footer>
+      </main>
+
+      <Footer />
     </>
   );
 };
