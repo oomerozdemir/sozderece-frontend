@@ -24,6 +24,13 @@ const toMonday = (date) => {
 };
 const toISO = (d) => d.toISOString().slice(0, 10);
 
+const STATUS_META = {
+  pending: { label: "Bekliyor", color: "#94a3b8", bg: "#f1f5f9" },
+  done: { label: "Bitti", color: "#059669", bg: "#ecfdf5" },
+  partial: { label: "Yarıda Kaldı", color: "#c2740c", bg: "#fff7ea" },
+  stuck: { label: "Zorlandım", color: "#dc2626", bg: "#fef2f2" },
+};
+
 // Koçun bir öğrenci için haftalık program hazırladığı + deneme sonucu girdiği
 // modal. İki basit sekme: Program / Deneme Sonucu.
 export default function StudentPanelEditor({ student, onClose }) {
@@ -116,6 +123,27 @@ export default function StudentPanelEditor({ student, onClose }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, student.id]);
 
+  /* ── Bugünkü Durum sekmesi ── */
+  const [todayItems, setTodayItems] = useState([]);
+  const [dayReports, setDayReports] = useState([]);
+  const [todayLoading, setTodayLoading] = useState(false);
+
+  useEffect(() => {
+    if (tab !== "bugun") return;
+    setTodayLoading(true);
+    Promise.all([
+      axios.get(`/api/coach/students/${student.id}/today`, authHeaders),
+      axios.get(`/api/coach/students/${student.id}/day-reports`, authHeaders),
+    ])
+      .then(([todayRes, reportsRes]) => {
+        setTodayItems(todayRes.data?.items || []);
+        setDayReports(reportsRes.data?.reports || []);
+      })
+      .catch(() => {})
+      .finally(() => setTodayLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, student.id]);
+
   const updateSubjectNet = (i, field, value) => setSubjectNets((prev) => prev.map((s, idx) => (idx === i ? { ...s, [field]: value } : s)));
   const addSubjectNet = () => setSubjectNets((prev) => [...prev, { subject: "", net: "" }]);
   const removeSubjectNet = (i) => setSubjectNets((prev) => prev.filter((_, idx) => idx !== i));
@@ -181,10 +209,66 @@ export default function StudentPanelEditor({ student, onClose }) {
           >
             Deneme Sonucu
           </button>
+          <button
+            onClick={() => setTab("bugun")}
+            className={`px-4 py-2 rounded-full text-xs font-bold ${tab === "bugun" ? "bg-brand-navy text-white" : "bg-[#f1f5f9] text-[#64748b]"}`}
+          >
+            Bugünkü Durum
+          </button>
         </div>
 
         <div className="p-6">
-          {tab === "program" ? (
+          {tab === "bugun" ? (
+            <div className="space-y-4">
+              {todayLoading ? (
+                <p className="text-xs text-[#94a3b8]">Yükleniyor…</p>
+              ) : (
+                <>
+                  <div>
+                    <p className="text-xs font-bold text-[#475569] mb-2">Bugünün Görevleri</p>
+                    {todayItems.length === 0 ? (
+                      <p className="text-xs text-[#94a3b8]">Bugün için planlı görev yok.</p>
+                    ) : (
+                      <div className="space-y-1.5">
+                        {todayItems.map((it) => {
+                          const meta = STATUS_META[it.status] || STATUS_META.pending;
+                          return (
+                            <div key={it.id} className="flex items-center justify-between gap-2 rounded-lg px-3 py-2.5" style={{ background: meta.bg }}>
+                              <div className="min-w-0">
+                                <p className="text-xs font-bold text-[#0f172a] truncate">{it.subject}</p>
+                                {it.topic && <p className="text-[11px] text-[#64748b] truncate">{it.topic}</p>}
+                              </div>
+                              <span className="text-[11px] font-bold flex-shrink-0" style={{ color: meta.color }}>{meta.label}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-3 border-t border-[#f1f5f9]">
+                    <p className="text-xs font-bold text-[#475569] mb-2">Z-Raporu Geçmişi (son 14 gün)</p>
+                    {dayReports.length === 0 ? (
+                      <p className="text-xs text-[#94a3b8]">Henüz tamamlanmış bir gün yok.</p>
+                    ) : (
+                      <div className="space-y-1.5 max-h-[180px] overflow-y-auto">
+                        {dayReports.map((r) => (
+                          <div key={r.id} className="flex items-center justify-between text-xs text-[#475569] bg-[#f8fafc] rounded-lg px-3 py-2">
+                            <span className="font-bold">{new Date(r.date).toLocaleDateString("tr-TR", { day: "numeric", month: "short", weekday: "short" })}</span>
+                            <span>
+                              <span className="text-[#059669] font-bold">{r.doneTasks} bitti</span>
+                              {r.partialTasks > 0 && <span className="text-[#c2740c] font-bold"> · {r.partialTasks} yarıda</span>}
+                              {r.stuckTasks > 0 && <span className="text-[#dc2626] font-bold"> · {r.stuckTasks} zorlandı</span>}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          ) : tab === "program" ? (
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <button
@@ -214,7 +298,7 @@ export default function StudentPanelEditor({ student, onClose }) {
                         {DAY_OPTIONS.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}
                       </select>
                       <input className={inputCls} placeholder="Ders (Matematik)" value={r.subject} onChange={(e) => updateRow(i, "subject", e.target.value)} />
-                      <input className={inputCls} placeholder="Konu (opsiyonel)" value={r.topic} onChange={(e) => updateRow(i, "topic", e.target.value)} />
+                      <input className={inputCls} placeholder="Nokta atışı görev (ör. 3D Yayınları, Syf 45-52, 4 Test)" value={r.topic} onChange={(e) => updateRow(i, "topic", e.target.value)} />
                       <input className={inputCls} type="number" placeholder="dk" value={r.durationMin} onChange={(e) => updateRow(i, "durationMin", e.target.value)} />
                       <button onClick={() => removeRow(i)} className="text-[#ef4444] p-2"><FaTrash size={12} /></button>
                     </div>

@@ -16,7 +16,13 @@ const CoachDashboard = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setStudents(res.data.students);
+        // Dikkat isteyenler (zorlanan > yarıda kalan) listenin başına gelsin —
+        // koç kartı açmadan kimin bugün takıldığını hemen görsün.
+        const sorted = [...res.data.students].sort((a, b) => {
+          const score = (s) => (s.strugglingToday ? 2 : s.partialToday ? 1 : 0);
+          return score(b) - score(a);
+        });
+        setStudents(sorted);
       } catch (err) {
         console.error("Öğrenciler alınamadı:");
       }
@@ -39,8 +45,19 @@ const CoachDashboard = () => {
               return (
                 <div
                   key={student.id}
-                  className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
+                  className={`bg-white border rounded-2xl p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md ${
+                    student.strugglingToday ? "border-red-300" : student.partialToday ? "border-amber-300" : "border-slate-200"
+                  }`}
                 >
+                  {(student.strugglingToday || student.partialToday) && (
+                    <span
+                      className={`inline-flex items-center gap-1.5 mb-3 px-3 py-1 rounded-full text-xs font-bold ${
+                        student.strugglingToday ? "bg-red-50 text-red-600" : "bg-amber-50 text-amber-700"
+                      }`}
+                    >
+                      {student.strugglingToday ? "😓 Bugün zorlandı — kontrol et" : "⏳ Bugün yarıda kaldı"}
+                    </span>
+                  )}
                   <p className="my-2 text-sm text-slate-600"><strong className="text-slate-900">👤 İsim:</strong> {student.name}</p>
                   <p className="my-2 text-sm text-slate-600"><strong className="text-slate-900">📧 Email:</strong> {student.email}</p>
                   <p className="my-2 text-sm text-slate-600"><strong className="text-slate-900">📞 Telefon:</strong> {student.phone || "Yok"}</p>

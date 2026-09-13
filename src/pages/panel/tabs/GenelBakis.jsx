@@ -181,7 +181,7 @@ export default function GenelBakis({ onNavigate }) {
             onClick={() => onNavigate && onNavigate("program")}
             className="mt-auto pt-4 font-nunito font-bold text-sm text-page-navy text-left hover:underline"
           >
-            Programımı Aç →
+            Bugünü Aç →
           </button>
         </div>
 

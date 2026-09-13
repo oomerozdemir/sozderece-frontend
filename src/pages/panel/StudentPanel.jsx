@@ -16,7 +16,7 @@ import Siparislerim from "./tabs/Siparislerim";
 // öğrencilere gösteriliyor (bkz. ../StudentDashboard.jsx seçicisi).
 const TABS = [
   { key: "genel", label: "Genel Bakış", icon: FaHome, Component: GenelBakis },
-  { key: "program", label: "Haftalık Programım", icon: FaCalendarWeek, Component: HaftalikProgram },
+  { key: "program", label: "Bugünüm", icon: FaCalendarWeek, Component: HaftalikProgram },
   { key: "deneme", label: "Deneme Analizim", icon: FaChartLine, Component: DenemeAnalizi },
   { key: "kaynaklar", label: "Kaynaklarım", icon: FaBookOpen, Component: Kaynaklarim },
   { key: "gundem", label: "Gündem", icon: FaBullhorn, Component: Gundem },
