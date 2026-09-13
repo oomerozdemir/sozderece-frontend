@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaCookieBite, FaTimes } from "react-icons/fa";
+import axios from "../utils/axios";
+import { getStoredVisitorId, getStoredSessionId } from "./VisitorTracker";
 
 const STORAGE_KEY = "cookieConsent";
 
@@ -31,6 +33,16 @@ export default function CookieConsent() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...value, decidedAt: new Date().toISOString() }));
     } catch {}
+    // Karar tarayıcıda kalıcı olsa da (banner bir daha çıkmaz), bizim
+    // tarafımızda da görünür olsun diye — KVKK denetlenebilirliği +
+    // admin panelde kaç kişinin kabul/reddettiğini görebilmek için.
+    axios
+      .post("/api/tracking/consent", {
+        ...value,
+        visitorId: getStoredVisitorId(),
+        sessionId: getStoredSessionId(),
+      })
+      .catch(() => {});
     setVisible(false);
     setShowSettings(false);
   };

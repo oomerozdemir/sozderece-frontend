@@ -135,6 +135,7 @@ const AdminDashboard = () => {
   const [abandonedCarts, setAbandonedCarts] = useState(null);
   const [abandonedLoading, setAbandonedLoading] = useState(false);
   const [momentumStats, setMomentumStats] = useState(null); // 14 Günlük Program sayfa görüntülenmesi
+  const [consentStats, setConsentStats] = useState(null); // Çerez onayı kararları
   const filteredOrders = orders.filter((order) => {
     const term = searchTerm.trim().toLowerCase();
     const matchesSearch =
@@ -235,6 +236,14 @@ const AdminDashboard = () => {
         params: { path: "/14-gunde-calisma-aliskanligi-kazan" },
       })
       .then((res) => setMomentumStats(res.data))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    axios
+      .get("/api/admin/consent-stats", { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => setConsentStats(res.data))
       .catch(() => {});
   }, []);
 
@@ -644,6 +653,36 @@ const AdminDashboard = () => {
                       </div>
                     </div>
                   )}
+                </div>
+              )}
+            </div>
+
+            {/* Çerez Onayları */}
+            <div className="bg-white rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#f1f5f9] col-span-2 max-[768px]:col-span-1">
+              <h2 className="text-base font-black text-[#0f172a] mb-1">🍪 Çerez Onayları</h2>
+              <p className="text-xs text-[#94a3b8] mb-4">Ziyaretçilerin çerez banner'ında verdiği kararlar</p>
+              {!consentStats ? (
+                <p className="text-sm text-[#94a3b8]">Yükleniyor…</p>
+              ) : consentStats.total === 0 ? (
+                <p className="text-sm text-[#94a3b8]">Henüz kayıtlı bir karar yok.</p>
+              ) : (
+                <div className="grid grid-cols-4 gap-3 max-[640px]:grid-cols-2">
+                  <div className="p-4 bg-[#f8fafc] rounded-xl border border-[#f1f5f9] text-center">
+                    <p className="text-xs font-semibold text-[#64748b]">Toplam Karar</p>
+                    <p className="text-2xl font-black text-[#0f172a] mt-1">{consentStats.total}</p>
+                  </div>
+                  <div className="p-4 bg-[#ecfdf5] rounded-xl border border-[#a7f3d0] text-center">
+                    <p className="text-xs font-semibold text-[#059669]">Tümünü Kabul</p>
+                    <p className="text-2xl font-black text-[#065f46] mt-1">{consentStats.acceptedAll}</p>
+                  </div>
+                  <div className="p-4 bg-[#fef2f2] rounded-xl border border-[#fecaca] text-center">
+                    <p className="text-xs font-semibold text-[#991b1b]">Tümünü Reddet</p>
+                    <p className="text-2xl font-black text-[#7f1d1d] mt-1">{consentStats.rejectedAll}</p>
+                  </div>
+                  <div className="p-4 bg-[#fffbeb] rounded-xl border border-[#fde68a] text-center">
+                    <p className="text-xs font-semibold text-[#92400e]">Kısmi Onay</p>
+                    <p className="text-2xl font-black text-[#78350f] mt-1">{consentStats.partial}</p>
+                  </div>
                 </div>
               )}
             </div>
