@@ -1,11 +1,14 @@
 import Navbar from "../components/navbar";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "../utils/axios";
 import StudentPanelEditor from "./coach/StudentPanelEditor";
+import { FaExclamationTriangle } from "react-icons/fa";
 
 const CoachDashboard = () => {
   const [students, setStudents] = useState([]);
   const [editingStudent, setEditingStudent] = useState(null);
+  const [sosAlerts, setSosAlerts] = useState([]);
+  const [resolvingId, setResolvingId] = useState(null);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -31,10 +34,66 @@ const CoachDashboard = () => {
     fetchStudents();
   }, []);
 
+  const fetchSosAlerts = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get("/api/coach/sos-alerts", { headers: { Authorization: `Bearer ${token}` } });
+      setSosAlerts(res.data?.alerts || []);
+    } catch {
+      // sessizce yut
+    }
+  }, []);
+
+  // Sayfa açıkken de yeni SOS bildirimleri düşerse görünsün diye 30sn'de bir yenile.
+  useEffect(() => {
+    fetchSosAlerts();
+    const t = setInterval(fetchSosAlerts, 30000);
+    return () => clearInterval(t);
+  }, [fetchSosAlerts]);
+
+  const resolveSos = async (id) => {
+    setResolvingId(id);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.patch(`/api/coach/sos-alerts/${id}/resolve`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      setSosAlerts((prev) => prev.filter((a) => a.id !== id));
+    } catch {
+      // sessizce yut
+    } finally {
+      setResolvingId(null);
+    }
+  };
+
   return (
     <>
       <Navbar />
       <div className="p-8 bg-gray-50 min-h-screen">
+        {sosAlerts.length > 0 && (
+          <div className="mb-8 bg-red-50 border-2 border-red-300 rounded-2xl p-5">
+            <p className="flex items-center gap-2 text-red-700 font-black text-sm mb-3">
+              <FaExclamationTriangle /> {sosAlerts.length} acil durum bildirimi bekliyor
+            </p>
+            <div className="flex flex-col gap-2">
+              {sosAlerts.map((a) => (
+                <div key={a.id} className="flex items-start justify-between gap-3 bg-white rounded-xl px-4 py-3 flex-wrap">
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-slate-900">{a.student?.name || "Öğrenci"}</p>
+                    {a.message && <p className="text-xs text-slate-600 mt-0.5">"{a.message}"</p>}
+                    <p className="text-[11px] text-slate-400 mt-1">{new Date(a.createdAt).toLocaleString("tr-TR")}</p>
+                  </div>
+                  <button
+                    onClick={() => resolveSos(a.id)}
+                    disabled={resolvingId === a.id}
+                    className="flex-shrink-0 px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-black hover:bg-red-700 transition-colors disabled:opacity-60"
+                  >
+                    {resolvingId === a.id ? "…" : "Gördüm, Çözüldü"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <h2 className="text-3xl font-bold text-slate-800 mb-8">📚 Atanmış Öğrenciler</h2>
 
         {students.length > 0 ? (

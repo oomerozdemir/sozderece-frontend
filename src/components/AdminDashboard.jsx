@@ -136,6 +136,8 @@ const AdminDashboard = () => {
   const [abandonedLoading, setAbandonedLoading] = useState(false);
   const [momentumStats, setMomentumStats] = useState(null); // 14 Günlük Program sayfa görüntülenmesi
   const [consentStats, setConsentStats] = useState(null); // Çerez onayı kararları
+  const [sosAlerts, setSosAlerts] = useState([]); // Çözülmemiş SOS bildirimleri — koç kaçırırsa admin görsün
+  const [resolvingSosId, setResolvingSosId] = useState(null);
   const filteredOrders = orders.filter((order) => {
     const term = searchTerm.trim().toLowerCase();
     const matchesSearch =
@@ -246,6 +248,34 @@ const AdminDashboard = () => {
       .then((res) => setConsentStats(res.data))
       .catch(() => {});
   }, []);
+
+  const fetchSosAlerts = () => {
+    const token = localStorage.getItem("token");
+    axios
+      .get("/api/admin/sos-alerts", { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => setSosAlerts(res.data?.alerts || []))
+      .catch(() => {});
+  };
+
+  // Koç kaçırırsa diye 30sn'de bir yenile — "7/24 kesintisiz takip" için güvenlik ağı.
+  useEffect(() => {
+    fetchSosAlerts();
+    const t = setInterval(fetchSosAlerts, 30000);
+    return () => clearInterval(t);
+  }, []);
+
+  const resolveSosAsAdmin = async (id) => {
+    setResolvingSosId(id);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(`/api/admin/sos-alerts/${id}/resolve`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      setSosAlerts((prev) => prev.filter((a) => a.id !== id));
+    } catch {
+      // sessizce yut
+    } finally {
+      setResolvingSosId(null);
+    }
+  };
 
   useEffect(() => {
     document.body.classList.toggle("modal-open", !!selectedUser);
@@ -547,6 +577,38 @@ const AdminDashboard = () => {
       </div>
 
       <div className="max-w-[1400px] mx-auto px-6 py-6 space-y-6">
+
+        {/* ── SOS Bildirimleri — koç kaçırırsa diye güvenlik ağı ── */}
+        {sosAlerts.length > 0 && (
+          <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-5">
+            <p className="flex items-center gap-2 text-red-700 font-black text-sm mb-3">
+              🆘 {sosAlerts.length} çözülmemiş SOS bildirimi
+            </p>
+            <div className="flex flex-col gap-2">
+              {sosAlerts.map((a) => (
+                <div key={a.id} className="flex items-start justify-between gap-3 bg-white rounded-xl px-4 py-3 flex-wrap">
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-slate-900">
+                      {a.student?.name || "Öğrenci"}
+                      {a.student?.assignedCoach?.name && (
+                        <span className="text-slate-400 font-normal"> · Koç: {a.student.assignedCoach.name}</span>
+                      )}
+                    </p>
+                    {a.message && <p className="text-xs text-slate-600 mt-0.5">"{a.message}"</p>}
+                    <p className="text-[11px] text-slate-400 mt-1">{new Date(a.createdAt).toLocaleString("tr-TR")}</p>
+                  </div>
+                  <button
+                    onClick={() => resolveSosAsAdmin(a.id)}
+                    disabled={resolvingSosId === a.id}
+                    className="flex-shrink-0 px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-black hover:bg-red-700 transition-colors disabled:opacity-60"
+                  >
+                    {resolvingSosId === a.id ? "…" : "Gördüm, Çözüldü"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ── Stat Cards ── */}
         <div className="grid grid-cols-4 gap-4 max-[900px]:grid-cols-2 max-[500px]:grid-cols-1">

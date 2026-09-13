@@ -11,6 +11,7 @@ import Kaynaklarim from "./tabs/Kaynaklarim";
 import Gundem from "./tabs/Gundem";
 import Kocum from "./tabs/Kocum";
 import Siparislerim from "./tabs/Siparislerim";
+import SosButton from "./SosButton";
 
 // Yeni öğrenci paneli — Faz 1 kabuğu. Sadece User.panelBetaAccess=true olan
 // öğrencilere gösteriliyor (bkz. ../StudentDashboard.jsx seçicisi).
@@ -89,6 +90,8 @@ export default function StudentPanel() {
           </div>
         </div>
       </div>
+
+      <SosButton studentName={student?.name} />
     </div>
   );
 }

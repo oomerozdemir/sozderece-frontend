@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import axios from "../../../utils/axios";
 import {
   FaClock, FaCheck, FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight,
-  FaRegCircle, FaHourglassHalf, FaFrown,
+  FaRegCircle, FaHourglassHalf, FaFrown, FaPlay, FaStop, FaForward,
 } from "react-icons/fa";
 
 const DAY_LABELS = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
+const FOCUS_SECONDS = 25 * 60;
+const BREAK_SECONDS = 5 * 60;
 
 // Emoji YOK: renkli emoji glifleri (ör. ✅) kendi rengiyle geliyor, bu yüzden
 // buton "aktif değilken" bile "yeşil işaretli" gibi görünüyordu (canlı
@@ -48,6 +50,13 @@ const fmtMinutes = (mins) => {
   return rem ? `${h} sa ${rem} dk` : `${h} sa`;
 };
 
+const fmtClock = (totalSeconds) => {
+  const s = Math.max(0, Math.round(totalSeconds));
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+};
+
 // Görevin yanındaki üç durum butonu — "Bitti" dışında "Yarıda Kaldı"/
 // "Zorlandım" ile koç öğrencinin nerede takıldığını anlık görür. Aktif
 // olana tekrar basmak "pending"e geri alır (yanlışlıkla işaretlemeyi
@@ -84,7 +93,40 @@ function StatusButtons({ status, onChange, compact }) {
   );
 }
 
-function TaskRow({ item, onChange, compact }) {
+// Görevin başında küçük bir Pomodoro başlat/çalışıyor göstergesi. Aynı anda
+// tek tur olabildiği için (backend tek "aktif" oturuma izin veriyor), başka
+// bir görevde tur çalışırken bu buton pasif görünüyor.
+function PomodoroButton({ item, pomodoro, onStart, compact }) {
+  const isThisRunning = pomodoro.phase === "focus" && pomodoro.session?.studyPlanItemId === item.id;
+  const blockedByOther = pomodoro.phase !== "idle" && !isThisRunning;
+  const size = compact ? 26 : 32;
+
+  if (isThisRunning) {
+    return (
+      <span
+        className="flex items-center gap-1.5 font-nunito font-black flex-shrink-0 px-2.5 rounded-full"
+        style={{ height: size, fontSize: compact ? 10 : 11, background: "#ede8fa", color: "#1C1B8A" }}
+      >
+        🍅 {fmtClock(pomodoro.remaining)}
+      </span>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      title={blockedByOther ? "Başka bir Pomodoro çalışıyor" : "Pomodoro Başlat (25 dk)"}
+      disabled={blockedByOther}
+      onClick={() => onStart(item)}
+      className="flex items-center justify-center rounded-full flex-shrink-0 transition-transform hover:scale-110 disabled:opacity-30 disabled:hover:scale-100"
+      style={{ width: size, height: size, background: "#f1f5f9", color: "#7340C8" }}
+    >
+      <FaPlay size={compact ? 9 : 10} />
+    </button>
+  );
+}
+
+function TaskRow({ item, onChange, compact, pomodoro, onStartPomodoro }) {
   const meta = STATUS_META[item.status];
   return (
     <div
@@ -117,6 +159,7 @@ function TaskRow({ item, onChange, compact }) {
           )}
         </span>
       </span>
+      <PomodoroButton item={item} pomodoro={pomodoro} onStart={onStartPomodoro} compact={compact} />
       <StatusButtons status={item.status} compact={compact} onChange={(next) => onChange(item.id, next)} />
     </div>
   );
@@ -150,8 +193,55 @@ function ZRaporuCard({ report }) {
           </div>
         </div>
         <p className="font-nunito text-[11px] mt-3" style={{ color: "rgba(255,255,255,0.7)" }}>
-          Toplam çalışma süresi: {fmtMinutes(report.totalMinutes)}
+          Planlanan süre: {fmtMinutes(report.totalMinutes)} · Gerçek çalışma: {fmtMinutes(report.actualStudyMinutes)}
         </p>
+      </div>
+    </div>
+  );
+}
+
+// Odak/mola turu çalışırken üstte beliren büyük sayaç kartı.
+function PomodoroBanner({ pomodoro, activeItem, onStop, onSkipBreak }) {
+  if (pomodoro.phase === "idle") return null;
+  const isFocus = pomodoro.phase === "focus";
+  const totalSecs = isFocus ? FOCUS_SECONDS : BREAK_SECONDS;
+  const pct = Math.max(2, Math.round(((totalSecs - pomodoro.remaining) / totalSecs) * 100));
+
+  return (
+    <div
+      className="rounded-[20px] p-5 text-white relative overflow-hidden"
+      style={{ background: isFocus ? "linear-gradient(135deg, #1C1B8A 0%, #2a1f9e 100%)" : "linear-gradient(135deg, #c2410c 0%, #ea580c 100%)" }}
+    >
+      <div className="flex items-center justify-between gap-4 flex-wrap relative">
+        <div>
+          <p className="font-fredoka font-bold text-base">{isFocus ? "🍅 Odak Modu" : "☕ Mola Zamanı"}</p>
+          <p className="font-nunito text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>
+            {isFocus ? activeItem?.subject || "Bir görev üzerinde çalışıyorsun" : "5 dakika nefes al, sonra devam et."}
+          </p>
+        </div>
+        <span className="font-fredoka font-bold text-3xl tabular-nums">{fmtClock(pomodoro.remaining)}</span>
+      </div>
+      <div className="h-2 rounded-full mt-4 overflow-hidden relative" style={{ background: "rgba(255,255,255,0.2)" }}>
+        <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${pct}%`, background: isFocus ? "#D8FF4F" : "#fff" }} />
+      </div>
+      <div className="mt-4 relative">
+        {isFocus ? (
+          <button
+            onClick={onStop}
+            className="flex items-center gap-1.5 font-nunito font-bold text-xs px-4 py-2 rounded-full"
+            style={{ background: "rgba(255,255,255,0.15)" }}
+          >
+            <FaStop size={9} /> Turu Durdur
+          </button>
+        ) : (
+          <button
+            onClick={onSkipBreak}
+            className="flex items-center gap-1.5 font-nunito font-bold text-xs px-4 py-2 rounded-full"
+            style={{ background: "rgba(255,255,255,0.15)" }}
+          >
+            <FaForward size={9} /> Molayı Geç
+          </button>
+        )}
       </div>
     </div>
   );
@@ -164,6 +254,8 @@ export default function HaftalikProgram() {
   const [weekStart, setWeekStart] = useState(() => toMonday(new Date()));
   const [plan, setPlan] = useState(null);
   const [weekLoading, setWeekLoading] = useState(false);
+  const [pomodoro, setPomodoro] = useState({ phase: "idle", session: null, remaining: 0 });
+  const hydratedRef = useRef(false);
   const token = useMemo(() => localStorage.getItem("token"), []);
   const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
 
@@ -203,6 +295,76 @@ export default function HaftalikProgram() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weekOpen, weekStart]);
 
+  // Sayfa yenilendiğinde sunucudaki aktif Pomodoro turunu bir kereliğine
+  // devral — sonrasında bu bileşenin kendi tik-tak state'i otoriter olur.
+  useEffect(() => {
+    if (hydratedRef.current || loading) return;
+    hydratedRef.current = true;
+    const s = today?.activePomodoro;
+    if (!s) return;
+    const elapsed = Math.floor((Date.now() - new Date(s.startedAt).getTime()) / 1000);
+    const remaining = s.plannedSeconds - elapsed;
+    if (remaining > 0) {
+      setPomodoro({ phase: "focus", session: s, remaining });
+    } else {
+      // Sekme kapalıyken süresi dolmuş — sessizce kapat, mola ekranı açma.
+      axios.patch(`/api/v1/ogrenci/me/pomodoro/${s.id}/stop`, { completed: true }, { headers }).catch(() => {}).finally(loadToday);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, today]);
+
+  // Saniye sayacı
+  useEffect(() => {
+    if (pomodoro.phase === "idle") return;
+    const t = setInterval(() => {
+      setPomodoro((p) => (p.remaining <= 1 ? { ...p, remaining: 0 } : { ...p, remaining: p.remaining - 1 }));
+    }, 1000);
+    return () => clearInterval(t);
+  }, [pomodoro.phase]);
+
+  // Süre dolunca faz geçişi: odak bitince mola başlasın, mola bitince boşa düşsün.
+  useEffect(() => {
+    if (pomodoro.remaining !== 0 || pomodoro.phase === "idle") return;
+    if (pomodoro.phase === "focus") {
+      const sessionId = pomodoro.session?.id;
+      if (sessionId) {
+        axios.patch(`/api/v1/ogrenci/me/pomodoro/${sessionId}/stop`, { completed: true }, { headers }).catch(() => {}).finally(loadToday);
+      }
+      setPomodoro({ phase: "break", session: null, remaining: BREAK_SECONDS });
+    } else {
+      setPomodoro({ phase: "idle", session: null, remaining: 0 });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pomodoro.remaining, pomodoro.phase]);
+
+  const handleStartPomodoro = async (item) => {
+    if (pomodoro.phase !== "idle") return;
+    try {
+      const { data } = await axios.post("/api/v1/ogrenci/me/pomodoro/start", { studyPlanItemId: item.id }, { headers });
+      const s = data.session;
+      const elapsed = Math.floor((Date.now() - new Date(s.startedAt).getTime()) / 1000);
+      setPomodoro({ phase: "focus", session: s, remaining: Math.max(1, s.plannedSeconds - elapsed) });
+    } catch {
+      // sessizce yut
+    }
+  };
+
+  const handleStopPomodoro = async () => {
+    const sessionId = pomodoro.session?.id;
+    setPomodoro({ phase: "idle", session: null, remaining: 0 });
+    if (sessionId) {
+      try {
+        await axios.patch(`/api/v1/ogrenci/me/pomodoro/${sessionId}/stop`, { completed: false }, { headers });
+      } catch {
+        // sessizce yut
+      } finally {
+        loadToday();
+      }
+    }
+  };
+
+  const handleSkipBreak = () => setPomodoro({ phase: "idle", session: null, remaining: 0 });
+
   // İyimser güncelleme: buton anında tepki versin, sonra sunucudan (Z-Raporu
   // oluşmuş olabilir diye) otoriter veriyi tekrar çek.
   const setStatus = async (itemId, status, isToday) => {
@@ -225,6 +387,7 @@ export default function HaftalikProgram() {
   const total = items.length;
   const resolved = items.filter((i) => i.status !== "pending").length;
   const pct = total > 0 ? Math.round((resolved / total) * 100) : 0;
+  const activeItem = items.find((i) => i.id === pomodoro.session?.studyPlanItemId) || null;
 
   const itemsByDay = useMemo(() => {
     const map = Array.from({ length: 7 }, () => []);
@@ -241,6 +404,8 @@ export default function HaftalikProgram() {
         <p className="font-fredoka font-bold text-page-navy text-lg capitalize">{fmtToday(today?.date) || "Bugün"}</p>
         <p className="font-nunito text-xs text-[#64748b] mt-0.5">Sadece bugüne odaklan — haftanın tamamı aşağıda seni bekliyor.</p>
       </div>
+
+      <PomodoroBanner pomodoro={pomodoro} activeItem={activeItem} onStop={handleStopPomodoro} onSkipBreak={handleSkipBreak} />
 
       {loading ? (
         <div className="bg-white border border-dashed border-[#e2e8f0] rounded-2xl p-8 text-center text-[#94a3b8] font-nunito text-sm">Yükleniyor…</div>
@@ -269,13 +434,22 @@ export default function HaftalikProgram() {
                 }}
               />
             </div>
+            <p className="font-nunito text-[11px] text-[#94a3b8] mt-2.5 flex items-center gap-1.5">
+              🍅 Gerçek Çalışma Süresi (Pomodoro): <span className="font-bold text-[#334155]">{fmtMinutes(today?.actualStudyMinutesToday)}</span>
+            </p>
           </div>
 
           <ZRaporuCard report={today?.report} />
 
           <div className="flex flex-col gap-2.5">
             {items.map((it) => (
-              <TaskRow key={it.id} item={it} onChange={(id, status) => setStatus(id, status, true)} />
+              <TaskRow
+                key={it.id}
+                item={it}
+                onChange={(id, status) => setStatus(id, status, true)}
+                pomodoro={pomodoro}
+                onStartPomodoro={handleStartPomodoro}
+              />
             ))}
           </div>
         </>
@@ -328,7 +502,14 @@ export default function HaftalikProgram() {
                       <p className="font-fredoka font-bold text-[#334155] text-xs mb-2">{label}</p>
                       <div className="flex flex-col gap-2">
                         {dItems.map((it) => (
-                          <TaskRow key={it.id} item={it} compact onChange={(id, status) => setStatus(id, status, false)} />
+                          <TaskRow
+                            key={it.id}
+                            item={it}
+                            compact
+                            onChange={(id, status) => setStatus(id, status, false)}
+                            pomodoro={pomodoro}
+                            onStartPomodoro={handleStartPomodoro}
+                          />
                         ))}
                       </div>
                     </div>
