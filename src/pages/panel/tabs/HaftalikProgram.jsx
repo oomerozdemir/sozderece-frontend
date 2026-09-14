@@ -4,10 +4,32 @@ import {
   FaClock, FaCheck, FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight,
   FaRegCircle, FaHourglassHalf, FaFrown, FaPlay, FaStop, FaForward,
 } from "react-icons/fa";
+import { playTaskDoneSound, playLevelUpSound } from "../../../utils/sound";
 
 const DAY_LABELS = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
 const FOCUS_SECONDS = 25 * 60;
 const BREAK_SECONDS = 5 * 60;
+
+// Mola ekranında değişen didaktik bilgi kapsülleri — beynin dinlenmeyi
+// neden "kaçak" değil "yatırım" saydığını gösteren, marka sesine uygun,
+// kısa bilimsel notlar.
+const BREAK_TIPS = [
+  "Biliyor musun? Sınavda dikkatinin dağılmasının sebebi odaklanamaman değil, beyninin yorulmadan mola vermeyi bilmemesidir.",
+  "Kısa molalar, beynin az önce öğrendiğini kısa süreli bellekten uzun süreliye taşıması için gereken en verimli yoldur.",
+  "5 dakikalık bu mola, çalışma süreni uzatan değil, geri kalanını daha verimli yapan bir yatırım.",
+  "Gözlerini ekrandan ayır, biraz esne — kasların gevşeyince zihnin de gevşer.",
+  "Su içmeyi unutma. Hafif susuzluk bile dikkat süresini ölçülebilir şekilde kısaltıyor.",
+];
+
+// Görevler bitince çıkan didaktik kutlama mesajları — sadece "tebrikler"
+// demek yerine bilimsel bir tavsiye de veriyor.
+const ALL_DONE_TIPS = [
+  "Günün fatihi! Beynin şu an öğrendiklerini kısa süreli bellekten uzun süreli belleğe aktarıyor. Git ve büyük bir bardak su iç.",
+  "Bugünü kapattın. Şimdi ekrandan uzaklaş — beynin, gündüz öğrendiklerini asıl gece pekiştirir.",
+  "Harika bir gün geçirdin. Yarının programı için enerjini şimdiden biriktir, bu bir maraton.",
+  "Tebrikler! Küçük, tutarlı adımlar büyük sıçramalardan daha güçlüdür — tam da bunu yaptın.",
+];
+const pickTip = (list, seed) => list[Math.abs(seed) % list.length];
 
 // Emoji YOK: renkli emoji glifleri (ör. ✅) kendi rengiyle geliyor, bu yüzden
 // buton "aktif değilken" bile "yeşil işaretli" gibi görünüyordu (canlı
@@ -126,12 +148,40 @@ function PomodoroButton({ item, pomodoro, onStart, compact }) {
   );
 }
 
+// Görev tamamlandığı ANI fiziksel bir tatmine dönüştürüyor: sert bir
+// neo-brutalist çerçeve+gölge anlık parlayıp sarsılıyor (CSS shake), metnin
+// üstü kalın bir fosforlu çizgiyle "çiziliyor" (0.3sn'de genişleyen bar) ve
+// kısa bir "klik" sesi çalıyor. Sadece "done"a geçişte — partial/stuck
+// nötr/olumsuz sonuçlar, kutlama almaz.
 function TaskRow({ item, onChange, compact, pomodoro, onStartPomodoro }) {
   const meta = STATUS_META[item.status];
+  const prevStatusRef = useRef(item.status);
+  const [celebrate, setCelebrate] = useState(false);
+  const [strikeOn, setStrikeOn] = useState(item.status === "done");
+
+  useEffect(() => {
+    const prev = prevStatusRef.current;
+    if (prev !== "done" && item.status === "done") {
+      playTaskDoneSound();
+      setCelebrate(true);
+      setStrikeOn(false);
+      requestAnimationFrame(() => requestAnimationFrame(() => setStrikeOn(true)));
+      const t = setTimeout(() => setCelebrate(false), 550);
+      prevStatusRef.current = item.status;
+      return () => clearTimeout(t);
+    }
+    if (item.status !== "done") setStrikeOn(false);
+    prevStatusRef.current = item.status;
+  }, [item.status]);
+
   return (
     <div
-      className="flex items-start sm:items-center gap-3 rounded-xl px-3.5 py-3 flex-wrap sm:flex-nowrap transition-colors"
-      style={{ background: meta ? meta.bg : "#f8fafc" }}
+      className={`flex items-start sm:items-center gap-3 rounded-xl px-3.5 py-3 flex-wrap sm:flex-nowrap transition-colors ${celebrate ? "sd-task-pop" : ""}`}
+      style={{
+        background: meta ? meta.bg : "#f8fafc",
+        border: celebrate ? "3px solid #0f172a" : "3px solid transparent",
+        boxShadow: celebrate ? "4px 4px 0px #00e676" : "none",
+      }}
     >
       <span
         className="flex-shrink-0 flex items-center justify-center rounded-full mt-0.5 sm:mt-0"
@@ -140,10 +190,16 @@ function TaskRow({ item, onChange, compact, pomodoro, onStartPomodoro }) {
         {item.status === "done" ? <FaCheck size={11} /> : <FaRegCircle size={11} />}
       </span>
       <span className="flex-1 min-w-0">
-        <span
-          className={`block font-nunito font-bold text-sm ${item.status === "done" ? "text-[#94a3b8] line-through" : "text-[#0f172a]"}`}
-        >
-          {item.subject}
+        <span className="relative inline-block">
+          <span className={`block font-nunito font-bold text-sm ${item.status === "done" ? "text-[#64748b]" : "text-[#0f172a]"}`}>
+            {item.subject}
+          </span>
+          {item.status === "done" && (
+            <span
+              className="absolute left-0 top-1/2 h-[3px] rounded-full pointer-events-none"
+              style={{ background: "#00c853", width: strikeOn ? "100%" : "0%", transition: "width 0.3s ease" }}
+            />
+          )}
         </span>
         {item.topic && <span className="block font-nunito text-xs text-[#64748b] mt-0.5">{item.topic}</span>}
         <span className="flex items-center gap-3 mt-1">
@@ -166,6 +222,7 @@ function TaskRow({ item, onChange, compact, pomodoro, onStartPomodoro }) {
 }
 
 function ZRaporuCard({ report }) {
+  const tip = useMemo(() => (report ? pickTip(ALL_DONE_TIPS, report.id + report.doneTasks) : ""), [report]);
   if (!report) return null;
   return (
     <div
@@ -195,6 +252,9 @@ function ZRaporuCard({ report }) {
         <p className="font-nunito text-[11px] mt-3" style={{ color: "rgba(255,255,255,0.7)" }}>
           Planlanan süre: {fmtMinutes(report.totalMinutes)} · Gerçek çalışma: {fmtMinutes(report.actualStudyMinutes)}
         </p>
+        <p className="font-nunito text-xs mt-3 pt-3 leading-relaxed" style={{ borderTop: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.85)" }}>
+          💡 {tip}
+        </p>
       </div>
     </div>
   );
@@ -202,6 +262,9 @@ function ZRaporuCard({ report }) {
 
 // Odak/mola turu çalışırken üstte beliren büyük sayaç kartı.
 function PomodoroBanner({ pomodoro, activeItem, onStop, onSkipBreak }) {
+  // Her yeni mola için BİR tip seçilir (mola süresince sabit kalır, sonraki
+  // molada değişir) — breakStartedAt her yeni molada yeni bir değer alıyor.
+  const breakTip = useMemo(() => pickTip(BREAK_TIPS, pomodoro.breakStartedAt || 0), [pomodoro.breakStartedAt]);
   if (pomodoro.phase === "idle") return null;
   const isFocus = pomodoro.phase === "focus";
   const totalSecs = isFocus ? FOCUS_SECONDS : BREAK_SECONDS;
@@ -224,6 +287,11 @@ function PomodoroBanner({ pomodoro, activeItem, onStop, onSkipBreak }) {
       <div className="h-2 rounded-full mt-4 overflow-hidden relative" style={{ background: "rgba(255,255,255,0.2)" }}>
         <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${pct}%`, background: isFocus ? "#D8FF4F" : "#fff" }} />
       </div>
+      {!isFocus && (
+        <p className="font-nunito text-xs mt-3.5 relative leading-relaxed" style={{ color: "rgba(255,255,255,0.85)" }}>
+          💡 {breakTip}
+        </p>
+      )}
       <div className="mt-4 relative">
         {isFocus ? (
           <button
@@ -256,6 +324,7 @@ export default function HaftalikProgram() {
   const [weekLoading, setWeekLoading] = useState(false);
   const [pomodoro, setPomodoro] = useState({ phase: "idle", session: null, remaining: 0 });
   const hydratedRef = useRef(false);
+  const prevReportIdRef = useRef(undefined);
   const token = useMemo(() => localStorage.getItem("token"), []);
   const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
 
@@ -330,12 +399,23 @@ export default function HaftalikProgram() {
       if (sessionId) {
         axios.patch(`/api/v1/ogrenci/me/pomodoro/${sessionId}/stop`, { completed: true }, { headers }).catch(() => {}).finally(loadToday);
       }
-      setPomodoro({ phase: "break", session: null, remaining: BREAK_SECONDS });
+      setPomodoro({ phase: "break", session: null, remaining: BREAK_SECONDS, breakStartedAt: Date.now() });
     } else {
       setPomodoro({ phase: "idle", session: null, remaining: 0 });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pomodoro.remaining, pomodoro.phase]);
+
+  // Z-Raporu ilk kez bu oturumda belirdiğinde ("günü bitirdin" anı) küçük
+  // bir zafer sesi çalar — sayfa ilk açıldığında (gün zaten bitmişse) çalmaz,
+  // sadece SON görev az önce burada işaretlenip rapor yeni oluştuğunda çalar.
+  useEffect(() => {
+    const reportId = today?.report?.id ?? null;
+    if (prevReportIdRef.current !== undefined && prevReportIdRef.current === null && reportId !== null) {
+      playLevelUpSound();
+    }
+    prevReportIdRef.current = reportId;
+  }, [today?.report?.id]);
 
   const handleStartPomodoro = async (item) => {
     if (pomodoro.phase !== "idle") return;

@@ -13,6 +13,9 @@ import Gundem from "./tabs/Gundem";
 import Kocum from "./tabs/Kocum";
 import Siparislerim from "./tabs/Siparislerim";
 import SosButton from "./SosButton";
+import CoachNoteBanner from "./CoachNoteBanner";
+import StreakBadge from "./StreakBadge";
+import CoachAvatar from "./CoachAvatar";
 
 // Yeni öğrenci paneli — Faz 1 kabuğu. Sadece User.panelBetaAccess=true olan
 // öğrencilere gösteriliyor (bkz. ../StudentDashboard.jsx seçicisi).
@@ -30,12 +33,15 @@ const TABS = [
 export default function StudentPanel() {
   const [student, setStudent] = useState(null);
   const [tab, setTab] = useState("genel");
+  const [headerStats, setHeaderStats] = useState({ streak: { current: 0, longest: 0 }, daysSinceLastActivity: null });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const headers = { Authorization: `Bearer ${token}` };
+    axios.get("/api/v1/ogrenci/me", { headers }).then((res) => setStudent(res.data)).catch(() => {});
     axios
-      .get("/api/v1/ogrenci/me", { headers: { Authorization: `Bearer ${token}` } })
-      .then((res) => setStudent(res.data))
+      .get("/api/v1/ogrenci/me/summary", { headers })
+      .then((res) => setHeaderStats({ streak: res.data?.streak || { current: 0, longest: 0 }, daysSinceLastActivity: res.data?.daysSinceLastActivity ?? null }))
       .catch(() => {});
   }, []);
 
@@ -47,20 +53,30 @@ export default function StudentPanel() {
       <Navbar />
 
       <div className="max-w-[1200px] mx-auto px-5 py-10 max-[768px]:py-6">
-        <div className="mb-7">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="inline-block w-5 h-[3px] rounded-full" style={{ background: "#FF6B35" }} />
-            <span className="font-fredoka font-bold text-[11px] uppercase text-accent-orange" style={{ letterSpacing: 3 }}>
-              PANELİM / {active.label}
-            </span>
+        <div className="mb-5">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="inline-block w-5 h-[3px] rounded-full" style={{ background: "#FF6B35" }} />
+                <span className="font-fredoka font-bold text-[11px] uppercase text-accent-orange" style={{ letterSpacing: 3 }}>
+                  PANELİM / {active.label}
+                </span>
+              </div>
+              <h1 className="font-fredoka font-bold text-page-navy text-2xl max-[640px]:text-xl">
+                Merhaba, {student?.name || "Öğrenci"} 👋
+              </h1>
+              <p className="font-nunito text-[#64748b] text-sm mt-1">
+                Programını, denemelerini ve kaynaklarını tek yerden takip et.
+              </p>
+            </div>
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <StreakBadge current={headerStats.streak.current} />
+              <CoachAvatar daysSinceLastActivity={headerStats.daysSinceLastActivity} />
+            </div>
           </div>
-          <h1 className="font-fredoka font-bold text-page-navy text-2xl max-[640px]:text-xl">
-            Merhaba, {student?.name || "Öğrenci"} 👋
-          </h1>
-          <p className="font-nunito text-[#64748b] text-sm mt-1">
-            Programını, denemelerini ve kaynaklarını tek yerden takip et.
-          </p>
         </div>
+
+        <CoachNoteBanner />
 
         <div className="grid grid-cols-[240px_1fr] gap-6 max-[860px]:grid-cols-1 items-start">
           {/* Sol menü */}

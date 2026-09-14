@@ -108,15 +108,22 @@ const CoachDashboard = () => {
                     student.strugglingToday ? "border-red-300" : student.partialToday ? "border-amber-300" : "border-slate-200"
                   }`}
                 >
-                  {(student.strugglingToday || student.partialToday) && (
-                    <span
-                      className={`inline-flex items-center gap-1.5 mb-3 px-3 py-1 rounded-full text-xs font-bold ${
-                        student.strugglingToday ? "bg-red-50 text-red-600" : "bg-amber-50 text-amber-700"
-                      }`}
-                    >
-                      {student.strugglingToday ? "😓 Bugün zorlandı — kontrol et" : "⏳ Bugün yarıda kaldı"}
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2 flex-wrap mb-3">
+                    {(student.strugglingToday || student.partialToday) && (
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+                          student.strugglingToday ? "bg-red-50 text-red-600" : "bg-amber-50 text-amber-700"
+                        }`}
+                      >
+                        {student.strugglingToday ? "😓 Bugün zorlandı — kontrol et" : "⏳ Bugün yarıda kaldı"}
+                      </span>
+                    )}
+                    {student.streak?.current > 0 && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-orange-50 text-orange-600">
+                        🔥 {student.streak.current} günlük seri
+                      </span>
+                    )}
+                  </div>
                   <p className="my-2 text-sm text-slate-600"><strong className="text-slate-900">👤 İsim:</strong> {student.name}</p>
                   <p className="my-2 text-sm text-slate-600"><strong className="text-slate-900">📧 Email:</strong> {student.email}</p>
                   <p className="my-2 text-sm text-slate-600"><strong className="text-slate-900">📞 Telefon:</strong> {student.phone || "Yok"}</p>

@@ -6,7 +6,7 @@ const inputCls =
 
 const emptyForm = {
   title: "", description: "", type: "video", url: "",
-  targetTrack: "", targetGrade: "", subject: "", displayOrder: 0, hidden: false,
+  targetTrack: "", targetGrade: "", subject: "", displayOrder: 0, hidden: false, requiredStreak: 0,
 };
 
 const TYPE_LABELS = { video: "🎬 Video", pdf: "📄 PDF", link: "🔗 Link", document: "📁 Belge" };
@@ -39,6 +39,7 @@ const AdminResourcePage = () => {
       title: r.title, description: r.description || "", type: r.type, url: r.url,
       targetTrack: r.targetTrack || "", targetGrade: r.targetGrade || "",
       subject: r.subject || "", displayOrder: r.displayOrder || 0, hidden: r.hidden || false,
+      requiredStreak: r.requiredStreak || 0,
     });
     setShowForm(true);
   };
@@ -163,6 +164,18 @@ const AdminResourcePage = () => {
                   <label className="block text-xs font-bold text-[#475569] mb-1.5">Sınıf</label>
                   <input className={inputCls} placeholder="Örn: 11 (boş = tüm sınıflar)" value={form.targetGrade} onChange={(e) => setForm({ ...form, targetGrade: e.target.value })} />
                 </div>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-[#475569] mb-1.5">🔒 Kilit Açma — Gereken Ateş Serisi (gün)</label>
+                <input
+                  className={inputCls}
+                  type="number"
+                  min="0"
+                  placeholder="0 = kilitsiz, herkese açık"
+                  value={form.requiredStreak}
+                  onChange={(e) => setForm({ ...form, requiredStreak: e.target.value })}
+                />
+                <p className="text-[11px] text-[#94a3b8] mt-1">0'dan büyükse öğrenci bu kadar günlük seriye ulaşana kadar kaynak kilitli görünür — oyunlaştırma çapası.</p>
               </div>
               <div className="flex items-center gap-3 p-3 bg-[#f8fafc] rounded-xl border border-[#f1f5f9]">
                 <input type="checkbox" id="res-hidden" checked={form.hidden} onChange={(e) => setForm({ ...form, hidden: e.target.checked })} className="w-4 h-4 accent-brand-navy" />

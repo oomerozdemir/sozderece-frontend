@@ -22,6 +22,20 @@
   100% { transform: translateY(-250px) scale(0.8); opacity: 0; }
 }
 
+/* HaftalikProgram.jsx (öğrenci paneli "Bugünüm") — görev "Bitti" işaretlenen
+   anki neo-brutalist sarsılma. Kısa, tek seferlik; tatmin hissi için. */
+@keyframes sdTaskPop {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(2px, -2px); }
+  60% { transform: translate(-2px, 0); }
+  80% { transform: translate(2px, 0); }
+  100% { transform: translate(0, 0); }
+}
+.sd-task-pop {
+  animation: sdTaskPop 0.4s ease;
+}
+
 /* Sayfaya özel stiller — her biri sadece kendi bileşeninin ihtiyaç duyduğu,
    Tailwind class'larıyla ifade edilemeyen kuralları (::after, keyframe,
    CSS custom property compound selector) içerir. */

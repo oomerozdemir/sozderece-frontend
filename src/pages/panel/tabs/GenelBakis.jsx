@@ -102,6 +102,15 @@ export default function GenelBakis({ onNavigate }) {
           </div>
         </div>
 
+        {summary.streak?.current > 0 && (
+          <div className="flex items-center gap-2.5 mb-4 relative px-4 py-2.5 rounded-xl" style={{ background: "rgba(255,159,28,0.15)", border: "1px solid rgba(255,159,28,0.3)" }}>
+            <span className="text-lg">🔥</span>
+            <p className="font-nunito font-bold text-xs text-white">
+              Art arda <span className="text-[#ffb347]">{summary.streak.current} gündür</span> programını %90'ın üzerinde tamamlıyorsun! Bu seriyi bozma.
+            </p>
+          </div>
+        )}
+
         {summary.recentActivity?.length > 0 ? (
           <div className="flex gap-2.5 overflow-x-auto pb-1 relative" style={{ scrollbarWidth: "thin" }}>
             {summary.recentActivity.map((a, i) => (

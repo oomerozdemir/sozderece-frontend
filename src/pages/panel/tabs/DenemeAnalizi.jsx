@@ -1,24 +1,45 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "../../../utils/axios";
-import { Line } from "react-chartjs-2";
+import { Line, Radar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   LineElement,
   PointElement,
   CategoryScale,
   LinearScale,
+  RadialLinearScale,
+  RadarController,
   Tooltip,
   Legend,
+  Filler,
 } from "chart.js";
-import { FaExclamationTriangle, FaBolt } from "react-icons/fa";
+import { FaExclamationTriangle, FaBolt, FaDiceD20 } from "react-icons/fa";
 
-ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend);
+ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, RadialLinearScale, RadarController, Tooltip, Legend, Filler);
 
 const fmtDate = (d) => (d ? new Date(d).toLocaleDateString("tr-TR", { day: "numeric", month: "short" }) : "");
 
 // "Siber" tema için neon renk paleti — brand'ın lime'ı da içinde, ama bu
 // grafikler bilinçli olarak sitenin geri kalanından ayrı, koyu bir zeminde.
 const NEON_PALETTE = ["#00e5ff", "#D8FF4F", "#ff2ea6", "#a78bfa", "#ff9f1c", "#34d399"];
+
+const radarOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false },
+    tooltip: { backgroundColor: "#0a0a2e", titleColor: "#fff", bodyColor: "#fff", borderColor: "rgba(255,255,255,0.15)", borderWidth: 1 },
+  },
+  scales: {
+    r: {
+      beginAtZero: true,
+      angleLines: { color: "rgba(255,255,255,0.12)" },
+      grid: { color: "rgba(255,255,255,0.1)" },
+      pointLabels: { color: "rgba(255,255,255,0.85)", font: { family: "Nunito", weight: "700", size: 11 } },
+      ticks: { display: false, backdropColor: "transparent" },
+    },
+  },
+};
 
 const cyberChartOptions = (dark) => ({
   responsive: true,
@@ -66,6 +87,41 @@ export default function DenemeAnalizi({ onNavigate }) {
     }),
     [results]
   );
+
+  // RPG "yetenek radarı" — son 3 denemenin branş bazlı ORTALAMA netleri.
+  // Kasıtlı olarak curriculuma göre normalize edilmiyor (TYT Matematik'in
+  // maksimum 40, Fizik'in 7 net olması gibi farklar konuya göre hep
+  // değişir) — chart.js radial eksen kendi ölçeğini veriye göre otomatik
+  // kuruyor, bu yüzden en güçlü branş dış çembere, zayıf branş içe doğru
+  // çöküyor. Öğrenci "hangi yönüm içe çökük" sorusunu tam da bu sayede
+  // görsel olarak yakalıyor.
+  const radarData = useMemo(() => {
+    const last3 = results.slice(-3);
+    const sums = {};
+    const counts = {};
+    for (const r of last3) {
+      for (const s of r.subjectNets || []) {
+        sums[s.subject] = (sums[s.subject] || 0) + (s.net || 0);
+        counts[s.subject] = (counts[s.subject] || 0) + 1;
+      }
+    }
+    const subjects = Object.keys(sums);
+    if (subjects.length < 3) return null; // radar 3'ten az eksende anlamsız görünür
+    return {
+      labels: subjects,
+      datasets: [
+        {
+          label: "Ortalama Net (son 3 deneme)",
+          data: subjects.map((s) => Number((sums[s] / counts[s]).toFixed(1))),
+          backgroundColor: "rgba(167,139,250,0.25)",
+          borderColor: "#a78bfa",
+          pointBackgroundColor: "#a78bfa",
+          pointBorderColor: "#fff",
+          borderWidth: 2,
+        },
+      ],
+    };
+  }, [results]);
 
   const subjectChartData = useMemo(() => {
     const subjects = [...new Set(results.flatMap((r) => (Array.isArray(r.subjectNets) ? r.subjectNets.map((s) => s.subject) : [])))];
@@ -128,7 +184,22 @@ export default function DenemeAnalizi({ onNavigate }) {
         <div className="absolute rounded-full pointer-events-none" style={{ width: 240, height: 240, background: "#00e5ff", filter: "blur(90px)", opacity: 0.15, top: -80, left: -60 }} />
         <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#ff2ea6", filter: "blur(90px)", opacity: 0.12, bottom: -60, right: -40 }} />
         <div className="relative">
-          <div className="flex items-center gap-2 mb-1">
+          {radarData && (
+            <>
+              <div className="flex items-center gap-2 mb-1">
+                <FaDiceD20 className="text-[#a78bfa]" size={13} />
+                <span className="font-fredoka font-bold text-[11px] uppercase text-[#a78bfa]" style={{ letterSpacing: 2 }}>Yetenek Radarın</span>
+              </div>
+              <p className="font-nunito text-[11px] mb-2" style={{ color: "rgba(255,255,255,0.5)" }}>
+                Dış çembere yakın = güçlü yönün. İçe çöken köşe = orada saldırman gereken yer.
+              </p>
+              <div style={{ height: 260 }}>
+                <Radar data={radarData} options={radarOptions} />
+              </div>
+            </>
+          )}
+
+          <div className="flex items-center gap-2 mb-1 mt-6">
             <FaBolt className="text-[#00e5ff]" size={13} />
             <span className="font-fredoka font-bold text-[11px] uppercase text-[#00e5ff]" style={{ letterSpacing: 2 }}>Net Trendi</span>
           </div>
