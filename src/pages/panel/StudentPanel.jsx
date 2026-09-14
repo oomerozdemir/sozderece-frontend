@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import axios from "../../utils/axios";
 import Navbar from "../../components/navbar";
 import {
-  FaHome, FaCalendarWeek, FaChartLine, FaBookOpen, FaBullhorn, FaUserTie, FaBoxOpen,
+  FaHome, FaCalendarWeek, FaChartLine, FaBookOpen, FaBullhorn, FaUserTie, FaBoxOpen, FaTree,
 } from "react-icons/fa";
 import GenelBakis from "./tabs/GenelBakis";
 import HaftalikProgram from "./tabs/HaftalikProgram";
 import DenemeAnalizi from "./tabs/DenemeAnalizi";
+import KonuAgaci from "./tabs/KonuAgaci";
 import Kaynaklarim from "./tabs/Kaynaklarim";
 import Gundem from "./tabs/Gundem";
 import Kocum from "./tabs/Kocum";
@@ -19,6 +20,7 @@ const TABS = [
   { key: "genel", label: "Genel Bakış", icon: FaHome, Component: GenelBakis },
   { key: "program", label: "Bugünüm", icon: FaCalendarWeek, Component: HaftalikProgram },
   { key: "deneme", label: "Deneme Analizim", icon: FaChartLine, Component: DenemeAnalizi },
+  { key: "konular", label: "Konu Ağacım", icon: FaTree, Component: KonuAgaci },
   { key: "kaynaklar", label: "Kaynaklarım", icon: FaBookOpen, Component: Kaynaklarim },
   { key: "gundem", label: "Gündem", icon: FaBullhorn, Component: Gundem },
   { key: "kocum", label: "Koçum", icon: FaUserTie, Component: Kocum },

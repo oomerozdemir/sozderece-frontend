@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "../../utils/axios";
-import { FaTimes, FaPlus, FaTrash } from "react-icons/fa";
+import { FaTimes, FaPlus, FaTrash, FaExclamationTriangle } from "react-icons/fa";
 
 const DAY_OPTIONS = [
   { value: 0, label: "Pazartesi" },
@@ -106,10 +106,12 @@ export default function StudentPanelEditor({ student, onClose }) {
   const [totalNet, setTotalNet] = useState("");
   const [ranking, setRanking] = useState("");
   const [notes, setNotes] = useState("");
-  const [subjectNets, setSubjectNets] = useState([{ subject: "", net: "" }]);
+  const [subjectNets, setSubjectNets] = useState([{ subject: "", net: "", wrongTopicIds: [] }]);
   const [examSaving, setExamSaving] = useState(false);
   const [examMsg, setExamMsg] = useState("");
   const [pastExams, setPastExams] = useState([]);
+  const [topics, setTopics] = useState([]);
+  const [topicPickerOpen, setTopicPickerOpen] = useState(null); // hangi subjectNets satırı açık
 
   const loadExams = () => {
     axios
@@ -119,9 +121,46 @@ export default function StudentPanelEditor({ student, onClose }) {
   };
 
   useEffect(() => {
-    if (tab === "deneme") loadExams();
+    if (tab !== "deneme") return;
+    loadExams();
+    axios
+      .get(`/api/coach/students/${student.id}/topics`, authHeaders)
+      .then((res) => setTopics(res.data?.topics || []))
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, student.id]);
+
+  /* ── İçgörüler sekmesi ── */
+  const [insights, setInsights] = useState([]);
+  const [insightsLoading, setInsightsLoading] = useState(false);
+  const [addingInsightId, setAddingInsightId] = useState(null);
+  const [addedInsightIds, setAddedInsightIds] = useState([]);
+
+  const loadInsights = () => {
+    setInsightsLoading(true);
+    axios
+      .get(`/api/coach/students/${student.id}/insights`, authHeaders)
+      .then((res) => setInsights(res.data?.insights || []))
+      .catch(() => {})
+      .finally(() => setInsightsLoading(false));
+  };
+
+  useEffect(() => {
+    if (tab === "icgoruler") loadInsights();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, student.id]);
+
+  const addInsightToPlan = async (topicId) => {
+    setAddingInsightId(topicId);
+    try {
+      await axios.post(`/api/coach/students/${student.id}/insights/${topicId}/add-to-plan`, {}, authHeaders);
+      setAddedInsightIds((prev) => [...prev, topicId]);
+    } catch {
+      // sessizce yut
+    } finally {
+      setAddingInsightId(null);
+    }
+  };
 
   /* ── Bugünkü Durum sekmesi ── */
   const [todayItems, setTodayItems] = useState([]);
@@ -145,8 +184,28 @@ export default function StudentPanelEditor({ student, onClose }) {
   }, [tab, student.id]);
 
   const updateSubjectNet = (i, field, value) => setSubjectNets((prev) => prev.map((s, idx) => (idx === i ? { ...s, [field]: value } : s)));
-  const addSubjectNet = () => setSubjectNets((prev) => [...prev, { subject: "", net: "" }]);
+  const addSubjectNet = () => setSubjectNets((prev) => [...prev, { subject: "", net: "", wrongTopicIds: [] }]);
   const removeSubjectNet = (i) => setSubjectNets((prev) => prev.filter((_, idx) => idx !== i));
+  const toggleWrongTopic = (i, topicId) =>
+    setSubjectNets((prev) =>
+      prev.map((s, idx) => {
+        if (idx !== i) return s;
+        const has = (s.wrongTopicIds || []).includes(topicId);
+        return { ...s, wrongTopicIds: has ? s.wrongTopicIds.filter((id) => id !== topicId) : [...(s.wrongTopicIds || []), topicId] };
+      })
+    );
+
+  // Serbest metin "Ders" alanı ile Topic kataloğunu eşleştirir (gevşek: küçük
+  // harfe çevirip kırpar) + sınav türüne (TYT/AYT/LGS) göre filtreler.
+  const topicsForRow = (subjectText) => {
+    const norm = (subjectText || "").trim().toLowerCase();
+    if (!norm) return [];
+    return topics.filter((t) => {
+      const subjectMatches = t.subject.trim().toLowerCase() === norm;
+      const examTypeMatches = examType === "LGS" ? !t.examType : t.examType === examType;
+      return subjectMatches && examTypeMatches;
+    });
+  };
 
   const saveExam = async () => {
     if (!examDate || !examName.trim()) {
@@ -165,13 +224,15 @@ export default function StudentPanelEditor({ student, onClose }) {
           totalNet: totalNet || undefined,
           ranking: ranking || undefined,
           notes,
-          subjectNets: subjectNets.filter((s) => s.subject.trim()).map((s) => ({ subject: s.subject, net: parseFloat(s.net) || 0 })),
+          subjectNets: subjectNets
+            .filter((s) => s.subject.trim())
+            .map((s) => ({ subject: s.subject, net: parseFloat(s.net) || 0, wrongTopicIds: s.wrongTopicIds || [] })),
         },
         authHeaders
       );
       setExamMsg("Deneme sonucu eklendi ✓");
       setExamDate(""); setExamName(""); setTotalNet(""); setRanking(""); setNotes("");
-      setSubjectNets([{ subject: "", net: "" }]);
+      setSubjectNets([{ subject: "", net: "", wrongTopicIds: [] }]);
       loadExams();
     } catch {
       setExamMsg("Eklenemedi, tekrar dene.");
@@ -215,10 +276,51 @@ export default function StudentPanelEditor({ student, onClose }) {
           >
             Bugünkü Durum
           </button>
+          <button
+            onClick={() => setTab("icgoruler")}
+            className={`px-4 py-2 rounded-full text-xs font-bold ${tab === "icgoruler" ? "bg-brand-navy text-white" : "bg-[#f1f5f9] text-[#64748b]"}`}
+          >
+            İçgörüler
+          </button>
         </div>
 
         <div className="p-6">
-          {tab === "bugun" ? (
+          {tab === "icgoruler" ? (
+            <div className="space-y-3">
+              <p className="text-xs text-[#64748b] mb-1">
+                Son 3 denemenin en az 2'sinde yanlış işaretlenen konular — tekrar eden hatalar. Tek tıkla bugünün programına ekleyebilirsin.
+              </p>
+              {insightsLoading ? (
+                <p className="text-xs text-[#94a3b8]">Yükleniyor…</p>
+              ) : insights.length === 0 ? (
+                <p className="text-xs text-[#94a3b8]">Şu an tekrar eden bir hata örüntüsü yok (ya da deneme sonuçları henüz konu bazlı girilmedi).</p>
+              ) : (
+                <div className="space-y-2">
+                  {insights.map((ins) => {
+                    const added = addedInsightIds.includes(ins.topicId);
+                    return (
+                      <div key={ins.topicId} className="flex items-center justify-between gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex-wrap">
+                        <div className="min-w-0 flex items-start gap-2">
+                          <FaExclamationTriangle className="text-amber-500 flex-shrink-0 mt-0.5" size={13} />
+                          <p className="text-xs text-[#334155]">
+                            Son <strong>{ins.checkedExams}</strong> denemenin <strong>{ins.count}</strong> tanesinde{" "}
+                            <strong className="text-amber-800">{ins.subject} — {ins.topicName}</strong>
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => addInsightToPlan(ins.topicId)}
+                          disabled={added || addingInsightId === ins.topicId}
+                          className="flex-shrink-0 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-[11px] font-black disabled:opacity-60 transition-colors"
+                        >
+                          {added ? "Eklendi ✓" : addingInsightId === ins.topicId ? "…" : "Bugüne Ekle"}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          ) : tab === "bugun" ? (
             <div className="space-y-4">
               {todayLoading ? (
                 <p className="text-xs text-[#94a3b8]">Yükleniyor…</p>
@@ -329,13 +431,52 @@ export default function StudentPanelEditor({ student, onClose }) {
               <div>
                 <p className="text-xs font-bold text-[#475569] mb-1.5">Branş Bazlı Netler (opsiyonel)</p>
                 <div className="space-y-1.5">
-                  {subjectNets.map((s, i) => (
-                    <div key={i} className="flex gap-1.5">
-                      <input className={inputCls} placeholder="Ders (Matematik)" value={s.subject} onChange={(e) => updateSubjectNet(i, "subject", e.target.value)} />
-                      <input className={`${inputCls} w-24 flex-shrink-0`} type="number" step="0.01" placeholder="Net" value={s.net} onChange={(e) => updateSubjectNet(i, "net", e.target.value)} />
-                      <button onClick={() => removeSubjectNet(i)} className="text-[#ef4444] p-2 flex-shrink-0"><FaTrash size={12} /></button>
-                    </div>
-                  ))}
+                  {subjectNets.map((s, i) => {
+                    const matchingTopics = topicsForRow(s.subject);
+                    const wrongCount = (s.wrongTopicIds || []).length;
+                    return (
+                      <div key={i} className="space-y-1.5">
+                        <div className="flex gap-1.5">
+                          <input className={`${inputCls} flex-1 min-w-0`} placeholder="Ders (Matematik)" value={s.subject} onChange={(e) => updateSubjectNet(i, "subject", e.target.value)} />
+                          {/* Not: inputCls'in kendi w-full'unu bir w-24 ile aynı elemente eklemek CSS
+                              çakışmasına yol açıyordu (Tailwind'in kendi sıralamasında w-full, w-24'ü
+                              eziyor) — Net kutusu tüm satırı kaplayıp Ders kutusunu 26px'e sıkıştırıyordu.
+                              inputCls'teki w-full'u burada w-24 ile değiştirerek çakışmayı kökten kaldırıyoruz. */}
+                          <input className={`${inputCls.replace("w-full", "w-24")} flex-shrink-0`} type="number" step="0.01" placeholder="Net" value={s.net} onChange={(e) => updateSubjectNet(i, "net", e.target.value)} />
+                          <button onClick={() => removeSubjectNet(i)} className="text-[#ef4444] p-2 flex-shrink-0"><FaTrash size={12} /></button>
+                        </div>
+                        {matchingTopics.length > 0 && (
+                          <div>
+                            <button
+                              type="button"
+                              onClick={() => setTopicPickerOpen((prev) => (prev === i ? null : i))}
+                              className="text-[11px] font-bold text-amber-700 hover:underline"
+                            >
+                              {wrongCount > 0 ? `⚠️ ${wrongCount} yanlış konu seçili` : "Yanlış Yapılan Konuları Seç (opsiyonel)"}
+                            </button>
+                            {topicPickerOpen === i && (
+                              <div className="flex flex-wrap gap-1.5 mt-1.5 p-2.5 bg-[#f8fafc] rounded-lg max-h-[140px] overflow-y-auto">
+                                {matchingTopics.map((t) => {
+                                  const active = (s.wrongTopicIds || []).includes(t.id);
+                                  return (
+                                    <button
+                                      key={t.id}
+                                      type="button"
+                                      onClick={() => toggleWrongTopic(i, t.id)}
+                                      className="text-[11px] font-bold px-2.5 py-1 rounded-full border transition-colors"
+                                      style={active ? { background: "#fef2f2", borderColor: "#dc2626", color: "#dc2626" } : { background: "#fff", borderColor: "#e2e8f0", color: "#64748b" }}
+                                    >
+                                      {t.name}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                   <button onClick={addSubjectNet} className="flex items-center gap-1.5 text-xs font-bold text-page-navy"><FaPlus size={10} /> Ders Ekle</button>
                 </div>
               </div>
