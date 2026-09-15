@@ -606,7 +606,7 @@ export default function StudentPanelEditor({ student, onClose }) {
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <input className={inputCls} type="date" value={examDate} onChange={(e) => setExamDate(e.target.value)} />
                 <select className={inputCls} value={examType} onChange={(e) => setExamType(e.target.value)}>
                   <option value="TYT">TYT</option>
