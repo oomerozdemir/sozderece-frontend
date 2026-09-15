@@ -449,7 +449,7 @@ export default function AdminCampPage() {
                   <span className="text-xs font-black text-[#64748b] uppercase tracking-wide">Kutu {i + 1}</span>
                   <DelBtn onClick={() => arrDel("camp.weeks", i)} />
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <div>
                     <Label>Etiket</Label>
                     <input className={inp} placeholder="1. Hafta" value={week.week || ""} onChange={(e) => arrSet("camp.weeks", i, "week", e.target.value)} />
@@ -556,7 +556,7 @@ export default function AdminCampPage() {
                   <span className="text-xs font-black text-[#64748b] uppercase tracking-wide">İstatistik {i + 1}</span>
                   <DelBtn onClick={() => arrDel("testimonials.stats", i)} />
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <div>
                     <Label>Sayı / Değer</Label>
                     <input className={inp} placeholder="59→70" value={stat.number || ""} onChange={(e) => arrSet("testimonials.stats", i, "number", e.target.value)} />
@@ -578,7 +578,7 @@ export default function AdminCampPage() {
                   <span className="text-xs font-black text-[#64748b] uppercase tracking-wide">Yorum {i + 1}</span>
                   <DelBtn onClick={() => arrDel("testimonials.items", i)} />
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <div>
                     <Label>Ad</Label>
                     <input className={inp} placeholder="Sevval" value={item.name || ""} onChange={(e) => arrSet("testimonials.items", i, "name", e.target.value)} />

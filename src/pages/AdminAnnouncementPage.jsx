@@ -126,7 +126,7 @@ const AdminAnnouncementPage = () => {
                 <label className="block text-xs font-bold text-[#475569] mb-1.5">İçerik *</label>
                 <textarea className={`${inputCls} resize-none`} rows={4} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-[#475569] mb-1.5">Sınav Türü</label>
                   <select className={inputCls} value={form.targetTrack} onChange={(e) => setForm({ ...form, targetTrack: e.target.value })}>

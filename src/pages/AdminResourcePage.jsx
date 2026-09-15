@@ -132,7 +132,7 @@ const AdminResourcePage = () => {
                 <label className="block text-xs font-bold text-[#475569] mb-1.5">Açıklama</label>
                 <input className={inputCls} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-[#475569] mb-1.5">Tür</label>
                   <select className={inputCls} value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
@@ -151,7 +151,7 @@ const AdminResourcePage = () => {
                 <label className="block text-xs font-bold text-[#475569] mb-1.5">Link (URL) *</label>
                 <input className={inputCls} placeholder="https://..." value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-[#475569] mb-1.5">Sınav Türü</label>
                   <select className={inputCls} value={form.targetTrack} onChange={(e) => setForm({ ...form, targetTrack: e.target.value })}>

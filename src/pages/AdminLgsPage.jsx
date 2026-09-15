@@ -113,7 +113,7 @@ function HeroEditor({ content, setContent }) {
       <Field label="Alt Başlık">
         <input value={h.subtitle || ""} onChange={(e) => s("subtitle", e.target.value)} className={inp} placeholder="Her gün yanında biri var..." />
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Field label="Chip 1">
           <input value={h.chip1 || ""} onChange={(e) => s("chip1", e.target.value)} className={inp} />
         </Field>
@@ -121,7 +121,7 @@ function HeroEditor({ content, setContent }) {
           <input value={h.chip2 || ""} onChange={(e) => s("chip2", e.target.value)} className={inp} />
         </Field>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Field label="Ana CTA Butonu">
           <input value={h.ctaPrimary || ""} onChange={(e) => s("ctaPrimary", e.target.value)} className={inp} />
         </Field>
@@ -192,7 +192,7 @@ function PainPointsEditor({ content, setContent }) {
   const items = pp.items || [];
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Field label="Bölüm Başlığı">
           <input value={pp.title || ""} onChange={(e) => set(setContent, "painPoints.title", e.target.value)} className={inp} />
         </Field>
@@ -278,7 +278,7 @@ function HowItWorksEditor({ content, setContent }) {
 
       {/* Karşılaştırma tablosu */}
       <div>
-        <div className="grid grid-cols-2 gap-3 mb-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
           <Field label="Karşılaştırma Başlığı">
             <input value={how.comparisonTitle || ""} onChange={(e) => set(setContent, "howItWorks.comparisonTitle", e.target.value)} className={inp} />
           </Field>
@@ -314,7 +314,7 @@ function SocialProofEditor({ content, setContent }) {
   const testimonials = sp.testimonials || [];
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Field label="Başlık">
           <input value={sp.title || ""} onChange={(e) => set(setContent, "socialProof.title", e.target.value)} className={inp} />
         </Field>
@@ -426,7 +426,7 @@ function OfferFormEditor({ content, setContent }) {
       <div>
         <p className="text-sm font-black text-[#0f172a] mb-3 pb-2 border-b border-[#f1f5f9]">Genel Teklif Bilgileri</p>
         <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Başlık">
               <input value={o.title || ""} onChange={(e) => set(setContent, "offer.title", e.target.value)} className={inp} />
             </Field>
@@ -434,7 +434,7 @@ function OfferFormEditor({ content, setContent }) {
               <input value={o.subtitle || ""} onChange={(e) => set(setContent, "offer.subtitle", e.target.value)} className={inp} />
             </Field>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="İkincil CTA (form linki)">
               <input value={o.ctaSecondary || ""} onChange={(e) => set(setContent, "offer.ctaSecondary", e.target.value)} className={inp} placeholder="📞 Önce Konuşalım" />
             </Field>
@@ -476,7 +476,7 @@ function OfferFormEditor({ content, setContent }) {
                 <DelBtn onClick={() => arrDel(setContent, "offer.plans", i)} />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <Field label="Plan Etiketi">
                   <input className={inp} placeholder="2 Aylık Plan" value={plan.label || ""} onChange={(e) => arrSet(setContent, "offer.plans", i, "label", e.target.value)} />
                 </Field>
@@ -569,7 +569,7 @@ function OfferFormEditor({ content, setContent }) {
         <p className="text-sm font-black text-[#0f172a] mb-3 pb-2 border-b border-[#f1f5f9]">
           Fallback Fiyat <span className="text-[#94a3b8] font-normal text-xs">(yukarıda plan yoksa bu tek blok gösterilir)</span>
         </p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Field label="Fiyat (₺)">
             <input type="number" value={o.price || ""} onChange={(e) => set(setContent, "offer.price", e.target.value)} className={inp} placeholder="2500" />
           </Field>
@@ -586,7 +586,7 @@ function OfferFormEditor({ content, setContent }) {
       <div>
         <p className="text-sm font-black text-[#0f172a] mb-3 pb-2 border-b border-[#f1f5f9]">Form Bloğu</p>
         <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Form Başlığı">
               <input value={f.title || ""} onChange={(e) => set(setContent, "form.title", e.target.value)} className={inp} />
             </Field>
@@ -597,7 +597,7 @@ function OfferFormEditor({ content, setContent }) {
           <Field label="Gönder Butonu Metni">
             <input value={f.submitText || ""} onChange={(e) => set(setContent, "form.submitText", e.target.value)} className={inp} />
           </Field>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Başarı Başlığı">
               <input value={f.successTitle || ""} onChange={(e) => set(setContent, "form.successTitle", e.target.value)} className={inp} />
             </Field>
