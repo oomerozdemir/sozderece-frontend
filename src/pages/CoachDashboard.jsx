@@ -1,8 +1,8 @@
 import Navbar from "../components/navbar";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "../utils/axios";
 import StudentPanelEditor from "./coach/StudentPanelEditor";
-import { FaExclamationTriangle } from "react-icons/fa";
+import { FaExclamationTriangle, FaFire, FaClock, FaBrain } from "react-icons/fa";
 
 const CoachDashboard = () => {
   const [students, setStudents] = useState([]);
@@ -19,10 +19,11 @@ const CoachDashboard = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        // Dikkat isteyenler (zorlanan > yarıda kalan) listenin başına gelsin —
-        // koç kartı açmadan kimin bugün takıldığını hemen görsün.
+        // Dikkat isteyenler (zorlanan > yarıda kalan > tekrar eden hata)
+        // listenin başına gelsin — koç kartı açmadan kimin bugün takıldığını
+        // hemen görsün.
         const sorted = [...res.data.students].sort((a, b) => {
-          const score = (s) => (s.strugglingToday ? 2 : s.partialToday ? 1 : 0);
+          const score = (s) => (s.strugglingToday ? 3 : s.partialToday ? 2 : s.recurringWeaknessCount > 0 ? 1 : 0);
           return score(b) - score(a);
         });
         setStudents(sorted);
@@ -64,10 +65,20 @@ const CoachDashboard = () => {
     }
   };
 
+  // "Dikkat Gerektirenler" özeti — koçun 10-20 öğrencisine tek satırda göz
+  // gezdirip nereye bakması gerektiğini anlaması için.
+  const triage = useMemo(() => {
+    const struggling = students.filter((s) => s.strugglingToday).length;
+    const partial = students.filter((s) => s.partialToday).length;
+    const inactive3Days = students.filter((s) => (s.streak?.current ?? 0) === 0 && s.todayProgress?.total === 0).length;
+    const weaknesses = students.filter((s) => s.recurringWeaknessCount > 0).length;
+    return { struggling, partial, inactive3Days, weaknesses };
+  }, [students]);
+
   return (
     <>
       <Navbar />
-      <div className="p-8 bg-gray-50 min-h-screen">
+      <div className="p-4 sm:p-8 bg-gray-50 min-h-screen">
         {sosAlerts.length > 0 && (
           <div className="mb-8 bg-red-50 border-2 border-red-300 rounded-2xl p-5">
             <p className="flex items-center gap-2 text-red-700 font-black text-sm mb-3">
@@ -94,12 +105,34 @@ const CoachDashboard = () => {
           </div>
         )}
 
-        <h2 className="text-3xl font-bold text-slate-800 mb-8">📚 Atanmış Öğrenciler</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-5">📚 Atanmış Öğrenciler</h2>
+
+        {students.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+            <div className={`rounded-2xl p-4 border ${triage.struggling > 0 ? "bg-red-50 border-red-200" : "bg-white border-slate-200"}`}>
+              <p className="text-2xl font-black text-red-600">{triage.struggling}</p>
+              <p className="text-xs font-bold text-slate-500 mt-0.5">😓 Bugün Zorlandı</p>
+            </div>
+            <div className={`rounded-2xl p-4 border ${triage.partial > 0 ? "bg-amber-50 border-amber-200" : "bg-white border-slate-200"}`}>
+              <p className="text-2xl font-black text-amber-600">{triage.partial}</p>
+              <p className="text-xs font-bold text-slate-500 mt-0.5">⏳ Yarıda Kaldı</p>
+            </div>
+            <div className={`rounded-2xl p-4 border ${triage.inactive3Days > 0 ? "bg-slate-100 border-slate-300" : "bg-white border-slate-200"}`}>
+              <p className="text-2xl font-black text-slate-600">{triage.inactive3Days}</p>
+              <p className="text-xs font-bold text-slate-500 mt-0.5">💤 Seri Yok / Pasif</p>
+            </div>
+            <div className={`rounded-2xl p-4 border ${triage.weaknesses > 0 ? "bg-purple-50 border-purple-200" : "bg-white border-slate-200"}`}>
+              <p className="text-2xl font-black text-purple-600">{triage.weaknesses}</p>
+              <p className="text-xs font-bold text-slate-500 mt-0.5">🧠 Tekrar Eden Hata</p>
+            </div>
+          </div>
+        )}
 
         {students.length > 0 ? (
           <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
             {students.map((student) => {
               const latestOrder = student.orders?.[0];
+              const progress = student.todayProgress || { done: 0, total: 0 };
 
               return (
                 <div
@@ -120,10 +153,37 @@ const CoachDashboard = () => {
                     )}
                     {student.streak?.current > 0 && (
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-orange-50 text-orange-600">
-                        🔥 {student.streak.current} günlük seri
+                        <FaFire size={10} /> {student.streak.current} günlük seri
+                      </span>
+                    )}
+                    {student.recurringWeaknessCount > 0 && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700">
+                        <FaBrain size={10} /> {student.recurringWeaknessCount} tekrar eden hata
                       </span>
                     )}
                   </div>
+
+                  {/* Bugünkü ilerleme + gerçek çalışma süresi — modalı açmadan tek bakış */}
+                  {progress.total > 0 && (
+                    <div className="mb-3 bg-slate-50 rounded-xl px-3 py-2.5 border border-slate-100">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-xs font-bold text-slate-600">Bugünkü İlerleme</span>
+                        <span className="text-xs font-black text-slate-800">{progress.done}/{progress.total}</span>
+                      </div>
+                      <div className="h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500"
+                          style={{ width: `${Math.max(progress.done > 0 ? 6 : 0, Math.round((progress.done / progress.total) * 100))}%` }}
+                        />
+                      </div>
+                      {student.actualStudyMinutesToday > 0 && (
+                        <p className="flex items-center gap-1 text-[11px] font-semibold text-slate-500 mt-1.5">
+                          <FaClock size={9} /> {student.actualStudyMinutesToday} dk gerçek çalışma (Pomodoro)
+                        </p>
+                      )}
+                    </div>
+                  )}
+
                   <p className="my-2 text-sm text-slate-600"><strong className="text-slate-900">👤 İsim:</strong> {student.name}</p>
                   <p className="my-2 text-sm text-slate-600"><strong className="text-slate-900">📧 Email:</strong> {student.email}</p>
                   <p className="my-2 text-sm text-slate-600"><strong className="text-slate-900">📞 Telefon:</strong> {student.phone || "Yok"}</p>

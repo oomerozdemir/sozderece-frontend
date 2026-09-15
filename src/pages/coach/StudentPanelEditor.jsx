@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import axios from "../../utils/axios";
-import { FaTimes, FaPlus, FaTrash, FaExclamationTriangle, FaMicrophone, FaStop, FaPaperPlane, FaVolumeUp } from "react-icons/fa";
+import { FaTimes, FaPlus, FaTrash, FaExclamationTriangle, FaMicrophone, FaStop, FaPaperPlane, FaVolumeUp, FaClock } from "react-icons/fa";
 
 const DAY_OPTIONS = [
   { value: 0, label: "Pazartesi" },
@@ -29,6 +29,20 @@ const STATUS_META = {
   done: { label: "Bitti", color: "#059669", bg: "#ecfdf5" },
   partial: { label: "Yarıda Kaldı", color: "#c2740c", bg: "#fff7ea" },
   stuck: { label: "Zorlandım", color: "#dc2626", bg: "#fef2f2" },
+};
+
+const MASTERY_META = {
+  none: { label: "—", bg: "#f1f5f9", border: "#e2e8f0", color: "#94a3b8" },
+  studied: { label: "Çalıştı", bg: "#eff6ff", border: "#3b82f6", color: "#1d4ed8" },
+  practiced: { label: "Test Çözdü", bg: "#f5f3ff", border: "#7340C8", color: "#6d28d9" },
+  mastered: { label: "Full ⭐", bg: "#fef3c7", border: "#f59e0b", color: "#92400e" },
+};
+
+const isTodayIso = (iso) => {
+  if (!iso) return false;
+  const d = new Date(iso);
+  const now = new Date();
+  return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
 };
 
 // Koçun bir öğrenci için haftalık program hazırladığı + deneme sonucu girdiği
@@ -268,6 +282,7 @@ export default function StudentPanelEditor({ student, onClose }) {
   const [todayItems, setTodayItems] = useState([]);
   const [dayReports, setDayReports] = useState([]);
   const [todayLoading, setTodayLoading] = useState(false);
+  const [actualStudyMinutesToday, setActualStudyMinutesToday] = useState(0);
 
   useEffect(() => {
     if (tab !== "bugun") return;
@@ -279,11 +294,39 @@ export default function StudentPanelEditor({ student, onClose }) {
       .then(([todayRes, reportsRes]) => {
         setTodayItems(todayRes.data?.items || []);
         setDayReports(reportsRes.data?.reports || []);
+        setActualStudyMinutesToday(todayRes.data?.actualStudyMinutesToday || 0);
       })
       .catch(() => {})
       .finally(() => setTodayLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, student.id]);
+
+  /* ── Konu Ağacı sekmesi (salt-okunur) ── */
+  const [masteryTopics, setMasteryTopics] = useState([]);
+  const [masteryLoading, setMasteryLoading] = useState(false);
+
+  useEffect(() => {
+    if (tab !== "konular") return;
+    setMasteryLoading(true);
+    axios
+      .get(`/api/coach/students/${student.id}/mastery`, authHeaders)
+      .then((res) => setMasteryTopics(res.data?.topics || []))
+      .catch(() => {})
+      .finally(() => setMasteryLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, student.id]);
+
+  const masteryGrouped = useMemo(() => {
+    const byExamType = new Map();
+    for (const t of masteryTopics) {
+      const key = t.examType || "GENEL";
+      if (!byExamType.has(key)) byExamType.set(key, new Map());
+      const bySubject = byExamType.get(key);
+      if (!bySubject.has(t.subject)) bySubject.set(t.subject, []);
+      bySubject.get(t.subject).push(t);
+    }
+    return byExamType;
+  }, [masteryTopics]);
 
   const updateSubjectNet = (i, field, value) => setSubjectNets((prev) => prev.map((s, idx) => (idx === i ? { ...s, [field]: value } : s)));
   const addSubjectNet = () => setSubjectNets((prev) => [...prev, { subject: "", net: "", wrongTopicIds: [] }]);
@@ -359,45 +402,103 @@ export default function StudentPanelEditor({ student, onClose }) {
           </button>
         </div>
 
-        <div className="flex gap-2 px-6 pt-4">
+        <div className="flex gap-2 px-6 pt-4 overflow-x-auto">
           <button
             onClick={() => setTab("program")}
-            className={`px-4 py-2 rounded-full text-xs font-bold ${tab === "program" ? "bg-brand-navy text-white" : "bg-[#f1f5f9] text-[#64748b]"}`}
+            className={`px-4 py-2 rounded-full text-xs font-bold flex-shrink-0 ${tab === "program" ? "bg-brand-navy text-white" : "bg-[#f1f5f9] text-[#64748b]"}`}
           >
             Haftalık Program
           </button>
           <button
             onClick={() => setTab("deneme")}
-            className={`px-4 py-2 rounded-full text-xs font-bold ${tab === "deneme" ? "bg-brand-navy text-white" : "bg-[#f1f5f9] text-[#64748b]"}`}
+            className={`px-4 py-2 rounded-full text-xs font-bold flex-shrink-0 ${tab === "deneme" ? "bg-brand-navy text-white" : "bg-[#f1f5f9] text-[#64748b]"}`}
           >
             Deneme Sonucu
           </button>
           <button
             onClick={() => setTab("bugun")}
-            className={`px-4 py-2 rounded-full text-xs font-bold ${tab === "bugun" ? "bg-brand-navy text-white" : "bg-[#f1f5f9] text-[#64748b]"}`}
+            className={`px-4 py-2 rounded-full text-xs font-bold flex-shrink-0 ${tab === "bugun" ? "bg-brand-navy text-white" : "bg-[#f1f5f9] text-[#64748b]"}`}
           >
             Bugünkü Durum
           </button>
           <button
             onClick={() => setTab("icgoruler")}
-            className={`px-4 py-2 rounded-full text-xs font-bold ${tab === "icgoruler" ? "bg-brand-navy text-white" : "bg-[#f1f5f9] text-[#64748b]"}`}
+            className={`px-4 py-2 rounded-full text-xs font-bold flex-shrink-0 ${tab === "icgoruler" ? "bg-brand-navy text-white" : "bg-[#f1f5f9] text-[#64748b]"}`}
           >
             İçgörüler
           </button>
           <button
             onClick={() => setTab("not")}
-            className={`px-4 py-2 rounded-full text-xs font-bold ${tab === "not" ? "bg-brand-navy text-white" : "bg-[#f1f5f9] text-[#64748b]"}`}
+            className={`px-4 py-2 rounded-full text-xs font-bold flex-shrink-0 ${tab === "not" ? "bg-brand-navy text-white" : "bg-[#f1f5f9] text-[#64748b]"}`}
           >
             Günlük Not
+          </button>
+          <button
+            onClick={() => setTab("konular")}
+            className={`px-4 py-2 rounded-full text-xs font-bold flex-shrink-0 ${tab === "konular" ? "bg-brand-navy text-white" : "bg-[#f1f5f9] text-[#64748b]"}`}
+          >
+            Konu Ağacı
           </button>
         </div>
 
         <div className="p-6">
-          {tab === "not" ? (
+          {tab === "konular" ? (
+            <div className="space-y-4">
+              <p className="text-xs text-[#64748b]">
+                Öğrencinin konu ustalık haritası (salt-okunur) — ders planı hazırlarken zayıf konulara göre şekillendir.
+              </p>
+              {masteryLoading ? (
+                <p className="text-xs text-[#94a3b8]">Yükleniyor…</p>
+              ) : masteryTopics.length === 0 ? (
+                <p className="text-xs text-[#94a3b8]">Konu listesi henüz hazırlanmadı.</p>
+              ) : (
+                [...masteryGrouped.entries()].map(([examType, bySubject]) => (
+                  <div key={examType} className="space-y-2">
+                    {examType !== "GENEL" && (
+                      <p className="text-[11px] font-black text-amber-600 uppercase tracking-wide">{examType}</p>
+                    )}
+                    {[...bySubject.entries()].map(([subject, subjectTopics]) => {
+                      const masteredCount = subjectTopics.filter((t) => t.stage === "mastered").length;
+                      return (
+                        <div key={subject} className="bg-[#f8fafc] rounded-xl p-3.5 border border-[#f1f5f9]">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-xs font-black text-[#0f172a]">{subject}</p>
+                            <span className="text-[11px] font-bold text-amber-700">⭐ {masteredCount}/{subjectTopics.length} Full</span>
+                          </div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {subjectTopics.map((t) => {
+                              const meta = MASTERY_META[t.stage] || MASTERY_META.none;
+                              return (
+                                <span
+                                  key={t.id}
+                                  title={`${t.name} — ${meta.label}`}
+                                  className="text-[11px] font-bold px-2.5 py-1 rounded-full border"
+                                  style={{ background: meta.bg, borderColor: meta.border, color: meta.color }}
+                                >
+                                  {t.name}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))
+              )}
+            </div>
+          ) : tab === "not" ? (
             <div className="space-y-4">
               <p className="text-xs text-[#64748b]">
                 Panelin en üstünde, her sekmede sabit görünen kısa bir günlük mesaj — "abla/abin"in orada olduğunu hissettirir.
               </p>
+
+              {!noteHistoryLoading && !noteHistory.some((n) => isTodayIso(n.createdAt)) && (
+                <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3.5 py-2.5">
+                  <FaExclamationTriangle className="text-amber-500 flex-shrink-0" size={13} />
+                  <p className="text-xs font-bold text-amber-800">Bugün henüz bir not bırakmadın.</p>
+                </div>
+              )}
 
               <div>
                 <p className="text-xs font-bold text-[#475569] mb-1.5">Yazılı Not</p>
@@ -516,6 +617,12 @@ export default function StudentPanelEditor({ student, onClose }) {
                 <p className="text-xs text-[#94a3b8]">Yükleniyor…</p>
               ) : (
                 <>
+                  {actualStudyMinutesToday > 0 && (
+                    <div className="flex items-center gap-2 bg-[#ede8fa] rounded-xl px-3.5 py-2.5">
+                      <FaClock className="text-page-navy flex-shrink-0" size={13} />
+                      <p className="text-xs font-bold text-page-navy">Bugün {actualStudyMinutesToday} dk gerçek çalışma (Pomodoro)</p>
+                    </div>
+                  )}
                   <div>
                     <p className="text-xs font-bold text-[#475569] mb-2">Bugünün Görevleri</p>
                     {todayItems.length === 0 ? (
