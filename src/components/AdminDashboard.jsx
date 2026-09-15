@@ -7,7 +7,7 @@ import {
   FaChartPie, FaChalkboardTeacher, FaBoxOpen, FaUserCheck, FaShoppingCart,
   FaSyncAlt, FaUsers, FaFire, FaCreditCard, FaGraduationCap, FaUniversity, FaPhoneAlt,
   FaFileAlt, FaListUl, FaSearch, FaFilter, FaChevronDown, FaChevronUp, FaDownload,
-  FaBookOpen, FaBullhorn,
+  FaBookOpen, FaBullhorn, FaBars, FaTimes,
 } from "react-icons/fa";
 import { Bar } from "react-chartjs-2";
 import {
@@ -194,6 +194,10 @@ const AdminDashboard = () => {
   const [editingBilling, setEditingBilling] = useState(null);
   const [updatedBillingInfo, setUpdatedBillingInfo] = useState({});
   const [view, setView] = useState("dashboard");
+  // Sidebar sabit 240px genişliğinde — mobilde ekranın çoğunu kaplayıp
+  // içeriği kullanılamaz hale getiriyordu. Artık mobilde (md altı) off-canvas
+  // bir çekmece: hamburger ile açılıp kapanıyor, masaüstünde her zaman açık.
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [attributionCache, setAttributionCache] = useState({}); // orderId -> data | "loading" | "error"
 
   const loadAttribution = async (orderId) => {
@@ -510,11 +514,28 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* ── Sidebar ── */}
-      <aside className="w-60 flex-shrink-0 sticky top-0 h-screen overflow-y-auto" style={{ background: "#0D0A2E" }}>
-        <div className="px-5 py-6 border-b border-white/10">
-          <p className="font-fredoka font-bold text-white text-lg leading-tight">Sözderece</p>
-          <p className="text-white/40 text-xs mt-0.5">Admin Kontrol Paneli</p>
+      {/* ── Sidebar (mobilde off-canvas çekmece, md+ üstünde her zaman açık) ── */}
+      {mobileSidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-[1100] md:hidden" onClick={() => setMobileSidebarOpen(false)} />
+      )}
+      <aside
+        className={`fixed md:sticky top-0 left-0 h-screen z-[1101] md:z-0 w-72 md:w-60 flex-shrink-0 overflow-y-auto transform transition-transform duration-200 ${
+          mobileSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
+        style={{ background: "#0D0A2E" }}
+      >
+        <div className="px-5 py-6 border-b border-white/10 flex items-center justify-between gap-3">
+          <div>
+            <p className="font-fredoka font-bold text-white text-lg leading-tight">Sözderece</p>
+            <p className="text-white/40 text-xs mt-0.5">Admin Kontrol Paneli</p>
+          </div>
+          <button
+            onClick={() => setMobileSidebarOpen(false)}
+            className="md:hidden w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white/70 flex-shrink-0"
+            aria-label="Menüyü kapat"
+          >
+            <FaTimes size={13} />
+          </button>
         </div>
         <nav className="py-3">
           {SIDEBAR_SECTIONS.map((section) => (
@@ -525,7 +546,7 @@ const AdminDashboard = () => {
                 return (
                   <button
                     key={item.key}
-                    onClick={() => setView(item.key)}
+                    onClick={() => { setView(item.key); setMobileSidebarOpen(false); }}
                     className={`w-full flex items-center gap-3 px-5 py-2.5 text-sm font-semibold transition-all ${sidebarItemCls(item.key)}`}
                   >
                     <Icon className="flex-shrink-0 text-[15px]" />
@@ -542,11 +563,20 @@ const AdminDashboard = () => {
       <div className="flex-1 min-w-0">
 
       {/* ── Header ── */}
-      <div className="bg-gradient-to-r from-brand-navy to-[#2563eb] text-white px-8 py-6 shadow-lg">
+      <div className="bg-gradient-to-r from-brand-navy to-[#2563eb] text-white px-4 sm:px-8 py-6 shadow-lg">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-2xl font-black tracking-tight">🛠 Admin Kontrol Paneli</h1>
-            <p className="text-blue-200 text-sm mt-0.5">Sözderece Koçluk Yönetim Sistemi</p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileSidebarOpen(true)}
+              className="md:hidden w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0"
+              aria-label="Menüyü aç"
+            >
+              <FaBars size={16} />
+            </button>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-black tracking-tight">🛠 Admin Kontrol Paneli</h1>
+              <p className="text-blue-200 text-sm mt-0.5">Sözderece Koçluk Yönetim Sistemi</p>
+            </div>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             <Link
@@ -583,7 +613,7 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 py-6 space-y-6">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 space-y-6">
 
         {/* ── SOS Bildirimleri — koç kaçırırsa diye güvenlik ağı ── */}
         {sosAlerts.length > 0 && (
