@@ -303,7 +303,7 @@ const AdminDashboard = () => {
   const handleUserUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`/api/admin/users/${editingUser.id}`, editingUser, { headers: { Authorization: `Bearer ${token}` } });
+      const updateRes = await axios.put(`/api/admin/users/${editingUser.id}`, editingUser, { headers: { Authorization: `Bearer ${token}` } });
       let assignedCoachData = null;
       if (editingUser.role === "student") {
         const res = await axios.post("/api/admin/assign-coach",
@@ -315,7 +315,14 @@ const AdminDashboard = () => {
       const updatedUser = { ...editingUser, assignedCoach: assignedCoachData };
       setUsers((prev) => prev.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
       setSelectedUser(null);
-      showMsg("Kullanıcı başarıyla güncellendi.");
+      // Rolü koça çevrilen kullanıcı için backend otomatik bir Coach profili
+      // açtıysa (bkz. adminController.updateUser), admini "Koçlar" sayfasına
+      // yönlendirip ders/açıklama/fotoğrafı tamamlamasını hatırlat.
+      if (updateRes.data?.newCoachProfile) {
+        showMsg("Kullanıcı koç yapıldı ve Koçlar listesine eklendi — ders/açıklama/fotoğrafını Koçlar sayfasından tamamlayabilirsin.", 5000);
+      } else {
+        showMsg("Kullanıcı başarıyla güncellendi.");
+      }
     } catch (error) {
       console.error("Kullanıcı güncellenemedi:", error);
       showMsg("Güncelleme sırasında hata oluştu.");
@@ -336,9 +343,9 @@ const AdminDashboard = () => {
     }
   };
 
-  const showMsg = (msg) => {
+  const showMsg = (msg, ms = 3000) => {
     setMessage(msg);
-    setTimeout(() => setMessage(null), 3000);
+    setTimeout(() => setMessage(null), ms);
   };
 
   const handleApproveRefund = async (orderId) => {
@@ -498,7 +505,7 @@ const AdminDashboard = () => {
 
       {/* ── Toast ── */}
       {message && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[9999] bg-[#1e293b] text-white px-5 py-3 rounded-2xl shadow-[0_8px_24px_rgba(0,0,0,0.2)] text-sm font-semibold animate-fade-in">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[9999] w-[92vw] max-w-[420px] bg-[#1e293b] text-white px-5 py-3 rounded-2xl shadow-[0_8px_24px_rgba(0,0,0,0.2)] text-sm font-semibold animate-fade-in text-center">
           {message}
         </div>
       )}
