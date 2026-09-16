@@ -68,15 +68,29 @@ const STATUS_META = {
   refunded:         { label: "İade Edildi",       cls: "bg-[#fef2f2] text-[#991b1b] border-[#fecaca]" },
   refund_requested: { label: "İade Talep Edildi", cls: "bg-[#fff7ed] text-[#9a3412] border-[#fed7aa]" },
   failed:           { label: "Başarısız",          cls: "bg-[#fef2f2] text-[#991b1b] border-[#fecaca]" },
+  // PayTR'nin "müşteri kart bilgisi girmeden ödeme sayfasından ayrıldı"
+  // bildirimi teknik bir hata değil, iyi bilinen bir terk-etme senaryosu —
+  // bunu kırmızı "Başarısız" yerine nötr bir rozetle ayırıyoruz ki admin
+  // gerçek ödeme sorunlarıyla (kart reddi, tutar uyuşmazlığı vb.) karışmasın.
+  abandoned:        { label: "Ödeme Sayfasını Terk Etti", cls: "bg-[#f1f5f9] text-[#475569] border-[#cbd5e1]" },
   pending:          { label: "Ödeme Bekleniyor",   cls: "bg-[#fffbeb] text-[#92400e] border-[#fde68a]" },
   expired:          { label: "Süresi Doldu",       cls: "bg-[#f8fafc] text-[#475569] border-[#e2e8f0]" },
   active:           { label: "Aktif",              cls: "bg-[#ecfdf5] text-[#065f46] border-[#a7f3d0]" },
 };
 
+// PayTR'nin failed_reason_msg'i sabit bir kod/enum değil, serbest metin —
+// tam eşleşme yerine "vazgeçti"/"ayrıldı" gibi anahtar kelimelerle gevşek
+// eşleştiriyoruz. Diğer tüm failReason'lar (kart reddi, tutar uyuşmazlığı,
+// bilinmeyen teknik hatalar) gerçek "Başarısız" olarak kalmaya devam ediyor.
+const isAbandonedCheckout = (order) => {
+  const reason = (order.failReason || "").toLowerCase();
+  return reason.includes("vazgeç") || reason.includes("ayrıldı") || reason.includes("terk et");
+};
+
 const getOrderMeta = (order) => {
   if (order.status === "refunded")         return STATUS_META.refunded;
   if (order.status === "refund_requested") return STATUS_META.refund_requested;
-  if (order.status === "failed")           return STATUS_META.failed;
+  if (order.status === "failed")           return isAbandonedCheckout(order) ? STATUS_META.abandoned : STATUS_META.failed;
   if (order.status === "pending" || order.status === "pending_payment") return STATUS_META.pending;
   if (new Date(order.endDate) < new Date()) return STATUS_META.expired;
   return STATUS_META.active;
@@ -147,7 +161,17 @@ const AdminDashboard = () => {
       order.billingInfo?.email?.toLowerCase().includes(term) ||
       order.merchantOid?.toLowerCase().includes(term) ||
       order.package?.toLowerCase().includes(term);
-    const matchesStatus = orderStatusFilter === "all" || order.status === orderStatusFilter;
+    // "abandoned"/"failed" ikisi de DB'de status="failed" — aradaki fark
+    // sadece failReason'ın terk-etme mi yoksa gerçek bir hata mı olduğu
+    // (bkz. isAbandonedCheckout), o yüzden bu iki filtre değeri özel işleniyor.
+    const matchesStatus =
+      orderStatusFilter === "all"
+        ? true
+        : orderStatusFilter === "abandoned"
+        ? order.status === "failed" && isAbandonedCheckout(order)
+        : orderStatusFilter === "failed"
+        ? order.status === "failed" && !isAbandonedCheckout(order)
+        : order.status === orderStatusFilter;
     return matchesSearch && matchesStatus;
   });
   const orderTotalPages = Math.max(1, Math.ceil(filteredOrders.length / ordersPerPage));
@@ -861,7 +885,8 @@ const AdminDashboard = () => {
                       <option value="pending">Ödeme Bekliyor</option>
                       <option value="refund_requested">İade Talep Edildi</option>
                       <option value="refunded">İade Edildi</option>
-                      <option value="failed">Başarısız</option>
+                      <option value="abandoned">Ödeme Sayfasını Terk Etti</option>
+                      <option value="failed">Başarısız (diğer)</option>
                     </select>
                   </div>
                 </div>
