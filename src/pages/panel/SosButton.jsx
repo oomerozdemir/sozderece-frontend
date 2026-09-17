@@ -58,8 +58,8 @@ export default function SosButton({ studentName }) {
       <button
         onClick={() => setOpen(true)}
         aria-label="Acil durum bildirimi gönder"
-        className={`fixed z-[900] right-6 flex items-center gap-2 font-fredoka font-bold text-sm px-5 py-3.5 rounded-full text-white transition-all hover:scale-105 ${
-          cookieBannerUp ? "bottom-[260px] sm:bottom-6" : "bottom-6"
+        className={`fixed z-[900] right-4 md:right-6 flex items-center gap-2 font-fredoka font-bold text-sm px-5 py-3.5 rounded-full text-white transition-all hover:scale-105 ${
+          cookieBannerUp ? "bottom-[320px] md:bottom-6" : "bottom-[92px] md:bottom-6"
         }`}
         style={{
           background: "linear-gradient(135deg, #dc2626, #b91c1c)",

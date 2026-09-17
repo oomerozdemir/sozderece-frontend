@@ -36,6 +36,13 @@
   animation: sdTaskPop 0.4s ease;
 }
 
+/* StudentPanel.jsx / CoachPanel — mobil alt sekme çubuğundaki "Diğer" sayfası
+   alttan yukarı kayarak açılıyor, native uygulama bottom-sheet hissi için. */
+@keyframes sdSheetUp {
+  0% { transform: translateY(100%); }
+  100% { transform: translateY(0); }
+}
+
 /* Sayfaya özel stiller — her biri sadece kendi bileşeninin ihtiyaç duyduğu,
    Tailwind class'larıyla ifade edilemeyen kuralları (::after, keyframe,
    CSS custom property compound selector) içerir. */
