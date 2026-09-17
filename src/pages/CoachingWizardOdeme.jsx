@@ -50,6 +50,14 @@ const DEFAULT_SETTINGS = {
 // fiyatın birebir aynı olmasını garanti eder — sınav/promosyon indirimi
 // gösterilip tam fiyat tahsil edilmesin diye.
 function getEffectiveUnitPrice(pkg, activePlan) {
+  // "Sınava Kadar" gibi bir plan sabit fiyat yerine sınav tarihine göre canlı
+  // hesaplanan bir fiyat kullanıyorsa (dynamicExamPrice), ekranda gösterilen
+  // ile burada tahsil edilen birebir aynı formülden gelsin diye plan'ın kendi
+  // statik unitPrice'ını değil, aynı getExamUnitPrice hesaplamasını kullanıyoruz.
+  if (activePlan?.dynamicExamPrice && isExamPriceActive(pkg)) {
+    const kurus = getExamUnitPrice(pkg);
+    if (kurus !== null && !Number.isNaN(kurus)) return kurus;
+  }
   if (activePlan) return Number(activePlan.unitPrice);
   if (isExamPriceActive(pkg)) {
     const kurus = getExamUnitPrice(pkg);

@@ -28,6 +28,38 @@ const fadeUp = {
 // önceliklendirmesi), sadece açık zeminli sihirbaz kartına göre yeniden
 // biçimlendirildi. PricingSection'ın kendisine dokunulmuyor.
 function PackagePrice({ pkg, activePlan }) {
+  if (activePlan?.dynamicExamPrice && isExamPriceActive(pkg)) {
+    const price = getExamPrice(pkg);
+    const days = getExamDaysLeft(pkg);
+    const rate = pkg.examDiscountRate ?? 5;
+    const fullPrice = Math.round((days / 30) * pkg.price);
+    return (
+      <div>
+        <div className="font-nunito font-bold text-sm mb-1 text-[#94a3b8] line-through">
+          {fullPrice.toLocaleString("tr-TR")}₺
+        </div>
+        <div className="flex items-start gap-1">
+          <span className="font-fredoka font-bold text-[22px] mt-2 text-accent-orange">₺</span>
+          <span
+            className="font-fredoka font-bold text-page-navy leading-none"
+            style={{ fontSize: "clamp(48px,5vw,64px)", letterSpacing: -2 }}
+          >
+            {price.toLocaleString("tr-TR")}
+          </span>
+        </div>
+        {activePlan.durationText && (
+          <div className="font-nunito font-bold text-sm mt-1 text-[#64748b]">{activePlan.durationText}</div>
+        )}
+        <span
+          className="inline-block mt-2 font-fredoka font-bold text-[12px] px-3 py-1 rounded-full text-page-navy"
+          style={{ background: "rgba(28,27,138,0.08)" }}
+        >
+          Sınava {days} gün kaldı, %{rate} indirimli
+        </span>
+      </div>
+    );
+  }
+
   if (activePlan) {
     const priceStr = (activePlan.priceText || `${activePlan.price}₺`).replace(/₺/g, "").trim();
     return (

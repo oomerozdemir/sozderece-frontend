@@ -58,6 +58,27 @@ function PriceDisplay({ pkg, activePlan }) {
   if (!pkg) return null;
 
   if (activePlan) {
+    // "Sınava Kadar" gibi bir plan sekmesi sabit bir fiyat yerine sınav
+    // tarihine göre CANLI hesaplanan bir fiyat istiyorsa (plan.dynamicExamPrice)
+    // — aylık fiyat × sınava kalan ay × (1-indirim%) formülünü kullanıyoruz.
+    // examDate geçmişse/tanımsızsa sessizce plan'ın kendi statik fiyatına
+    // düşüyor, boş/kırık bir fiyat göstermek yerine.
+    if (activePlan.dynamicExamPrice && isExamPriceActive(pkg)) {
+      const price = getExamPrice(pkg);
+      const days = getExamDaysLeft(pkg);
+      const rate = pkg.examDiscountRate ?? 5;
+      const fullPrice = Math.round(((days / 30) * pkg.price));
+      return (
+        <div>
+          <OldPrice text={`${fullPrice.toLocaleString("tr-TR")}₺`} />
+          <Amount amount={price.toLocaleString("tr-TR")} duration={activePlan.durationText} />
+          <span className="inline-block mt-2 font-nunito font-bold text-[11px] px-2.5 py-1 rounded-full" style={{ background: "#dbeafe", color: "#1d4ed8" }}>
+            Sınava {days} gün · %{rate} indirimli
+          </span>
+        </div>
+      );
+    }
+
     const priceStr = (activePlan.priceText || `${activePlan.price}₺`).replace(/₺/g, "").trim();
     return (
       <div>
@@ -132,6 +153,11 @@ function PackageCard({ pkg, index }) {
 
   const videoEmbedUrl = pkg.videoUrl ? toYouTubeEmbed(pkg.videoUrl) : null;
 
+  // Rozetli paket "tavsiye edilen/öne çıkan" paket demek — daha kalın renkli
+  // çerçeve + daha belirgin gölgeyle diğer kartlardan ayrışsın. Yeni bir alan
+  // eklemeye gerek yok, mevcut `badge` alanı zaten bunun için var.
+  const featured = !!pkg.badge;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -139,7 +165,11 @@ function PackageCard({ pkg, index }) {
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: Math.min(index, 4) * 0.08, ease: [0.22, 1, 0.36, 1] }}
       className="relative flex flex-col h-full rounded-[28px] bg-white"
-      style={{ border: "1px solid #ECEAF5", boxShadow: "0 10px 30px rgba(28,27,138,0.08)", padding: "32px 28px" }}
+      style={
+        featured
+          ? { border: "2px solid #1C1B8A", boxShadow: "0 20px 50px rgba(28,27,138,0.22)", padding: "36px 30px" }
+          : { border: "1px solid #ECEAF5", boxShadow: "0 10px 30px rgba(28,27,138,0.08)", padding: "32px 28px" }
+      }
     >
       {pkg.badge && (
         <span
@@ -264,8 +294,12 @@ export default function PricingSection() {
   const activeVideo = video?.[tab === "lgs" ? "lgs" : "yks"];
   const videoEmbedUrl = activeVideo?.enabled && activeVideo?.videoUrl ? toYouTubeEmbed(activeVideo.videoUrl) : null;
 
-  const yksPackages = packages.filter((p) => p.type !== "lgs");
-  const lgsPackages = packages.filter((p) => p.type !== "yks");
+  // Rozetli ("tavsiye edilen") paket, displayOrder ne olursa olsun sekmenin
+  // en başında görünsün — Array.sort kararlı (stable) olduğu için rozetsizler
+  // kendi aralarındaki mevcut sırayı koruyor.
+  const byFeaturedFirst = (a, b) => (b.badge ? 1 : 0) - (a.badge ? 1 : 0);
+  const yksPackages = packages.filter((p) => p.type !== "lgs").sort(byFeaturedFirst);
+  const lgsPackages = packages.filter((p) => p.type !== "yks").sort(byFeaturedFirst);
   const visible = tab === "lgs" ? lgsPackages : yksPackages;
 
   return (

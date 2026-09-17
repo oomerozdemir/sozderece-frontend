@@ -117,8 +117,26 @@ const PackageDetail = () => {
   const examActive = !activePlan && isExamPriceActive(selected);
   const promoActive = !activePlan && !examActive && isPromoActive(selected);
 
+  // Plan sekmesi sabit fiyat yerine sınav tarihine göre canlı hesaplanan bir
+  // fiyat istiyorsa (dynamicExamPrice) — ödeme sihirbazıyla (CoachingWizardPaket/
+  // Odeme) aynı formülü kullanıyoruz ki bu sayfada gösterilen fiyat, gerçek
+  // ödeme ekranındakiyle birebir tutsun.
+  const activePlanDynamicExam = !!(activePlan?.dynamicExamPrice && isExamPriceActive(selected));
+
   let displayPrice, strikethroughPrice, priceBadgeText, priceBadgeStyle, durationText, planBadge, planBadgeStyle;
-  if (activePlan) {
+  if (activePlanDynamicExam) {
+    const examPrice = getExamPrice(selected);
+    const daysLeft = getExamDaysLeft(selected);
+    const rate = selected.examDiscountRate ?? 5;
+    const fullPrice = Math.round((daysLeft / 30) * selected.price);
+    displayPrice = `${examPrice.toLocaleString("tr-TR")}₺`;
+    durationText = activePlan.durationText || "";
+    strikethroughPrice = `${fullPrice.toLocaleString("tr-TR")}₺`;
+    priceBadgeText = `Sınava ${daysLeft} gün kaldı, %${rate} indirimli`;
+    priceBadgeStyle = "bg-[#dbeafe] text-[#1e40af]";
+    planBadge = activePlan.badge || null;
+    planBadgeStyle = BADGE_COLORS[activePlan.badgeColor] || BADGE_COLORS.green;
+  } else if (activePlan) {
     displayPrice = activePlan.priceText || "";
     durationText = activePlan.durationText || "";
     strikethroughPrice = activePlan.oldPriceText || null;
@@ -155,7 +173,9 @@ const PackageDetail = () => {
     planBadgeStyle = "";
   }
 
-  const numericPrice = examActive
+  const numericPrice = activePlanDynamicExam
+    ? String(getExamPrice(selected) || "0")
+    : examActive
     ? String(getExamPrice(selected) || "0")
     : promoActive
       ? String(selected.promoPrice || "0")
