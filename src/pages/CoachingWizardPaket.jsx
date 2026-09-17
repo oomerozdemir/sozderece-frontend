@@ -31,7 +31,6 @@ function PackagePrice({ pkg, activePlan }) {
   if (activePlan?.dynamicExamPrice && isExamPriceActive(pkg)) {
     const price = getExamPrice(pkg);
     const days = getExamDaysLeft(pkg);
-    const rate = pkg.examDiscountRate ?? 5;
     const fullPrice = Math.round((days / 30) * pkg.price);
     return (
       <div>
@@ -50,12 +49,6 @@ function PackagePrice({ pkg, activePlan }) {
         {activePlan.durationText && (
           <div className="font-nunito font-bold text-sm mt-1 text-[#64748b]">{activePlan.durationText}</div>
         )}
-        <span
-          className="inline-block mt-2 font-fredoka font-bold text-[12px] px-3 py-1 rounded-full text-page-navy"
-          style={{ background: "rgba(28,27,138,0.08)" }}
-        >
-          Sınava {days} gün kaldı, %{rate} indirimli
-        </span>
       </div>
     );
   }

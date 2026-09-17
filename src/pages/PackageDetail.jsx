@@ -127,13 +127,12 @@ const PackageDetail = () => {
   if (activePlanDynamicExam) {
     const examPrice = getExamPrice(selected);
     const daysLeft = getExamDaysLeft(selected);
-    const rate = selected.examDiscountRate ?? 5;
     const fullPrice = Math.round((daysLeft / 30) * selected.price);
     displayPrice = `${examPrice.toLocaleString("tr-TR")}₺`;
     durationText = activePlan.durationText || "";
     strikethroughPrice = `${fullPrice.toLocaleString("tr-TR")}₺`;
-    priceBadgeText = `Sınava ${daysLeft} gün kaldı, %${rate} indirimli`;
-    priceBadgeStyle = "bg-[#dbeafe] text-[#1e40af]";
+    priceBadgeText = null;
+    priceBadgeStyle = "";
     planBadge = activePlan.badge || null;
     planBadgeStyle = BADGE_COLORS[activePlan.badgeColor] || BADGE_COLORS.green;
   } else if (activePlan) {

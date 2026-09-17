@@ -66,15 +66,11 @@ function PriceDisplay({ pkg, activePlan }) {
     if (activePlan.dynamicExamPrice && isExamPriceActive(pkg)) {
       const price = getExamPrice(pkg);
       const days = getExamDaysLeft(pkg);
-      const rate = pkg.examDiscountRate ?? 5;
       const fullPrice = Math.round(((days / 30) * pkg.price));
       return (
         <div>
           <OldPrice text={`${fullPrice.toLocaleString("tr-TR")}₺`} />
           <Amount amount={price.toLocaleString("tr-TR")} duration={activePlan.durationText} />
-          <span className="inline-block mt-2 font-nunito font-bold text-[11px] px-2.5 py-1 rounded-full" style={{ background: "#dbeafe", color: "#1d4ed8" }}>
-            Sınava {days} gün · %{rate} indirimli
-          </span>
         </div>
       );
     }
