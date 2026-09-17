@@ -134,8 +134,13 @@ function PackagePrice({ pkg, activePlan }) {
     );
   }
 
+  // priceText tutar+süreyi tek string'de taşıyor (ör. "2.000₺/30 Gün") — "/"
+  // işaretinden bölüp süreyi ayrı, küçük bir alt satırda gösteriyoruz.
   const priceStr = pkg.priceText || `${pkg.price}₺`;
-  const priceNum = priceStr.replace(/₺/g, "").trim();
+  const cleaned = priceStr.replace(/₺/g, "").trim();
+  const slashIdx = cleaned.indexOf("/");
+  const priceNum = slashIdx >= 0 ? cleaned.slice(0, slashIdx).trim() : cleaned;
+  const durationSuffix = slashIdx >= 0 ? `/${cleaned.slice(slashIdx + 1).trim()}` : null;
   return (
     <div>
       {pkg.oldPriceText && (
@@ -150,6 +155,9 @@ function PackagePrice({ pkg, activePlan }) {
           {priceNum}
         </span>
       </div>
+      {durationSuffix && (
+        <div className="font-nunito font-bold text-sm mt-1 text-[#64748b]">{durationSuffix}</div>
+      )}
     </div>
   );
 }

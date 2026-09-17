@@ -113,12 +113,19 @@ function PriceDisplay({ pkg, activePlan }) {
     );
   }
 
+  // priceText genelde "2.000₺/30 Gün" gibi tutarı ve süreyi tek string'de
+  // taşıyor — hepsini Amount'a "amount" olarak vermek süre metnini de
+  // fiyatla AYNI dev punto ile gösteriyordu. "/" işaretinden bölüp süreyi
+  // ayrı, küçük bir alt satıra taşıyoruz (Amount zaten bunu destekliyor).
   const priceStr = pkg.priceText || `${pkg.price}₺`;
-  const priceNum = priceStr.replace(/₺/g, "").trim();
+  const cleaned = priceStr.replace(/₺/g, "").trim();
+  const slashIdx = cleaned.indexOf("/");
+  const priceNum = slashIdx >= 0 ? cleaned.slice(0, slashIdx).trim() : cleaned;
+  const durationSuffix = slashIdx >= 0 ? `/${cleaned.slice(slashIdx + 1).trim()}` : null;
   return (
     <div>
       <OldPrice text={pkg.oldPriceText} />
-      <Amount amount={priceNum} />
+      <Amount amount={priceNum} duration={durationSuffix} />
     </div>
   );
 }

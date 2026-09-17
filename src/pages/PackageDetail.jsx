@@ -163,8 +163,13 @@ const PackageDetail = () => {
     planBadge = null;
     planBadgeStyle = "";
   } else {
-    displayPrice = selected.priceText || `${selected.price}₺`;
-    durationText = "";
+    // priceText tutar+süreyi tek string'de taşıyor (ör. "2.000₺/30 Gün") — "/"
+    // işaretinden bölüp süreyi displayPrice'tan ayrı, küçük durationText
+    // olarak gösteriyoruz (aksi halde ikisi de aynı dev puntoyla basılıyordu).
+    const raw = selected.priceText || `${selected.price}₺`;
+    const slashIdx = raw.indexOf("/");
+    displayPrice = slashIdx >= 0 ? raw.slice(0, slashIdx).trim() : raw;
+    durationText = slashIdx >= 0 ? `/${raw.slice(slashIdx + 1).trim()}` : "";
     strikethroughPrice = null;
     priceBadgeText = null;
     priceBadgeStyle = "";
