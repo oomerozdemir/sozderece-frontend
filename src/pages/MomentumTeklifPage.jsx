@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaCheck, FaTimes, FaWhatsapp, FaLock } from "react-icons/fa";
+import { FaCheck, FaTimes, FaWhatsapp, FaLock, FaBell } from "react-icons/fa";
 import TopBar from "../components/TopBar";
 import Navbar from "../components/navbar";
 import Seo from "../components/Seo";
@@ -102,16 +102,24 @@ function CtaButton({ phase, now, size = "md", className = "" }) {
 
   if (phase === "closed") {
     return (
-      <button
-        type="button"
-        disabled
-        className={`w-full font-fredoka font-bold rounded-2xl cursor-not-allowed ${
-          size === "lg" ? "text-lg py-4 px-8" : "text-base py-3.5 px-6"
-        } ${className}`}
-        style={{ background: "#EDEBFB", color: "#8B87A6" }}
-      >
-        Kayıtlar Kapandı
-      </button>
+      <div className={className}>
+        <button
+          type="button"
+          disabled
+          className={`w-full font-fredoka font-bold rounded-2xl cursor-not-allowed ${
+            size === "lg" ? "text-lg py-4 px-8" : "text-base py-3.5 px-6"
+          }`}
+          style={{ background: "#EDEBFB", color: "#8B87A6" }}
+        >
+          Kayıtlar Kapandı
+        </button>
+        <a
+          href="#bekleme-listesi"
+          className="block text-center font-nunito font-bold text-sm text-page-navy mt-3 hover:underline"
+        >
+          🔔 Bir sonraki atölye için bekleme listesine katıl
+        </a>
+      </div>
     );
   }
 
@@ -128,6 +136,102 @@ function CtaButton({ phase, now, size = "md", className = "" }) {
     >
       Programa Katıl →
     </motion.button>
+  );
+}
+
+const waitlistInputCls =
+  "w-full py-3 px-4 rounded-xl border border-[#E2E0F0] bg-white text-sm font-nunito outline-none focus:border-page-navy transition-colors";
+
+// Kayıtlar kapandıktan sonra sayfanın hero'sunun hemen altında görünen tek,
+// belirgin bekleme listesi formu — CtaButton'ın "closed" durumundaki 3 ayrı
+// yerdeki linki hep buraya (#bekleme-listesi) yönlendiriyor, aynı formun
+// 3 kez tekrarlanmaması için.
+function WaitlistSection() {
+  const [form, setForm] = useState({ name: "", email: "", phone: "" });
+  const [status, setStatus] = useState("idle"); // "idle" | "sending" | "done" | "error"
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.email.trim()) {
+      setErrorMsg("Ad ve e-posta zorunlu.");
+      setStatus("error");
+      return;
+    }
+    setStatus("sending");
+    setErrorMsg("");
+    try {
+      await axios.post("/api/waitlist", {
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim() || undefined,
+        source: OFFER_SLUG,
+      });
+      setStatus("done");
+    } catch (err) {
+      setErrorMsg(err?.response?.data?.message || "Kaydedilemedi, lütfen tekrar dene.");
+      setStatus("error");
+    }
+  };
+
+  return (
+    <section id="bekleme-listesi" className="py-16 px-6" style={{ background: "#1C1B8A" }}>
+      <motion.div {...fadeUp} className="max-w-[560px] mx-auto text-center">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-5" style={{ background: "rgba(216,255,79,0.15)" }}>
+          <FaBell size={20} color="#D8FF4F" />
+        </div>
+        <h2 className="font-fredoka font-bold text-white m-0 mb-3" style={{ fontSize: "clamp(24px, 3vw, 32px)" }}>
+          Bu dönemin kontenjanı doldu
+        </h2>
+        <p className="font-nunito text-[#C7C5E8] mb-8" style={{ fontSize: 16, lineHeight: 1.6 }}>
+          Bir sonraki 14 Günlük Program atölyesi açıldığında ilk sen haber almak istersen,
+          aşağıya bırak — kayıtlar açılır açılmaz sana yazarız.
+        </p>
+
+        {status === "done" ? (
+          <div className="bg-white rounded-2xl p-6 flex items-center gap-3 text-left">
+            <FaCheck className="text-[#166534] flex-shrink-0" size={20} />
+            <p className="font-nunito font-bold text-[#334155] m-0">
+              Kaydettik! Bir sonraki atölye açıldığında sana en önce biz haber vereceğiz.
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={submit} className="bg-white rounded-[24px] p-6 space-y-3 text-left" style={{ boxShadow: "0 20px 50px rgba(0,0,0,0.2)" }}>
+            <input
+              className={waitlistInputCls}
+              placeholder="Adın Soyadın"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
+            <input
+              className={waitlistInputCls}
+              type="email"
+              placeholder="E-posta adresin"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
+            <input
+              className={waitlistInputCls}
+              type="tel"
+              placeholder="Telefon (opsiyonel)"
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            />
+            {status === "error" && errorMsg && (
+              <p className="font-nunito text-sm text-[#dc2626] m-0">{errorMsg}</p>
+            )}
+            <button
+              type="submit"
+              disabled={status === "sending"}
+              className="w-full font-fredoka font-bold text-white rounded-2xl py-3.5 text-base disabled:opacity-60"
+              style={{ background: "#1C1B8A" }}
+            >
+              {status === "sending" ? "Kaydediliyor…" : "Bekleme Listesine Katıl"}
+            </button>
+          </form>
+        )}
+      </motion.div>
+    </section>
   );
 }
 
@@ -278,6 +382,9 @@ export default function MomentumTeklifPage() {
             </motion.div>
           </div>
         </section>
+
+        {/* ── Bekleme Listesi (kayıtlar kapandıysa) ── */}
+        {phase === "closed" && <WaitlistSection />}
 
         {/* ── Kontenjan, Kapanış Tarihi ve Koşul ── */}
         <section className="py-16 px-6" style={{ background: "#F8F7FC" }}>

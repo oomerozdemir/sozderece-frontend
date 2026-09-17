@@ -7,7 +7,7 @@ import {
   FaChartPie, FaChalkboardTeacher, FaBoxOpen, FaUserCheck, FaShoppingCart,
   FaSyncAlt, FaUsers, FaFire, FaCreditCard, FaGraduationCap, FaUniversity, FaPhoneAlt,
   FaFileAlt, FaListUl, FaSearch, FaFilter, FaChevronDown, FaChevronUp, FaDownload,
-  FaBookOpen, FaBullhorn, FaBars, FaTimes,
+  FaBookOpen, FaBullhorn, FaBars, FaTimes, FaBell,
 } from "react-icons/fa";
 import { Bar } from "react-chartjs-2";
 import {
@@ -30,6 +30,7 @@ import AdminYksPage from "../pages/AdminYksPage";
 import AdminNavbarPage from "../pages/AdminNavbarPage";
 import AdminSubscriptionsPage from "../pages/AdminSubscriptionsPage";
 import AdminContactsPage from "../pages/AdminContactsPage";
+import AdminWaitlistPage from "../pages/AdminWaitlistPage";
 import AdminInstructorApplicationsPage from "../pages/AdminInstructorApplicationsPage";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
@@ -509,6 +510,7 @@ const AdminDashboard = () => {
       title: "İletişim & İçerik",
       items: [
         { key: "contacts", label: "Görüşme Talepleri", icon: FaPhoneAlt },
+        { key: "waitlist", label: "Bekleme Listesi", icon: FaBell },
         { key: "applications", label: "Eğitmen Başvuruları", icon: FaFileAlt },
         { key: "packages", label: "Paketler", icon: FaBoxOpen },
         { key: "navbar", label: "Navbar", icon: FaListUl },
@@ -690,6 +692,7 @@ const AdminDashboard = () => {
         {view === "lgs"               && <AdminLgsPage />}
         {view === "yks"               && <AdminYksPage />}
         {view === "contacts"          && <AdminContactsPage />}
+        {view === "waitlist"          && <AdminWaitlistPage />}
         {view === "applications"      && <AdminInstructorApplicationsPage />}
         {view === "navbar"            && <AdminNavbarPage />}
         {view === "subscriptions"     && <AdminSubscriptionsPage />}
