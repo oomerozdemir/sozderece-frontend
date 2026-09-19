@@ -110,7 +110,7 @@ const PackageDetail = () => {
     { title: "Programlar kişiye özel mi hazırlanıyor?", content: "Evet, kopyala-yapıştır program kullanmıyoruz. Okul saatlerinize, seviyenize ve hedefinize göre her hafta size özel bir program hazırlanır." },
     { title: "Koça sadece belirli saatlerde mi ulaşabiliyorum?", content: "Hayır. Sabit tek bir haftalık görüşmeyle sınırlı değiliz — gün boyu istediğiniz an arayabilir, görüntülü görüşebilir ve yazabilirsiniz. Bize geçen öğrencilerin en sık anlattığı şey, eski koçluklarında haftada bir görüşüp bir daha ulaşamamaları." },
     { title: "Memnun kalmazsam koçumu değiştirebilir miyim?", content: "Kesinlikle. İlk 5 gün içinde koşulsuz, sonrasında talep etmeniz halinde her zaman koç değiştirme hakkınız vardır." },
-    { title: "İade politikanız nedir?", content: "Koçluk programınız size verildikten sonraki ilk 14 gün içerisinde koşulsuz iade hakkınız vardır." }
+    { title: "İade politikanız nedir?", content: "Koçluk programınız size verildikten sonraki ilk 7 gün içerisinde koşulsuz iade hakkınız vardır." }
   ];
   const faqList = [...defaultFaq];
 
@@ -404,7 +404,7 @@ const PackageDetail = () => {
                 <FaCreditCard className="text-page-navy" /> Taksit İmkanı
               </span>
               <span className="inline-flex items-center gap-1.5 bg-[#ecfdf5] text-[#065f46] font-nunito font-bold text-xs px-3.5 py-2 rounded-full">
-                <FaUndo /> 14 Gün İade Garantisi
+                <FaUndo /> 7 Gün İade Garantisi
               </span>
             </div>
             <div className="flex justify-center gap-4 opacity-70 pt-4 border-t border-[#f1f5f9]">

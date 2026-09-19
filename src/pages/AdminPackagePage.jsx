@@ -805,7 +805,7 @@ const AdminPackagePage = () => {
                   <label className="block text-xs font-black text-[#9f1239] mb-0.5">Ödeme Sayfası Güvence Kutusu</label>
                   <p className="text-[11px] text-[#e11d48]">
                     Bu paket için ödeme adımında (CoachingWizardOdeme) gösterilen iade/güvence metnini özelleştirir.
-                    Boş bırakılırsa sitedeki genel varsayılan metin ("14 gün koşulsuz cayma hakkı…") kullanılır.
+                    Boş bırakılırsa sitedeki genel varsayılan metin ("7 gün koşulsuz cayma hakkı…") kullanılır.
                   </p>
                 </div>
                 <div>

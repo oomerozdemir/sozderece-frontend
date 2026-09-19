@@ -71,13 +71,13 @@ const MesafeliHizmetSozlesmesi = () => {
 
         <h2 className="mt-6 text-[1.3rem] text-slate-700 border-b border-slate-200 pb-1">5. CAYMA HAKKI ve İADE POLİTİKASI</h2>
         <p className="my-3">
-          Hizmet Alan, sözleşmenin kurulduğu tarihten itibaren 14 (on dört) gün içinde
+          Hizmet Alan, sözleşmenin kurulduğu tarihten itibaren 7 (yedi) gün içinde
           hiçbir gerekçe göstermeksizin ve cezai şart ödemeksizin cayma hakkını
           kullanabilir.
         </p>
         <p className="my-3">
           Cayma hakkı bildirimi web sitesi, e-posta veya WhatsApp üzerinden yazılı
-          şekilde yapılmalıdır. Cayma halinde ödeme en geç 14 gün içinde iade edilir.
+          şekilde yapılmalıdır. Cayma halinde ödeme en geç 7 gün içinde iade edilir.
         </p>
         <p className="my-3">
           Ancak cayma süresi içerisinde hizmetin kısmen/tamamen sunulmuş olması

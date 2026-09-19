@@ -205,7 +205,7 @@ const CartPage = () => {
               200'den fazla öğrenci bu adımı çoktan attı
             </h3>
             <p className="font-nunito text-[#64748b] text-sm mt-2 max-w-[480px] mx-auto leading-relaxed">
-              Kart bilgin PayTR'nin güvenli altyapısında işlenir, bizim sunucularımıza hiç ulaşmaz. Program sana uymazsa ilk 14 gün içinde koşulsuz iade alırsın.
+              Kart bilgin PayTR'nin güvenli altyapısında işlenir, bizim sunucularımıza hiç ulaşmaz. Program sana uymazsa ilk 7 gün içinde koşulsuz iade alırsın.
             </p>
           </div>
 
@@ -214,7 +214,7 @@ const CartPage = () => {
               <FaShieldAlt style={{ color: "#7340C8" }} /> 256-bit SSL Güvenli Ödeme
             </span>
             <span className="inline-flex items-center gap-1.5 bg-[#ecfdf5] text-[#065f46] font-nunito font-bold text-xs px-3.5 py-2 rounded-full">
-              <FaUndo /> 14 Gün Koşulsuz İade
+              <FaUndo /> 7 Gün Koşulsuz İade
             </span>
             <span className="inline-flex items-center gap-1.5 bg-[#f8fafc] text-[#475569] font-nunito font-bold text-xs px-3.5 py-2 rounded-full">
               <FaCreditCard className="text-page-navy" /> Taksit İmkanı

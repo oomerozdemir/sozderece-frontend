@@ -59,7 +59,7 @@ const ORDER_FAQ = [
   },
   {
     title: "İade politikanız nedir?",
-    content: "Kayıt tarihinden itibaren ilk 14 gün içinde koşulsuz iade hakkınız bulunuyor. Program sizi tatmin etmezse hiçbir gerekçe göstermeksizin talep oluşturabilirsiniz.",
+    content: "Kayıt tarihinden itibaren ilk 7 gün içinde koşulsuz iade hakkınız bulunuyor. Program sizi tatmin etmezse hiçbir gerekçe göstermeksizin talep oluşturabilirsiniz.",
   },
   {
     title: "İade talebimi nasıl oluştururum?",

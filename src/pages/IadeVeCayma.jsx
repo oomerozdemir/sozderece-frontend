@@ -15,7 +15,7 @@ const IadeVeCaymaPolitikasi = () => {
       */}
       <Seo 
         title="İade ve Cayma Politikası" 
-        description="Sözderece Koçluk'ta 14 günlük koşulsuz cayma hakkı, ücret iadesi süreci ve hizmet iptal koşulları hakkında yasal bilgilendirme."
+        description="Sözderece Koçluk'ta 7 günlük koşulsuz cayma hakkı, ücret iadesi süreci ve hizmet iptal koşulları hakkında yasal bilgilendirme."
         canonical="/iade-ve-cayma-politikasi"
       />
 
@@ -60,7 +60,7 @@ const IadeVeCaymaPolitikasi = () => {
 
             <h2>1. CAYMA HAKKI VE SÜRESİ</h2>
             <p>
-            Alıcı, hizmetin satın alındığı tarihten itibaren <strong>14 (on dört) takvim günü</strong> içerisinde, hiçbir hukuki ve cezai sorumluluk üstlenmeksizin ve hiçbir gerekçe göstermeksizin sözleşmeden cayma hakkına sahiptir.
+            Alıcı, hizmetin satın alındığı tarihten itibaren <strong>7 (yedi) takvim günü</strong> içerisinde, hiçbir hukuki ve cezai sorumluluk üstlenmeksizin ve hiçbir gerekçe göstermeksizin sözleşmeden cayma hakkına sahiptir.
             Cayma hakkının kullanılması için bu süre içinde Satıcı'ya yazılı olarak veya kalıcı veri saklayıcısı ile bildirimde bulunulması şarttır.
             </p>
 
@@ -76,7 +76,7 @@ const IadeVeCaymaPolitikasi = () => {
 
             <h2>3. ÜCRET İADESİ PROSEDÜRÜ</h2>
             <p>
-            Cayma bildiriminin Satıcı'ya ulaşmasını takip eden <strong>14 (on dört) gün</strong> içerisinde, hizmet bedeli Alıcı'nın satın alma işleminde kullandığı ödeme aracına uygun şekilde tek seferde iade edilir.
+            Cayma bildiriminin Satıcı'ya ulaşmasını takip eden <strong>7 (yedi) gün</strong> içerisinde, hizmet bedeli Alıcı'nın satın alma işleminde kullandığı ödeme aracına uygun şekilde tek seferde iade edilir.
             Kredi kartı ile yapılan ödemelerde, iade işlemi bankanızın süreçlerine bağlı olarak ekstrenize 3-7 iş günü içerisinde yansıyabilir. Taksitli alışverişlerde bankanız iadeyi taksitli olarak gerçekleştirebilir.
             </p>
 
@@ -85,14 +85,14 @@ const IadeVeCaymaPolitikasi = () => {
             Aşağıdaki durumlarda yasal mevzuat gereği cayma hakkı kullanılamaz veya sınırlandırılabilir:
             </p>
             <ul>
-                <li>14 günlük yasal cayma süresi dolduktan sonra yapılan başvurular.</li>
-                <li>Hizmetin ifasına başlandıktan sonra, tüketicinin onayı ile 14 günlük süre dolmadan tamamlanan tek seferlik danışmanlık hizmetleri.</li>
+                <li>7 günlük yasal cayma süresi dolduktan sonra yapılan başvurular.</li>
+                <li>Hizmetin ifasına başlandıktan sonra, tüketicinin onayı ile 7 günlük süre dolmadan tamamlanan tek seferlik danışmanlık hizmetleri.</li>
                 <li>Kopyalanabilir nitelikteki dijital içerikler (PDF notlar, video ders kayıtları vb.) teslim edildikten sonra.</li>
             </ul>
 
             <h2>5. HİZMET İPTALİ VE FESİH</h2>
             <p>
-            Koçluk süreci devam ederken (14 günlük cayma süresi geçtikten sonra) hizmetin Alıcı tarafından sonlandırılmak istenmesi durumunda, kullanılan gün veya haftaların ücreti "standart paket fiyatı" üzerinden hesaplanarak düşülür ve kalan bakiye iade edilir. Ancak kampanyalı/indirimli paket alımlarında iptal durumunda indirim tutarı geri alınabilir.
+            Koçluk süreci devam ederken (7 günlük cayma süresi geçtikten sonra) hizmetin Alıcı tarafından sonlandırılmak istenmesi durumunda, kullanılan gün veya haftaların ücreti "standart paket fiyatı" üzerinden hesaplanarak düşülür ve kalan bakiye iade edilir. Ancak kampanyalı/indirimli paket alımlarında iptal durumunda indirim tutarı geri alınabilir.
             </p>
 
             <h2>6. MÜCBİR SEBEPLER</h2>
