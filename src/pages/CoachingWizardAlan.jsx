@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaFlask, FaBook, FaBalanceScale, FaGlobeAmericas } from "react-icons/fa";
+import axios from "../utils/axios";
 import Navbar from "../components/navbar";
 import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
@@ -16,6 +18,16 @@ const ALAN_OPTIONS = [
   { value: "Dil", icon: <FaGlobeAmericas />, desc: "Yabancı dil ağırlıklı" },
 ];
 
+// LGS paketi seçildiğinde "Alan" (Sayısal/Sözel/EA/Dil) anlamsız — LGS
+// öğrencileri henüz alan ayrımına girmemiş ortaokul öğrencileri. Onun yerine
+// kaçıncı sınıfta olduklarını soruyoruz.
+const SINIF_OPTIONS = [
+  { value: "5. Sınıf", label: "5. Sınıf", desc: "Temel kazanım pekiştirme" },
+  { value: "6. Sınıf", label: "6. Sınıf", desc: "Konu yoğunluğu artıyor" },
+  { value: "7. Sınıf", label: "7. Sınıf", desc: "LGS'ye hazırlık başlıyor" },
+  { value: "8. Sınıf", label: "8. Sınıf", desc: "LGS sınav yılı" },
+];
+
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
   animate: { opacity: 1, y: 0 },
@@ -29,16 +41,40 @@ const stagger = {
 export default function CoachingWizardAlan() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const slug = searchParams.get("slug");
+  // null = paket bilgisi henüz gelmedi, true/false = LGS paketi mi değil mi.
+  // slug yoksa (genel "Hemen Başla" girişi) varsayılan olarak Alan sorulur.
+  const [isLgs, setIsLgs] = useState(slug ? null : false);
+
+  useEffect(() => {
+    if (!slug) return;
+    let cancelled = false;
+    axios
+      .get("/api/packages")
+      .then((r) => {
+        if (cancelled) return;
+        const pkgs = r.data?.packages || [];
+        const pkg = pkgs.find((p) => p.slug === slug);
+        setIsLgs(pkg?.type === "lgs");
+      })
+      .catch(() => {
+        if (!cancelled) setIsLgs(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
 
   const goNext = (alan) => {
     const params = new URLSearchParams();
     params.set("alan", alan);
-    const slug = searchParams.get("slug");
     const plan = searchParams.get("plan");
     if (slug) params.set("slug", slug);
     if (plan !== null) params.set("plan", plan);
     navigate(`/hemen-basla/paket?${params.toString()}`);
   };
+
+  const options = isLgs ? SINIF_OPTIONS : ALAN_OPTIONS;
 
   return (
     <motion.div
@@ -64,41 +100,47 @@ export default function CoachingWizardAlan() {
             className="font-fredoka font-bold text-page-navy leading-[0.95]"
             style={{ fontSize: "clamp(28px, 4vw, 44px)", letterSpacing: -1 }}
           >
-            Hangi alanda hazırlanıyorsun?
+            {isLgs ? "Kaçıncı sınıftasın?" : "Hangi alanda hazırlanıyorsun?"}
           </h1>
           <p className="font-nunito text-[#64748b] text-base mt-3">
-            Programını sana göre şekillendirebilmemiz için önce alanını öğrenelim.
+            {isLgs
+              ? "Programını sınıfına göre şekillendirebilmemiz için önce sınıfını öğrenelim."
+              : "Programını sana göre şekillendirebilmemiz için önce alanını öğrenelim."}
           </p>
         </motion.div>
 
-        <motion.div
-          variants={stagger}
-          initial="initial"
-          animate="animate"
-          className="grid grid-cols-2 gap-4 max-[560px]:grid-cols-1"
-        >
-          {ALAN_OPTIONS.map((opt) => (
-            <motion.button
-              key={opt.value}
-              variants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 } }}
-              transition={{ duration: 0.45, ease: "easeOut" }}
-              whileHover={{ y: -4, scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
-              type="button"
-              onClick={() => goNext(opt.value)}
-              className="text-left rounded-[24px] border-2 border-[#f4f2fa] hover:border-page-navy bg-[#f8f9fc] hover:bg-white hover:shadow-[0_12px_32px_rgba(28,27,138,0.1)] transition-colors p-6"
-            >
-              <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl mb-3 text-page-navy"
-                style={{ background: "rgba(28,27,138,0.08)" }}
+        {isLgs === null ? (
+          <div className="text-center py-10 font-nunito text-[#94a3b8] text-sm">Yükleniyor…</div>
+        ) : (
+          <motion.div
+            variants={stagger}
+            initial="initial"
+            animate="animate"
+            className="grid grid-cols-2 gap-4 max-[560px]:grid-cols-1"
+          >
+            {options.map((opt) => (
+              <motion.button
+                key={opt.value}
+                variants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.45, ease: "easeOut" }}
+                whileHover={{ y: -4, scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
+                type="button"
+                onClick={() => goNext(opt.value)}
+                className="text-left rounded-[24px] border-2 border-[#f4f2fa] hover:border-page-navy bg-[#f8f9fc] hover:bg-white hover:shadow-[0_12px_32px_rgba(28,27,138,0.1)] transition-colors p-6"
               >
-                {opt.icon}
-              </div>
-              <div className="font-fredoka font-bold text-page-navy text-xl mb-1">{opt.value}</div>
-              <div className="font-nunito text-[#64748b] text-sm">{opt.desc}</div>
-            </motion.button>
-          ))}
-        </motion.div>
+                <div
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl mb-3 text-page-navy font-fredoka font-bold"
+                  style={{ background: "rgba(28,27,138,0.08)" }}
+                >
+                  {opt.icon || opt.label.slice(0, 1)}
+                </div>
+                <div className="font-fredoka font-bold text-page-navy text-xl mb-1">{opt.label || opt.value}</div>
+                <div className="font-nunito text-[#64748b] text-sm">{opt.desc}</div>
+              </motion.button>
+            ))}
+          </motion.div>
+        )}
 
         <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.25 }} className="text-center mt-8">
           <button
