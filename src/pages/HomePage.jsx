@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Warp } from "@paper-design/shaders-react";
-import { FaWhatsapp, FaChartLine, FaUsers, FaRoute, FaTasks, FaSyncAlt } from "react-icons/fa";
+import { FaWhatsapp, FaChartLine, FaUsers, FaRoute, FaTasks, FaSyncAlt, FaPaperPlane, FaComments } from "react-icons/fa";
 import Seo from "../components/Seo";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
@@ -115,33 +115,37 @@ const whyCards = [
 const steps = [
   {
     num: "01",
-    title: "Görüşme Talep Et",
-    desc: "Formu doldur ya da WhatsApp'tan yaz. 15 dakika içinde dönüyoruz, hiçbir taahhüt yok.",
-    icon: "💬",
+    title: "Başvurunu Gönder",
+    desc: "Kısa formu doldur ve ihtiyacını paylaş.",
+    icon: <FaPaperPlane />,
     circleColor: "#D8FF4F",
     circleText: "#0D0A2E",
   },
   {
     num: "02",
-    title: "Ücretsiz Keşif Görüşmesi",
-    desc: "15 dakikada nerede olduğunu, nereye gitmek istediğini anlıyoruz. Sana özel ön değerlendirme.",
-    icon: "🎯",
+    title: "Seni Tanıyalım",
+    desc: "Hedefini, mevcut durumunu ve ihtiyaçlarını netleştirelim.",
+    icon: <FaComments />,
     circleColor: "#7340C8",
     circleText: "#ffffff",
   },
   {
     num: "03",
-    title: "Koçun Belirleniyor",
-    desc: "Sınav türüne ve hedefe en uygun koç seçiliyor. Deneme analizi yapılıyor, program hazırlanıyor.",
-    icon: "🤝",
+    title: "Rotanı Oluşturalım",
+    desc: "Koçunu belirleyelim ve ilk çalışma rotanı hazırlayalım.",
+    tag: "KİŞİSEL ROTA",
+    tagColor: "#7340C8",
+    icon: <FaRoute />,
     circleColor: "#FF6B35",
     circleText: "#ffffff",
   },
   {
     num: "04",
-    title: "Programın Başlar",
-    desc: "İlk günden itibaren günlük plan, WhatsApp takibi ve haftalık görüşmelerle yola çıkıyorsun.",
-    icon: "🚀",
+    title: "Birlikte İlerleyelim",
+    desc: "İlerlemeni takip edelim, rotanı ihtiyaçlarına göre güncelleyelim.",
+    tag: "İLERLEME TAKİBİ + DİNAMİK PLANLAMA",
+    tagColor: "#c2410c",
+    icon: <FaChartLine />,
     circleColor: "#1C1B8A",
     circleText: "#D8FF4F",
   },
@@ -434,11 +438,11 @@ function HowItWorksSection() {
             className="font-fredoka font-bold m-0 leading-[0.95]"
             style={{ fontSize: "clamp(36px, 4vw, 56px)", letterSpacing: -1 }}
           >
-            <span className="text-page-dark">İlk adım </span>
-            <span style={{ color: "transparent", WebkitTextStroke: "2.5px #1C1B8A" }}>15 dakika.</span>
+            <span className="text-page-dark">Koçluk Sürecine Başlamak </span>
+            <span style={{ color: "transparent", WebkitTextStroke: "2.5px #1C1B8A" }}>Çok Kolay.</span>
           </h2>
           <p className="font-nunito text-[#64748b] text-base mt-4 max-w-[460px] mx-auto">
-            Geri kalanı biz hallederiz.
+            Önce seni tanıyoruz, sonra sana uygun rotayı birlikte oluşturuyoruz.
           </p>
         </motion.div>
 
@@ -474,9 +478,17 @@ function HowItWorksSection() {
                 >
                   {s.num}
                 </div>
-                <div className="text-2xl mb-3">{s.icon}</div>
+                <div className="text-xl mb-3" style={{ color: "#1C1B8A" }}>{s.icon}</div>
                 <h3 className="font-fredoka font-bold text-page-dark text-base mb-2">{s.title}</h3>
                 <p className="font-nunito text-[#64748b] text-sm leading-relaxed">{s.desc}</p>
+                {s.tag && (
+                  <div
+                    className="inline-flex items-center mt-3 font-fredoka font-bold text-[10px] px-2.5 py-1 rounded-full"
+                    style={{ background: `${s.tagColor}14`, color: s.tagColor, letterSpacing: 0.5 }}
+                  >
+                    {s.tag}
+                  </div>
+                )}
               </div>
             </motion.div>
           ))}
@@ -487,19 +499,13 @@ function HowItWorksSection() {
           transition={{ ...fadeUp.transition, delay: 0.25 }}
           className="text-center mt-12"
         >
-          <a
-            href="https://www.instagram.com/sozderece/"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 font-fredoka font-bold text-sm px-8 py-4 rounded-full no-underline transition-all hover:scale-105"
-            style={{
-              border: "1.5px solid rgba(28,27,138,0.2)",
-              color: "#1C1B8A",
-              background: "transparent",
-            }}
+          <Link
+            to="/ucretsiz-on-gorusme"
+            className="inline-flex items-center gap-2 text-white font-fredoka font-bold text-base px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
+            style={{ background: "#FF6B35", boxShadow: "0 8px 28px rgba(255,107,53,0.3)" }}
           >
-            @sozderece'ye git →
-          </a>
+            Koçluk İçin Başvur →
+          </Link>
         </motion.div>
       </div>
     </section>
