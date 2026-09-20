@@ -14,7 +14,6 @@ import Gundem from "./tabs/Gundem";
 import Kocum from "./tabs/Kocum";
 import Siparislerim from "./tabs/Siparislerim";
 import SosButton from "./SosButton";
-import CoachNoteBanner from "./CoachNoteBanner";
 import StreakBadge from "./StreakBadge";
 import CoachAvatar from "./CoachAvatar";
 
@@ -44,7 +43,11 @@ export default function StudentPanel() {
   const [student, setStudent] = useState(null);
   const [tab, setTab] = useState("genel");
   const [moreOpen, setMoreOpen] = useState(false);
-  const [headerStats, setHeaderStats] = useState({ streak: { current: 0, longest: 0 }, daysSinceLastActivity: null });
+  const [headerStats, setHeaderStats] = useState({
+    streak: { current: 0, longest: 0 },
+    daysSinceLastActivity: null,
+    todayFocusCount: null, // null = henüz bilinmiyor
+  });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -52,7 +55,13 @@ export default function StudentPanel() {
     axios.get("/api/v1/ogrenci/me", { headers }).then((res) => setStudent(res.data)).catch(() => {});
     axios
       .get("/api/v1/ogrenci/me/summary", { headers })
-      .then((res) => setHeaderStats({ streak: res.data?.streak || { current: 0, longest: 0 }, daysSinceLastActivity: res.data?.daysSinceLastActivity ?? null }))
+      .then((res) =>
+        setHeaderStats({
+          streak: res.data?.streak || { current: 0, longest: 0 },
+          daysSinceLastActivity: res.data?.daysSinceLastActivity ?? null,
+          todayFocusCount: res.data?.todayFocus?.length ?? 0,
+        })
+      )
       .catch(() => {});
   }, []);
 
@@ -76,6 +85,17 @@ export default function StudentPanel() {
     background: isActive ? "rgba(255,255,255,0.09)" : "transparent",
     color: isActive ? "#ffffff" : "rgba(255,255,255,0.55)",
   });
+
+  // Genel Bakış'ta sistem öğrencinin durumuna göre konuşsun — diğer
+  // sekmelerde jenerik bir alt başlık yeterli.
+  const headerSubtitle =
+    tab === "genel"
+      ? headerStats.todayFocusCount === null
+        ? "Bugünkü rotan hazırlanıyor…"
+        : headerStats.todayFocusCount > 0
+        ? "Bugünkü rotan hazır."
+        : "Bugün planlı görevin yok — istersen yaklaşan çalışmalarına göz at."
+      : `${active.label} · Programını buradan takip et`;
 
   return (
     <div className="min-h-screen bg-[#F5F4FB] md:h-screen md:overflow-hidden flex flex-col md:flex-row font-nunito">
@@ -146,7 +166,7 @@ export default function StudentPanel() {
               Merhaba, {firstName} 👋
             </h1>
             <p className="font-nunito text-[#8b87a6] text-xs mt-0.5 hidden sm:block truncate">
-              {active.label} · Programını buradan takip et
+              {headerSubtitle}
             </p>
           </div>
           <div className="flex items-center gap-2.5 md:gap-3 flex-shrink-0">
@@ -175,7 +195,6 @@ export default function StudentPanel() {
         </header>
 
         <main className="px-4 md:px-9 py-5 md:py-7 max-w-[1200px] mx-auto">
-          <CoachNoteBanner />
           <ActiveComponent student={student} onNavigate={setTab} />
         </main>
       </div>
