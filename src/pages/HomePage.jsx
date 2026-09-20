@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Warp } from "@paper-design/shaders-react";
-import { FaWhatsapp, FaChartLine, FaUsers, FaHandshake, FaSyncAlt, FaChartBar, FaCheckCircle } from "react-icons/fa";
+import { FaWhatsapp, FaChartLine, FaUsers, FaRoute, FaTasks, FaSyncAlt } from "react-icons/fa";
 import Seo from "../components/Seo";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
@@ -55,48 +55,60 @@ const shaderPurple2 = {
   colors: ["hsl(250,90%,34%)", "hsl(268,100%,66%)", "hsl(258,85%,40%)", "hsl(262,100%,76%)"],
 };
 
+// Sözderece Rota Sistemi — 6 kart üç mekanizma aşamasına renkle bağlanıyor
+// (mor=Kişisel Rota, yeşil=İlerleme Takibi, turuncu=Dinamik Planlama), son
+// iki kart (koç desteği, veli süreci) bu üç rengi destekleyici bir çift
+// olarak tekrar kullanıyor. "Koç Uyum Garantisi" ve "Ölçülebilir Sonuçlar"
+// buradan çıkarıldı — biri güven/garanti mesajı, diğeri doğrulanamaz bir
+// sonuç iddiasıydı, ikisi de mekanizma anlatımıyla karışıyordu.
 const whyCards = [
   {
-    icon: <FaWhatsapp />,
-    title: "Gün Boyu Ulaşılabilir Koç",
-    desc: "Sabit haftada bir görüşmeyle sınırlı değiliz. Günün her saatinde arayabilir, görüntülü konuşabilir, yazabilirsin — koçun gerçekten cevap verir.",
+    icon: <FaRoute />,
+    title: "Kişisel Çalışma Rotası",
+    desc: "Nereden başlayacağın, hangi derslere öncelik vereceğin ve haftanı nasıl planlayacağın mevcut durumuna ve hedeflerine göre belirlenir.",
+    tag: "KİŞİSEL ROTA",
+    accent: "#a78bfa",
+    shader: shaderPurple,
+  },
+  {
+    icon: <FaTasks />,
+    title: "Günlük İlerleme Takibi",
+    desc: "Program sadece hazırlanıp gönderilmez. Yaptıkların ve aksayan noktalar düzenli olarak takip edilir.",
+    tag: "İLERLEME TAKİBİ",
     accent: "#D8FF4F",
     shader: shaderLime,
   },
   {
     icon: <FaChartLine />,
-    title: "Anlık Deneme Analizi",
-    desc: "Her deneme sonrası 24 saat içinde program yeniden yapılandırılıyor. Aynı hatayı bir daha yapmazsın.",
-    accent: "#FF6B35",
-    shader: shaderOrange,
-  },
-  {
-    icon: <FaUsers />,
-    title: "Veli Dahil Süreç",
-    desc: "'Ders çalış' demek zorunda kalmıyorsunuz. Kötü polis olmayı biz üstleniyoruz: haftalık rapor, aylık görüşme.",
-    accent: "#a78bfa",
-    shader: shaderPurple,
-  },
-  {
-    icon: <FaHandshake />,
-    title: "Koç Uyum Garantisi",
-    desc: "Koçunu beğenmezsen değiştiriyoruz. Memnuniyetin bizim önceliğimiz.",
+    title: "Deneme Analizi",
+    desc: "Deneme sonuçların yalnızca net olarak kalmaz. Eksiklerin ve önceliklerin belirlenerek sonraki çalışma rotana yansıtılır.",
+    tag: "İLERLEME TAKİBİ",
     accent: "#D8FF4F",
     shader: shaderLime2,
   },
   {
     icon: <FaSyncAlt />,
-    title: "Dinamik Program",
-    desc: "Sabit PDF değil, her denemeden sonra güncellenen canlı program. Strateji durgun kalmaz, sen de kalmıyorsun.",
+    title: "Dinamik Planlama",
+    desc: "Planın sabit kalmaz. İlerlemen, denemelerin ve ihtiyaçların değiştikçe çalışma rotan da güncellenir. Sabit bir PDF değil, sen ilerledikçe gelişen bir çalışma planı.",
+    tag: "DİNAMİK PLANLAMA",
     accent: "#FF6B35",
-    shader: shaderOrange2,
+    shader: shaderOrange,
   },
   {
-    icon: <FaChartBar />,
-    title: "Ölçülebilir Sonuçlar",
-    desc: "Ortalama +17.5 net artışı ilk ayda. Boş vaat değil, gerçek hikayeler ve gerçek rakamlar.",
+    icon: <FaWhatsapp />,
+    title: "Ulaşılabilir Koç Desteği",
+    desc: "Takıldığında bir sonraki görüşmeyi beklemek zorunda kalmazsın. Süreç içerisinde koçuna ulaşıp destek alabilirsin.",
+    tag: "KOÇ DESTEĞİ",
     accent: "#a78bfa",
     shader: shaderPurple2,
+  },
+  {
+    icon: <FaUsers />,
+    title: "Veli Süreç Takibi",
+    desc: "Veli de süreçte karanlıkta kalmaz. Düzenli rapor ve geri bildirimlerle öğrencinin ilerleyişini takip eder.",
+    tag: "VELİ SÜRECİ",
+    accent: "#FF6B35",
+    shader: shaderOrange2,
   },
 ];
 
@@ -313,17 +325,25 @@ function WhyDifferentSection() {
             className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-4"
             style={{ letterSpacing: 4 }}
           >
-            NEDEN SÖZDERECE
+            SÖZDERECE ROTA SİSTEMİ
           </div>
           <h2
             className="font-fredoka font-bold m-0 leading-[0.95]"
             style={{ fontSize: "clamp(40px, 4.5vw, 64px)", letterSpacing: -1, maxWidth: 720 }}
           >
-            <span className="text-page-dark">Diğerleri ne yapıyor, </span>
-            <span style={{ color: "transparent", WebkitTextStroke: "2.5px #1C1B8A" }}>biz ne yapıyoruz?</span>
+            <span className="text-page-dark">Bir Program Verip</span>
+            <br />
+            <span style={{ color: "transparent", WebkitTextStroke: "2.5px #1C1B8A" }}>Seni Yalnız Bırakmıyoruz.</span>
           </h2>
           <p className="font-nunito text-[#64748b] text-base mt-5 max-w-[500px]">
-            Dershane konu anlatır. Koçun görevi evdeki boşluğu kapatmak, her gün ve somut olarak.
+            Çalışma rotanı oluşturuyor, ilerlemeni takip ediyor ve sonuçlarına göre planını sürekli güncelliyoruz.
+          </p>
+          <p className="font-fredoka font-bold text-[13px] tracking-[0.06em] mt-4">
+            <span style={{ color: "#7340C8" }}>Kişisel Rota</span>{" "}
+            <span style={{ color: "#cbd5e1" }}>→</span>{" "}
+            <span style={{ color: "#3F6B0A" }}>İlerleme Takibi</span>{" "}
+            <span style={{ color: "#cbd5e1" }}>→</span>{" "}
+            <span className="text-accent-orange">Dinamik Planlama</span>
           </p>
         </motion.div>
 
@@ -360,10 +380,10 @@ function WhyDifferentSection() {
                 <h3 className="font-fredoka font-bold text-white text-lg mb-2">{c.title}</h3>
                 <p className="font-nunito text-white/70 text-sm leading-relaxed flex-grow">{c.desc}</p>
                 <div
-                  className="inline-flex items-center gap-1.5 mt-4 font-fredoka font-bold text-[11px] px-2.5 py-1 rounded-full self-start"
-                  style={{ background: "rgba(255,255,255,0.1)", color: c.accent }}
+                  className="inline-flex items-center mt-4 font-fredoka font-bold text-[11px] px-2.5 py-1 rounded-full self-start"
+                  style={{ background: "rgba(255,255,255,0.1)", color: c.accent, letterSpacing: 0.5 }}
                 >
-                  <FaCheckCircle size={10} /> dahil
+                  {c.tag}
                 </div>
               </div>
             </motion.div>
