@@ -450,7 +450,7 @@ function YksSlide() {
           className="font-fredoka text-[64px] max-[900px]:text-[46px] max-[640px]:text-[38px] max-[400px]:text-[30px] leading-[1.05] mb-6"
           style={{ letterSpacing: "-0.5px", maxWidth: 640, color: TEXT_DARK }}
         >
-          TYT-AYT Stresi Bitsin, {" "}
+          YKS'de En Zor Şey Daha Fazla Çalışmak Değil. {" "}
           <span style={{
             background: "linear-gradient(90deg, #1C1B8A, #FF6B35, #1C1B8A)",
             backgroundSize: "200% auto",
@@ -458,16 +458,25 @@ function YksSlide() {
             backgroundClip: "text",
             WebkitTextFillColor: "transparent",
             animation: "heroShimmer 3s linear infinite",
-          }}>Hedefine Netlerinle Ulaş.</span>
+          }}>Neye Çalışacağını Bilmek.</span>
         </motion.h1>
 
         <motion.p
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.15 }}
-          className="font-nunito font-bold text-[19px] max-[640px]:text-base leading-relaxed mb-10"
+          className="font-nunito font-bold text-[19px] max-[640px]:text-base leading-relaxed mb-4"
           style={{ maxWidth: 520, color: TEXT_65 }}
         >
-          Günlük çalışma takibi, haftalık deneme analizi ve kişisel programla TYT-AYT'ye sistemli hazırlan. Koçuna sadece haftada bir değil, gün boyu ulaşabilirsin.
+          Hangi konuya öncelik vereceğini, bu hafta ne çalışacağını ve denemelerine göre rotanı nasıl değiştireceğini tek başına düşünmek zorunda kalma.
+        </motion.p>
+
+        <motion.p
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.19 }}
+          className="font-fredoka font-bold text-[13px] tracking-[0.06em] mb-10"
+          style={{ color: "#FF6B35" }}
+        >
+          Kişisel Rota <span style={{ color: TEXT_40 }}>→</span> İlerleme Takibi <span style={{ color: TEXT_40 }}>→</span> Dinamik Planlama
         </motion.p>
 
         <motion.div
@@ -484,14 +493,14 @@ function YksSlide() {
               letterSpacing: "0.3px",
             }}
           >
-            Sana Özel Değerlendirme Al
+            YKS Koçluğuna Başvur →
           </Link>
           <Link
             to="/yks-yolculugu"
             className="inline-flex items-center gap-2 font-fredoka font-semibold text-[16px] px-7 py-4 rounded-full no-underline transition-all hover:bg-black/[0.04]"
             style={{ border: `1.5px solid ${BORDER_SOFT}`, color: TEXT_DARK }}
           >
-            YKS Yolculuğunu İncele
+            Nasıl İlerliyor?
           </Link>
         </motion.div>
       </div>
@@ -556,18 +565,15 @@ function YksSlide() {
             </div>
           </div>
 
-          {/* Lacivert rozet — net artışı */}
+          {/* Lacivert rozet — hedef tamamlanma */}
           <div style={{
             position: "absolute", top: 0, left: 0,
             background: "#1C1B8A", borderRadius: 20, padding: "16px 22px",
             animation: "heroFloat2 4s ease-in-out infinite",
             boxShadow: "0 12px 30px rgba(28,27,138,0.35)",
           }}>
-            <div className="flex items-center gap-1.5">
-              <span className="font-fredoka font-bold text-white text-[28px] leading-none">+41</span>
-              <FaChartLine size={16} color="#D8FF4F" />
-            </div>
-            <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">Net artışı</div>
+            <div className="font-fredoka font-bold text-white text-[28px] leading-none">3/4</div>
+            <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">Hedef tamamlandı</div>
           </div>
 
           {/* Açık lacivert rozet — deneme takibi (turuncu CTA'dan dikkat
