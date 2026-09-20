@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaBullseye, FaClipboardList, FaChartLine, FaChevronLeft, FaChevronRight, FaPlay, FaPause } from "react-icons/fa";
+import { FaClipboardList, FaChartLine, FaChevronLeft, FaChevronRight, FaPlay, FaPause } from "react-icons/fa";
 
 const fadeUp = {
   initial: { opacity: 0, y: 32 },
@@ -91,9 +91,11 @@ function Eyebrow({ children, accent = "#FF6B35" }) {
 // SLAYT 1 — Varsayılan (YKS + LGS genel)
 // ══════════════════════════════════════════════
 function DefaultSlide() {
-  const stats = [
-    { value: "500+", label: "Öğrenci" },
-    { value: "%94", label: "Hedef Başarı" },
+  const trustPoints = ["500+ Öğrenciyle Deneyim", "Sınava Kadar Koçluk Desteği"];
+  const weeklyItems = [
+    { text: "Matematik", done: true },
+    { text: "Fizik", done: true },
+    { text: "Deneme Analizi", done: false },
   ];
 
   return (
@@ -110,7 +112,7 @@ function DefaultSlide() {
           className="font-fredoka text-[72px] max-[900px]:text-[52px] max-[640px]:text-[42px] max-[400px]:text-[34px] leading-[1.05] mb-6"
           style={{ letterSpacing: "-0.5px", maxWidth: 640, color: TEXT_DARK }}
         >
-          Çalışıyorsun Ama Netlerin Artmıyor Mu? {" "}
+          Sınava Çok Çalışarak Değil,{" "}
           <span style={{
             background: "linear-gradient(90deg, #1C1B8A, #7340C8, #1C1B8A)",
             backgroundSize: "200% auto",
@@ -118,16 +120,25 @@ function DefaultSlide() {
             backgroundClip: "text",
             WebkitTextFillColor: "transparent",
             animation: "heroShimmer 3s linear infinite",
-          }}>Sorun Sende Değil.</span>
+          }}>Doğru Bir Rotayla Hazırlan.</span>
         </motion.h1>
 
         <motion.p
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.15 }}
-          className="font-nunito font-bold text-[19px] max-[640px]:text-base leading-relaxed mb-10"
+          className="font-nunito font-bold text-[19px] max-[640px]:text-base leading-relaxed mb-4"
           style={{ maxWidth: 520, color: TEXT_65 }}
         >
-          Kişiye özel koçluk, günlük takip ve deneme analizleriyle LGS & YKS'ye hazırlan. Koçun sadece haftada bir görüşüp kaybolmaz — gün boyu arayabilir, yazabilirsin.
+          Ne çalışacağını bil, ilerlemeni takip et ve ihtiyaçlarına göre çalışma planını güncelle.
+        </motion.p>
+
+        <motion.p
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.19 }}
+          className="font-fredoka font-bold text-[13px] tracking-[0.06em] mb-10"
+          style={{ color: "#7340C8" }}
+        >
+          Kişisel Rota <span style={{ color: TEXT_40 }}>→</span> İlerleme Takibi <span style={{ color: TEXT_40 }}>→</span> Dinamik Planlama
         </motion.p>
 
         <motion.div
@@ -144,28 +155,34 @@ function DefaultSlide() {
               letterSpacing: "0.3px",
             }}
           >
-            Hemen Tanışalım →
+            Koçluk İçin Başvur →
           </Link>
           <a
             href="#nasil-calisir"
             className="inline-flex items-center gap-2 font-fredoka font-semibold text-[16px] px-7 py-4 rounded-full no-underline transition-all hover:bg-black/[0.04]"
             style={{ border: `1.5px solid ${BORDER_SOFT}`, color: TEXT_DARK }}
           >
-            Nasıl Çalışır?
+            Nasıl Çalışıyor?
           </a>
         </motion.div>
 
-        <div className="flex gap-8">
-          {stats.map((s, i) => (
+        <div className="flex flex-wrap gap-3">
+          {trustPoints.map((t, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 6 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
+              className="inline-flex items-center gap-2 rounded-full pl-1.5 pr-4 py-1.5"
+              style={{ border: `1px solid ${BORDER_SOFT}` }}
             >
-              <div className="font-fredoka font-bold text-[28px] leading-none" style={{ color: "#1C1B8A" }}>{s.value}</div>
-              <div className="font-nunito font-bold text-[13px] mt-1 tracking-wide" style={{ color: TEXT_50 }}>{s.label}</div>
+              <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#D8FF4F" }}>
+                <svg width="10" height="10" viewBox="0 0 12 12">
+                  <polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </span>
+              <span className="font-nunito font-bold text-[13px]" style={{ color: TEXT_DARK }}>{t}</span>
             </motion.div>
           ))}
         </div>
@@ -180,7 +197,7 @@ function DefaultSlide() {
         className="flex-shrink-0 max-[960px]:hidden"
       >
         <div className="relative" style={{ width: 390, height: 440 }}>
-          {/* Ana kart — haftalık plan */}
+          {/* Ana kart — bu haftaki rota */}
           <div style={{
             position: "absolute", top: 70, left: 40,
             width: 310,
@@ -191,13 +208,9 @@ function DefaultSlide() {
             boxShadow: "0 24px 50px rgba(21,14,51,0.1)",
           }}>
             <div className="font-fredoka font-bold text-sm tracking-[0.12em] uppercase mb-4" style={{ color: "#1C1B8A" }}>
-              Bu Haftanın Planı
+              Bu Haftaki Rotan
             </div>
-            {[
-              { text: "Mat: Türevler — 2 ders", done: true },
-              { text: "Fizik: Elektrik — 1 ders", done: true },
-              { text: "Deneme Analizi — Cuma", done: false },
-            ].map((item, i) => (
+            {weeklyItems.map((item, i) => (
               <div key={i} className="flex items-center gap-3 mb-3.5">
                 <div style={{
                   width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
@@ -217,26 +230,44 @@ function DefaultSlide() {
             ))}
           </div>
 
-          {/* Turuncu rozet — net artışı */}
+          {/* Turuncu rozet — haftalık plan tamamlanma oranı */}
           <div style={{
             position: "absolute", top: 0, left: 0,
             background: "#FF6B35", borderRadius: 20, padding: "16px 22px",
             animation: "heroFloat2 4s ease-in-out infinite",
             boxShadow: "0 12px 30px rgba(255,107,53,0.35)",
           }}>
-            <div className="font-fredoka font-bold text-white text-[28px] leading-none">+47</div>
-            <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">Net artışı</div>
+            <div className="font-fredoka font-bold text-white text-[28px] leading-none">%82</div>
+            <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">Haftalık plan tamamlandı</div>
           </div>
 
-          {/* Sarı rozet — koç */}
+          {/* Sarı rozet — koç geri bildirimi */}
           <div style={{
             position: "absolute", bottom: 10, right: 0,
             background: "#D8FF4F", borderRadius: 18, padding: "14px 20px",
             animation: "heroFloat3 6s ease-in-out infinite",
             boxShadow: "0 10px 24px rgba(216,255,79,0.4)",
           }}>
-            <div className="font-fredoka font-bold text-page-dark text-[15px] leading-snug">Koçunla bugün</div>
-            <div className="font-fredoka font-bold text-page-dark text-[15px] flex items-center gap-1.5">görüş <FaBullseye size={13} /></div>
+            <div className="font-fredoka font-bold text-page-dark text-[15px] leading-snug flex items-center gap-1.5">
+              Koç geri bildirimi
+              <svg width="13" height="13" viewBox="0 0 12 12">
+                <polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2.2" strokeLinecap="round" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Lacivert rozet — rota güncellendi */}
+          <div style={{
+            position: "absolute", top: 300, left: -18,
+            background: "#EEEEFB",
+            border: "1px solid #D6D6F5",
+            borderRadius: 18, padding: "12px 18px",
+            animation: "heroFloat1 5.5s ease-in-out infinite",
+            boxShadow: "0 10px 24px rgba(21,14,51,0.08)",
+          }}>
+            <div className="font-fredoka font-bold text-[14px] flex items-center gap-1.5" style={{ color: "#1C1B8A" }}>
+              Rota güncellendi <span>↗</span>
+            </div>
           </div>
         </div>
       </motion.div>
