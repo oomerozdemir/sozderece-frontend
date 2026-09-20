@@ -251,14 +251,18 @@ const testimonials = [
   },
 ];
 
+// Dershane sütunu bilinçli olarak kaldırıldı — dershane doğrudan bir rakip
+// değil, farklı bir ihtiyacı karşılıyor (konu anlatımı vs. süreç yönetimi).
+// Karşılaştırma artık "kim daha çok özelliğe sahip" değil, "süreç nasıl
+// yönetiliyor" sorusuna odaklanıyor; "klasik yaklaşım" sütunu da kesin bir
+// iddia değil, genel bir yaklaşım modeli olarak yazıldı.
 const compRows = [
-  { feature: "Koça ulaşım", dershane: false, other: "haftada 1 görüşme", sozderece: "gün boyu ara/yaz" },
-  { feature: "Günlük takip", dershane: false, other: false, sozderece: true },
-  { feature: "Deneme analizi", dershane: false, other: "bazen", sozderece: true },
-  { feature: "Dinamik program", dershane: false, other: false, sozderece: true },
-  { feature: "WhatsApp iletişim", dershane: false, other: "sınırlı saatte", sozderece: true },
-  { feature: "Veli bilgilendirmesi", dershane: false, other: false, sozderece: true },
-  { feature: "Bire bir kişiselleştirme", dershane: false, other: "haftalık", sozderece: "günlük" },
+  { label: "Çalışma planı", klasik: "Genel / sabit plan", sozderece: "Öğrenciye göre oluşturulan rota" },
+  { label: "Uygulama", klasik: "Plan öğrenciye bırakılır", sozderece: "İlerleme düzenli takip edilir" },
+  { label: "Plan aksadığında", klasik: "Aynı plana devam", sozderece: "Rota yeniden düzenlenir" },
+  { label: "Denemeler", klasik: "Sonuç/net görülür", sozderece: "Analiz edilip plana yansıtılır" },
+  { label: "Koç desteği", klasik: "Belirli görüşmeler", sozderece: "Süreç boyunca ulaşılabilir destek" },
+  { label: "Veli iletişimi", klasik: "Sürece göre değişir", sozderece: "Düzenli bilgilendirme" },
 ];
 
 const faqs = [
@@ -654,36 +658,6 @@ function TestimonialsSection() {
 // ══════════════════════════════════════════════
 // KARŞILAŞTIRMA — Light, premium tablo
 // ══════════════════════════════════════════════
-function Cell({ val, highlight }) {
-  if (val === true)
-    return (
-      <span
-        className="inline-flex items-center justify-center w-7 h-7 rounded-full font-fredoka font-bold text-sm"
-        style={
-          highlight
-            ? { background: "#D8FF4F", color: "#0D0A2E" }
-            : { background: "#f1f0f8", color: "#1C1B8A" }
-        }
-      >
-        ✓
-      </span>
-    );
-  if (val === false)
-    return (
-      <span className="inline-flex items-center justify-center w-7 h-7 rounded-full font-fredoka font-bold text-sm" style={{ background: "#f4f4f4", color: "#cbd5e1" }}>
-        ✗
-      </span>
-    );
-  return (
-    <span
-      className="font-fredoka font-bold text-sm px-2.5 py-1 rounded-full"
-      style={{ background: "rgba(255,107,53,0.1)", color: "#FF6B35" }}
-    >
-      {val}
-    </span>
-  );
-}
-
 function ComparisonSection() {
   return (
     <section className="py-24 px-5" style={{ background: "#f4f2fa" }}>
@@ -697,11 +671,15 @@ function ComparisonSection() {
           </div>
           <h2
             className="font-fredoka font-bold m-0 leading-[0.95]"
-            style={{ fontSize: "clamp(36px, 4vw, 56px)", letterSpacing: -1 }}
+            style={{ fontSize: "clamp(34px, 4vw, 52px)", letterSpacing: -1 }}
           >
-            <span className="text-page-dark">Her koçluk </span>
-            <span style={{ color: "transparent", WebkitTextStroke: "2.5px #FF6B35" }}>aynı değil.</span>
+            <span className="text-page-dark">Bir Program Almakla,</span>
+            <br />
+            <span style={{ color: "transparent", WebkitTextStroke: "2.5px #FF6B35" }}>Bir Süreci Yönetmek Aynı Şey Değil.</span>
           </h2>
+          <p className="font-nunito text-[#64748b] text-base mt-5 max-w-[560px] mx-auto">
+            Sözderece'de amaç yalnızca program hazırlamak değil; rotanı belirlemek, ilerlemeni takip etmek ve gerektiğinde planını güncellemek.
+          </p>
         </motion.div>
 
         <motion.div
@@ -710,32 +688,26 @@ function ComparisonSection() {
           className="overflow-x-auto rounded-[24px] shadow-[0_8px_40px_rgba(28,27,138,0.1)]"
           style={{ border: "1px solid rgba(28,27,138,0.08)" }}
         >
-          <table className="w-full min-w-[540px] border-collapse">
+          <table className="w-full min-w-[480px] border-collapse">
             <thead>
               <tr>
                 <th
                   className="text-left py-5 px-6 font-fredoka font-bold text-sm uppercase text-white/40"
-                  style={{ background: "#0D0A2E", letterSpacing: 2, width: "40%" }}
+                  style={{ background: "#0D0A2E", letterSpacing: 2, width: "34%" }}
                 >
-                  Özellik
+                  Süreç
                 </th>
                 <th
                   className="text-center py-5 px-4 font-fredoka font-bold text-sm uppercase text-white/40"
                   style={{ background: "#0D0A2E", letterSpacing: 2 }}
                 >
-                  Dershane
-                </th>
-                <th
-                  className="text-center py-5 px-4 font-fredoka font-bold text-sm uppercase text-white/40"
-                  style={{ background: "#0D0A2E", letterSpacing: 2 }}
-                >
-                  Başka Koçluk
+                  Klasik Yaklaşım
                 </th>
                 <th
                   className="text-center py-5 px-4 font-fredoka font-bold text-sm uppercase text-page-dark"
                   style={{ background: "#D8FF4F", letterSpacing: 2 }}
                 >
-                  Sözderece ✦
+                  Sözderece Rota Sistemi
                 </th>
               </tr>
             </thead>
@@ -743,16 +715,18 @@ function ComparisonSection() {
               {compRows.map((row, i) => (
                 <tr key={i} style={{ background: i % 2 === 0 ? "#ffffff" : "#faf9ff" }}>
                   <td className="py-4 px-6 font-nunito font-bold text-sm text-[#475569]" style={{ borderBottom: "1px solid rgba(28,27,138,0.06)" }}>
-                    {row.feature}
+                    {row.label}
                   </td>
                   <td className="py-4 px-4 text-center" style={{ borderBottom: "1px solid rgba(28,27,138,0.06)" }}>
-                    <Cell val={row.dershane} highlight={false} />
-                  </td>
-                  <td className="py-4 px-4 text-center" style={{ borderBottom: "1px solid rgba(28,27,138,0.06)" }}>
-                    <Cell val={row.other} highlight={false} />
+                    <span className="font-nunito font-semibold text-sm text-[#94a3b8]">{row.klasik}</span>
                   </td>
                   <td className="py-4 px-4 text-center" style={{ borderBottom: "1px solid rgba(216,255,79,0.2)", background: "rgba(28,27,138,0.03)" }}>
-                    <Cell val={row.sozderece} highlight={true} />
+                    <span
+                      className="inline-block font-fredoka font-bold text-sm px-3 py-1.5 rounded-full"
+                      style={{ background: "rgba(216,255,79,0.25)", color: "#1C1B8A" }}
+                    >
+                      {row.sozderece}
+                    </span>
                   </td>
                 </tr>
               ))}
@@ -760,9 +734,28 @@ function ComparisonSection() {
           </table>
         </motion.div>
 
+        {/* Ana yaklaşım — tablonun tamamının anlattığı şeyi tek satıra
+            indiren, görsel olarak büyütülmüş kapanış karşılaştırması. */}
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.15 }}
+          className="mt-5 rounded-[24px] px-8 py-9 text-center"
+          style={{ background: "#0D0A2E" }}
+        >
+          <p className="font-nunito font-bold text-white/30 text-xs uppercase mb-3" style={{ letterSpacing: 3 }}>
+            Ana Yaklaşım
+          </p>
+          <p className="font-fredoka font-bold text-white/35 text-lg md:text-xl mb-2" style={{ letterSpacing: -0.3 }}>
+            Programı Oluştur → Uygula
+          </p>
+          <p className="font-fredoka font-bold text-xl md:text-[28px]" style={{ color: "#D8FF4F", letterSpacing: -0.5 }}>
+            Rotanı Oluştur → Uygula → Takip Et → Güncelle
+          </p>
+        </motion.div>
+
+        <motion.div
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.2 }}
           className="text-center mt-8"
         >
           <Link
@@ -770,7 +763,7 @@ function ComparisonSection() {
             className="inline-flex items-center gap-2 font-fredoka font-bold text-page-dark text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
             style={{ background: "#D8FF4F", boxShadow: "0 6px 20px rgba(216,255,79,0.3)" }}
           >
-            Fiyatları Gör →
+            Sana Uygun Koçluğu İncele →
           </Link>
         </motion.div>
       </div>
