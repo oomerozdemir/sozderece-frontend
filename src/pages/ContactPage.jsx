@@ -356,19 +356,10 @@ const IletisimPage = () => {
                 <motion.p
                   {...fadeUp}
                   transition={{ ...fadeUp.transition, delay: 0.15 }}
-                  className="font-nunito font-bold text-white/65 text-[1.05rem] leading-relaxed mb-3 max-w-[95%] max-[960px]:text-base max-[960px]:max-w-full"
+                  className="font-nunito font-bold text-white/65 text-[1.05rem] leading-relaxed mb-8 max-w-[95%] max-[960px]:text-base max-[960px]:max-w-full"
                 >
                   Birkaç kısa soruyu yanıtla. Böylece görüşmede mevcut durumunu anlamakla vakit kaybetmeden,
                   doğrudan sana nasıl yardımcı olabileceğimizi konuşalım.
-                </motion.p>
-
-                <motion.p
-                  {...fadeUp}
-                  transition={{ ...fadeUp.transition, delay: 0.18 }}
-                  className="font-nunito font-bold text-lime/80 text-xs mb-8 max-[960px]:mx-auto"
-                  style={{ color: "#D8FF4F" }}
-                >
-                  Yaklaşık 2 dakika • Ücretsiz • Herhangi bir taahhüt yok
                 </motion.p>
 
                 <button
