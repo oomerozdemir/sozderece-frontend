@@ -1,6 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "../utils/axios";
 import Button from "../components/ui/Button";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 const authHeaders = () => {
   const token = localStorage.getItem("token");
@@ -11,6 +12,7 @@ const AdminContactsPage = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [expandedId, setExpandedId] = useState(null);
 
   const fetchContacts = () => {
     setLoading(true);
@@ -92,29 +94,79 @@ const AdminContactsPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((c, i) => (
-                  <tr key={c.id} className={`border-t border-[#f1f5f9] ${i % 2 === 0 ? "bg-white" : "bg-[#f8fafc]"} hover:bg-[#eff6ff] transition-colors`}>
-                    <td className="px-4 py-3 text-[#94a3b8] text-xs">{c.id}</td>
-                    <td className="px-4 py-3 font-semibold text-[#0f172a]">{c.name}</td>
-                    <td className="px-4 py-3">
-                      <span className="bg-[#eff6ff] text-[#1d4ed8] text-xs font-bold px-2 py-0.5 rounded-full">{c.userType || "—"}</span>
-                    </td>
-                    <td className="px-4 py-3 text-[#475569]">
-                      <a href={`tel:${c.phone}`} className="hover:text-brand-navy block">{c.phone}</a>
-                      <a href={`mailto:${c.email}`} className="hover:text-brand-navy text-xs text-[#94a3b8]">{c.email}</a>
-                    </td>
-                    <td className="px-4 py-3 text-[#475569] whitespace-nowrap">
-                      {c.meetingDate || "—"} {c.meetingTime && <span className="text-xs text-[#94a3b8]">{c.meetingTime}</span>}
-                    </td>
-                    <td className="px-4 py-3 text-[#64748b] max-w-[200px] truncate">{c.message || "—"}</td>
-                    <td className="px-4 py-3 text-[#94a3b8] text-xs whitespace-nowrap">
-                      {new Date(c.createdAt).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })}
-                    </td>
-                    <td className="px-4 py-3">
-                      <Button onClick={() => handleDelete(c.id)} variant="danger" size="sm">Sil</Button>
-                    </td>
-                  </tr>
-                ))}
+                {filtered.map((c, i) => {
+                  const hasProfile = c.role || c.examType || (c.challenges && c.challenges.length) || c.goal || (c.supportAreas && c.supportAreas.length) || c.studyRoutine || c.lastExamResult;
+                  const isOpen = expandedId === c.id;
+                  return (
+                    <React.Fragment key={c.id}>
+                      <tr className={`border-t border-[#f1f5f9] ${i % 2 === 0 ? "bg-white" : "bg-[#f8fafc]"} hover:bg-[#eff6ff] transition-colors`}>
+                        <td className="px-4 py-3 text-[#94a3b8] text-xs">{c.id}</td>
+                        <td className="px-4 py-3 font-semibold text-[#0f172a]">{c.name}</td>
+                        <td className="px-4 py-3">
+                          {c.role || c.examType || c.gradeStatus ? (
+                            <span className="bg-[#eff6ff] text-[#1d4ed8] text-xs font-bold px-2 py-0.5 rounded-full whitespace-nowrap">
+                              {[c.role, c.examType, c.gradeStatus].filter(Boolean).join(" · ")}
+                            </span>
+                          ) : (
+                            <span className="bg-[#eff6ff] text-[#1d4ed8] text-xs font-bold px-2 py-0.5 rounded-full">{c.userType || "—"}</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-[#475569]">
+                          <a href={`tel:${c.phone}`} className="hover:text-brand-navy block">{c.phone}</a>
+                          {c.email && <a href={`mailto:${c.email}`} className="hover:text-brand-navy text-xs text-[#94a3b8]">{c.email}</a>}
+                        </td>
+                        <td className="px-4 py-3 text-[#475569] whitespace-nowrap">
+                          {c.meetingDate || "—"} {c.meetingTime && <span className="text-xs text-[#94a3b8]">{c.meetingTime}</span>}
+                        </td>
+                        <td className="px-4 py-3 text-[#64748b] max-w-[200px] truncate">{c.message || "—"}</td>
+                        <td className="px-4 py-3 text-[#94a3b8] text-xs whitespace-nowrap">
+                          {new Date(c.createdAt).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            {hasProfile && (
+                              <button
+                                onClick={() => setExpandedId(isOpen ? null : c.id)}
+                                className="w-7 h-7 rounded-lg bg-[#f1f5f9] hover:bg-[#e2e8f0] flex items-center justify-center text-[#64748b] flex-shrink-0"
+                                aria-label={isOpen ? "Detayı gizle" : "Rota Sistemi profilini göster"}
+                              >
+                                {isOpen ? <FaChevronUp size={11} /> : <FaChevronDown size={11} />}
+                              </button>
+                            )}
+                            <Button onClick={() => handleDelete(c.id)} variant="danger" size="sm">Sil</Button>
+                          </div>
+                        </td>
+                      </tr>
+                      {isOpen && hasProfile && (
+                        <tr className="border-t border-[#f1f5f9] bg-[#fafaff]">
+                          <td colSpan={8} className="px-4 py-4">
+                            <div className="grid gap-3 sm:grid-cols-2">
+                              {c.studyRoutine && (
+                                <DetailField label="Çalışma Düzeni" value={c.studyRoutine} />
+                              )}
+                              {c.lastExamResult && (
+                                <DetailField label="Son Deneme Sonucu" value={c.lastExamResult} />
+                              )}
+                              {c.challenges?.length > 0 && (
+                                <DetailField
+                                  label="Zorlandığı Noktalar"
+                                  value={c.challenges.map((ch) => (ch === "Diğer" && c.challengesOther ? `Diğer: ${c.challengesOther}` : ch)).join(" · ")}
+                                />
+                              )}
+                              {c.goal && <DetailField label="Hedefi" value={c.goal} />}
+                              {c.supportAreas?.length > 0 && (
+                                <DetailField
+                                  label="Beklediği Destek"
+                                  value={c.supportAreas.map((s) => (s === "Diğer" && c.supportAreasOther ? `Diğer: ${c.supportAreasOther}` : s)).join(" · ")}
+                                />
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -123,5 +175,14 @@ const AdminContactsPage = () => {
     </div>
   );
 };
+
+function DetailField({ label, value }) {
+  return (
+    <div className="bg-white rounded-xl border border-[#f1f5f9] px-3.5 py-2.5">
+      <p className="text-[10px] font-bold uppercase tracking-wide text-[#94a3b8] mb-1">{label}</p>
+      <p className="text-sm text-[#334155] leading-relaxed">{value}</p>
+    </div>
+  );
+}
 
 export default AdminContactsPage;

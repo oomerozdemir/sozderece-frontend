@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import axios from "../utils/axios";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { isValidName, isValidPhone, isValidEmail } from "../utils/validation";
 import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";
@@ -16,7 +16,8 @@ import {
   FaArrowDown,
   FaCheckCircle,
   FaExclamationCircle,
-  FaCalendarAlt
+  FaCalendarAlt,
+  FaArrowLeft,
 } from "react-icons/fa";
 
 const fadeUp = {
@@ -42,6 +43,61 @@ const steps = [
   { num: "03", title: "Başlangıç", desc: "Sistemi ve koçunu sevdiysen hemen çalışmaya başla.", circleColor: "#FF6B35", circleText: "#ffffff" },
 ];
 
+// Form sihirbazı — Sözderece Rota Sistemi'nin ilk temas noktası. 3 kısa
+// profil adımı + son adımda doğrudan randevu saati seçimi. Backend
+// (contact.controller.js) ile senkron whitelist'ler.
+const GRADE_OPTIONS = {
+  YKS: ["9. Sınıf", "10. Sınıf", "11. Sınıf", "12. Sınıf", "Mezun"],
+  LGS: ["5. Sınıf", "6. Sınıf", "7. Sınıf", "8. Sınıf"],
+};
+
+const CHALLENGE_OPTIONS = [
+  "Nereden başlayacağımı bilmiyorum.",
+  "Program yapıyorum ama sürdüremiyorum.",
+  "Günümü düzenleyemiyorum.",
+  "Eksiklerimi nasıl kapatacağımı bilmiyorum.",
+  "Deneme sonuçlarımı nasıl değerlendireceğimi bilmiyorum.",
+  "Düzenli çalışmakta zorlanıyorum.",
+  "Ne kadar çalışsam da doğru ilerlediğimden emin değilim.",
+  "Diğer",
+];
+
+const STUDY_ROUTINE_OPTIONS = ["Düzenli", "Bazen düzenli", "Dağınık", "Henüz bir düzenim yok"];
+
+const SUPPORT_AREA_OPTIONS = [
+  "Bana uygun çalışma planı",
+  "Düzenli takip",
+  "Deneme analizi",
+  "Eksiklerin belirlenmesi",
+  "Çalışma disiplini",
+  "Zaman yönetimi",
+  "Süreci biriyle birlikte yönetmek",
+  "Diğer",
+];
+
+const WIZARD_STEPS = [
+  { key: 1, label: "Seni Tanıyalım" },
+  { key: 2, label: "Mevcut Durumun" },
+  { key: 3, label: "Hedefin" },
+];
+
+function Pill({ active, onClick, children }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="text-left px-3.5 py-2.5 rounded-xl text-sm font-nunito font-bold border transition-all"
+      style={
+        active
+          ? { background: "#1C1B8A", borderColor: "#1C1B8A", color: "#D8FF4F" }
+          : { background: "#fff", borderColor: "#e5e7eb", color: "#334155" }
+      }
+    >
+      {children}
+    </button>
+  );
+}
+
 const IletisimPage = () => {
   const navigate = useNavigate();
   const formRef = useRef(null);
@@ -56,11 +112,21 @@ const IletisimPage = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
+  const [step, setStep] = useState(1); // 1-3 profil adımları, 4 = randevu
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
     phone: "",
-    userType: "",
+    email: "",
+    role: "",
+    examType: "",
+    gradeStatus: "",
+    challenges: [],
+    challengesOther: "",
+    studyRoutine: "",
+    lastExamResult: "",
+    goal: "",
+    supportAreas: [],
+    supportAreasOther: "",
     meetingDate: "",
     meetingTime: "",
     message: "",
@@ -134,22 +200,50 @@ const IletisimPage = () => {
     }
   };
 
+  const toggleMulti = (field, value) => {
+    setFormData((prev) => {
+      const list = prev[field];
+      const next = list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
+      return { ...prev, [field]: next };
+    });
+  };
+
+  const goStep = (n) => {
+    setErrorMsg("");
+    setStep(n);
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  const validateStep1 = () => {
+    if (!isValidName(formData.name)) return "Ad Soyad sadece harf içermeli ve en az 2 karakter olmalıdır.";
+    if (!isValidPhone(formData.phone)) return "Telefon numarası 05XX XXX XX XX formatında olmalıdır.";
+    if (formData.email && !isValidEmail(formData.email)) return "Geçerli bir e-posta adresi giriniz (veya boş bırakın).";
+    if (!formData.role) return "Öğrenci mi veli misin, lütfen belirt.";
+    if (!formData.examType) return "Lütfen sınav türünü seç.";
+    if (!formData.gradeStatus) return "Lütfen sınıf/mezuniyet durumunu seç.";
+    return null;
+  };
+
+  const handleNextFromStep1 = () => {
+    const err = validateStep1();
+    if (err) {
+      setErrorMsg(err);
+      return;
+    }
+    goStep(2);
+  };
+
+  const handleNextFromStep2 = () => {
+    goStep(3);
+  };
+
+  const handleNextFromStep3 = () => {
+    goStep(4);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // --- Client-side validasyon (backend ile tutarlı) ---
-    if (!isValidName(formData.name)) {
-      setErrorMsg("Ad Soyad sadece harf içermeli ve en az 2 karakter olmalıdır.");
-      return;
-    }
-    if (!isValidEmail(formData.email)) {
-      setErrorMsg("Geçerli bir e-posta adresi giriniz.");
-      return;
-    }
-    if (!isValidPhone(formData.phone)) {
-      setErrorMsg("Telefon numarası 05XX XXX XX XX formatında olmalıdır.");
-      return;
-    }
     if (!formData.meetingTime) {
       setErrorMsg("Lütfen bir saat seçin.");
       return;
@@ -164,10 +258,15 @@ const IletisimPage = () => {
       if (res.data.success) {
         setSuccessMsg("Randevu talebiniz alındı! Seçtiğiniz tarihte sizi arayacağız.");
         setFormData({
-          name: "", email: "", phone: "",
-          userType: "", meetingDate: "", meetingTime: "",
-          message: ""
+          name: "", phone: "", email: "",
+          role: "", examType: "", gradeStatus: "",
+          challenges: [], challengesOther: "",
+          studyRoutine: "", lastExamResult: "",
+          goal: "", supportAreas: [], supportAreasOther: "",
+          meetingDate: "", meetingTime: "",
+          message: "",
         });
+        setStep(1);
 
         if (window.gtag) {
           window.gtag('event', 'conversion', {
@@ -195,6 +294,13 @@ const IletisimPage = () => {
       setLoading(false);
     }
   };
+
+  const cardTitle =
+    step === 1 ? "Seni Tanıyalım" : step === 2 ? "Şu An Neredesin?" : step === 3 ? "Nereye Gitmek İstiyorsun?" : "Görüşme Saatini Seç";
+  const cardSubtitle =
+    step === 4
+      ? "Harika, seni biraz tanıdık. Şimdi sana uygun görüşme saatini seç."
+      : "Birkaç kısa soru, görüşmeyi sana göre hazırlayalım.";
 
   return (
     <>
@@ -234,7 +340,7 @@ const IletisimPage = () => {
                 <motion.div {...fadeUp} className="inline-flex items-center gap-3 mb-[18px] max-[960px]:justify-center">
                   <span style={{ width: 26, height: 3, borderRadius: 2, background: "#D8FF4F", display: "inline-block" }} />
                   <span className="font-fredoka text-lime text-sm font-bold tracking-[0.14em] uppercase">
-                    YKS / LGS 2027 Hazırlık
+                    Ön Görüşme
                   </span>
                 </motion.div>
 
@@ -244,17 +350,25 @@ const IletisimPage = () => {
                   className="font-fredoka font-bold text-white text-[2.6rem] leading-[1.1] mb-5 max-[960px]:text-[1.9rem]"
                   style={{ letterSpacing: "-0.5px" }}
                 >
-                  Hedeflerine Ulaşmak İçin<br />
-                  <span className="text-lime">İlk Adımı At</span>
+                  Seni Biraz <span className="text-lime">Tanıyalım.</span>
                 </motion.h1>
 
                 <motion.p
                   {...fadeUp}
                   transition={{ ...fadeUp.transition, delay: 0.15 }}
-                  className="font-nunito font-bold text-white/65 text-[1.05rem] leading-relaxed mb-8 max-w-[95%] max-[960px]:text-base max-[960px]:max-w-full"
+                  className="font-nunito font-bold text-white/65 text-[1.05rem] leading-relaxed mb-3 max-w-[95%] max-[960px]:text-base max-[960px]:max-w-full"
                 >
-                  YKS/LGS sınav sürecinde yalnız değilsin. Formu doldur, derece öğrencisi koçlarımız
-                  seni arayıp seviyene uygun yol haritasını anlatsın.
+                  Birkaç kısa soruyu yanıtla. Böylece görüşmede mevcut durumunu anlamakla vakit kaybetmeden,
+                  doğrudan sana nasıl yardımcı olabileceğimizi konuşalım.
+                </motion.p>
+
+                <motion.p
+                  {...fadeUp}
+                  transition={{ ...fadeUp.transition, delay: 0.18 }}
+                  className="font-nunito font-bold text-lime/80 text-xs mb-8 max-[960px]:mx-auto"
+                  style={{ color: "#D8FF4F" }}
+                >
+                  Yaklaşık 2 dakika • Ücretsiz • Herhangi bir taahhüt yok
                 </motion.p>
 
                 <button
@@ -316,139 +430,344 @@ const IletisimPage = () => {
                 className="bg-white p-7 rounded-[28px] shadow-[0_20px_50px_rgba(0,0,0,0.3)] max-[960px]:p-5"
                 ref={formRef}
               >
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center gap-3 mb-5">
                   <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(216,255,79,0.15)", color: "#7340C8" }}>
                     <FaCalendarAlt />
                   </div>
                   <div>
-                    <h2 className="font-fredoka font-bold text-page-navy text-lg leading-tight">Randevu Oluştur</h2>
-                    <p className="font-nunito text-[#94a3b8] text-xs mt-0.5">Müsait olduğun zamanı seç, biz arayalım.</p>
+                    <h2 className="font-fredoka font-bold text-page-navy text-lg leading-tight">{cardTitle}</h2>
+                    <p className="font-nunito text-[#94a3b8] text-xs mt-0.5">{cardSubtitle}</p>
                   </div>
                 </div>
 
-                <form onSubmit={handleSubmit}>
-                  <div className="mb-3.5">
-                    <label className={labelCls}>Adınız Soyadınız</label>
-                    <input type="text" name="name" value={formData.name} onChange={handleInputChange} required placeholder="Örn: Ahmet Yılmaz" maxLength={100} className={inputCls} />
+                {/* İlerleme göstergesi — 3 profil adımı */}
+                {step <= 3 && (
+                  <div className="mb-5">
+                    <div className="flex items-center justify-between mb-1.5">
+                      {WIZARD_STEPS.map((s) => (
+                        <span
+                          key={s.key}
+                          className="font-fredoka font-bold text-[10px] uppercase"
+                          style={{ color: s.key <= step ? "#1C1B8A" : "#cbd5e1", letterSpacing: 0.5 }}
+                        >
+                          {String(s.key).padStart(2, "0")} {s.label}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="h-1.5 rounded-full bg-[#f1f5f9] overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-300"
+                        style={{ width: `${(step / 3) * 100}%`, background: "linear-gradient(90deg, #1C1B8A, #FF6B35)" }}
+                      />
+                    </div>
                   </div>
+                )}
 
-                  <div className="mb-3.5">
-                    <label className={labelCls}>E-posta Adresi</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} required placeholder="ornek@gmail.com" maxLength={254} className={inputCls} />
-                  </div>
-
-                  <div className="mb-3.5">
-                    <label className={labelCls}>Telefon Numarası</label>
-                    <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="05XX XXX XX XX" pattern="^05\d{9}$" maxLength={11} className={inputCls} />
-                  </div>
-
-                  <div className="mb-3.5">
-                    <label className={labelCls}>Durumunuz</label>
-                    <select name="userType" value={formData.userType} onChange={handleInputChange} required className={inputCls}>
-                      <option value="">Seçiniz...</option>
-                      <option value="Mezun">Mezun Öğrenci</option>
-                      <option value="12. Sınıf">12. Sınıf Öğrencisi</option>
-                      <option value="11. Sınıf">11. Sınıf Öğrencisi</option>
-                      <option value="8. Sınıf">8. Sınıf Öğrencisi</option>
-                      <option value="7. Sınıf">7. Sınıf Öğrencisi</option>
-                      <option value="Veli">Veli</option>
-                    </select>
-                  </div>
-
-                  {/* TARİH VE SAAT SEÇİMİ */}
-                  <div className="mb-3.5">
-                    <label className={labelCls}>Tarih Seçiniz</label>
-                    <input type="date" name="meetingDate" value={formData.meetingDate} onChange={handleInputChange} min={today} max={maxDate} required style={{ cursor: "pointer" }} className={inputCls} />
-                  </div>
-
-                  {/* SAAT SLOT GRID */}
-                  <div className="mb-3.5">
-                    <label className={labelCls}>
-                      Müsait Olduğunuz Saat Aralığı
-                      {slotsLoading && <span className="text-[11px] font-normal normal-case text-[#94a3b8] ml-2">güncelleniyor…</span>}
-                    </label>
-
-                    {!formData.meetingDate ? (
-                      <div className="w-full p-3 border border-[#e5e7eb] rounded-xl text-sm text-[#94a3b8] bg-[#f8fafc] text-center">
-                        Önce tarih seçin
-                      </div>
-                    ) : (
-                      <>
-                        {/* Legenda */}
-                        <div className="flex gap-3 mb-2 text-[11px] text-[#64748b]">
-                          <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-[#e8f5e9] border border-[#4caf50]"></span>Boş</span>
-                          <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-[#fde8e8] border border-[#e57373]"></span>Dolu</span>
-                          <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-page-navy border border-page-navy"></span>Seçili</span>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={step}
+                    initial={{ opacity: 0, x: 16 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -16 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    {step === 1 && (
+                      <div className="flex flex-col gap-3.5">
+                        <div>
+                          <label className={labelCls}>Adın Soyadın</label>
+                          <input type="text" name="name" value={formData.name} onChange={handleInputChange} placeholder="Örn: Ahmet Yılmaz" maxLength={100} className={inputCls} />
                         </div>
-
-                        {/* Gruplara göre slotlar */}
-                        {[
-                          { label: "Sabah", slots: timeSlots.slice(0, 9) },
-                          { label: "Öğle", slots: timeSlots.slice(9, 18) },
-                          { label: "Öğleden Sonra", slots: timeSlots.slice(18, 27) },
-                          { label: "Akşam", slots: timeSlots.slice(27) },
-                        ].map((group) => (
-                          <div key={group.label} className="mb-3">
-                            <div className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-wider mb-1">{group.label}</div>
-                            <div className="grid grid-cols-3 gap-1.5">
-                              {group.slots.map((slot) => {
-                                const dolu = blockedSlots.has(slot);
-                                const secili = formData.meetingTime === slot;
-                                return (
-                                  <button
-                                    key={slot}
-                                    type="button"
-                                    disabled={dolu}
-                                    onClick={() => !dolu && setFormData((prev) => ({ ...prev, meetingTime: slot }))}
-                                    className={`py-1.5 px-1 rounded-lg text-[11px] font-bold border transition-all text-center leading-tight
-                                      ${secili
-                                        ? "bg-page-navy text-white border-page-navy shadow-md"
-                                        : dolu
-                                        ? "bg-[#fde8e8] text-[#c62828] border-[#e57373] cursor-not-allowed opacity-70"
-                                        : "bg-[#e8f5e9] text-[#2e7d32] border-[#4caf50] hover:bg-page-navy hover:text-white hover:border-page-navy cursor-pointer"
-                                      }`}
-                                  >
-                                    {slot.replace(" - ", "–")}
-                                    {dolu && <span className="block text-[10px] mt-0.5 opacity-80">Dolu</span>}
-                                  </button>
-                                );
-                              })}
-                            </div>
+                        <div>
+                          <label className={labelCls}>Telefon / WhatsApp</label>
+                          <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} placeholder="05XX XXX XX XX" maxLength={11} className={inputCls} />
+                        </div>
+                        <div>
+                          <label className={labelCls}>E-posta <span className="font-normal normal-case text-[#94a3b8]">(opsiyonel)</span></label>
+                          <input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="ornek@gmail.com" maxLength={254} className={inputCls} />
+                        </div>
+                        <div>
+                          <label className={labelCls}>Öğrenci misin, veli misin?</label>
+                          <div className="grid grid-cols-2 gap-2">
+                            {["Öğrenci", "Veli"].map((r) => (
+                              <Pill key={r} active={formData.role === r} onClick={() => setFormData((p) => ({ ...p, role: r }))}>
+                                <span className="block text-center">{r}</span>
+                              </Pill>
+                            ))}
                           </div>
-                        ))}
-
-                        {/* Seçilen saati göster */}
-                        {formData.meetingTime && (
-                          <div className="mt-1 text-xs text-page-navy font-bold">
-                            ✓ Seçilen saat: {formData.meetingTime}
+                        </div>
+                        <div>
+                          <label className={labelCls}>Sınav Türü</label>
+                          <div className="grid grid-cols-2 gap-2">
+                            {["YKS", "LGS"].map((ex) => (
+                              <Pill
+                                key={ex}
+                                active={formData.examType === ex}
+                                onClick={() => setFormData((p) => ({ ...p, examType: ex, gradeStatus: "" }))}
+                              >
+                                <span className="block text-center">{ex}</span>
+                              </Pill>
+                            ))}
+                          </div>
+                        </div>
+                        {formData.examType && (
+                          <div>
+                            <label className={labelCls}>Sınıf / Mezuniyet Durumu</label>
+                            <select name="gradeStatus" value={formData.gradeStatus} onChange={handleInputChange} className={inputCls}>
+                              <option value="">Seçiniz...</option>
+                              {GRADE_OPTIONS[formData.examType].map((g) => (
+                                <option key={g} value={g}>{g}</option>
+                              ))}
+                            </select>
                           </div>
                         )}
 
-                        {/* Hidden input for form validation */}
-                        <input type="hidden" name="meetingTime" value={formData.meetingTime} required />
-                      </>
+                        <button
+                          type="button"
+                          onClick={handleNextFromStep1}
+                          className="w-full py-3.5 mt-1.5 font-fredoka font-bold text-base rounded-full border-none cursor-pointer transition-transform hover:scale-[1.02]"
+                          style={{ background: "#1C1B8A", color: "#D8FF4F" }}
+                        >
+                          Devam Et →
+                        </button>
+                      </div>
                     )}
-                  </div>
 
-                  <div className="mb-4">
-                    <label className={labelCls}>Hedefleriniz / Notunuz</label>
-                    <textarea name="message" rows="3" value={formData.message} onChange={handleInputChange} maxLength={1000} className={`${inputCls} resize-none`}></textarea>
-                  </div>
+                    {step === 2 && (
+                      <div className="flex flex-col gap-4">
+                        <div>
+                          <label className={labelCls}>Şu anda sınav sürecinde seni en çok zorlayan şey nedir?</label>
+                          <div className="flex flex-col gap-1.5">
+                            {CHALLENGE_OPTIONS.map((c) => (
+                              <Pill key={c} active={formData.challenges.includes(c)} onClick={() => toggleMulti("challenges", c)}>
+                                {c}
+                              </Pill>
+                            ))}
+                          </div>
+                          {formData.challenges.includes("Diğer") && (
+                            <input
+                              type="text"
+                              name="challengesOther"
+                              value={formData.challengesOther}
+                              onChange={handleInputChange}
+                              placeholder="Kısaca anlat..."
+                              maxLength={300}
+                              className={`${inputCls} mt-2`}
+                            />
+                          )}
+                        </div>
 
-                  <button
-                    type="submit"
-                    className="w-full py-4 font-fredoka font-bold text-base rounded-full border-none cursor-pointer transition-transform hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
-                    style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 6px 18px rgba(216,255,79,0.3)" }}
-                    disabled={loading}
-                  >
-                    {loading ? "Gönderiliyor..." : "Randevu Talebi Oluştur"}
-                  </button>
+                        <div>
+                          <label className={labelCls}>Şu anda çalışma düzenini nasıl tanımlarsın?</label>
+                          <div className="grid grid-cols-2 gap-2">
+                            {STUDY_ROUTINE_OPTIONS.map((s) => (
+                              <Pill key={s} active={formData.studyRoutine === s} onClick={() => setFormData((p) => ({ ...p, studyRoutine: s }))}>
+                                <span className="block text-center">{s}</span>
+                              </Pill>
+                            ))}
+                          </div>
+                        </div>
 
-                  {successMsg && <div className="p-3 rounded-xl mt-3 text-sm flex items-center gap-2 bg-[#ecfdf5] text-[#065f46] font-nunito font-bold"><FaCheckCircle /> {successMsg}</div>}
-                  {errorMsg && <div className="p-3 rounded-xl mt-3 text-sm flex items-center gap-2 bg-[#fef2f2] text-[#991b1b] font-nunito font-bold"><FaExclamationCircle /> {errorMsg}</div>}
+                        <div>
+                          <label className={labelCls}>Son deneme sonucun <span className="font-normal normal-case text-[#94a3b8]">(opsiyonel)</span></label>
+                          <input
+                            type="text"
+                            name="lastExamResult"
+                            value={formData.lastExamResult}
+                            onChange={handleInputChange}
+                            placeholder={formData.examType === "LGS" ? "Örn: 380 puan" : "Örn: TYT 65 net"}
+                            maxLength={200}
+                            className={inputCls}
+                          />
+                        </div>
 
-                  <p className="text-center text-[11px] text-[#94a3b8] font-nunito mt-3">Bilgileriniz 3. şahıslarla paylaşılmaz.</p>
-                </form>
+                        <div className="flex gap-2.5 mt-1">
+                          <button
+                            type="button"
+                            onClick={() => goStep(1)}
+                            className="flex items-center justify-center gap-1.5 px-5 py-3.5 font-fredoka font-bold text-sm rounded-full border cursor-pointer"
+                            style={{ borderColor: "#e5e7eb", color: "#475569" }}
+                          >
+                            <FaArrowLeft size={11} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleNextFromStep2}
+                            className="flex-1 py-3.5 font-fredoka font-bold text-base rounded-full border-none cursor-pointer transition-transform hover:scale-[1.02]"
+                            style={{ background: "#1C1B8A", color: "#D8FF4F" }}
+                          >
+                            Devam Et →
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {step === 3 && (
+                      <div className="flex flex-col gap-4">
+                        <div>
+                          <label className={labelCls}>Bu sınavdaki hedefin nedir?</label>
+                          <textarea
+                            name="goal"
+                            rows="2"
+                            value={formData.goal}
+                            onChange={handleInputChange}
+                            placeholder="Örn: İstanbul'da bir mühendislik bölümü kazanmak"
+                            maxLength={500}
+                            className={`${inputCls} resize-none`}
+                          />
+                        </div>
+
+                        <div>
+                          <label className={labelCls}>Koçluktan en çok hangi konuda destek almak istiyorsun?</label>
+                          <div className="flex flex-col gap-1.5">
+                            {SUPPORT_AREA_OPTIONS.map((s) => (
+                              <Pill key={s} active={formData.supportAreas.includes(s)} onClick={() => toggleMulti("supportAreas", s)}>
+                                {s}
+                              </Pill>
+                            ))}
+                          </div>
+                          {formData.supportAreas.includes("Diğer") && (
+                            <input
+                              type="text"
+                              name="supportAreasOther"
+                              value={formData.supportAreasOther}
+                              onChange={handleInputChange}
+                              placeholder="Kısaca anlat..."
+                              maxLength={300}
+                              className={`${inputCls} mt-2`}
+                            />
+                          )}
+                        </div>
+
+                        <div>
+                          <label className={labelCls}>Görüşmeden önce koçunun bilmesini istediğin başka bir şey var mı? <span className="font-normal normal-case text-[#94a3b8]">(opsiyonel)</span></label>
+                          <textarea name="message" rows="2" value={formData.message} onChange={handleInputChange} maxLength={1000} className={`${inputCls} resize-none`} />
+                        </div>
+
+                        <div className="flex gap-2.5 mt-1">
+                          <button
+                            type="button"
+                            onClick={() => goStep(2)}
+                            className="flex items-center justify-center gap-1.5 px-5 py-3.5 font-fredoka font-bold text-sm rounded-full border cursor-pointer"
+                            style={{ borderColor: "#e5e7eb", color: "#475569" }}
+                          >
+                            <FaArrowLeft size={11} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleNextFromStep3}
+                            className="flex-1 py-3.5 font-fredoka font-bold text-base rounded-full border-none cursor-pointer transition-transform hover:scale-[1.02]"
+                            style={{ background: "#1C1B8A", color: "#D8FF4F" }}
+                          >
+                            Görüşme Saatimi Seç →
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {step === 4 && (
+                      <form onSubmit={handleSubmit}>
+                        {/* TARİH VE SAAT SEÇİMİ */}
+                        <div className="mb-3.5">
+                          <label className={labelCls}>Tarih Seçiniz</label>
+                          <input type="date" name="meetingDate" value={formData.meetingDate} onChange={handleInputChange} min={today} max={maxDate} required style={{ cursor: "pointer" }} className={inputCls} />
+                        </div>
+
+                        {/* SAAT SLOT GRID */}
+                        <div className="mb-3.5">
+                          <label className={labelCls}>
+                            Müsait Olduğunuz Saat Aralığı
+                            {slotsLoading && <span className="text-[11px] font-normal normal-case text-[#94a3b8] ml-2">güncelleniyor…</span>}
+                          </label>
+
+                          {!formData.meetingDate ? (
+                            <div className="w-full p-3 border border-[#e5e7eb] rounded-xl text-sm text-[#94a3b8] bg-[#f8fafc] text-center">
+                              Önce tarih seçin
+                            </div>
+                          ) : (
+                            <>
+                              {/* Legenda */}
+                              <div className="flex gap-3 mb-2 text-[11px] text-[#64748b]">
+                                <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-[#e8f5e9] border border-[#4caf50]"></span>Boş</span>
+                                <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-[#fde8e8] border border-[#e57373]"></span>Dolu</span>
+                                <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-page-navy border border-page-navy"></span>Seçili</span>
+                              </div>
+
+                              {/* Gruplara göre slotlar */}
+                              {[
+                                { label: "Sabah", slots: timeSlots.slice(0, 9) },
+                                { label: "Öğle", slots: timeSlots.slice(9, 18) },
+                                { label: "Öğleden Sonra", slots: timeSlots.slice(18, 27) },
+                                { label: "Akşam", slots: timeSlots.slice(27) },
+                              ].map((group) => (
+                                <div key={group.label} className="mb-3">
+                                  <div className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-wider mb-1">{group.label}</div>
+                                  <div className="grid grid-cols-3 gap-1.5">
+                                    {group.slots.map((slot) => {
+                                      const dolu = blockedSlots.has(slot);
+                                      const secili = formData.meetingTime === slot;
+                                      return (
+                                        <button
+                                          key={slot}
+                                          type="button"
+                                          disabled={dolu}
+                                          onClick={() => !dolu && setFormData((prev) => ({ ...prev, meetingTime: slot }))}
+                                          className={`py-1.5 px-1 rounded-lg text-[11px] font-bold border transition-all text-center leading-tight
+                                            ${secili
+                                              ? "bg-page-navy text-white border-page-navy shadow-md"
+                                              : dolu
+                                              ? "bg-[#fde8e8] text-[#c62828] border-[#e57373] cursor-not-allowed opacity-70"
+                                              : "bg-[#e8f5e9] text-[#2e7d32] border-[#4caf50] hover:bg-page-navy hover:text-white hover:border-page-navy cursor-pointer"
+                                            }`}
+                                        >
+                                          {slot.replace(" - ", "–")}
+                                          {dolu && <span className="block text-[10px] mt-0.5 opacity-80">Dolu</span>}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              ))}
+
+                              {/* Seçilen saati göster */}
+                              {formData.meetingTime && (
+                                <div className="mt-1 text-xs text-page-navy font-bold">
+                                  ✓ Seçilen saat: {formData.meetingTime}
+                                </div>
+                              )}
+
+                              {/* Hidden input for form validation */}
+                              <input type="hidden" name="meetingTime" value={formData.meetingTime} required />
+                            </>
+                          )}
+                        </div>
+
+                        <div className="flex gap-2.5">
+                          <button
+                            type="button"
+                            onClick={() => goStep(3)}
+                            className="flex items-center justify-center gap-1.5 px-5 py-4 font-fredoka font-bold text-sm rounded-full border cursor-pointer flex-shrink-0"
+                            style={{ borderColor: "#e5e7eb", color: "#475569" }}
+                          >
+                            <FaArrowLeft size={11} />
+                          </button>
+                          <button
+                            type="submit"
+                            className="flex-1 py-4 font-fredoka font-bold text-base rounded-full border-none cursor-pointer transition-transform hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
+                            style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 6px 18px rgba(216,255,79,0.3)" }}
+                            disabled={loading}
+                          >
+                            {loading ? "Gönderiliyor..." : "Randevu Talebi Oluştur"}
+                          </button>
+                        </div>
+                      </form>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+
+                {successMsg && <div className="p-3 rounded-xl mt-3 text-sm flex items-center gap-2 bg-[#ecfdf5] text-[#065f46] font-nunito font-bold"><FaCheckCircle /> {successMsg}</div>}
+                {errorMsg && <div className="p-3 rounded-xl mt-3 text-sm flex items-center gap-2 bg-[#fef2f2] text-[#991b1b] font-nunito font-bold"><FaExclamationCircle /> {errorMsg}</div>}
+
+                <p className="text-center text-[11px] text-[#94a3b8] font-nunito mt-4">Bu cevaplar görüşmeye hazırlanmamız için kullanılır.</p>
               </motion.div>
 
             </div>
