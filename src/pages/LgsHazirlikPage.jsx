@@ -178,88 +178,102 @@ export default function LgsHazirlikPage() {
             </div>
 
             <h1 className="font-fredoka font-bold leading-tight mb-4" style={{ fontSize: "clamp(28px,5vw,52px)", animation: "lgsShimmer 4s ease-in-out infinite" }}>
-              Çocuğunuz Masaya Oturmuyor mu?<br />
-              <span style={{ color: "#D8FF4F" }}>{hero.titleAccent || "Kalan Sürede Kontrolü Bize Bırakın."}</span>
+              Her Gün "Ders Çalıştın mı?"{" "}
+              <span style={{ color: "#D8FF4F" }}>{hero.titleAccent || "Diye Sormak Zorunda Kalmayın."}</span>
             </h1>
 
-            <p className="font-nunito font-bold text-lg mb-8" style={{ color: "rgba(255,255,255,0.6)", fontSize: "clamp(15px,2vw,18px)" }}>
-              {hero.subtitle || "Her gün yanında biri var: koçu, planı, sistemi."}
+            <p className="font-nunito font-bold text-lg mb-4" style={{ color: "rgba(255,255,255,0.6)", fontSize: "clamp(15px,2vw,18px)" }}>
+              {hero.subtitle || "Çocuğunuzun çalışma rotasını birlikte oluşturalım, ilerlemesini düzenli takip edelim ve ihtiyaçlarına göre planını güncelleyelim."}
             </p>
 
-            <div className="flex flex-wrap justify-center gap-2 mb-8">
-              {[hero.chip1, hero.chip2, remaining !== null && remaining > 0 ? `🔥 Sadece ${remaining} yer kaldı` : null].filter(Boolean).map((chip, i) => (
-                <span key={i} className="font-nunito font-bold text-xs px-4 py-1.5 rounded-full border" style={{ background: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.14)", color: "rgba(255,255,255,0.75)" }}>{chip}</span>
-              ))}
-            </div>
+            <p className="font-fredoka font-bold text-sm mb-8" style={{ letterSpacing: 0.5 }}>
+              <span style={{ color: "#7340C8" }}>Kişisel Rota</span>{" "}
+              <span style={{ color: "rgba(255,255,255,0.3)" }}>→</span>{" "}
+              <span style={{ color: "#D8FF4F" }}>İlerleme Takibi</span>{" "}
+              <span style={{ color: "rgba(255,255,255,0.3)" }}>→</span>{" "}
+              <span style={{ color: "#FF6B35" }}>Dinamik Planlama</span>
+            </p>
 
-            <motion.button
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.96 }}
-              onClick={scrollToOffer}
-              className="font-fredoka font-bold text-base px-10 py-4 rounded-full"
-              style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 10px 32px rgba(216,255,79,0.35)" }}
-            >
-              {hero.ctaPrimary || "⚡ Yerimi Şimdi Ayırt →"}
-            </motion.button>
-
-            {(hero.mediaType === "images" ? Array.isArray(hero.images) && hero.images.some((img) => img?.url) : !!hero.videoUrl) && (
-              <div className="mt-10 max-w-3xl mx-auto w-full">
-                {hero.mediaType === "images" ? (
-                  <div className="grid grid-cols-3 gap-3 max-[640px]:grid-cols-1">
-                    {hero.images.slice(0, 3).map((img, i) => img?.url ? (
-                      <div key={i} className="rounded-2xl overflow-hidden border shadow-xl" style={{ borderColor: "rgba(255,255,255,0.1)", aspectRatio: "4/3" }}>
-                        <img src={img.url} alt={img.alt || `Görsel ${i + 1}`} className="w-full h-full object-cover" />
-                      </div>
-                    ) : null)}
-                  </div>
-                ) : (
-                  <div className="relative rounded-2xl overflow-hidden shadow-2xl border aspect-video" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
-                    <iframe src={hero.videoUrl} title="Tanıtım" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="w-full h-full" />
-                  </div>
-                )}
+            {remaining !== null && remaining > 0 && (
+              <div className="flex justify-center mb-8">
+                <span className="font-nunito font-bold text-xs px-4 py-1.5 rounded-full border" style={{ background: "rgba(239,68,68,0.12)", borderColor: "rgba(239,68,68,0.3)", color: "#fca5a5" }}>
+                  🔥 Sadece {remaining} yer kaldı
+                </span>
               </div>
             )}
+
+            <div className="flex flex-wrap justify-center items-center gap-4">
+              <motion.button
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.96 }}
+                onClick={scrollToOffer}
+                className="font-fredoka font-bold text-base px-10 py-4 rounded-full"
+                style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 10px 32px rgba(216,255,79,0.35)" }}
+              >
+                {hero.ctaPrimary || "LGS Koçluğu İçin Görüşme Talep Et →"}
+              </motion.button>
+              <button onClick={scrollToForm} className="font-nunito font-bold text-sm text-white/55 hover:text-white transition-colors underline underline-offset-4">
+                Süreç Nasıl İşliyor?
+              </button>
+            </div>
+
+            {/* Ürünün gerçek işlevini gösteren küçük mockup — net iddiası yerine */}
+            <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.2 }} className="mt-12 max-w-[320px] mx-auto">
+              <div className="bg-white rounded-[20px] p-5 text-left">
+                <p className="font-fredoka font-bold text-[10px] uppercase mb-3" style={{ color: "#FF6B35", letterSpacing: 2 }}>Mert'in Bu Haftaki Rotası</p>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="font-nunito font-bold text-xs text-[#64748b]">İlerleme</span>
+                  <span className="font-fredoka font-bold text-sm text-page-navy">8 / 11 görev</span>
+                </div>
+                {[
+                  { text: "Matematik", done: true },
+                  { text: "Türkçe", done: true },
+                  { text: "Fen — Devam ediyor", done: false },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2.5 mb-2">
+                    <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: item.done ? "#D8FF4F" : "#f1f5f9" }}>
+                      {item.done && <svg width="9" height="9" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2.4" strokeLinecap="round" /></svg>}
+                    </div>
+                    <span className="font-nunito font-bold text-xs" style={{ color: item.done ? "#0f172a" : "#94a3b8" }}>{item.text}</span>
+                  </div>
+                ))}
+                <div className="mt-3 pt-3 border-t border-[#f1f5f9] flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: "#22c55e" }} />
+                  <span className="font-nunito font-bold text-[11px] text-[#64748b]">Koç geri bildirimi gönderildi</span>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
-      {/* ── ACI NOKTALARI ── */}
+      {/* ── SİZDE DE BÖYLE Mİ? ── */}
       {painPoints.items?.length > 0 && (
         <section className="py-20 px-5" style={{ background: "#f4f2fa" }}>
-          <div className="max-w-5xl mx-auto">
-            <motion.div {...fadeUp} className="text-center mb-12">
-              <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>TANIDIK MI?</div>
+          <div className="max-w-2xl mx-auto">
+            <motion.div {...fadeUp} className="text-center mb-10">
+              <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>SİZDE DE BÖYLE Mİ?</div>
               <h2 className="font-fredoka font-bold text-page-navy m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,40px)" }}>
-                {painPoints.title || "Tanıdık geliyor mu?"}
+                {painPoints.title || "LGS süreci evde sürekli bir hatırlatma döngüsüne mi dönüştü?"}
               </h2>
-              {painPoints.subtitle && <p className="font-nunito font-bold text-[#64748b] mt-2">{painPoints.subtitle}</p>}
             </motion.div>
 
-            <div className="grid grid-cols-3 gap-4 max-[768px]:grid-cols-1 max-[1024px]:grid-cols-2">
-              {painPoints.items.map((p, i) => {
-                const accents = ["#D8FF4F", "#FF6B35", "#7340C8", "#D8FF4F", "#FF6B35", "#7340C8"];
-                const accent = accents[i % 6];
-                const emojis = ["📉", "📱", "📋", "❓", "💔", ""];
-                return (
-                  <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }}
-                    whileHover={{ y: -4 }}
-                    className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-[0_8px_24px_rgba(28,27,138,0.09)] hover:border-page-navy/20 transition-shadow duration-200 flex gap-4">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-lg" style={{ background: `${accent}22`, color: accent }}>
-                      {emojis[i % 6]}
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="font-nunito font-bold text-[#0f172a] text-sm mb-1">{p.title}</h3>
-                      <p className="font-nunito text-[#64748b] text-xs leading-relaxed">{p.desc}</p>
-                    </div>
-                  </motion.div>
-                );
-              })}
+            <div className="flex flex-col gap-3">
+              {painPoints.items.map((p, i) => (
+                <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }}
+                  className="bg-white rounded-2xl px-5 py-4 border border-[#e2e8f0] shadow-sm flex items-center gap-3.5">
+                  <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#fff0ea", color: "#c2410c" }}>
+                    <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6 L4.5 8.5 L10 2.5" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </span>
+                  <p className="font-nunito font-bold text-[#0f172a] text-sm">{p.title}</p>
+                </motion.div>
+              ))}
             </div>
 
-            <motion.div {...fadeUp} className="mt-12 text-center">
+            <motion.div {...fadeUp} className="mt-10 text-center">
               <p className="font-nunito font-bold text-[#475569] text-base max-w-xl mx-auto mb-5 leading-relaxed">
-                Eğer bunlardan en az birini yaşıyorsan, yanlış giden bir şeyler var demektir.{" "}
-                <span className="text-page-navy">Gel, sana özel bir çıkış yolu çizelim.</span>
+                Amaç çocuğunuza daha fazla baskı kurmak değil.{" "}
+                <span className="text-page-navy">Kendi çalışma sürecini daha sistemli yönetebileceği bir yapı oluşturmak.</span>
               </p>
               <button onClick={scrollToForm} className="font-fredoka font-bold text-sm px-8 py-3.5 rounded-full transition-all hover:scale-105 inline-flex items-center gap-2" style={{ background: "#1C1B8A", color: "#D8FF4F", boxShadow: "0 4px 16px rgba(28,27,138,0.25)" }}>
                 Bu Yükü Biz Devralalım → Ücretsiz Veli Görüşmesi
@@ -269,62 +283,208 @@ export default function LgsHazirlikPage() {
         </section>
       )}
 
-      {/* ── NASIL ÇALIŞIR ── */}
-      {(howItWorks.steps?.length > 0 || howItWorks.comparison?.length > 0) && (
-        <section className="py-20 px-5 text-white relative overflow-hidden" style={{ background: "#1C1B8A" }}>
-          <div className="absolute rounded-full pointer-events-none" style={{ width: 320, height: 320, background: "#7340C8", filter: "blur(90px)", opacity: 0.3, top: -60, right: -60 }} />
-          <div className="absolute rounded-full pointer-events-none" style={{ width: 220, height: 220, background: "#0D0A2E", filter: "blur(70px)", opacity: 0.5, bottom: -40, left: -40 }} />
-          <div className="max-w-5xl mx-auto relative">
-            {howItWorks.steps?.length > 0 && (
-              <>
-                <motion.div {...fadeUp} className="text-center mb-12">
-                  <div className="font-fredoka font-bold text-lime text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>NASIL ÇALIŞIR</div>
-                  <h2 className="font-fredoka font-bold text-white m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,40px)" }}>
-                    <span style={{ color: "#D8FF4F" }}>Sözderece</span> LGS'de Nasıl Çalışır?
-                  </h2>
-                </motion.div>
-                <div className="grid grid-cols-3 gap-6 mb-16 max-[768px]:grid-cols-1">
-                  {howItWorks.steps.map((s, i) => (
-                    <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.1 }}
-                      whileHover={{ y: -4, borderColor: "rgba(216,255,79,0.4)" }}
-                      className="rounded-2xl p-6 border relative" style={{ background: "rgba(255,255,255,0.07)", borderColor: "rgba(255,255,255,0.14)" }}>
-                      <div className="font-fredoka font-bold mb-3" style={{ fontSize: 52, color: "rgba(216,255,79,0.18)", lineHeight: 1 }}>{String(i + 1).padStart(2, "0")}</div>
-                      <h3 className="font-nunito font-bold text-white text-sm mb-2">{s.title}</h3>
-                      <p className="font-nunito text-white/55 text-xs leading-relaxed">{s.desc}</p>
-                      <div className="absolute top-5 right-5 w-8 h-8 rounded-full flex items-center justify-center font-fredoka font-bold text-xs" style={{ background: "#D8FF4F", color: "#1C1B8A" }}>{i + 1}</div>
-                    </motion.div>
-                  ))}
-                </div>
-              </>
-            )}
+      {/* ── VELİ – ÖĞRENCİ – KOÇ MODELİ ── */}
+      <section className="py-20 px-5 bg-white">
+        <div className="max-w-2xl mx-auto text-center">
+          <motion.div {...fadeUp} className="mb-14">
+            <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>NASIL YÖNETİYORUZ</div>
+            <h2 className="font-fredoka font-bold text-page-navy m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,40px)" }}>
+              LGS Sürecini Tek Bir Kişinin Omzuna Bırakmıyoruz.
+            </h2>
+          </motion.div>
 
-            {howItWorks.comparison?.length > 0 && (
-              <motion.div {...fadeUp}>
-                <h3 className="font-fredoka font-bold text-white text-xl text-center mb-6">{howItWorks.comparisonTitle || "Neden Sözderece?"}</h3>
-                <div className="max-w-2xl mx-auto rounded-2xl overflow-hidden shadow-2xl border" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
-                  <div className="grid grid-cols-3 font-nunito font-bold text-sm" style={{ background: "#0D0A2E" }}>
-                    <div className="px-5 py-3 text-white/60">Özellik</div>
-                    <div className="px-5 py-3 text-center" style={{ color: "#D8FF4F" }}>Sözderece</div>
-                    <div className="px-5 py-3 text-center text-white/35">Dershane / Özel Ders</div>
+          <div className="flex flex-col items-center">
+            {[
+              { label: "ÖĞRENCİ", desc: "Rotasını uygular, sorumluluk alır.", color: "#FF6B35" },
+              { label: "KOÇ", desc: "Planlar, takip eder, geri bildirim verir, rotayı günceller.", color: "#7340C8" },
+              { label: "VELİ", desc: "Sürecin nasıl ilerlediğini görür.", color: "#1C1B8A" },
+            ].map((p, i) => (
+              <div key={i} className="w-full max-w-sm">
+                <motion.div {...fadeUp} transition={{ duration: 0.5, delay: i * 0.12 }}
+                  className="rounded-2xl px-6 py-5 border-2" style={{ borderColor: p.color, background: `${p.color}0d` }}>
+                  <p className="font-fredoka font-bold text-sm mb-1" style={{ color: p.color, letterSpacing: 1 }}>{p.label}</p>
+                  <p className="font-nunito font-bold text-[#334155] text-sm">{p.desc}</p>
+                </motion.div>
+                {i < 2 && (
+                  <div className="flex justify-center py-2">
+                    <span className="font-fredoka font-bold text-lg text-[#cbd5e1]">↕</span>
                   </div>
-                  {howItWorks.comparison.map((row, i) => (
-                    <div key={i} className="grid grid-cols-3 text-sm" style={{ background: i % 2 === 0 ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.02)" }}>
-                      <div className="px-5 py-3 font-nunito font-bold text-white/65">{row.label}</div>
-                      <div className="px-5 py-3 text-center font-fredoka font-bold" style={{ color: "#D8FF4F" }}>✓</div>
-                      <div className="px-5 py-3 text-center text-white/30 font-fredoka font-bold">✗</div>
-                    </div>
-                  ))}
+                )}
+              </div>
+            ))}
+          </div>
+
+          <motion.p {...fadeUp} className="font-nunito font-bold text-[#475569] text-base max-w-lg mx-auto mt-10 leading-relaxed">
+            Böylece veli sürekli kontrol eden kişi olmak yerine{" "}
+            <span className="text-page-navy">süreci takip eden kişi</span> olabilir.
+          </motion.p>
+        </div>
+      </section>
+
+      {/* ── SÖZDERECE ROTA SİSTEMİ ── */}
+      <section className="py-20 px-5 text-white relative overflow-hidden" style={{ background: "#0D0A2E" }}>
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 340, height: 340, background: "#7340C8", filter: "blur(100px)", opacity: 0.3, top: -80, right: -60, animation: "lgsOrb1 8s ease-in-out infinite" }} />
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 260, height: 260, background: "#1C1B8A", filter: "blur(90px)", opacity: 0.4, bottom: -50, left: -50, animation: "lgsOrb2 10s ease-in-out infinite" }} />
+        <div className="max-w-5xl mx-auto relative">
+          <motion.div {...fadeUp} className="text-center mb-14">
+            <div className="font-fredoka font-bold text-lime text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>SÖZDERECE ROTA SİSTEMİ</div>
+            <h2 className="font-fredoka font-bold text-white m-0 leading-tight" style={{ fontSize: "clamp(26px,4vw,44px)" }}>
+              Çocuğunuza Yalnızca Bir Program Değil,{" "}
+              <span style={{ color: "#D8FF4F" }}>Takip Edilen Bir Çalışma Süreci.</span>
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-3 gap-6 mb-14 max-[768px]:grid-cols-1">
+            {[
+              { num: "01", title: "Kişisel Rota", desc: "Öğrencinin seviyesi, eksikleri, okul düzeni ve hedefleri değerlendirilerek çalışma rotası oluşturulur.", color: "#7340C8" },
+              { num: "02", title: "İlerleme Takibi", desc: "Programın yalnızca hazırlanması değil, uygulanması da takip edilir. Aksayan noktalar görünür hale gelir.", color: "#D8FF4F" },
+              { num: "03", title: "Dinamik Planlama", desc: "Deneme sonuçları, konu ilerleyişi ve öğrencinin ihtiyaçlarına göre rota güncellenir.", color: "#FF6B35" },
+            ].map((b, i) => (
+              <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.1 }}
+                whileHover={{ y: -4, borderColor: "rgba(216,255,79,0.4)" }}
+                className="rounded-2xl p-6 border relative" style={{ background: "rgba(255,255,255,0.07)", borderColor: "rgba(255,255,255,0.14)" }}>
+                <div className="font-fredoka font-bold mb-3" style={{ fontSize: 44, color: `${b.color}30`, lineHeight: 1 }}>{b.num}</div>
+                <h3 className="font-fredoka font-bold text-white text-base mb-2">{b.title}</h3>
+                <p className="font-nunito text-white/55 text-sm leading-relaxed">{b.desc}</p>
+                <div className="absolute top-5 right-5 w-2.5 h-2.5 rounded-full" style={{ background: b.color }} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── ÇOCUĞUMUN BİR HAFTASI NASIL GEÇECEK ── */}
+      <section className="py-20 px-5 bg-white">
+        <div className="max-w-2xl mx-auto">
+          <motion.div {...fadeUp} className="text-center mb-14">
+            <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>NASIL İŞLİYOR</div>
+            <h2 className="font-fredoka font-bold text-page-navy m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,40px)" }}>
+              Çocuğumun Bir Haftası Nasıl Geçecek?
+            </h2>
+          </motion.div>
+
+          <div className="relative">
+            <div className="absolute top-0 bottom-0 w-[2px]" style={{ left: 19, background: "linear-gradient(to bottom, #7340C8, #D8FF4F, #FF6B35, #1C1B8A, #7340C8)", opacity: 0.25 }} />
+            {[
+              { day: "Pazartesi", desc: "Haftalık çalışma rotası belli.", color: "#7340C8" },
+              { day: "Hafta Boyunca", desc: "Öğrenci planını uygular, ilerleyişi takip edilir.", color: "#D8FF4F" },
+              { day: "Takıldığı Noktada", desc: "Koçundan destek ve geri bildirim alır.", color: "#FF6B35" },
+              { day: "Deneme Sonrası", desc: "Sonuç yalnızca kaydedilmez; eksikler değerlendirilir.", color: "#1C1B8A" },
+              { day: "Yeni Hafta", desc: "Gerekiyorsa çalışma rotası güncellenir.", color: "#7340C8" },
+            ].map((s, i) => (
+              <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.08 }} className="relative flex items-start gap-5 pb-8 last:pb-0">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 font-fredoka font-bold text-sm relative z-10" style={{ background: s.color, color: s.color === "#D8FF4F" ? "#1C1B8A" : "#fff" }}>
+                  {i + 1}
                 </div>
-                <div className="text-center mt-6">
-                  <button onClick={scrollToOffer} className="font-fredoka font-bold text-base px-10 py-4 rounded-full transition-all hover:scale-105" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 8px 24px rgba(216,255,79,0.3)" }}>
-                    {howItWorks.comparisonCta || "Hemen Kayıt Ol →"}
-                  </button>
+                <div className="pt-2">
+                  <h3 className="font-fredoka font-bold text-page-navy text-base mb-0.5">{s.day}</h3>
+                  <p className="font-nunito text-[#64748b] text-sm">{s.desc}</p>
                 </div>
               </motion.div>
-            )}
+            ))}
           </div>
-        </section>
-      )}
+
+          <motion.p {...fadeUp} className="text-center font-fredoka font-bold mt-6" style={{ fontSize: "clamp(17px,2.4vw,24px)", color: "#1C1B8A" }}>
+            Planla → Uygula → Takip Et → Güncelle
+          </motion.p>
+        </div>
+      </section>
+
+      {/* ── ÖĞRENCİ PANELİ ── */}
+      <section className="py-20 px-5" style={{ background: "#f4f2fa" }}>
+        <div className="max-w-5xl mx-auto grid grid-cols-2 gap-14 items-center max-[900px]:grid-cols-1 max-[900px]:gap-10">
+          <motion.div {...fadeUp}>
+            <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>ÖĞRENCİ PANELİ</div>
+            <h2 className="font-fredoka font-bold text-page-navy leading-tight mb-6" style={{ fontSize: "clamp(24px,3.6vw,36px)" }}>
+              Öğrenci Ne Yapacağını Görür. Siz Sürecin Nasıl Gittiğini Bilirsiniz.
+            </h2>
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { title: "Bugünkü Rotası", desc: "Bugün ne yapması gerektiğini görür." },
+                { title: "Haftalık İlerlemesi", desc: "Planının ne kadarını uyguladığını takip eder." },
+                { title: "Deneme Gelişimi", desc: "Deneme sonuçlarını ve gelişimini görür." },
+                { title: "Koç Desteği", desc: "Takıldığı noktada koçuyla iletişim kurar." },
+              ].map((c, i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "#D8FF4F" }}>
+                    <svg width="10" height="10" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" /></svg>
+                  </span>
+                  <div>
+                    <p className="font-fredoka font-bold text-page-navy text-xs">{c.title}</p>
+                    <p className="font-nunito text-[#64748b] text-xs">{c.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, scale: 0.94 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+            <div className="rounded-[24px] p-5 max-w-[380px] mx-auto" style={{ background: "#1C1B8A" }}>
+              <div className="bg-white rounded-[18px] p-5">
+                <p className="font-fredoka font-bold text-[10px] uppercase mb-3" style={{ color: "#FF6B35", letterSpacing: 2 }}>Bugünkü Rotam</p>
+                {[
+                  { text: "Matematik — Denklemler", done: true },
+                  { text: "Türkçe — Paragraf", done: true },
+                  { text: "Fen — Kuvvet ve Hareket", done: false },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2.5 mb-2.5">
+                    <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: item.done ? "#D8FF4F" : "#f1f5f9" }}>
+                      {item.done && <svg width="9" height="9" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2.4" strokeLinecap="round" /></svg>}
+                    </div>
+                    <span className="font-nunito font-bold text-xs" style={{ color: item.done ? "#0f172a" : "#94a3b8" }}>{item.text}</span>
+                  </div>
+                ))}
+                <div className="mt-4 pt-4 border-t border-[#f1f5f9] flex items-center justify-between">
+                  <span className="font-nunito font-bold text-[10px] uppercase text-[#94a3b8]">Bu Hafta</span>
+                  <span className="font-fredoka font-bold text-sm text-page-navy">8/11 görev</span>
+                </div>
+                <div className="h-1.5 rounded-full bg-[#f1f5f9] overflow-hidden mt-1.5">
+                  <div className="h-full rounded-full" style={{ width: "73%", background: "linear-gradient(90deg, #1C1B8A, #FF6B35)" }} />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── VELİ BİLGİLENDİRMESİ ── */}
+      <section className="py-20 px-5 bg-white">
+        <div className="max-w-4xl mx-auto grid grid-cols-2 gap-14 items-center max-[900px]:grid-cols-1 max-[900px]:gap-10">
+          <motion.div {...fadeUp}>
+            <p className="font-nunito font-bold text-[#94a3b8] text-sm italic mb-3">"Peki ben sürecin nasıl gittiğini nasıl bileceğim?"</p>
+            <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>VELİ BİLGİLENDİRMESİ</div>
+            <h2 className="font-fredoka font-bold text-page-navy leading-tight mb-4" style={{ fontSize: "clamp(24px,3.6vw,36px)" }}>
+              Düzenli Veli Bilgilendirmesi
+            </h2>
+            <p className="font-nunito text-[#64748b] text-sm leading-relaxed">
+              Çocuğunuza her gün "çalıştın mı?" diye sormadan da sürecin nasıl ilerlediğini görebilirsiniz.
+            </p>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, scale: 0.94 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+            <div className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-[0_8px_30px_rgba(28,27,138,0.08)] max-w-[340px] mx-auto">
+              <div className="flex items-center justify-between mb-4">
+                <p className="font-fredoka font-bold text-page-navy text-sm">Haftalık Veli Raporu</p>
+                <span className="font-nunito font-bold text-[10px] text-[#94a3b8]">14–20 Eylül</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="bg-[#f8fafc] rounded-xl p-3 text-center">
+                  <p className="font-fredoka font-bold text-page-navy text-lg">%82</p>
+                  <p className="font-nunito font-bold text-[10px] text-[#94a3b8]">Plan Uygulama</p>
+                </div>
+                <div className="bg-[#f8fafc] rounded-xl p-3 text-center">
+                  <p className="font-fredoka font-bold text-page-navy text-lg">64,5</p>
+                  <p className="font-nunito font-bold text-[10px] text-[#94a3b8]">Son Deneme Net</p>
+                </div>
+              </div>
+              <div className="bg-[#f5f3ff] rounded-xl p-3">
+                <p className="font-nunito font-bold text-[10px] uppercase text-[#7340C8] mb-1">Koçtan Not</p>
+                <p className="font-nunito text-xs text-[#475569] leading-relaxed">"Bu hafta fen konularında güzel ilerleme kaydetti, önümüzdeki hafta matematik tekrarına ağırlık veriyoruz."</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
       {/* ── SOSYAL KANIT ── */}
       {(socialProof.stats?.length > 0 || socialProof.testimonials?.length > 0) && (
@@ -360,26 +520,161 @@ export default function LgsHazirlikPage() {
             )}
 
             {socialProof.testimonials?.length > 0 && (
-              <div className="grid grid-cols-2 gap-5 max-[640px]:grid-cols-1">
-                {socialProof.testimonials.map((t, i) => (
-                  <motion.div key={i} {...fadeUp} transition={{ delay: i * 0.1 }}
-                    whileHover={{ y: -4 }}
-                    className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-[0_8px_24px_rgba(28,27,138,0.09)] transition-shadow duration-200 flex flex-col gap-3">
-                    <div className="flex gap-0.5">{Array(5).fill(0).map((_, j) => <span key={j} style={{ color: "#FF6B35" }}>★</span>)}</div>
-                    <p className="font-nunito text-[#374151] text-sm leading-relaxed italic flex-grow">"{t.quote}"</p>
-                    <div className="flex items-center gap-3 pt-2 border-t border-[#f1f5f9]">
-                      <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-fredoka font-bold text-sm flex-shrink-0" style={{ background: t.isParent ? "#1C1B8A" : "#FF6B35" }}>
-                        {t.author?.[0]?.toUpperCase() || (t.isParent ? "V" : "Ö")}
+              <div className="grid grid-cols-3 gap-5 max-[900px]:grid-cols-1">
+                {socialProof.testimonials.map((t, i) => {
+                  const catColors = { "Düzen": "#7340C8", "Sorumluluk": "#c2410c", "Akademik İlerleme": "#1C1B8A" };
+                  const color = catColors[t.category] || "#1C1B8A";
+                  return (
+                    <motion.div key={i} {...fadeUp} transition={{ delay: i * 0.1 }}
+                      whileHover={{ y: -4 }}
+                      className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-[0_8px_24px_rgba(28,27,138,0.09)] transition-shadow duration-200 flex flex-col gap-3">
+                      {t.category && (
+                        <span className="inline-flex self-start font-fredoka font-bold text-[10px] uppercase px-2.5 py-1 rounded-full" style={{ background: `${color}18`, color, letterSpacing: 1 }}>
+                          {t.category}
+                        </span>
+                      )}
+                      {(t.problem || t.process) && (
+                        <div className="text-[11px] font-nunito leading-relaxed border-l-2 pl-2.5" style={{ borderColor: `${color}40` }}>
+                          {t.problem && <p><span className="font-bold text-[#94a3b8]">Başlangıç:</span> <span className="text-[#64748b]">{t.problem}</span></p>}
+                          {t.process && <p className="mt-0.5"><span className="font-bold text-[#94a3b8]">Süreç:</span> <span className="text-[#64748b]">{t.process}</span></p>}
+                        </div>
+                      )}
+                      <div className="flex gap-0.5">{Array(5).fill(0).map((_, j) => <span key={j} style={{ color: "#FF6B35" }}>★</span>)}</div>
+                      <p className="font-nunito text-[#374151] text-sm leading-relaxed italic flex-grow">"{t.quote}"</p>
+                      <div className="flex items-center gap-3 pt-2 border-t border-[#f1f5f9]">
+                        <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-fredoka font-bold text-sm flex-shrink-0" style={{ background: t.isParent ? "#1C1B8A" : "#FF6B35" }}>
+                          {t.author?.[0]?.toUpperCase() || (t.isParent ? "V" : "Ö")}
+                        </div>
+                        <div>
+                          <p className="font-nunito font-bold text-xs text-[#0f172a]">{t.author}</p>
+                          <p className="font-nunito text-xs text-[#94a3b8]">{t.isParent ? "Veli" : "Öğrenci"}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-nunito font-bold text-xs text-[#0f172a]">{t.author}</p>
-                        <p className="font-nunito text-xs text-[#94a3b8]">{t.isParent ? "Veli" : "Öğrenci"}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  );
+                })}
               </div>
             )}
+          </div>
+        </section>
+      )}
+
+      {/* ── KOÇLUKTA NELER VAR ── */}
+      <section className="py-20 px-5 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <motion.div {...fadeUp} className="text-center mb-12">
+            <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>KOÇLUKTA NELER VAR</div>
+            <h2 className="font-fredoka font-bold text-page-navy m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,40px)" }}>
+              Rota Sisteminin Parçaları
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-2 gap-4 max-[640px]:grid-cols-1">
+            {[
+              { title: "Kişiye Özel Çalışma Rotası", desc: "Nereden başlayacağını düşünmesine gerek yok — rotası onun için hazırlanır." },
+              { title: "Günlük İlerleme Takibi", desc: "Plan çocuğunuza bırakılmaz, her gün nerede olduğu takip edilir." },
+              { title: "Deneme Analizi", desc: "Deneme sonuçları sadece net olarak kalmaz, sonraki rotaya yansıtılır." },
+              { title: "Dinamik Program Güncelleme", desc: "İhtiyaçlar değiştiğinde rota da güncellenir, sabit kalmaz." },
+              { title: "Koç Desteği", desc: "Takıldığı noktada bir sonraki görüşmeyi beklemesine gerek kalmaz." },
+              { title: "Öğrenci Paneli", desc: "Rotasını ve ilerlemesini kendi panelinden görebilir." },
+              { title: "Dikkat Dağıtan Alışkanlıkların Yönetimi", desc: "Çalışma düzenine etkisi birlikte yönetilir." },
+              { title: "Düzenli Veli Bilgilendirmesi", desc: "Süreci sormadan da takip edebilirsiniz." },
+            ].map((f, i) => (
+              <motion.div key={i} {...fadeUp} transition={{ duration: 0.45, delay: Math.min(i * 0.06, 0.3) }}
+                className="flex items-start gap-3.5 bg-[#f8fafc] rounded-2xl p-5">
+                <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "#D8FF4F" }}>
+                  <svg width="12" height="12" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2.2" strokeLinecap="round" /></svg>
+                </span>
+                <div>
+                  <h3 className="font-fredoka font-bold text-page-navy text-sm mb-1">{f.title}</h3>
+                  <p className="font-nunito text-[#64748b] text-xs leading-relaxed">{f.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── KİMLER İÇİN ── */}
+      <section className="py-20 px-5" style={{ background: "#f4f2fa" }}>
+        <div className="max-w-4xl mx-auto">
+          <motion.div {...fadeUp} className="text-center mb-12">
+            <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>KİMLER İÇİN</div>
+            <h2 className="font-fredoka font-bold text-page-navy m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,40px)" }}>
+              Bu Koçluk Çocuğunuz İçin Uygun mu?
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-2 gap-5 max-[768px]:grid-cols-1">
+            <motion.div {...fadeUp} className="bg-white rounded-2xl p-7 border-2" style={{ borderColor: "#D8FF4F" }}>
+              <h3 className="font-fredoka font-bold text-page-navy text-base mb-4">Bu koçluk çocuğunuz için uygun olabilir eğer...</h3>
+              <ul className="flex flex-col gap-3">
+                {[
+                  "Çalışmaya başlamakta zorlanıyorsa",
+                  "Programını sürdüremiyorsa",
+                  "Hangi derse öncelik vereceğini bilmiyorsa",
+                  "Düzenli takip ve yönlendirmeye ihtiyaç duyuyorsa",
+                  "Sorumluluk almaya açıksa",
+                ].map((t, i) => (
+                  <li key={i} className="flex items-start gap-2.5">
+                    <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "#ecfdf5", color: "#059669" }}>
+                      <svg width="10" height="10" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+                    </span>
+                    <span className="font-nunito font-bold text-sm text-[#334155]">{t}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            <motion.div {...fadeUp} transition={{ delay: 0.1 }} className="bg-white rounded-2xl p-7 border border-[#e2e8f0]">
+              <h3 className="font-fredoka font-bold text-[#64748b] text-base mb-4">Uygun olmayabilir eğer...</h3>
+              <ul className="flex flex-col gap-3">
+                {[
+                  "Koçun öğrencinin yerine çalışma sorumluluğunu üstlenmesini bekliyorsanız",
+                  "Garanti edilmiş net veya sıralama sonucu arıyorsanız",
+                  "Öğrencinin sürece hiç katılım göstermesini beklemiyorsanız",
+                ].map((t, i) => (
+                  <li key={i} className="flex items-start gap-2.5">
+                    <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "#f1f5f9", color: "#94a3b8" }}>
+                      <svg width="9" height="9" viewBox="0 0 10 10"><path d="M1 1 L9 9 M9 1 L1 9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+                    </span>
+                    <span className="font-nunito font-bold text-sm text-[#64748b]">{t}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── BAŞVURU SÜRECİ (4 adım) ── */}
+      {howItWorks.steps?.length > 0 && (
+        <section className="py-20 px-5 text-white relative overflow-hidden" style={{ background: "#1C1B8A" }}>
+          <div className="absolute rounded-full pointer-events-none" style={{ width: 320, height: 320, background: "#7340C8", filter: "blur(90px)", opacity: 0.3, top: -60, right: -60 }} />
+          <div className="absolute rounded-full pointer-events-none" style={{ width: 220, height: 220, background: "#0D0A2E", filter: "blur(70px)", opacity: 0.5, bottom: -40, left: -40 }} />
+          <div className="max-w-5xl mx-auto relative">
+            <motion.div {...fadeUp} className="text-center mb-12">
+              <div className="font-fredoka font-bold text-lime text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>BAŞVURU SÜRECİ</div>
+              <h2 className="font-fredoka font-bold text-white m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,40px)" }}>
+                Sürece Başlamak <span style={{ color: "#D8FF4F" }}>Çok Kolay.</span>
+              </h2>
+            </motion.div>
+            <div className="grid grid-cols-4 gap-5 mb-4 max-[900px]:grid-cols-2 max-[560px]:grid-cols-1">
+              {howItWorks.steps.map((s, i) => (
+                <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.1 }}
+                  whileHover={{ y: -4, borderColor: "rgba(216,255,79,0.4)" }}
+                  className="rounded-2xl p-6 border relative" style={{ background: "rgba(255,255,255,0.07)", borderColor: "rgba(255,255,255,0.14)" }}>
+                  <div className="font-fredoka font-bold mb-3" style={{ fontSize: 40, color: "rgba(216,255,79,0.18)", lineHeight: 1 }}>{String(i + 1).padStart(2, "0")}</div>
+                  <h3 className="font-nunito font-bold text-white text-sm mb-2">{s.title}</h3>
+                  <p className="font-nunito text-white/55 text-xs leading-relaxed">{s.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+            <div className="text-center mt-8">
+              <button onClick={scrollToOffer} className="font-fredoka font-bold text-base px-10 py-4 rounded-full transition-all hover:scale-105" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 8px 24px rgba(216,255,79,0.3)" }}>
+                {howItWorks.comparisonCta || "Hemen Kayıt Ol →"}
+              </button>
+            </div>
           </div>
         </section>
       )}
