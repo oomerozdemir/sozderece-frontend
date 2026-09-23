@@ -359,7 +359,7 @@ const PackageDetail = () => {
                 style={{ background: "#D8FF4F", color: "#1C1B8A", padding: "16px", boxShadow: "0 6px 18px rgba(216,255,79,0.3)" }}
                 onClick={handleContinue}
               >
-                {isSpecialTutoring ? "Öğretmenleri İncele" : (activePlan?.ctaLabel || "Hemen Başla →")}
+                {isSpecialTutoring ? "Öğretmenleri İncele" : "Paketi Satın Al →"}
               </button>
             </div>
 
@@ -475,7 +475,7 @@ const PackageDetail = () => {
                 style={{ background: "#D8FF4F", color: "#1C1B8A", padding: "14px 32px", boxShadow: "0 6px 18px rgba(216,255,79,0.3)" }}
                 onClick={handleContinue}
               >
-                {isSpecialTutoring ? "Öğretmenleri İncele" : "Hemen Başla →"}
+                {isSpecialTutoring ? "Öğretmenleri İncele" : "Paketi Satın Al →"}
               </button>
             </div>
           </div>

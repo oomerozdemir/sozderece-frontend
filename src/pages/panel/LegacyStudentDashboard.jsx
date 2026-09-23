@@ -218,7 +218,7 @@ export default function LegacyStudentDashboard() {
                     className="text-center font-fredoka font-bold text-sm px-5 py-3 rounded-full transition-transform hover:scale-[1.02]"
                     style={{ background: "#D8FF4F", color: "#1C1B8A" }}
                   >
-                    🗓️ Ücretsiz Ön Görüşme
+                    🗓️ Ücretsiz Görüşme Al
                   </a>
                   <a
                     href="https://wa.me/905312546701"

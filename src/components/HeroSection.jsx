@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { scrollToId } from "../utils/scrollToId";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaClipboardList, FaChartLine, FaChevronLeft, FaChevronRight, FaPlay, FaPause } from "react-icons/fa";
 
@@ -10,60 +10,7 @@ const fadeUp = {
   transition: { duration: 0.55, ease: "easeOut" },
 };
 
-const SOCIAL_PROOF = [
-  {
-    quote: "1 ayda +17 net yaptım. Koçumun her gün takip etmesi ve her an yanımda olması istikrarlı olmamı sağladı.",
-    name: "Şevval",
-    role: "ÖĞRENCİ",
-    badge: "+17 NET · 1. AY",
-    avatar: "Ş",
-    avatarBg: "#1C1B8A",
-    year: "TYT-AYT 2026",
-    stars: 5,
-  },
-  {
-    quote: "Çocuğumun ders çalışma isteği arttı. Ben de veli raporlaması sayesinde süreci yakından takip edebildim.",
-    name: "Serpil H.",
-    role: "VELİ",
-    badge: "LGS 2025",
-    avatar: "S",
-    avatarBg: "#7340C8",
-    year: "LGS 2025",
-    stars: 4,
-  },
-  {
-    quote: "Her deneme sonrası yapılan analizler sayesinde hatalarımı fark ettim ve artık yapmıyorum.",
-    name: "Ege K.",
-    role: "ÖĞRENCİ",
-    badge: "+18 NET",
-    avatar: "E",
-    avatarBg: "#FF6B35",
-    year: "TYT 2024",
-    stars: 5,
-  },
-  {
-    quote: "Hedefimi belirledik, programımı ayarladık. Uyamadığım zamanlar oldu programıma ama o zamanda koçum hep destek oldu ve bana göre düzenledi programımı. Sayesinde mezun senemde sınava en hazır gittiğim yıl oldu bu.",
-    name: "Mert A.",
-    role: "ÖĞRENCİ",
-    badge: "+22 NET",
-    avatar: "M",
-    avatarBg: "#1C1B8A",
-    year: "AYT 2026",
-    stars: 5,
-  },
-  {
-    quote: "LGS puanı beklentimizin çok üzerinde çıktı. Sistematik çalışma fark yaratıyor.",
-    name: "Ayşe K.",
-    role: "VELİ",
-    badge: "LGS 2025",
-    avatar: "A",
-    avatarBg: "#7340C8",
-    year: "LGS 2024",
-    stars: 4,
-  },
-];
 
-const MARQUEE_CARDS = [...SOCIAL_PROOF, ...SOCIAL_PROOF];
 
 // Ortak metin/renk tokenleri — beyaz zemine göre.
 const TEXT_DARK = "#150E33";
@@ -84,6 +31,74 @@ function Eyebrow({ children, accent = "#FF6B35" }) {
         {children}
       </span>
     </span>
+  );
+}
+
+// Hero'nun tek net eylemi: paketler bölümüne kaydır. İkincil eylem süreç
+// bölümüne kaydırır. Tüm slaytlarda aynı — sayfayı terk eden "Başvur" yok.
+function HeroCtas({ className = "" }) {
+  const go = (id) => (e) => {
+    e.preventDefault();
+    scrollToId(id);
+  };
+  return (
+    <motion.div
+      {...fadeUp}
+      transition={{ ...fadeUp.transition, delay: 0.24 }}
+      className={`flex flex-wrap gap-4 max-[640px]:flex-col max-[640px]:gap-3 ${className}`}
+    >
+      <a
+        href="#paketler"
+        onClick={go("paketler")}
+        className="inline-flex items-center justify-center gap-2 text-white font-fredoka font-bold text-[18px] max-[640px]:text-[17px] px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
+        style={{
+          background: "#FF6B35",
+          animation: "heroPulse 2.5s ease-out infinite",
+          letterSpacing: "0.3px",
+        }}
+      >
+        Paketleri &amp; Fiyatları Gör ↓
+      </a>
+      <a
+        href="#nasil-calisir"
+        onClick={go("nasil-calisir")}
+        className="inline-flex items-center justify-center gap-2 font-fredoka font-semibold text-[16px] px-7 py-4 rounded-full no-underline transition-all hover:bg-black/[0.04]"
+        style={{ border: `1.5px solid ${BORDER_SOFT}`, color: TEXT_DARK }}
+      >
+        Koçluk Nasıl İşliyor?
+      </a>
+    </motion.div>
+  );
+}
+
+// Mobilde masaüstündeki rota kartı gizli — mekanizmayı 3 küçük adımla anlatan
+// kompakt bir şerit (ekranı uzatmadan).
+function MobileMechanism() {
+  const items = [
+    { n: "1", t: "Kişisel Rota", c: "#7340C8" },
+    { n: "2", t: "İlerleme Takibi", c: "#3F6B0A" },
+    { n: "3", t: "Dinamik Planlama", c: "#c2410c" },
+  ];
+  return (
+    <div className="hidden max-[960px]:flex items-center gap-1.5 flex-wrap mb-7">
+      {items.map((it, i) => (
+        <React.Fragment key={it.n}>
+          <span
+            className="inline-flex items-center gap-1.5 rounded-full pl-1 pr-3 py-1 font-fredoka font-bold text-[12px]"
+            style={{ background: `${it.c}14`, color: it.c }}
+          >
+            <span
+              className="w-5 h-5 rounded-full flex items-center justify-center text-[11px] text-white"
+              style={{ background: it.c }}
+            >
+              {it.n}
+            </span>
+            {it.t}
+          </span>
+          {i < items.length - 1 && <span style={{ color: TEXT_40 }}>→</span>}
+        </React.Fragment>
+      ))}
+    </div>
   );
 }
 
@@ -135,36 +150,14 @@ function DefaultSlide() {
         <motion.p
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.19 }}
-          className="font-fredoka font-bold text-[13px] tracking-[0.06em] mb-10"
+          className="font-fredoka font-bold text-[13px] tracking-[0.06em] mb-10 max-[960px]:hidden"
           style={{ color: "#7340C8" }}
         >
           Kişisel Rota <span style={{ color: TEXT_40 }}>→</span> İlerleme Takibi <span style={{ color: TEXT_40 }}>→</span> Dinamik Planlama
         </motion.p>
+        <MobileMechanism />
 
-        <motion.div
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.24 }}
-          className="flex flex-wrap gap-4 mb-14"
-        >
-          <Link
-            to="/ucretsiz-on-gorusme"
-            className="inline-flex items-center gap-2 text-white font-fredoka font-bold text-[18px] px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
-            style={{
-              background: "#FF6B35",
-              animation: "heroPulse 2.5s ease-out infinite",
-              letterSpacing: "0.3px",
-            }}
-          >
-            Koçluk İçin Başvur →
-          </Link>
-          <a
-            href="#nasil-calisir"
-            className="inline-flex items-center gap-2 font-fredoka font-semibold text-[16px] px-7 py-4 rounded-full no-underline transition-all hover:bg-black/[0.04]"
-            style={{ border: `1.5px solid ${BORDER_SOFT}`, color: TEXT_DARK }}
-          >
-            Nasıl Çalışıyor?
-          </a>
-        </motion.div>
+        <HeroCtas className="mb-14" />
 
         <div className="flex flex-wrap gap-3">
           {trustPoints.map((t, i) => (
@@ -313,30 +306,7 @@ function LgsSlide() {
           Günlük takip, telefon yönetimi ve haftalık veli raporuyla LGS'ye kadar yanında biri olsun — istediğin an arayıp ulaşabileceğin biri.
         </motion.p>
 
-        <motion.div
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.24 }}
-          className="flex flex-wrap gap-4"
-        >
-          <Link
-            to="/ucretsiz-on-gorusme"
-            className="inline-flex items-center gap-2 text-white font-fredoka font-bold text-[18px] px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
-            style={{
-              background: "#FF6B35",
-              animation: "heroPulse 2.5s ease-out infinite",
-              letterSpacing: "0.3px",
-            }}
-          >
-            Veli Görüşmesi Talep Et →
-          </Link>
-          <Link
-            to="/lgs-hazirlik"
-            className="inline-flex items-center gap-2 font-fredoka font-semibold text-[16px] px-7 py-4 rounded-full no-underline transition-all hover:bg-black/[0.04]"
-            style={{ border: `1.5px solid ${BORDER_SOFT}`, color: TEXT_DARK }}
-          >
-            LGS Hazırlığını İncele
-          </Link>
-        </motion.div>
+        <HeroCtas className="" />
       </div>
 
       {/* Sağ — floating kartlar */}
@@ -479,30 +449,7 @@ function YksSlide() {
           Kişisel Rota <span style={{ color: TEXT_40 }}>→</span> İlerleme Takibi <span style={{ color: TEXT_40 }}>→</span> Dinamik Planlama
         </motion.p>
 
-        <motion.div
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.24 }}
-          className="flex flex-wrap gap-4"
-        >
-          <Link
-            to="/ucretsiz-on-gorusme"
-            className="inline-flex items-center gap-2 text-white font-fredoka font-bold text-[18px] px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
-            style={{
-              background: "#FF6B35",
-              animation: "heroPulse 2.5s ease-out infinite",
-              letterSpacing: "0.3px",
-            }}
-          >
-            YKS Koçluğuna Başvur →
-          </Link>
-          <Link
-            to="/yks-yolculugu"
-            className="inline-flex items-center gap-2 font-fredoka font-semibold text-[16px] px-7 py-4 rounded-full no-underline transition-all hover:bg-black/[0.04]"
-            style={{ border: `1.5px solid ${BORDER_SOFT}`, color: TEXT_DARK }}
-          >
-            Nasıl İlerliyor?
-          </Link>
-        </motion.div>
+        <HeroCtas className="" />
       </div>
 
       {/* Sağ — floating kartlar */}
@@ -651,8 +598,7 @@ export default function HeroSection() {
         @keyframes heroFloat3   { 0%,100%{transform:translateY(0px) rotate(0deg)} 50%{transform:translateY(-22px) rotate(4deg)} }
         @keyframes heroShimmer  { 0%{background-position:200% center} 100%{background-position:-200% center} }
         @keyframes heroPulse    { 0%{box-shadow:0 8px 28px rgba(255,107,53,0.35),0 0 0 0 rgba(255,107,53,0.4)} 70%{box-shadow:0 8px 28px rgba(255,107,53,0.35),0 0 0 20px rgba(255,107,53,0)} 100%{box-shadow:0 8px 28px rgba(255,107,53,0.35),0 0 0 0 rgba(255,107,53,0)} }
-        @keyframes heroMarquee  { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-
+        
         /* Slaytların hepsi birebir aynı boyutta olsun diye sabit bir
            "viewport" yüksekliği — içerik slayta göre değişse de kayan
            alan büyüyüp küçülmüyor. Masaüstünde sabit height (sağdaki
@@ -663,7 +609,7 @@ export default function HeroSection() {
           .hero-slide-viewport { height: auto; min-height: 600px; }
         }
         @media (max-width: 640px) {
-          .hero-slide-viewport { min-height: 660px; }
+          .hero-slide-viewport { min-height: 600px; }
         }
       `}</style>
 
@@ -749,83 +695,6 @@ export default function HeroSection() {
           )}
         </div>
       )}
-
-      {/* Sosyal kanıt marquee şeridi */}
-      <div
-        className="relative w-full overflow-hidden"
-        style={{
-          borderTop: "1px solid #F0EFF5",
-          background: "#FAF9FC",
-          paddingTop: 16,
-          paddingBottom: 14,
-        }}
-      >
-        {/* Sol fade */}
-        <div style={{
-          position: "absolute", left: 0, top: 0, bottom: 0, width: 80, zIndex: 2,
-          background: "linear-gradient(to right, #FAF9FC, transparent)",
-          pointerEvents: "none",
-        }} />
-        {/* Sağ fade */}
-        <div style={{
-          position: "absolute", right: 0, top: 0, bottom: 0, width: 80, zIndex: 2,
-          background: "linear-gradient(to left, #FAF9FC, transparent)",
-          pointerEvents: "none",
-        }} />
-
-        <div
-          style={{
-            display: "flex",
-            gap: 16,
-            animation: "heroMarquee 28s linear infinite",
-            width: "max-content",
-          }}
-        >
-          {MARQUEE_CARDS.map((item, i) => (
-            <div
-              key={i}
-              style={{
-                flexShrink: 0,
-                width: 280,
-                background: "#FFFFFF",
-                border: "1px solid #ECEAF3",
-                borderRadius: 16,
-                padding: "16px 18px",
-              }}
-            >
-              {/* Stars */}
-              <div className="flex gap-0.5 mb-2">
-                {[1,2,3,4,5].map(n => (
-                  <svg key={n} width="13" height="13" viewBox="0 0 24 24" fill={n <= (item.stars || 5) ? item.avatarBg : "#E4E2EC"}>
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                  </svg>
-                ))}
-              </div>
-              <p className="font-nunito text-[13px] leading-snug mb-3 line-clamp-2" style={{ color: TEXT_65 }}>
-                "{item.quote}"
-              </p>
-              <div className="flex items-center gap-2.5">
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center font-fredoka font-bold text-white text-sm flex-shrink-0"
-                  style={{ background: item.avatarBg }}
-                >
-                  {item.avatar}
-                </div>
-                <div>
-                  <div className="font-fredoka font-bold text-[13px] leading-none" style={{ color: TEXT_DARK }}>{item.name}</div>
-                  <div className="font-nunito text-[11px] mt-0.5" style={{ color: TEXT_45 }}>{item.role} · {item.year}</div>
-                </div>
-                <div
-                  className="ml-auto font-fredoka font-bold text-[11px] px-2 py-0.5 rounded-full flex-shrink-0"
-                  style={{ background: "#EEFBC7", color: "#3F6B0A" }}
-                >
-                  {item.badge}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Warp } from "@paper-design/shaders-react";
-import { FaWhatsapp, FaChartLine, FaUsers, FaRoute, FaTasks, FaSyncAlt, FaPaperPlane, FaComments } from "react-icons/fa";
+import { FaWhatsapp, FaChartLine, FaUsers, FaRoute, FaTasks, FaSyncAlt, FaBoxOpen, FaClipboardList } from "react-icons/fa";
+import { scrollToId } from "../utils/scrollToId";
 import Seo from "../components/Seo";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
@@ -19,8 +20,25 @@ const fadeUp = {
   transition: { duration: 0.55, ease: "easeOut" },
 };
 
+// Sayfa içi bölüme yumuşak kaydıran CTA (ana yolculuk: paketlere in).
+function ScrollCta({ to, className = "", style, children }) {
+  return (
+    <a
+      href={`#${to}`}
+      onClick={(e) => {
+        e.preventDefault();
+        scrollToId(to);
+      }}
+      className={className}
+      style={style}
+    >
+      {children}
+    </a>
+  );
+}
+
 // ══════════════════════════════════════════════
-// DATA — değiştirilmedi
+// DATA
 // ══════════════════════════════════════════════
 // Her kartın shader rengi, kartın orijinal accent tonuyla aynı aile
 // (lime/turuncu/mor) — WebGL sırt planı marka paletinden kopmuyor.
@@ -29,123 +47,86 @@ const shaderLime = {
   shape: "dots", shapeScale: 0.1,
   colors: ["hsl(70,90%,32%)", "hsl(80,100%,60%)", "hsl(60,85%,38%)", "hsl(85,100%,72%)"],
 };
-const shaderLime2 = {
-  proportion: 0.4, softness: 1.05, distortion: 0.2, swirl: 0.85, swirlIterations: 13,
-  shape: "checks", shapeScale: 0.085,
-  colors: ["hsl(75,95%,30%)", "hsl(88,100%,58%)", "hsl(65,85%,36%)", "hsl(90,100%,70%)"],
-};
 const shaderOrange = {
   proportion: 0.38, softness: 1.0, distortion: 0.19, swirl: 0.8, swirlIterations: 11,
   shape: "checks", shapeScale: 0.09,
   colors: ["hsl(14,100%,38%)", "hsl(30,100%,58%)", "hsl(8,90%,42%)", "hsl(36,100%,70%)"],
-};
-const shaderOrange2 = {
-  proportion: 0.34, softness: 0.9, distortion: 0.15, swirl: 0.7, swirlIterations: 8,
-  shape: "dots", shapeScale: 0.12,
-  colors: ["hsl(18,100%,36%)", "hsl(34,100%,60%)", "hsl(12,90%,40%)", "hsl(40,100%,72%)"],
 };
 const shaderPurple = {
   proportion: 0.36, softness: 0.95, distortion: 0.17, swirl: 0.75, swirlIterations: 10,
   shape: "dots", shapeScale: 0.11,
   colors: ["hsl(255,90%,32%)", "hsl(272,100%,64%)", "hsl(246,85%,38%)", "hsl(266,100%,74%)"],
 };
-const shaderPurple2 = {
-  proportion: 0.44, softness: 1.1, distortion: 0.21, swirl: 0.9, swirlIterations: 14,
-  shape: "checks", shapeScale: 0.1,
-  colors: ["hsl(250,90%,34%)", "hsl(268,100%,66%)", "hsl(258,85%,40%)", "hsl(262,100%,76%)"],
-};
 
-// Sözderece Rota Sistemi — 6 kart üç mekanizma aşamasına renkle bağlanıyor
-// (mor=Kişisel Rota, yeşil=İlerleme Takibi, turuncu=Dinamik Planlama), son
-// iki kart (koç desteği, veli süreci) bu üç rengi destekleyici bir çift
-// olarak tekrar kullanıyor. "Koç Uyum Garantisi" ve "Ölçülebilir Sonuçlar"
-// buradan çıkarıldı — biri güven/garanti mesajı, diğeri doğrulanamaz bir
-// sonuç iddiasıydı, ikisi de mekanizma anlatımıyla karışıyordu.
-const whyCards = [
+// Sözderece Rota Sistemi — ana sayfada yalnızca 3 temel adım (mor=Kişisel
+// Rota, yeşil=İlerleme Takibi, turuncu=Dinamik Planlama). Deneme analizi, koç
+// desteği ve veli bilgilendirmesi küçük destek unsurları olarak altta.
+const routeSteps = [
   {
+    num: "01",
     icon: <FaRoute />,
-    title: "Kişisel Çalışma Rotası",
-    desc: "Nereden başlayacağın, hangi derslere öncelik vereceğin ve haftanı nasıl planlayacağın mevcut durumuna ve hedeflerine göre belirlenir.",
-    tag: "KİŞİSEL ROTA",
+    title: "Kişisel Rota",
+    desc: "Nereden başlayacağın ve neye öncelik vereceğin netleşir.",
     accent: "#a78bfa",
     shader: shaderPurple,
   },
   {
+    num: "02",
     icon: <FaTasks />,
-    title: "Günlük İlerleme Takibi",
-    desc: "Program sadece hazırlanıp gönderilmez. Yaptıkların ve aksayan noktalar düzenli olarak takip edilir.",
-    tag: "İLERLEME TAKİBİ",
+    title: "İlerleme Takibi",
+    desc: "Programın uygulanması ve gelişimin düzenli takip edilir.",
     accent: "#D8FF4F",
     shader: shaderLime,
   },
   {
-    icon: <FaChartLine />,
-    title: "Deneme Analizi",
-    desc: "Deneme sonuçların yalnızca net olarak kalmaz. Eksiklerin ve önceliklerin belirlenerek sonraki çalışma rotana yansıtılır.",
-    tag: "İLERLEME TAKİBİ",
-    accent: "#D8FF4F",
-    shader: shaderLime2,
-  },
-  {
+    num: "03",
     icon: <FaSyncAlt />,
     title: "Dinamik Planlama",
-    desc: "Planın sabit kalmaz. İlerlemen, denemelerin ve ihtiyaçların değiştikçe çalışma rotan da güncellenir. Sabit bir PDF değil, sen ilerledikçe gelişen bir çalışma planı.",
-    tag: "DİNAMİK PLANLAMA",
+    desc: "Sonuçlarına göre çalışma rotan güncellenir.",
     accent: "#FF6B35",
     shader: shaderOrange,
   },
-  {
-    icon: <FaWhatsapp />,
-    title: "Ulaşılabilir Koç Desteği",
-    desc: "Takıldığında bir sonraki görüşmeyi beklemek zorunda kalmazsın. Süreç içerisinde koçuna ulaşıp destek alabilirsin.",
-    tag: "KOÇ DESTEĞİ",
-    accent: "#a78bfa",
-    shader: shaderPurple2,
-  },
-  {
-    icon: <FaUsers />,
-    title: "Veli Süreç Takibi",
-    desc: "Veli de süreçte karanlıkta kalmaz. Düzenli rapor ve geri bildirimlerle öğrencinin ilerleyişini takip eder.",
-    tag: "VELİ SÜRECİ",
-    accent: "#FF6B35",
-    shader: shaderOrange2,
-  },
 ];
 
+const supportItems = [
+  { icon: <FaChartLine />, title: "Deneme Analizi", desc: "Netlerin, eksiklere ve önceliklere dönüşür." },
+  { icon: <FaWhatsapp />, title: "Koç Desteği", desc: "Takıldığında koçuna ulaşırsın." },
+  { icon: <FaUsers />, title: "Veli Bilgilendirmesi", desc: "Veli süreçte karanlıkta kalmaz." },
+];
+
+// "Koçluğa Nasıl Başlarsın?" — gerçek operasyon: satın alma → başlangıç formu →
+// koç WhatsApp'tan yazar → program hazırlanıp paylaşılır. Henüz hazır olmayan
+// panel özellikleri burada vaat edilmiyor.
 const steps = [
   {
     num: "01",
-    title: "Başvurunu Gönder",
-    desc: "Kısa formu doldur ve ihtiyacını paylaş.",
-    icon: <FaPaperPlane />,
+    title: "Paketini Seç",
+    desc: "YKS veya LGS için sana uygun paketi incele.",
+    icon: <FaBoxOpen />,
     circleColor: "#D8FF4F",
     circleText: "#0D0A2E",
   },
   {
     num: "02",
     title: "Seni Tanıyalım",
-    desc: "Hedefini, mevcut durumunu ve ihtiyaçlarını netleştirelim.",
-    icon: <FaComments />,
+    desc: "Kayıttan sonra kısa başlangıç formunu doldur.",
+    icon: <FaClipboardList />,
     circleColor: "#7340C8",
     circleText: "#ffffff",
   },
   {
     num: "03",
-    title: "Rotanı Oluşturalım",
-    desc: "Koçunu belirleyelim ve ilk çalışma rotanı hazırlayalım.",
-    tag: "KİŞİSEL ROTA",
-    tagColor: "#7340C8",
-    icon: <FaRoute />,
+    title: "Koçunla Tanış",
+    desc: "Koçun seninle WhatsApp üzerinden iletişime geçsin.",
+    icon: <FaWhatsapp />,
     circleColor: "#FF6B35",
     circleText: "#ffffff",
   },
   {
     num: "04",
-    title: "Birlikte İlerleyelim",
-    desc: "İlerlemeni takip edelim, rotanı ihtiyaçlarına göre güncelleyelim.",
-    tag: "İLERLEME TAKİBİ + DİNAMİK PLANLAMA",
-    tagColor: "#c2410c",
-    icon: <FaChartLine />,
+    title: "İlk Rotan Hazırlansın",
+    desc: "Kişisel çalışma programın hazırlanır ve koçluk sürecin başlar.",
+    icon: <FaRoute />,
     circleColor: "#1C1B8A",
     circleText: "#D8FF4F",
   },
@@ -284,7 +265,7 @@ const faqs = [
   },
   {
     q: "Satın aldım, şimdi ne olacak?",
-    a: "Ödemenizi aldıktan sonra 24 saat içinde sizi arayacağız. Koç ataması yapılıp tanışma görüşmesi planlanacak. İlk günden itibaren günlük program başlıyor.",
+    a: "Ödemenden sonra kısa bir başlangıç formunu dolduruyorsun. Ardından koçun seninle WhatsApp üzerinden iletişime geçiyor, kişisel çalışma programın hazırlanıp seninle paylaşılıyor ve takip WhatsApp üzerinden devam ediyor.",
   },
   {
     q: "Paket otomatik yenileniyor mu?",
@@ -317,18 +298,18 @@ const faqs = [
 ];
 
 // ══════════════════════════════════════════════
-// NEDEN FARKLI — Dark, glassmorphism grid
+// SÖZDERECE ROTA SİSTEMİ — 3 ana adım + 3 destek unsuru
 // ══════════════════════════════════════════════
 function WhyDifferentSection() {
   return (
-    <section className="relative overflow-hidden py-24 px-5 bg-white">
+    <section className="relative overflow-hidden py-16 md:py-24 px-5 bg-white">
       <div
         className="absolute inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(216,255,79,0.08) 0%, transparent 70%)" }}
       />
 
-      <div className="max-w-[1200px] mx-auto relative" style={{ zIndex: 1 }}>
-        <motion.div {...fadeUp} className="mb-14">
+      <div className="max-w-[1100px] mx-auto relative" style={{ zIndex: 1 }}>
+        <motion.div {...fadeUp} className="mb-10 md:mb-12">
           <div
             className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-4"
             style={{ letterSpacing: 4 }}
@@ -337,7 +318,7 @@ function WhyDifferentSection() {
           </div>
           <h2
             className="font-fredoka font-bold m-0 leading-[0.95]"
-            style={{ fontSize: "clamp(40px, 4.5vw, 64px)", letterSpacing: -1, maxWidth: 720 }}
+            style={{ fontSize: "clamp(36px, 4.5vw, 60px)", letterSpacing: -1, maxWidth: 720 }}
           >
             <span className="text-page-dark">Bir Program Verip</span>
             <br />
@@ -346,70 +327,59 @@ function WhyDifferentSection() {
           <p className="font-nunito text-[#64748b] text-base mt-5 max-w-[500px]">
             Çalışma rotanı oluşturuyor, ilerlemeni takip ediyor ve sonuçlarına göre planını sürekli güncelliyoruz.
           </p>
-          <p className="font-fredoka font-bold text-[13px] tracking-[0.06em] mt-4">
-            <span style={{ color: "#7340C8" }}>Kişisel Rota</span>{" "}
-            <span style={{ color: "#cbd5e1" }}>→</span>{" "}
-            <span style={{ color: "#3F6B0A" }}>İlerleme Takibi</span>{" "}
-            <span style={{ color: "#cbd5e1" }}>→</span>{" "}
-            <span className="text-accent-orange">Dinamik Planlama</span>
-          </p>
         </motion.div>
 
-        <div className="grid grid-cols-3 gap-5 max-[900px]:grid-cols-2 max-[580px]:grid-cols-1">
-          {whyCards.map((c, i) => (
+        <div className="grid grid-cols-3 gap-5 max-[820px]:grid-cols-1">
+          {routeSteps.map((c, i) => (
             <motion.div
-              key={i}
+              key={c.num}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.45, delay: i * 0.07 }}
-              className="group relative rounded-[24px] overflow-hidden h-80 transition-transform duration-300 hover:-translate-y-1"
+              transition={{ duration: 0.45, delay: i * 0.08 }}
+              className="relative rounded-[24px] overflow-hidden"
             >
               <div className="absolute inset-0">
-                <Warp
-                  style={{ width: "100%", height: "100%" }}
-                  scale={1}
-                  rotation={0}
-                  speed={0.8}
-                  {...c.shader}
-                />
+                <Warp style={{ width: "100%", height: "100%" }} scale={1} rotation={0} speed={0.8} {...c.shader} />
               </div>
-
               <div
-                className="relative z-10 h-full flex flex-col p-6"
+                className="relative z-10 flex flex-col p-6 min-h-[240px] max-[820px]:min-h-[170px]"
                 style={{ background: "rgba(10,8,30,0.74)" }}
               >
-                <div
-                  className="w-11 h-11 rounded-2xl flex items-center justify-center text-xl mb-4 text-white"
-                  style={{ background: "rgba(255,255,255,0.1)" }}
-                >
-                  {c.icon}
+                <div className="flex items-center justify-between mb-5">
+                  <span className="font-fredoka font-bold text-[34px] leading-none" style={{ color: c.accent }}>{c.num}</span>
+                  <span
+                    className="w-11 h-11 rounded-2xl flex items-center justify-center text-xl text-white"
+                    style={{ background: "rgba(255,255,255,0.1)" }}
+                  >
+                    {c.icon}
+                  </span>
                 </div>
-                <h3 className="font-fredoka font-bold text-white text-lg mb-2">{c.title}</h3>
-                <p className="font-nunito text-white/70 text-sm leading-relaxed flex-grow">{c.desc}</p>
-                <div
-                  className="inline-flex items-center mt-4 font-fredoka font-bold text-[11px] px-2.5 py-1 rounded-full self-start"
-                  style={{ background: "rgba(255,255,255,0.1)", color: c.accent, letterSpacing: 0.5 }}
-                >
-                  {c.tag}
-                </div>
+                <h3 className="font-fredoka font-bold text-white text-xl mb-2">{c.title}</h3>
+                <p className="font-nunito text-white/75 text-[15px] leading-relaxed">{c.desc}</p>
               </div>
             </motion.div>
           ))}
         </div>
 
-        <motion.div
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.3 }}
-          className="mt-12 flex justify-center"
-        >
-          <Link
-            to="/paket-detay"
-            className="inline-flex items-center gap-2 font-fredoka font-bold text-page-dark text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
-            style={{ background: "#D8FF4F", boxShadow: "0 8px 28px rgba(216,255,79,0.3)" }}
-          >
-            Paketleri İncele →
-          </Link>
+        <p className="font-fredoka font-bold text-[13px] tracking-[0.06em] mt-6 text-center">
+          <span style={{ color: "#7340C8" }}>Kişisel Rota</span>{" "}
+          <span style={{ color: "#cbd5e1" }}>→</span>{" "}
+          <span style={{ color: "#3F6B0A" }}>İlerleme Takibi</span>{" "}
+          <span style={{ color: "#cbd5e1" }}>→</span>{" "}
+          <span className="text-accent-orange">Dinamik Planlama</span>
+        </p>
+
+        <motion.div {...fadeUp} className="grid grid-cols-3 gap-3 mt-8 max-[820px]:grid-cols-1">
+          {supportItems.map((it) => (
+            <div key={it.title} className="flex items-start gap-3 rounded-2xl px-4 py-3.5" style={{ background: "#F4F2FA" }}>
+              <span className="text-lg mt-0.5" style={{ color: "#1C1B8A" }}>{it.icon}</span>
+              <div>
+                <div className="font-fredoka font-bold text-page-dark text-[15px] leading-tight">{it.title}</div>
+                <div className="font-nunito text-[#64748b] text-[13px] leading-snug mt-0.5">{it.desc}</div>
+              </div>
+            </div>
+          ))}
         </motion.div>
       </div>
     </section>
@@ -423,7 +393,7 @@ function HowItWorksSection() {
   return (
     <section
       id="nasil-calisir"
-      className="bg-white py-24 px-5 overflow-hidden relative"
+      className="bg-white py-16 md:py-24 px-5 overflow-hidden relative"
     >
       <div
         className="absolute inset-0 pointer-events-none"
@@ -431,7 +401,7 @@ function HowItWorksSection() {
       />
 
       <div className="max-w-[1100px] mx-auto relative" style={{ zIndex: 1 }}>
-        <motion.div {...fadeUp} className="text-center mb-16">
+        <motion.div {...fadeUp} className="text-center mb-12 md:mb-16">
           <div
             className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-4"
             style={{ letterSpacing: 4 }}
@@ -442,11 +412,11 @@ function HowItWorksSection() {
             className="font-fredoka font-bold m-0 leading-[0.95]"
             style={{ fontSize: "clamp(36px, 4vw, 56px)", letterSpacing: -1 }}
           >
-            <span className="text-page-dark">Koçluk Sürecine Başlamak </span>
-            <span style={{ color: "transparent", WebkitTextStroke: "2.5px #1C1B8A" }}>Çok Kolay.</span>
+            <span className="text-page-dark">Koçluğa Nasıl </span>
+            <span style={{ color: "transparent", WebkitTextStroke: "2.5px #1C1B8A" }}>Başlarsın?</span>
           </h2>
           <p className="font-nunito text-[#64748b] text-base mt-4 max-w-[460px] mx-auto">
-            Önce seni tanıyoruz, sonra sana uygun rotayı birlikte oluşturuyoruz.
+            Satın aldıktan sonra seni ne beklediği net: dört adımda koçluk sürecin başlıyor.
           </p>
         </motion.div>
 
@@ -471,9 +441,9 @@ function HowItWorksSection() {
               className="relative"
               style={{ zIndex: 1 }}
             >
-              <div className="bg-white border border-gray-100 rounded-[24px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_32px_rgba(115,64,200,0.12)] transition-all h-full">
+              <div className="bg-white border border-gray-100 rounded-[24px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_32px_rgba(115,64,200,0.12)] transition-all h-full max-[580px]:flex max-[580px]:items-start max-[580px]:gap-4 max-[580px]:p-5">
                 <div
-                  className="w-11 h-11 rounded-full flex items-center justify-center mb-5 font-fredoka font-bold text-base flex-shrink-0"
+                  className="w-11 h-11 rounded-full flex items-center justify-center mb-5 max-[580px]:mb-0 font-fredoka font-bold text-base flex-shrink-0"
                   style={{
                     background: s.circleColor,
                     color: s.circleText,
@@ -482,17 +452,11 @@ function HowItWorksSection() {
                 >
                   {s.num}
                 </div>
-                <div className="text-xl mb-3" style={{ color: "#1C1B8A" }}>{s.icon}</div>
-                <h3 className="font-fredoka font-bold text-page-dark text-base mb-2">{s.title}</h3>
-                <p className="font-nunito text-[#64748b] text-sm leading-relaxed">{s.desc}</p>
-                {s.tag && (
-                  <div
-                    className="inline-flex items-center mt-3 font-fredoka font-bold text-[10px] px-2.5 py-1 rounded-full"
-                    style={{ background: `${s.tagColor}14`, color: s.tagColor, letterSpacing: 0.5 }}
-                  >
-                    {s.tag}
-                  </div>
-                )}
+                <div>
+                  <div className="text-xl mb-3 max-[580px]:hidden" style={{ color: "#1C1B8A" }}>{s.icon}</div>
+                  <h3 className="font-fredoka font-bold text-page-dark text-base mb-1.5">{s.title}</h3>
+                  <p className="font-nunito text-[#64748b] text-sm leading-relaxed">{s.desc}</p>
+                </div>
               </div>
             </motion.div>
           ))}
@@ -503,13 +467,13 @@ function HowItWorksSection() {
           transition={{ ...fadeUp.transition, delay: 0.25 }}
           className="text-center mt-12"
         >
-          <Link
-            to="/ucretsiz-on-gorusme"
-            className="inline-flex items-center gap-2 text-white font-fredoka font-bold text-base px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
+          <ScrollCta
+            to="paketler"
+            className="inline-flex items-center gap-2 text-white font-fredoka font-bold text-base px-9 py-4 rounded-full no-underline transition-transform hover:scale-105 max-[480px]:w-full max-[480px]:justify-center"
             style={{ background: "#FF6B35", boxShadow: "0 8px 28px rgba(255,107,53,0.3)" }}
           >
-            Koçluk İçin Başvur →
-          </Link>
+            Paketleri &amp; Fiyatları Gör →
+          </ScrollCta>
         </motion.div>
       </div>
     </section>
@@ -606,7 +570,7 @@ function TestimonialsSection() {
   const col3 = rotate(testimonials, Math.ceil((testimonials.length * 2) / 3));
 
   return (
-    <section className="relative overflow-hidden py-24 px-5 bg-white">
+    <section className="relative overflow-hidden py-16 md:py-24 px-5 bg-white">
       <div
         className="absolute inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(216,255,79,0.08) 0%, transparent 70%)" }}
@@ -642,13 +606,70 @@ function TestimonialsSection() {
           <p className="font-nunito text-[#64748b] text-sm mb-4">
             Sıradaki başarı hikayesi senin olabilir.
           </p>
-          <Link
-            to="/ucretsiz-on-gorusme"
-            className="inline-flex items-center gap-2 font-fredoka font-bold text-page-dark text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
+          <ScrollCta
+            to="paketler"
+            className="inline-flex items-center gap-2 font-fredoka font-bold text-page-dark text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform max-[480px]:w-full max-[480px]:justify-center"
             style={{ background: "#D8FF4F", boxShadow: "0 8px 28px rgba(216,255,79,0.25)" }}
           >
-            Yol Haritanızı Çizelim →
-          </Link>
+            Paketleri &amp; Fiyatları Gör →
+          </ScrollCta>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ══════════════════════════════════════════════
+// YKS / LGS DETAY SAYFALARINA YÖNLENDİRME
+// ══════════════════════════════════════════════
+const trackCards = [
+  {
+    to: "/yks-yolculugu",
+    label: "YKS KOÇLUĞU",
+    color: "#1C1B8A",
+    title: "YKS'ye hazırlanıyorsan",
+    desc: "Ne çalışacağını bilmek, ilerlemeni takip etmek ve rotanı sonuçlarına göre güncellemek isteyen öğrenciler için.",
+  },
+  {
+    to: "/lgs-hazirlik",
+    label: "LGS KOÇLUĞU",
+    color: "#7340C8",
+    title: "LGS'ye hazırlanıyorsan",
+    desc: "Öğrencinin çalışma düzenini kuran, velinin de süreçten düzenli haberdar olduğu bir koçluk isteyenler için.",
+  },
+];
+
+function TrackLinksSection() {
+  return (
+    <section className="bg-white py-14 md:py-20 px-5">
+      <div className="max-w-[900px] mx-auto">
+        <motion.div {...fadeUp} className="text-center mb-8">
+          <h2 className="font-fredoka font-bold text-page-dark m-0" style={{ fontSize: "clamp(26px, 3vw, 38px)", letterSpacing: -0.5 }}>
+            Sana uygun koçluğu ayrıntılı incele
+          </h2>
+        </motion.div>
+        <div className="grid grid-cols-2 gap-5 max-[640px]:grid-cols-1">
+          {trackCards.map((c) => (
+            <motion.div
+              key={c.to}
+              {...fadeUp}
+              className="rounded-[24px] p-7 flex flex-col"
+              style={{ border: "1px solid #ECEAF5", boxShadow: "0 8px 26px rgba(28,27,138,0.07)" }}
+            >
+              <span className="font-fredoka font-bold text-[11px] uppercase mb-3" style={{ color: c.color, letterSpacing: 2 }}>
+                {c.label}
+              </span>
+              <h3 className="font-fredoka font-bold text-page-dark text-xl mb-2">{c.title}</h3>
+              <p className="font-nunito text-[#64748b] text-[15px] leading-relaxed flex-grow mb-5">{c.desc}</p>
+              <Link
+                to={c.to}
+                className="self-start font-fredoka font-bold text-[15px] px-6 py-3 rounded-full no-underline transition-transform hover:scale-105"
+                style={{ background: c.color, color: "#D8FF4F" }}
+              >
+                Paketi İncele →
+              </Link>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
@@ -660,7 +681,7 @@ function TestimonialsSection() {
 // ══════════════════════════════════════════════
 function ComparisonSection() {
   return (
-    <section className="py-24 px-5" style={{ background: "#f4f2fa" }}>
+    <section className="py-16 md:py-24 px-5" style={{ background: "#f4f2fa" }}>
       <div className="max-w-[900px] mx-auto">
         <motion.div {...fadeUp} className="text-center mb-12">
           <div
@@ -736,36 +757,6 @@ function ComparisonSection() {
 
         {/* Ana yaklaşım — tablonun tamamının anlattığı şeyi tek satıra
             indiren, görsel olarak büyütülmüş kapanış karşılaştırması. */}
-        <motion.div
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.15 }}
-          className="mt-5 rounded-[24px] px-8 py-9 text-center"
-          style={{ background: "#0D0A2E" }}
-        >
-          <p className="font-nunito font-bold text-white/30 text-xs uppercase mb-3" style={{ letterSpacing: 3 }}>
-            Ana Yaklaşım
-          </p>
-          <p className="font-fredoka font-bold text-white/35 text-lg md:text-xl mb-2" style={{ letterSpacing: -0.3 }}>
-            Programı Oluştur → Uygula
-          </p>
-          <p className="font-fredoka font-bold text-xl md:text-[28px]" style={{ color: "#D8FF4F", letterSpacing: -0.5 }}>
-            Rotanı Oluştur → Uygula → Takip Et → Güncelle
-          </p>
-        </motion.div>
-
-        <motion.div
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.2 }}
-          className="text-center mt-8"
-        >
-          <Link
-            to="/paket-detay"
-            className="inline-flex items-center gap-2 font-fredoka font-bold text-page-dark text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
-            style={{ background: "#D8FF4F", boxShadow: "0 6px 20px rgba(216,255,79,0.3)" }}
-          >
-            Sana Uygun Koçluğu İncele →
-          </Link>
-        </motion.div>
       </div>
     </section>
   );
@@ -778,7 +769,7 @@ function FaqSection() {
   const [open, setOpen] = useState(null);
 
   return (
-    <section className="bg-white py-24 px-5">
+    <section className="bg-white py-16 md:py-24 px-5">
       <div className="max-w-[800px] mx-auto">
         <motion.div {...fadeUp} className="text-center mb-12">
           <div
@@ -897,7 +888,8 @@ function FaqSection() {
 function ContactCtaSection() {
   return (
     <section
-      className="relative overflow-hidden py-24 px-5"
+      id="final-cta"
+      className="relative overflow-hidden py-16 md:py-24 px-5"
       style={{ background: "radial-gradient(ellipse 80% 60% at 50% 60%, #3d1a80 0%, #1A0A40 55%, #0d0520 100%)" }}
     >
       <style>{`
@@ -953,8 +945,16 @@ function ContactCtaSection() {
               letterSpacing: "0.3px",
             }}
           >
-            Ön Analiz Randevusu Oluştur →
+            Ücretsiz Görüşme Al →
           </Link>
+          <div className="mt-6">
+            <ScrollCta
+              to="paketler"
+              className="font-nunito font-bold text-white/70 text-[15px] underline underline-offset-4 hover:text-white transition-colors"
+            >
+              veya Paketleri &amp; Fiyatları Gör
+            </ScrollCta>
+          </div>
         </motion.div>
       </div>
     </section>
@@ -962,16 +962,44 @@ function ContactCtaSection() {
 }
 
 // ══════════════════════════════════════════════
-// STICKY MOBİL CTA — değiştirilmedi
+// STICKY MOBİL CTA — tek eylem: paketlere in
 // ══════════════════════════════════════════════
+// Paketler, son CTA ya da footer ekranda olduğunda gizlenir (aynı eylemi zaten
+// gösteriyorlar / içeriğin üstüne binmesin). Alt güvenli alan (iPhone home
+// indicator) padding'e eklenir.
 function StickyMobileCta() {
-  const [visible, setVisible] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [hiddenZones, setHiddenZones] = useState({});
 
   useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 400);
+    const onScroll = () => setScrolled(window.scrollY > 400);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    const targets = [
+      ["paketler", document.getElementById("paketler")],
+      ["final", document.getElementById("final-cta")],
+      ["footer", document.querySelector("footer")],
+    ].filter(([, el]) => el);
+    if (targets.length === 0 || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver((entries) => {
+      setHiddenZones((prev) => {
+        const next = { ...prev };
+        entries.forEach((en) => {
+          const key = targets.find(([, el]) => el === en.target)?.[0];
+          if (key) next[key] = en.isIntersecting;
+        });
+        return next;
+      });
+    }, { threshold: 0.12 });
+    targets.forEach(([, el]) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
+  const visible = scrolled && !Object.values(hiddenZones).some(Boolean);
 
   return (
     <AnimatePresence>
@@ -981,15 +1009,16 @@ function StickyMobileCta() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed bottom-0 left-0 right-0 z-[900] px-4 pb-4 hidden max-[960px]:block"
+          className="fixed bottom-0 left-0 right-0 z-[900] px-4 hidden max-[960px]:block"
+          style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 12px)" }}
         >
-          <Link
-            to="/ucretsiz-on-gorusme"
+          <ScrollCta
+            to="paketler"
             className="block w-full font-fredoka font-bold text-page-dark text-base py-4 rounded-2xl text-center no-underline shadow-[0_-4px_24px_rgba(216,255,79,0.3)]"
             style={{ background: "#D8FF4F" }}
           >
-            Ücretsiz Ön Görüşme Ayarla →
-          </Link>
+            Paketleri &amp; Fiyatları Gör →
+          </ScrollCta>
         </motion.div>
       )}
     </AnimatePresence>
@@ -1015,6 +1044,7 @@ export default function HomePage() {
       <WhyDifferentSection />
       <HowItWorksSection />
       <TestimonialsSection />
+      <TrackLinksSection />
       <ComparisonSection />
       <FaqSection />
       <ContactCtaSection />

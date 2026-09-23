@@ -40,18 +40,48 @@ function OldPrice({ text }) {
   );
 }
 
+// "3.890 TL / 4 hafta" tek bir bütün olarak okunsun: tutar + TL büyük, süre
+// aynı satırda küçük. Süre "4 hafta" gibi kısa bir birimse satır içi, "YKS-LGS
+// 2027'ye kadar" gibi cümle gibi bir açıklamaysa altta ayrı küçük satır.
+const fmtAmount = (v) => {
+  const t = String(v ?? "").trim();
+  return /^\d{4,}$/.test(t) ? Number(t).toLocaleString("tr-TR") : t;
+};
+const cleanDuration = (d) => (d ? String(d).trim().replace(/^\//, "").trim() : "");
+const isShortDuration = (d) => /^\d+\s*(hafta|ay|gün)/i.test(d);
+
 function Amount({ amount, duration }) {
+  const dur = cleanDuration(duration);
+  const inline = dur && isShortDuration(dur);
   return (
     <div>
-      <div className="flex items-start gap-1">
-        <span className="font-fredoka font-bold text-[18px] mt-2" style={{ color: "rgba(28,27,138,0.55)" }}>₺</span>
-        <span className="font-fredoka font-bold text-page-navy leading-none" style={{ fontSize: "clamp(36px,3.4vw,44px)", letterSpacing: -1.5 }}>
-          {amount}
+      <div className="flex items-baseline flex-wrap gap-x-2 gap-y-0">
+        <span className="font-fredoka font-bold text-page-navy leading-none" style={{ fontSize: "clamp(36px,3.4vw,44px)", letterSpacing: -1 }}>
+          {fmtAmount(amount)}
+          <span className="text-[0.55em] ml-1" style={{ letterSpacing: 0 }}>TL</span>
         </span>
+        {inline && (
+          <span className="font-fredoka font-bold text-[16px]" style={{ color: "#6B6B8A" }}>
+            / {dur.toLocaleLowerCase("tr")}
+          </span>
+        )}
       </div>
-      {duration && <div className="font-nunito font-bold text-xs mt-1 text-[#94a3b8]">{duration}</div>}
+      {dur && !inline && <div className="font-nunito font-bold text-xs mt-1.5 text-[#94a3b8]">{dur}</div>}
     </div>
   );
+}
+
+// Süre planı seçilince "3.890 TL sınava kadar mı?" sorusunu fiyatın hemen
+// altında cevaplayan tek cümle.
+function durationNote(_pkg, activePlan) {
+  // Sadece süre planı (4 Hafta / Sınava Kadar) seçicisi olan paketlerde: tek
+  // fiyatlı paketlerin (ör. "4 Hafta Boyunca Koçluk") süre vaadi kendi
+  // özelliklerinde yazıyor, buradan farklı bir şey söylenmemeli.
+  if (!activePlan) return null;
+  const src = `${activePlan.durationText || ""} ${activePlan.label || ""}`;
+  if (/hafta/i.test(src)) return "Koçluğa sınava kadar devam edebilirsin.";
+  if (/kadar/i.test(src)) return "Tek ödemeyle sınava kadar koçluk.";
+  return null;
 }
 
 function PriceDisplay({ pkg, activePlan }) {
@@ -146,13 +176,18 @@ function PackageCard({ pkg, index }) {
   const shownFeatures = expanded ? allFeatures : allFeatures.slice(0, FEATURES_VISIBLE);
   const remaining = allFeatures.length - FEATURES_VISIBLE;
 
-  const ctaLabel = activePlan?.ctaLabel || pkg.ctaLabel || "Paketi Satın Al →";
-  const ctaHref =
-    activePlan?.ctaHref ||
-    pkg.ctaHref ||
-    (hasPlanTabs
-      ? `/hemen-basla?slug=${encodeURIComponent(pkg.slug)}&plan=${activePlanIdx}`
-      : `/hemen-basla?slug=${encodeURIComponent(pkg.slug)}`);
+  // CTA sözlüğü: kart tek bir net eylem sunar. Vitrin CTA'sı her zaman
+  // "Paketi Satın Al" (ödeme sihirbazı); DB'deki eski/özel etiketler
+  // ("Hemen Başla", "Paketi seç") kullanılmaz. Eski /pre-auth ya da
+  // /paket-detay yönlendirmeleri sihirbaza çevrilir.
+  const wizardHref = hasPlanTabs
+    ? `/hemen-basla?slug=${encodeURIComponent(pkg.slug)}&plan=${activePlanIdx}`
+    : `/hemen-basla?slug=${encodeURIComponent(pkg.slug)}`;
+  const customHref = activePlan?.ctaHref || pkg.ctaHref || "";
+  const useCustomHref = customHref && !/^\/(pre-auth|paket-detay)/.test(customHref);
+  const ctaHref = useCustomHref ? customHref : wizardHref;
+  const ctaLabel = useCustomHref ? "Paketi İncele →" : "Paketi Satın Al →";
+  const noteText = durationNote(pkg, activePlan);
 
   const videoEmbedUrl = pkg.videoUrl ? toYouTubeEmbed(pkg.videoUrl) : null;
 
@@ -183,7 +218,11 @@ function PackageCard({ pkg, index }) {
         </span>
       )}
 
-      <h3 className="font-fredoka font-bold text-page-navy text-xl leading-snug mb-4 pr-2">{pkg.name}</h3>
+      <h3 className="font-fredoka font-bold text-page-navy text-xl leading-snug mb-1.5 pr-2">{pkg.name}</h3>
+      {pkg.subtitle && (
+        <p className="font-nunito text-[#64748b] text-sm leading-snug mb-4">{pkg.subtitle}</p>
+      )}
+      {!pkg.subtitle && <div className="mb-2.5" />}
 
       {hasPlanTabs && (
         <div className="flex gap-1 rounded-full p-1 mb-4" style={{ background: "#F4F2FA" }}>
@@ -215,11 +254,13 @@ function PackageCard({ pkg, index }) {
         </span>
       )}
 
-      {pkg.subtitle && (
-        <div className="font-nunito text-[#64748b] text-sm leading-relaxed mt-3 mb-5">{pkg.subtitle}</div>
+      {noteText && (
+        <p className="font-nunito font-bold text-[13px] mt-3 mb-0" style={{ color: "#3F6B0A" }}>{noteText}</p>
       )}
 
-      <div className="flex flex-col gap-2.5 mb-2" style={{ marginTop: pkg.subtitle ? 0 : 20 }}>
+      <div className="h-px my-5" style={{ background: "#F1EFF8" }} />
+
+      <div className="flex flex-col gap-2.5 mb-2">
         {shownFeatures.map((f, i) => (
           <div key={i} className="flex items-start gap-2.5">
             <span
@@ -251,12 +292,14 @@ function PackageCard({ pkg, index }) {
       >
         {ctaLabel}
       </Link>
-      <Link
-        to={`/paket-detay?slug=${encodeURIComponent(pkg.slug)}`}
-        className="block text-center no-underline font-nunito font-bold text-[13px] text-[#8B87A6] hover:text-page-navy mt-3 transition-colors"
-      >
-        Paketi İncele
-      </Link>
+      {!useCustomHref && (
+        <Link
+          to={`/paket-detay?slug=${encodeURIComponent(pkg.slug)}`}
+          className="block text-center no-underline font-nunito font-bold text-[13px] text-[#8B87A6] hover:text-page-navy mt-3 transition-colors"
+        >
+          Paketi İncele
+        </Link>
+      )}
 
       {videoEmbedUrl && (
         <div className="rounded-2xl overflow-hidden mt-5" style={{ border: "1px solid #ECEAF5" }}>
@@ -316,7 +359,6 @@ export default function PricingSection() {
           align-items: stretch;
         }
         @media (max-width: 580px) {
-          .pricing-header { flex-direction: column !important; gap: 24px !important; }
           .pricing-section-pad { padding-left: 20px !important; padding-right: 20px !important; }
         }
       `}</style>
@@ -331,43 +373,28 @@ export default function PricingSection() {
       <div className="absolute" style={{ bottom: 0, left: 60, width: 200, height: 200, background: "#fff0ea", borderRadius: "50%", opacity: 0.6, zIndex: 0 }} />
 
       <div
-        className="mx-auto py-20 relative pricing-section-pad"
+        className="mx-auto py-14 md:py-20 relative pricing-section-pad"
         style={{ maxWidth: 1280, paddingLeft: 60, paddingRight: 60, zIndex: 2 }}
       >
         {/* Başlık */}
-        <div className="pricing-header flex items-start justify-between mb-10 gap-8">
-
-          {/* Sol — başlık */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55 }}
-          >
-            <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>
-              PAKETLERİMİZ
-            </div>
-            <h2 className="font-fredoka font-bold m-0 leading-[0.95]" style={{ letterSpacing: -1, fontSize: "clamp(40px, 4.5vw, 64px)" }}>
-              <span className="block text-page-navy">Kişisel</span>
-              <span className="block" style={{ color: "transparent", WebkitTextStroke: "2.5px #FF6B35" }}>Program.</span>
-            </h2>
-          </motion.div>
-
-          {/* Sağ — açıklama */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="self-center"
-          >
-            <p className="font-nunito font-bold text-[#64748b] text-base leading-relaxed m-0" style={{ maxWidth: 280 }}>
-              Her öğrencinin ihtiyacı farklı. Sana özel program{" "}
-              <span className="text-accent-orange">ilk görüşmede</span>{" "}
-              belirleniyor.
-            </p>
-          </motion.div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55 }}
+          className="text-center mb-8 md:mb-10"
+        >
+          <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>
+            PAKETLER &amp; FİYATLAR
+          </div>
+          <h2 className="font-fredoka font-bold m-0 leading-[1]" style={{ letterSpacing: -1, fontSize: "clamp(34px, 4.5vw, 60px)" }}>
+            <span className="block text-page-navy">YKS &amp; LGS</span>
+            <span className="block" style={{ color: "transparent", WebkitTextStroke: "2px #FF6B35" }}>Koçluk Paketleri</span>
+          </h2>
+          <p className="font-nunito font-bold text-[#64748b] text-base leading-relaxed mt-4 mx-auto" style={{ maxWidth: 480 }}>
+            İhtiyacına uygun koçluk paketini seç. Paket içeriklerini ve fiyatları aşağıda inceleyebilirsin.
+          </p>
+        </motion.div>
 
         {/* Geri sayım banner */}
         <CountdownPricingBanner />

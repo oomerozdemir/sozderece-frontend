@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { SHOW_OGRETMEN } from "../config/features";
 import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
+import { scrollToId } from "../utils/scrollToId";
 import {
   FaShoppingCart,
   FaUser,
@@ -15,14 +16,14 @@ import {
 } from "react-icons/fa";
 
 const DEFAULT_NAV_LINKS = [
-  { name: "YKS 2027", path: "/yks-yolculugu" },
-  { name: "LGS 2027", path: "/lgs-hazirlik" },
-  { name: "Paketler", path: "/paket-detay" },
+  { name: "YKS Koçluğu", path: "/yks-yolculugu" },
+  { name: "LGS Koçluğu", path: "/lgs-hazirlik" },
+  { name: "Paketler & Fiyatlar", path: "/#paketler" },
+  { name: "Nasıl Çalışır?", path: "/#nasil-calisir" },
   ...(SHOW_OGRETMEN ? [{ name: "Özel Ders", path: "/ogretmenler" }] : []),
-  // Sınırlı kontenjanlı lansman teklifi — bilinçli olarak SADECE navbar'dan
-  // yönlendiriliyor (anasayfa, footer vb. hiçbir yerde linklenmiyor).
-  { name: "14 Günlük Program", path: "/14-gunde-calisma-aliskanligi-kazan" },
 ];
+
+const isPackagesLink = (l) => /paketler/i.test(l.name);
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -33,6 +34,7 @@ export default function Navbar() {
   const [authState, setAuthState] = useState({ isLoggedIn: false, name: "", role: "" });
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { cart } = useCart() || { cart: [] };
   const cartCount = cart ? cart.length : 0;
 
@@ -92,6 +94,17 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // "/#paketler" gibi bağlantılar: ana sayfadaysak sayfayı yeniden yüklemeden
+  // kaydır, başka sayfadaysak normal navigasyon (ScrollToTop hash'e kaydırır).
+  const handleAnchor = (e, path) => {
+    if (!path?.startsWith("/#") || location.pathname !== "/") return;
+    e.preventDefault();
+    scrollToId(path.slice(2));
+  };
+
+  // Mobil menüde "Paketler & Fiyatlar" en üstte ve belirgin.
+  const mobileLinks = [...navLinks].sort((a, b) => (isPackagesLink(b) ? 1 : 0) - (isPackagesLink(a) ? 1 : 0));
+
   const getDashboardPath = () => {
     const r = authState.role;
     if (r === "admin") return "/admin";
@@ -142,6 +155,7 @@ export default function Navbar() {
               <Link
                 key={i}
                 to={link.path}
+                onClick={(e) => handleAnchor(e, link.path)}
                 className="no-underline text-white/80 font-nunito font-bold text-[0.92rem] transition-colors hover:text-lime"
               >
                 {link.name}
@@ -152,15 +166,15 @@ export default function Navbar() {
 
         {/* SAĞ BUTONLAR — masaüstü */}
         <div className="flex items-center gap-4 max-[960px]:hidden">
-          {/* Sepet */}
-          <Link to="/sepet" className="text-white/70 text-lg relative hover:text-lime transition-colors" aria-label="Sepet">
-            <FaShoppingCart />
-            {cartCount > 0 && (
+          {/* Sepet — sadece sepette ürün varsa (satın alma akışı misafir-öncelikli, sepet ana yolculukta yok) */}
+          {cartCount > 0 && (
+            <Link to="/sepet" className="text-white/70 text-lg relative hover:text-lime transition-colors" aria-label="Sepet">
+              <FaShoppingCart />
               <span className="absolute -top-2 -right-2 bg-accent-orange text-white text-[0.65rem] w-4 h-4 rounded-full flex items-center justify-center font-bold">
                 {cartCount}
               </span>
-            )}
-          </Link>
+            </Link>
+          )}
 
           {/* Kullanıcı */}
           {authState.isLoggedIn ? (
@@ -191,19 +205,17 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            <Link to="/giris-yap" className="no-underline text-white/70 font-nunito font-bold text-sm hover:text-lime transition-colors">
-              Giriş Yap
+            <Link to="/giris-yap" className="no-underline text-white/80 font-nunito font-bold text-[0.92rem] hover:text-lime transition-colors">
+              Öğrenci Girişi
             </Link>
           )}
 
           {/* Ana CTA */}
           <Link
             to="/ucretsiz-on-gorusme"
-            target="_blank"
-            rel="noreferrer"
             className="bg-lime text-page-dark font-nunito font-black text-sm py-2.5 px-5 rounded-full no-underline transition-all hover:bg-white hover:scale-105 shadow-[0_4px_14px_rgba(216,255,79,0.3)]"
           >
-            Hemen Rezervasyon Yap →
+            Ücretsiz Görüşme Al →
           </Link>
         </div>
 
@@ -227,15 +239,19 @@ export default function Navbar() {
         }`}
       >
         <div className="flex flex-col p-6 gap-1">
-          {navLinks.map((link, i) =>
-            link.isExternal ? (
+          {mobileLinks.map((link, i) => {
+            const featured = isPackagesLink(link);
+            const cls = featured
+              ? "no-underline bg-lime text-page-dark font-nunito font-black text-base py-4 px-4 rounded-2xl mb-3 flex items-center justify-between shadow-[0_4px_20px_rgba(216,255,79,0.25)]"
+              : "no-underline text-white/80 font-nunito font-bold text-base py-3.5 border-b border-white/10 hover:text-lime transition-colors";
+            return link.isExternal ? (
               <a
                 key={i}
                 href={link.path}
                 target={link.openInNew ? "_blank" : undefined}
                 rel={link.openInNew ? "noreferrer" : undefined}
                 onClick={() => setMenuOpen(false)}
-                className="no-underline text-white/80 font-nunito font-bold text-base py-3.5 border-b border-white/8 hover:text-lime transition-colors"
+                className={cls}
               >
                 {link.name}
               </a>
@@ -243,24 +259,36 @@ export default function Navbar() {
               <Link
                 key={i}
                 to={link.path}
-                onClick={() => setMenuOpen(false)}
-                className="no-underline text-white/80 font-nunito font-bold text-base py-3.5 border-b border-white/8 hover:text-lime transition-colors"
+                onClick={(e) => { handleAnchor(e, link.path); setMenuOpen(false); }}
+                className={cls}
               >
                 {link.name}
+                {featured && <span aria-hidden>→</span>}
               </Link>
-            )
-          )}
+            );
+          })}
+
+          <div className="mt-5">
+            <Link
+              to="/ucretsiz-on-gorusme"
+              onClick={() => setMenuOpen(false)}
+              className="block w-full border border-lime/60 text-lime font-nunito font-black text-base py-4 rounded-2xl text-center no-underline"
+            >
+              Ücretsiz Görüşme Al →
+            </Link>
+          </div>
 
           <div className="my-4 border-t border-white/10" />
 
-          {/* Sepet mobil */}
-          <Link
-            to="/sepet"
-            onClick={() => setMenuOpen(false)}
-            className="no-underline text-white/70 font-nunito font-bold text-base py-3 flex items-center gap-2 hover:text-lime transition-colors"
-          >
-            <FaShoppingCart /> Sepetim {cartCount > 0 && `(${cartCount})`}
-          </Link>
+          {cartCount > 0 && (
+            <Link
+              to="/sepet"
+              onClick={() => setMenuOpen(false)}
+              className="no-underline text-white/70 font-nunito font-bold text-base py-3 flex items-center gap-2 hover:text-lime transition-colors"
+            >
+              <FaShoppingCart /> Sepetim ({cartCount})
+            </Link>
+          )}
 
           {authState.isLoggedIn ? (
             <>
@@ -284,29 +312,18 @@ export default function Navbar() {
               onClick={() => setMenuOpen(false)}
               className="no-underline text-white/80 font-nunito font-bold text-base py-3 hover:text-lime transition-colors"
             >
-              Giriş Yap
+              Öğrenci Girişi
             </Link>
           )}
 
-          <div className="mt-6">
-            <Link
-              to="/ucretsiz-on-gorusme"
-              target="_blank"
-              rel="noreferrer"
-              onClick={() => setMenuOpen(false)}
-              className="block w-full bg-lime text-page-dark font-nunito font-black text-base py-4 rounded-2xl text-center no-underline shadow-[0_4px_20px_rgba(216,255,79,0.25)]"
-            >
-              Hemen Rezervasyon Yap →
-            </Link>
-            <a
-              href="https://www.instagram.com/sozderece/"
-              target="_blank"
-              rel="noreferrer"
-              className="mt-3 flex items-center justify-center gap-2 text-white/50 font-nunito text-sm no-underline hover:text-lime transition-colors"
-            >
-              <FaInstagram /> @sozderece
-            </a>
-          </div>
+          <a
+            href="https://www.instagram.com/sozderece/"
+            target="_blank"
+            rel="noreferrer"
+            className="mt-3 flex items-center justify-center gap-2 text-white/50 font-nunito text-sm no-underline hover:text-lime transition-colors"
+          >
+            <FaInstagram /> @sozderece
+          </a>
         </div>
       </div>
     </nav>

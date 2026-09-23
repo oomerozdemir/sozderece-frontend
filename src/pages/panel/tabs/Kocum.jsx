@@ -25,7 +25,7 @@ export default function Kocum({ student }) {
             📦 Paketleri İncele
           </a>
           <a href="/ucretsiz-on-gorusme" className="text-center font-fredoka font-bold text-sm px-5 py-3 rounded-full transition-transform hover:scale-[1.02]" style={{ background: "#D8FF4F", color: "#1C1B8A" }}>
-            🗓️ Ücretsiz Ön Görüşme
+            🗓️ Ücretsiz Görüşme Al
           </a>
           <a href="https://wa.me/905312546701" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 font-fredoka font-bold text-sm px-5 py-3 rounded-full border-2 transition-colors hover:bg-[#f0fdf4]" style={{ borderColor: "#22c55e", color: "#15803d" }}>
             <FaWhatsapp /> WhatsApp Destek
