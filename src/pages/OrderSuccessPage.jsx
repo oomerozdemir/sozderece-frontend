@@ -1,13 +1,28 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useCart from "../hooks/useCart";
 import StepIndicator from "../components/StepIndicator";
+import axios from "../utils/axios";
+
+const tokenUserId = () => {
+  try {
+    const t = localStorage.getItem("token");
+    const p = JSON.parse(atob(t.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+    return p.exp * 1000 > Date.now() ? p.id : null;
+  } catch {
+    return null;
+  }
+};
 
 const OrderSuccessPage = () => {
   const navigate = useNavigate();
   const { clearCart } = useCart();
 
   const user = JSON.parse(localStorage.getItem("user"));
+  // "checking": ödeme sunucuda doğrulanıp onboarding'e yönlendirilirken; "static": eski başarı ekranı.
+  const [phase, setPhase] = useState(() =>
+    window.self === window.top && sessionStorage.getItem("lastMerchantOid") ? "checking" : "static"
+  );
   const userName = user?.name || "Değerli öğrencimiz";
 
   useEffect(() => {
@@ -55,14 +70,75 @@ const OrderSuccessPage = () => {
 
     if (window.self !== window.top) {
       window.parent.postMessage("PAYMENT_SUCCESS", "*");
-    } else {
-      const timer = setTimeout(() => {
-        console.log("➡️ Navigating to /");
-        navigate("/");
-      }, 10000);
-      return () => clearTimeout(timer);
     }
   }, []); 
+
+  // Koçluk paketi alındıysa: sipariş sunucuda "paid" olunca onboarding'e geç.
+  // PayTR callback'i yönlendirmeden sonra gelebildiği için kısa süre yoklanır.
+  useEffect(() => {
+    const oid = window.self === window.top ? sessionStorage.getItem("lastMerchantOid") : null;
+    if (!oid) return;
+    let cancelled = false;
+    let timer;
+    let tries = 0;
+    const tick = async () => {
+      tries += 1;
+      try {
+        const { data } = await axios.post("/api/onboarding/claim", { merchantOid: oid });
+        if (cancelled) return;
+        if (data.status === "paid") {
+          if (data.onboarding) {
+            if (data.token && tokenUserId() !== data.userId) {
+              localStorage.setItem("token", data.token);
+              localStorage.setItem("user", JSON.stringify(data.user));
+            }
+            if (tokenUserId() === data.userId) {
+              sessionStorage.removeItem("lastMerchantOid");
+              navigate("/onboarding/hos-geldin", { replace: true });
+              return;
+            }
+          }
+          setPhase("static");
+          return;
+        }
+        if (data.status === "failed" || data.status === "unknown") {
+          setPhase("static");
+          return;
+        }
+      } catch {
+        // geçici ağ hatası — yoklamaya devam
+      }
+      if (tries >= 25) {
+        setPhase("static");
+        return;
+      }
+      timer = setTimeout(tick, 2000);
+    };
+    tick();
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [navigate]);
+
+  // Eski davranış: onboarding'e girmeyen siparişlerde 10 sn sonra ana sayfa.
+  useEffect(() => {
+    if (phase !== "static" || window.self !== window.top) return;
+    const timer = setTimeout(() => navigate("/"), 10000);
+    return () => clearTimeout(timer);
+  }, [phase, navigate]);
+
+  if (phase === "checking") {
+    return (
+      <div className="flex justify-center items-center min-h-[80vh] p-5" style={{ background: "#F8F7FF" }}>
+        <div className="bg-white p-8 rounded-[28px] text-center max-w-[460px] w-full" style={{ border: "1px solid #ECEAF5", boxShadow: "0 16px 44px rgba(28,27,138,0.10)" }}>
+          <div className="w-12 h-12 rounded-full mx-auto mb-5 animate-spin" style={{ border: "4px solid #E4E1F0", borderTopColor: "#1C1B8A" }} />
+          <h2 className="font-fredoka font-bold text-2xl m-0 mb-2" style={{ color: "#1C1B8A" }}>Ödemen onaylanıyor…</h2>
+          <p className="text-[#64748b] text-base m-0">Birkaç saniye içinde seni karşılayacağız.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

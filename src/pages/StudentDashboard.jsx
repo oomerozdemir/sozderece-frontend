@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "../utils/axios";
 import LegacyStudentDashboard from "./panel/LegacyStudentDashboard";
 import StudentPanel from "./panel/StudentPanel";
+import OnboardingResumeBanner from "../components/OnboardingResumeBanner";
 
 // /student/dashboard rotasının gösterdiği tek nokta — yeni öğrenci paneli
 // (StudentPanel) inşa halindeyken gerçek öğrenciler görmesin diye,
@@ -28,5 +29,10 @@ export default function StudentDashboard() {
     );
   }
 
-  return betaAccess ? <StudentPanel /> : <LegacyStudentDashboard />;
+  return (
+    <>
+      {betaAccess ? <StudentPanel /> : <LegacyStudentDashboard />}
+      <OnboardingResumeBanner />
+    </>
+  );
 }

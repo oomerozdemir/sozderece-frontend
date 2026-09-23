@@ -60,6 +60,10 @@ const CoachingWizardAlan = lazy(() => import("./pages/CoachingWizardAlan.jsx"));
 const CoachingWizardPaket = lazy(() => import("./pages/CoachingWizardPaket.jsx"));
 const CoachingWizardOdeme = lazy(() => import("./pages/CoachingWizardOdeme.jsx"));
 const DevamPaketiPage = lazy(() => import("./pages/DevamPaketiPage.jsx"));
+const OnboardingWelcome = lazy(() => import("./pages/onboarding/OnboardingWelcome.jsx"));
+const OnboardingForm = lazy(() => import("./pages/onboarding/OnboardingForm.jsx"));
+const OnboardingDone = lazy(() => import("./pages/onboarding/OnboardingDone.jsx"));
+const OnboardingProcess = lazy(() => import("./pages/onboarding/OnboardingProcess.jsx"));
 // Abonelik (aylık otomatik ödeme) başlatma — giriş şart, PrivateRoute yok
 // (SubscriptionAuthGate kendi içinde OTP giriş kapısı olarak çalışıyor)
 const SubscriptionStart = lazy(() => import("./pages/SubscriptionStart.jsx"));
@@ -128,6 +132,11 @@ function App() {
             {/* Korunan sayfalar */}
             <Route path="/coach/dashboard" element={<RoleRoute allowedRoles={["coach"]}><CoachDashboard /></RoleRoute>} />
             <Route path="/student/dashboard" element={<RoleRoute allowedRoles={["student"]}><StudentDashboard /></RoleRoute>} />
+            {/* Satın alma sonrası onboarding — sadece giriş yapmış öğrenci, veriler sunucuda token'dan çözülür */}
+            <Route path="/onboarding/hos-geldin" element={<RoleRoute allowedRoles={["student"]}><OnboardingWelcome /></RoleRoute>} />
+            <Route path="/onboarding/tanisma" element={<RoleRoute allowedRoles={["student"]}><OnboardingForm /></RoleRoute>} />
+            <Route path="/onboarding/tamamlandi" element={<RoleRoute allowedRoles={["student"]}><OnboardingDone /></RoleRoute>} />
+            <Route path="/onboarding/surec" element={<RoleRoute allowedRoles={["student"]}><OnboardingProcess /></RoleRoute>} />
             <Route path="/hesabim" element={<PrivateRoute><AccountPage /></PrivateRoute>} />
             <Route path="/orders" element={<PrivateRoute><OrdersPage /></PrivateRoute>} />
             <Route path="/payment" element={<PrivateRoute><PaymentPage /></PrivateRoute>} />

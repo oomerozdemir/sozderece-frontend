@@ -186,6 +186,8 @@ const PaymentPage = () => {
         // Gerçek ödenen tutarı /order-success'e taşımak için sessionStorage'a
         // yazılıyor (PayTR iframe akışında da hayatta kalır).
         sessionStorage.setItem("lastOrderAmount", String(payable));
+        // Ödeme sonrası onboarding: sunucu bu (tahmin edilemez) sipariş kimliğiyle siparişin gerçekten ödendiğini doğrular.
+        if (response.data?.merchantOid) sessionStorage.setItem("lastMerchantOid", response.data.merchantOid);
         navigate(`/payment/iframe/${response.data.token}`);
       } else {
         alert("Ödeme başlatılamadı.");
