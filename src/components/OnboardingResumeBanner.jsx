@@ -6,9 +6,9 @@ import useOnboarding from "../hooks/useOnboarding";
 export default function OnboardingResumeBanner() {
   const { loading, data } = useOnboarding();
   const ob = data?.onboarding;
-  if (loading || !ob || ob.formCompleted) return null;
+  if (loading || !ob || ob.processCompleted) return null;
 
-  const to = ob.stage === "payment_completed" ? "/onboarding/hos-geldin" : "/onboarding/tanisma";
+  const to = ob.formCompleted ? "/onboarding/surec" : ob.stage === "payment_completed" ? "/onboarding/hos-geldin" : "/onboarding/tanisma";
   return (
     <Link
       to={to}

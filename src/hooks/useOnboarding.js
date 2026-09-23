@@ -29,3 +29,9 @@ export const saveOnboarding = (step, answers) =>
 
 export const completeOnboardingForm = (answers) =>
   axios.post("/api/onboarding/me/complete", { answers }, { headers: authHeaders() });
+
+export const saveProcessStep = (step) =>
+  axios.put("/api/onboarding/me/process", { step }, { headers: authHeaders() });
+
+export const completeProcessIntro = () =>
+  axios.post("/api/onboarding/me/process/complete", {}, { headers: authHeaders() });

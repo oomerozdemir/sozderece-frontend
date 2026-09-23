@@ -13,6 +13,7 @@ export default function OnboardingDone() {
     if (loading) return;
     if (!ob) navigate("/student/dashboard", { replace: true });
     else if (!ob.formCompleted) navigate("/onboarding/hos-geldin", { replace: true });
+    else if (ob.processStep > 0 || ob.processCompleted) navigate("/onboarding/surec", { replace: true });
   }, [loading, ob, navigate]);
 
   if (loading || !ob?.formCompleted) return <OnboardingLoading />;
