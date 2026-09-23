@@ -59,6 +59,7 @@ const MomentumTeklifPage = lazy(() => import("./pages/MomentumTeklifPage"));
 const CoachingWizardAlan = lazy(() => import("./pages/CoachingWizardAlan.jsx"));
 const CoachingWizardPaket = lazy(() => import("./pages/CoachingWizardPaket.jsx"));
 const CoachingWizardOdeme = lazy(() => import("./pages/CoachingWizardOdeme.jsx"));
+const DevamPaketiPage = lazy(() => import("./pages/DevamPaketiPage.jsx"));
 // Abonelik (aylık otomatik ödeme) başlatma — giriş şart, PrivateRoute yok
 // (SubscriptionAuthGate kendi içinde OTP giriş kapısı olarak çalışıyor)
 const SubscriptionStart = lazy(() => import("./pages/SubscriptionStart.jsx"));
@@ -111,6 +112,8 @@ function App() {
             <Route path="/hemen-basla/paket" element={<CoachingWizardPaket />} />
             <Route path="/hemen-basla/odeme" element={<CoachingWizardOdeme />} />
             <Route path="/abone-ol" element={<SubscriptionStart />} />
+            {/* Mevcut öğrenci devam ödemesi — gizli bağlantı, noindex, hiçbir menüde yok */}
+            <Route path="/mevcut-ogrenci-devam" element={<DevamPaketiPage />} />
 
             <Route path="/ekibimiz" element={<CoachDetail />} />
             <Route path="/ucretsiz-on-gorusme" element={<ContactPage />} />

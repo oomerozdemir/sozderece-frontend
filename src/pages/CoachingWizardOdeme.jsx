@@ -107,6 +107,18 @@ export default function CoachingWizardOdeme() {
   const planParam = searchParams.get("plan");
   const planIndex = planParam !== null ? parseInt(planParam, 10) : null;
 
+  // Mevcut öğrenci devam ödemesi: paket herkese açık listede yok, fiyatı
+  // kişinin kilitli fiyatından geliyor (bkz. /mevcut-ogrenci-devam).
+  const isLockedFlow = searchParams.get("devam") === "1";
+  const lockedIdentity = useMemo(() => {
+    if (!isLockedFlow) return null;
+    try {
+      return JSON.parse(sessionStorage.getItem("sd_lock_identity") || "null");
+    } catch {
+      return null;
+    }
+  }, [isLockedFlow]);
+
   const storedUser = useMemo(() => {
     try {
       return JSON.parse(localStorage.getItem("user") || "null");
@@ -125,14 +137,14 @@ export default function CoachingWizardOdeme() {
   const [addressDone, setAddressDone] = useState(false);
 
   const [formData, setFormData] = useState({
-    email: storedUser?.email || "",
+    email: lockedIdentity?.email || storedUser?.email || "",
     name: "",
     surname: "",
     address: "",
     district: "",
     city: "",
     postalCode: "",
-    phone: "",
+    phone: lockedIdentity?.phone || "",
     allowEmails: false,
     tcNo: "",
     sinif: "",
@@ -167,7 +179,23 @@ export default function CoachingWizardOdeme() {
   }, []);
 
   useEffect(() => {
-    if (!slug) return;
+    if (!isLockedFlow) return;
+    if (!lockedIdentity) {
+      navigate("/mevcut-ogrenci-devam", { replace: true });
+      return;
+    }
+    axios
+      .post("/api/price-locks/check", lockedIdentity)
+      .then((r) => {
+        if (r.data?.eligible) setPkg(r.data.package);
+        else navigate("/mevcut-ogrenci-devam", { replace: true });
+      })
+      .catch(() => {})
+      .finally(() => setPkgLoaded(true));
+  }, [isLockedFlow, lockedIdentity, navigate]);
+
+  useEffect(() => {
+    if (!slug || isLockedFlow) return;
     // ?all=true: vitrine kapalı (hidden) paketler de dahil — sınırlı
     // kontenjanlı/lansman tekliflerinde paket bilinçli olarak "hidden"
     // tutuluyor (ana vitrinde/paket seçim adımında çıkmasın diye), ama
@@ -180,13 +208,13 @@ export default function CoachingWizardOdeme() {
       })
       .catch(() => {})
       .finally(() => setPkgLoaded(true));
-  }, [slug]);
+  }, [slug, isLockedFlow]);
 
   const plans = Array.isArray(pkg?.plans) ? pkg.plans : [];
   const activePlan = planIndex !== null && plans[planIndex] ? plans[planIndex] : null;
   // Süre planı (sekmeli) seçiliyse o planın billingCycle'ı; paketin hiç süre
   // planı yoksa (tek fiyatlı paket) paketin kendi billingCycle'ı kullanılır.
-  const monthlyEligible = activePlan ? activePlan.billingCycle === "monthly" : pkg?.billingCycle === "monthly";
+  const monthlyEligible = isLockedFlow ? false : activePlan ? activePlan.billingCycle === "monthly" : pkg?.billingCycle === "monthly";
 
   const chooseMonthly = () => {
     const subParams = new URLSearchParams();
@@ -378,8 +406,8 @@ export default function CoachingWizardOdeme() {
         </div>
       </header>
 
-      <WizardUrgencyBanner storageKey="hemen-basla" minutes={15} />
-      <WizardStepBar currentStep={3} steps={WIZARD_STEPS} />
+      {!isLockedFlow && <WizardUrgencyBanner storageKey="hemen-basla" minutes={15} />}
+      {!isLockedFlow && <WizardStepBar currentStep={3} steps={WIZARD_STEPS} />}
 
       <main className="flex-1">
         {!pkgLoaded ? (
@@ -400,13 +428,15 @@ export default function CoachingWizardOdeme() {
           >
             {/* ── Sol: 3 akordiyon bölüm ── */}
             <form className="flex-[2] flex flex-col gap-4" onSubmit={handleSubmit}>
-              <div className="flex items-center justify-between bg-white rounded-2xl px-5 py-3 border border-[#f1f5f9]">
-                <span className="font-nunito text-sm text-[#64748b]">Alan seçimin:</span>
-                <span className="font-fredoka font-bold text-sm text-page-navy">{alan}</span>
-                <button type="button" onClick={goEditAlan} className="font-nunito text-xs text-page-navy underline">
-                  değiştir
-                </button>
-              </div>
+              {!isLockedFlow && (
+                <div className="flex items-center justify-between bg-white rounded-2xl px-5 py-3 border border-[#f1f5f9]">
+                  <span className="font-nunito text-sm text-[#64748b]">Alan seçimin:</span>
+                  <span className="font-fredoka font-bold text-sm text-page-navy">{alan}</span>
+                  <button type="button" onClick={goEditAlan} className="font-nunito text-xs text-page-navy underline">
+                    değiştir
+                  </button>
+                </div>
+              )}
 
               {/* Ödeme şekli: tek seferlik mi aylık abonelik mi — kart bilgisi
                   girilmeden ÖNCE burada seçiliyor. */}
@@ -687,6 +717,7 @@ export default function CoachingWizardOdeme() {
                   </div>
                 )}
 
+                {!isLockedFlow && (
                 <div>
                   <label className="block mb-1.5 font-nunito text-sm font-semibold text-[#0f172a] flex items-center gap-1.5">
                     <FaTag size={12} className="text-page-navy" /> Kupon Kodu
@@ -722,6 +753,7 @@ export default function CoachingWizardOdeme() {
                     )}
                   </AnimatePresence>
                 </div>
+                )}
 
                 <div className="space-y-1.5 text-sm font-nunito">
                   <AnimatePresence>

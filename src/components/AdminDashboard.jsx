@@ -29,6 +29,7 @@ import AdminLgsPage from "../pages/AdminLgsPage";
 import AdminYksPage from "../pages/AdminYksPage";
 import AdminNavbarPage from "../pages/AdminNavbarPage";
 import AdminSubscriptionsPage from "../pages/AdminSubscriptionsPage";
+import AdminPriceLocksPage from "../pages/AdminPriceLocksPage";
 import AdminContactsPage from "../pages/AdminContactsPage";
 import AdminWaitlistPage from "../pages/AdminWaitlistPage";
 import AdminInstructorApplicationsPage from "../pages/AdminInstructorApplicationsPage";
@@ -487,6 +488,7 @@ const AdminDashboard = () => {
       items: [
         { key: "orders", label: "Siparişler", icon: FaShoppingCart },
         { key: "subscriptions", label: "Abonelikler", icon: FaSyncAlt },
+        { key: "price-locks", label: "Kilitli Fiyatlar", icon: FaCreditCard },
         { key: "payment-settings", label: "Ödeme Sayfası", icon: FaCreditCard },
       ],
     },
@@ -696,6 +698,7 @@ const AdminDashboard = () => {
         {view === "applications"      && <AdminInstructorApplicationsPage />}
         {view === "navbar"            && <AdminNavbarPage />}
         {view === "subscriptions"     && <AdminSubscriptionsPage />}
+        {view === "price-locks"       && <AdminPriceLocksPage />}
 
         {/* ══════════════════════════ GENEL BAKIŞ ══════════════════════════ */}
         {view === "dashboard" && (
