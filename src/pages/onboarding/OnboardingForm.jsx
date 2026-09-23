@@ -4,35 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import OnboardingShell, { OnboardingLoading } from "../../components/OnboardingShell";
 import useOnboarding, { saveOnboarding, completeOnboardingForm } from "../../hooks/useOnboarding";
 
-// Seçenek metinleri sunucudaki whitelist (utils/onboarding.js) ile birebir aynı.
-const CHALLENGES = [
-  "Nereden başlayacağımı bilmiyorum",
-  "Program yapıyorum ama sürdüremiyorum",
-  "Günümü planlamakta zorlanıyorum",
-  "Düzenli çalışamıyorum",
-  "Eksiklerimi nasıl kapatacağımı bilmiyorum",
-  "Zorlandığım dersleri erteliyorum",
-  "Deneme sonuçlarımı nasıl değerlendireceğimi bilmiyorum",
-  "Çalışıyorum ama doğru ilerlediğimden emin değilim",
-  "Diğer",
-];
-const ROUTINES = ["Düzenli çalışıyorum", "Bazen düzenli çalışıyorum", "Oldukça dağınık ilerliyorum", "Henüz bir çalışma düzenim yok"];
-const DAILY_HOURS = ["Henüz düzenli çalışmıyorum", "1 saatten az", "1–2 saat", "2–4 saat", "4 saat+"];
-const SUPPORTS = [
-  "Bana uygun çalışma programı",
-  "Düzenli takip",
-  "Zaman yönetimi",
-  "Deneme analizi",
-  "Eksiklerimi belirleme",
-  "Çalışma düzeni oluşturma",
-  "Zorlandığım dersleri yönetme",
-  "Süreç boyunca yönlendirilme",
-];
-const YKS_GRADES = ["12. sınıf", "Mezun", "Diğer"];
-const LGS_GRADES = ["5. sınıf", "6. sınıf", "7. sınıf", "8. sınıf"];
-const FIELDS = ["Sayısal", "Eşit Ağırlık", "Sözel", "Dil"];
-
-const STEP_TITLES = ["Seni Tanıyalım", "Hedefin", "Şu An Neredesin?", "Koçun Seni Tanısın"];
+// Cevap değerleri sabit kodlu; ekranda gösterilen etiketler.
+const OPTION_LABELS = { ogrenci: "Öğrenciyim", veli: "Veliyim" };
+const optionLabel = (o) => OPTION_LABELS[o] || o;
+const isCoreSingle = (key) => key === "respondent" || key === "exam";
 
 const inputCls =
   "w-full px-4 py-3.5 rounded-2xl border border-[#e2e8f0] outline-none text-[16px] text-[#0f172a] bg-white focus:border-page-navy transition-colors";
@@ -86,6 +61,8 @@ export default function OnboardingForm() {
   const navigate = useNavigate();
   const { loading, data } = useOnboarding();
   const ob = data?.onboarding;
+  const form = data?.form;
+  const total = form?.steps?.length || 1;
 
   const [answers, setAnswers] = useState(null);
   const [step, setStep] = useState(1);
@@ -97,22 +74,21 @@ export default function OnboardingForm() {
   // her zaman önceliklidir, tamamlanmış bir formda hiçbir şey sıfırlanmaz.
   useEffect(() => {
     if (loading) return;
-    if (!ob) {
+    if (!ob || !form) {
       navigate("/student/dashboard", { replace: true });
       return;
     }
     if (answers !== null) return;
     const pre = data.prefill || {};
-    const saved = ob.answers || {};
     setAnswers({
       fullName: pre.fullName || "",
       phone: pre.phone || "",
       exam: pre.exam || "",
       field: pre.field || "",
-      ...saved,
+      ...(ob.answers || {}),
     });
-    setStep(Math.min(4, Math.max(1, ob.currentStep || 1)));
-  }, [loading, ob, data, answers, navigate]);
+    setStep(Math.min(total, Math.max(1, ob.currentStep || 1)));
+  }, [loading, ob, form, data, answers, total, navigate]);
 
   useEffect(() => {
     topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -127,27 +103,36 @@ export default function OnboardingForm() {
     const cur = Array.isArray(a[key]) ? a[key] : [];
     set({ [key]: cur.includes(value) ? cur.filter((x) => x !== value) : [...cur, value] });
   };
+  // Sınav değişince, sınava özel (YKS/LGS) seçmeli soruların eski cevapları temizlenir.
   const setExam = (exam) => {
     if (exam === a.exam) return;
-    set({ exam, grade: "", field: "", targetSchool: a.targetSchool, targetRank: "" });
+    const patch = { exam };
+    form.steps.forEach((st) =>
+      st.questions.forEach((q) => {
+        if (q.exam && (q.type === "single" || q.type === "multi")) patch[q.key] = q.type === "multi" ? [] : "";
+      })
+    );
+    set(patch);
   };
 
-  const step1Errors = useMemo(() => {
-    const e = [];
-    if (!a.fullName || a.fullName.trim().length < 3) e.push("Ad soyad yaz.");
-    if (!a.phone || a.phone.replace(/\D/g, "").length < 10) e.push("Geçerli bir telefon numarası yaz.");
-    if (!a.respondent) e.push("Öğrenci mi veli mi olduğunu seç.");
-    if (!a.exam) e.push("Hazırlandığın sınavı seç.");
-    return e;
-  }, [a]);
-
-  const persist = async (nextStep) => {
-    await saveOnboarding(nextStep, a);
+  const visible = (st) => st.questions.filter((q) => !q.exam || q.exam === a.exam);
+  const filled = (q) => (Array.isArray(a[q.key]) ? a[q.key].length > 0 : !!String(a[q.key] || "").trim());
+  const stepError = (st) => {
+    for (const q of visible(st)) {
+      if (!q.required) continue;
+      if (q.key === "phone" ? String(a.phone || "").replace(/\D/g, "").length < 10 : !filled(q)) {
+        return `“${q.label}” zorunlu.`;
+      }
+    }
+    return "";
   };
+
+  const persist = (nextStep) => saveOnboarding(nextStep, a);
 
   const next = async () => {
-    if (step === 1 && step1Errors.length) {
-      setError(step1Errors[0]);
+    const err = stepError(form.steps[step - 1]);
+    if (err) {
+      setError(err);
       return;
     }
     setBusy(true);
@@ -175,10 +160,13 @@ export default function OnboardingForm() {
   };
 
   const finish = async () => {
-    if (step1Errors.length) {
-      setStep(1);
-      setError(step1Errors[0]);
-      return;
+    for (let i = 0; i < form.steps.length; i += 1) {
+      const err = stepError(form.steps[i]);
+      if (err) {
+        setStep(i + 1);
+        setError(err);
+        return;
+      }
     }
     setBusy(true);
     setError("");
@@ -191,20 +179,77 @@ export default function OnboardingForm() {
     }
   };
 
-  if (loading || !ob || answers === null) return <OnboardingLoading />;
+  if (loading || !ob || !form || answers === null) return <OnboardingLoading />;
 
-  const isLgs = a.exam === "LGS";
-  const pct = (step / 4) * 100;
+  const st = form.steps[step - 1];
+  const pct = (step / total) * 100;
+  const isLast = step === total;
+
+  const renderQuestion = (q, idx) => {
+    const val = a[q.key];
+    const labelEl = <Label hint={q.hint}>{q.label}{q.required ? " *" : ""}</Label>;
+    let control = null;
+    if (q.type === "text" || q.type === "tel") {
+      control = (
+        <input
+          className={inputCls}
+          type={q.type === "tel" ? "tel" : "text"}
+          inputMode={q.type === "tel" ? "tel" : undefined}
+          maxLength={200}
+          value={val || ""}
+          onChange={(e) => set({ [q.key]: e.target.value })}
+          autoComplete={q.key === "fullName" ? "name" : q.key === "phone" ? "tel" : "off"}
+        />
+      );
+    } else if (q.type === "textarea") {
+      control = <textarea className={inputCls} rows={3} maxLength={1500} value={val || ""} onChange={(e) => set({ [q.key]: e.target.value })} />;
+    } else if (q.type === "single") {
+      const two = q.options.length <= 4 && q.options.every((o) => optionLabel(o).length <= 16);
+      control = (
+        <ChoiceGrid cols={two ? 2 : 1}>
+          {q.options.map((o) => (
+            <Choice
+              key={o}
+              selected={val === o}
+              onClick={() => (q.key === "exam" ? setExam(o) : set({ [q.key]: val === o && !isCoreSingle(q.key) ? "" : o }))}
+            >
+              {optionLabel(o)}
+            </Choice>
+          ))}
+        </ChoiceGrid>
+      );
+    } else if (q.type === "multi") {
+      const otherKey = `${q.key}Other`;
+      control = (
+        <>
+          <ChoiceGrid>
+            {q.options.map((o) => (
+              <Choice key={o} multi selected={(val || []).includes(o)} onClick={() => toggle(q.key, o)}>{o}</Choice>
+            ))}
+          </ChoiceGrid>
+          {q.options.includes("Diğer") && (val || []).includes("Diğer") && (
+            <textarea className={`${inputCls} mt-2.5`} rows={2} maxLength={300} placeholder="Kısaca anlat…" value={a[otherKey] || ""} onChange={(e) => set({ [otherKey]: e.target.value })} />
+          )}
+        </>
+      );
+    }
+    return (
+      <div key={`${q.key}-${q.exam || "all"}-${idx}`}>
+        {labelEl}
+        {control}
+      </div>
+    );
+  };
 
   return (
     <OnboardingShell wide>
       <div ref={topRef} style={{ scrollMarginTop: 12 }} />
       <div className="mb-6">
         <div className="flex items-end justify-between mb-2.5">
-          <div className="font-fredoka font-bold text-page-navy text-[18px]">{STEP_TITLES[step - 1]}</div>
-          <div className="font-nunito font-bold text-[13px] text-[#8B87A6]">Adım {step} / 4</div>
+          <div className="font-fredoka font-bold text-page-navy text-[18px]">{st.title}</div>
+          <div className="font-nunito font-bold text-[13px] text-[#8B87A6]">Adım {step} / {total}</div>
         </div>
-        <div className="h-2.5 rounded-full overflow-hidden" style={{ background: "#E4E1F0" }} role="progressbar" aria-valuemin={1} aria-valuemax={4} aria-valuenow={step}>
+        <div className="h-2.5 rounded-full overflow-hidden" style={{ background: "#E4E1F0" }} role="progressbar" aria-valuemin={1} aria-valuemax={total} aria-valuenow={step}>
           <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: "linear-gradient(90deg, #1C1B8A, #7340C8)" }} />
         </div>
       </div>
@@ -212,134 +257,12 @@ export default function OnboardingForm() {
       <div className="bg-white rounded-[28px] p-5 md:p-8" style={{ border: "1px solid #ECEAF5", boxShadow: "0 16px 44px rgba(28,27,138,0.08)" }}>
         <AnimatePresence mode="wait">
           <motion.div key={step} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="flex flex-col gap-6">
-            {step === 1 && (
-              <>
-                <div>
-                  <h2 className="font-fredoka font-bold text-page-navy text-2xl m-0 mb-1.5">Önce seni tanıyalım.</h2>
-                  <p className="text-[#64748b] text-[15px] leading-relaxed m-0">
-                    Bu bilgiler koçunun seni ve sınav sürecini daha iyi tanımasına yardımcı olacak.
-                  </p>
-                </div>
-                <div>
-                  <Label>Ad Soyad</Label>
-                  <input className={inputCls} value={a.fullName || ""} onChange={(e) => set({ fullName: e.target.value })} autoComplete="name" />
-                </div>
-                <div>
-                  <Label hint="Koçun sana buradan ulaşacak.">Telefon / WhatsApp numarası</Label>
-                  <input className={inputCls} type="tel" inputMode="tel" placeholder="05XX XXX XX XX" value={a.phone || ""} onChange={(e) => set({ phone: e.target.value })} autoComplete="tel" />
-                </div>
-                <div>
-                  <Label>Öğrenci misin / Veli misin?</Label>
-                  <ChoiceGrid cols={2}>
-                    <Choice selected={a.respondent === "ogrenci"} onClick={() => set({ respondent: "ogrenci" })}>Öğrenciyim</Choice>
-                    <Choice selected={a.respondent === "veli"} onClick={() => set({ respondent: "veli" })}>Veliyim</Choice>
-                  </ChoiceGrid>
-                </div>
-                <div>
-                  <Label>Hangi sınava hazırlanıyorsun?</Label>
-                  <ChoiceGrid cols={2}>
-                    <Choice selected={a.exam === "YKS"} onClick={() => setExam("YKS")}>YKS</Choice>
-                    <Choice selected={a.exam === "LGS"} onClick={() => setExam("LGS")}>LGS</Choice>
-                  </ChoiceGrid>
-                </div>
-              </>
-            )}
+            <div>
+              {st.heading && <h2 className="font-fredoka font-bold text-page-navy text-2xl m-0 mb-1.5">{st.heading}</h2>}
+              {st.description && <p className="text-[#64748b] text-[15px] leading-relaxed m-0">{st.description}</p>}
+            </div>
 
-            {step === 2 && (
-              <>
-                <div>
-                  <h2 className="font-fredoka font-bold text-page-navy text-2xl m-0 mb-1.5">Nereye ulaşmak istiyorsun?</h2>
-                  <p className="text-[#64748b] text-[15px] leading-relaxed m-0">Net bir hedefin yoksa sorun değil, boş bırakabilirsin.</p>
-                </div>
-                <div>
-                  <Label>{isLgs ? "Sınıf" : "Sınıf / durum"}</Label>
-                  <ChoiceGrid cols={2}>
-                    {(isLgs ? LGS_GRADES : YKS_GRADES).map((g) => (
-                      <Choice key={g} selected={a.grade === g} onClick={() => set({ grade: a.grade === g ? "" : g })}>{g}</Choice>
-                    ))}
-                  </ChoiceGrid>
-                </div>
-                {!isLgs && (
-                  <div>
-                    <Label>Alan</Label>
-                    <ChoiceGrid cols={2}>
-                      {FIELDS.map((f) => (
-                        <Choice key={f} selected={a.field === f} onClick={() => set({ field: a.field === f ? "" : f })}>{f}</Choice>
-                      ))}
-                    </ChoiceGrid>
-                  </div>
-                )}
-                <div>
-                  <Label hint="Opsiyonel">{isLgs ? "Hedeflediğin lise/liseler var mı?" : "Hedeflediğin bölüm / üniversite var mı?"}</Label>
-                  <textarea className={inputCls} rows={3} maxLength={300} value={a.targetSchool || ""} onChange={(e) => set({ targetSchool: e.target.value })} />
-                </div>
-                <div>
-                  <Label hint="Opsiyonel">{isLgs ? "Hedef puanın veya yüzdelik dilimin varsa yaz." : "Hedef sıralaman varsa yaz."}</Label>
-                  <input className={inputCls} maxLength={100} value={a.targetRank || ""} onChange={(e) => set({ targetRank: e.target.value })} />
-                </div>
-              </>
-            )}
-
-            {step === 3 && (
-              <>
-                <div>
-                  <h2 className="font-fredoka font-bold text-page-navy text-2xl m-0 mb-1.5">Şimdi başlangıç noktanı anlayalım.</h2>
-                </div>
-                <div>
-                  <Label hint="Birden fazla seçebilirsin.">Şu anda sınav sürecinde seni en çok zorlayan şeyler neler?</Label>
-                  <ChoiceGrid>
-                    {CHALLENGES.map((c) => (
-                      <Choice key={c} multi selected={(a.challenges || []).includes(c)} onClick={() => toggle("challenges", c)}>{c}</Choice>
-                    ))}
-                  </ChoiceGrid>
-                  {(a.challenges || []).includes("Diğer") && (
-                    <textarea className={`${inputCls} mt-2.5`} rows={2} maxLength={300} placeholder="Kısaca anlat…" value={a.challengesOther || ""} onChange={(e) => set({ challengesOther: e.target.value })} />
-                  )}
-                </div>
-                <div>
-                  <Label>Şu an çalışma düzenini nasıl tanımlarsın?</Label>
-                  <ChoiceGrid>
-                    {ROUTINES.map((r) => (
-                      <Choice key={r} selected={a.routine === r} onClick={() => set({ routine: a.routine === r ? "" : r })}>{r}</Choice>
-                    ))}
-                  </ChoiceGrid>
-                </div>
-                <div>
-                  <Label>Günde ortalama ne kadar çalışıyorsun?</Label>
-                  <ChoiceGrid>
-                    {DAILY_HOURS.map((h) => (
-                      <Choice key={h} selected={a.dailyHours === h} onClick={() => set({ dailyHours: a.dailyHours === h ? "" : h })}>{h}</Choice>
-                    ))}
-                  </ChoiceGrid>
-                </div>
-                <div>
-                  <Label hint="Opsiyonel">{isLgs ? "Son denemenin puanı / neti" : "Son deneme netin veya sıralaman"}</Label>
-                  <input className={inputCls} maxLength={200} value={a.lastExam || ""} onChange={(e) => set({ lastExam: e.target.value })} />
-                </div>
-              </>
-            )}
-
-            {step === 4 && (
-              <>
-                <div>
-                  <h2 className="font-fredoka font-bold text-page-navy text-2xl m-0 mb-1.5">Son olarak, koçunun seni biraz daha tanımasına yardım et.</h2>
-                </div>
-                <div>
-                  <Label hint="Birden fazla seçebilirsin.">Koçluktan en çok hangi konularda destek almak istiyorsun?</Label>
-                  <ChoiceGrid>
-                    {SUPPORTS.map((s) => (
-                      <Choice key={s} multi selected={(a.supports || []).includes(s)} onClick={() => toggle("supports", s)}>{s}</Choice>
-                    ))}
-                  </ChoiceGrid>
-                </div>
-                <div>
-                  <Label hint="Çalışma alışkanlığın, okul programın, zorlandığın bir durum veya süreçten beklentin olabilir. (Opsiyonel)">
-                    Koçunun senin hakkında mutlaka bilmesini istediğin bir şey var mı?
-                  </Label>
-                  <textarea className={inputCls} rows={5} maxLength={1500} value={a.note || ""} onChange={(e) => set({ note: e.target.value })} />
-                </div>
-              </>
-            )}
+            {visible(st).map(renderQuestion)}
 
             {error && <p className="text-[#dc2626] text-[14px] font-semibold m-0" role="alert">{error}</p>}
 
@@ -357,12 +280,12 @@ export default function OnboardingForm() {
               )}
               <button
                 type="button"
-                onClick={step < 4 ? next : finish}
+                onClick={isLast ? finish : next}
                 disabled={busy}
                 className="flex-1 py-4 rounded-2xl font-fredoka font-bold text-[17px] border-0 cursor-pointer disabled:opacity-60"
-                style={step < 4 ? { background: "#1C1B8A", color: "#D8FF4F" } : { background: "#D8FF4F", color: "#0D0A2E", boxShadow: "0 8px 24px rgba(216,255,79,0.35)" }}
+                style={isLast ? { background: "#D8FF4F", color: "#0D0A2E", boxShadow: "0 8px 24px rgba(216,255,79,0.35)" } : { background: "#1C1B8A", color: "#D8FF4F" }}
               >
-                {busy ? "Kaydediliyor…" : step < 4 ? "Devam Et →" : "Tanışma Formumu Tamamla →"}
+                {busy ? "Kaydediliyor…" : isLast ? "Tanışma Formumu Tamamla →" : "Devam Et →"}
               </button>
             </div>
           </motion.div>
