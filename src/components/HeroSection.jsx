@@ -117,31 +117,31 @@ function DefaultSlide() {
     <div className="grid grid-cols-[1fr_auto] gap-16 items-center max-[960px]:grid-cols-1">
       {/* Sol — metin */}
       <div>
-        <motion.div {...fadeUp} className="mb-7">
+        <motion.div {...fadeUp} className="mb-5">
           <Eyebrow accent="var(--color-brand)">LGS &amp; YKS Koçluğu</Eyebrow>
         </motion.div>
 
         <motion.h1
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.1 }}
-          className="font-fredoka text-[72px] max-[900px]:text-[52px] max-[640px]:text-[42px] max-[400px]:text-[34px] leading-[1.05] mb-6"
+          className="font-fredoka text-[68px] max-[900px]:text-[52px] max-[640px]:text-[42px] max-[400px]:text-[34px] leading-[1.05] mb-5"
           style={{ letterSpacing: "-0.5px", maxWidth: 640, color: TEXT_DARK }}
         >
           Sınava Çok Çalışarak Değil,{" "}
           <span style={{
-            background: "linear-gradient(90deg, var(--color-dark), var(--color-brand), var(--color-dark))",
+            background: "linear-gradient(90deg, var(--color-brand-hover), var(--color-brand), var(--color-brand-hover))",
             backgroundSize: "200% auto",
             WebkitBackgroundClip: "text",
             backgroundClip: "text",
             WebkitTextFillColor: "transparent",
             animation: "heroShimmer 3s linear infinite",
-          }}>Doğru Bir Rotayla Hazırlan.</span>
+          }}>Doğru Bir Rotayla</span> Hazırlan.
         </motion.h1>
 
         <motion.p
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.15 }}
-          className="font-nunito font-bold text-[19px] max-[640px]:text-base leading-relaxed mb-4"
+          className="font-nunito font-bold text-[19px] max-[640px]:text-base leading-relaxed mb-3"
           style={{ maxWidth: 520, color: TEXT_65 }}
         >
           Ne çalışacağını bil, ilerlemeni takip et ve ihtiyaçlarına göre çalışma planını güncelle.
@@ -150,14 +150,14 @@ function DefaultSlide() {
         <motion.p
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.19 }}
-          className="font-fredoka font-bold text-[13px] tracking-[0.06em] mb-10 max-[960px]:hidden"
+          className="font-fredoka font-bold text-[13px] tracking-[0.06em] mb-7 max-[960px]:hidden"
           style={{ color: "var(--color-brand)" }}
         >
           Kişisel Rota <span style={{ color: TEXT_40 }}>→</span> İlerleme Takibi <span style={{ color: TEXT_40 }}>→</span> Dinamik Planlama
         </motion.p>
         <MobileMechanism />
 
-        <HeroCtas className="mb-14" />
+        <HeroCtas className="mb-8" />
 
         <div className="flex flex-wrap gap-3">
           {trustPoints.map((t, i) => (
@@ -189,57 +189,60 @@ function DefaultSlide() {
         transition={{ duration: 0.7, delay: 0.2 }}
         className="flex-shrink-0 max-[960px]:hidden"
       >
-        <div className="relative" style={{ width: 390, height: 440 }}>
-          {/* Ana kart — bu haftaki rota */}
+        <div className="relative" style={{ width: 440, height: 492 }}>
+          {/* Ana kart — bu haftaki rota. Boyut ve konumlar orijinal
+              (390×440) düzenden %12 büyütülerek türetildi — oranlar aynı
+              kaldığı için rozetlerle olan (kasıtlı, köşeye hafif taşan)
+              ilişkisi bozulmuyor; sadece kontrast/okunabilirlik arttı. */}
           <div style={{
-            position: "absolute", top: 70, left: 40,
-            width: 310,
+            position: "absolute", top: 78, left: 45,
+            width: 350,
             background: "#FFFFFF",
-            border: "1px solid #ECEAF3",
-            borderRadius: 28, padding: "28px 24px",
+            border: "1.5px solid #D7E4E6",
+            borderRadius: 28, padding: "30px 26px",
             animation: "heroFloat1 5s ease-in-out infinite",
-            boxShadow: "0 24px 50px rgba(21,14,51,0.1)",
+            boxShadow: "0 26px 56px rgba(21,14,51,0.15)",
           }}>
-            <div className="font-fredoka font-bold text-sm tracking-[0.12em] uppercase mb-4" style={{ color: "var(--color-dark)" }}>
+            <div className="font-fredoka font-bold text-[15px] tracking-[0.12em] uppercase mb-4" style={{ color: "var(--color-dark)" }}>
               Bu Haftaki Rotan
             </div>
             {weeklyItems.map((item, i) => (
-              <div key={i} className="flex items-center gap-3 mb-3.5">
+              <div key={i} className="flex items-center gap-3.5 mb-4">
                 <div style={{
-                  width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
+                  width: 23, height: 23, borderRadius: "50%", flexShrink: 0,
                   background: item.done ? "var(--color-brand)" : FILL_SOFT,
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   {item.done && (
-                    <svg width="11" height="11" viewBox="0 0 12 12">
+                    <svg width="12" height="12" viewBox="0 0 12 12">
                       <polyline points="2 6 5 9 10 3" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   )}
                 </div>
-                <span className="font-nunito font-bold text-sm" style={{ color: item.done ? TEXT_DARK : TEXT_40 }}>
+                <span className="font-nunito font-bold text-[15px]" style={{ color: item.done ? TEXT_DARK : TEXT_40 }}>
                   {item.text}
                 </span>
               </div>
             ))}
           </div>
 
-          {/* Turuncu rozet — haftalık plan tamamlanma oranı */}
+          {/* Turkuaz rozet — haftalık plan tamamlanma oranı */}
           <div style={{
             position: "absolute", top: 0, left: 0,
-            background: "var(--color-brand)", borderRadius: 20, padding: "16px 22px",
+            background: "var(--color-brand)", borderRadius: 20, padding: "17px 23px",
             animation: "heroFloat2 4s ease-in-out infinite",
-            boxShadow: "0 12px 30px rgba(14,124,136,0.35)",
+            boxShadow: "0 14px 32px rgba(14,124,136,0.4)",
           }}>
             <div className="font-fredoka font-bold text-white text-[28px] leading-none">%82</div>
             <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">Haftalık plan tamamlandı</div>
           </div>
 
-          {/* Sarı rozet — koç geri bildirimi */}
+          {/* "Koç geri bildirimi" rozeti */}
           <div style={{
-            position: "absolute", bottom: 10, right: 0,
-            background: "var(--color-brand-light)", borderRadius: 18, padding: "14px 20px",
+            position: "absolute", bottom: 11, right: 0,
+            background: "var(--color-brand-light)", borderRadius: 18, padding: "15px 21px",
             animation: "heroFloat3 6s ease-in-out infinite",
-            boxShadow: "0 10px 24px rgba(14,124,136,0.18)",
+            boxShadow: "0 12px 28px rgba(14,124,136,0.2)",
           }}>
             <div className="font-fredoka font-bold text-page-dark text-[15px] leading-snug flex items-center gap-1.5">
               Koç geri bildirimi
@@ -249,16 +252,16 @@ function DefaultSlide() {
             </div>
           </div>
 
-          {/* Lacivert rozet — rota güncellendi */}
+          {/* Rota güncellendi rozeti */}
           <div style={{
-            position: "absolute", top: 300, left: -18,
+            position: "absolute", top: 336, left: -20,
             background: "var(--color-brand-light)",
-            border: "1px solid #C9E9EB",
-            borderRadius: 18, padding: "12px 18px",
+            border: "1.5px solid #B9E4E7",
+            borderRadius: 18, padding: "13px 19px",
             animation: "heroFloat1 5.5s ease-in-out infinite",
-            boxShadow: "0 10px 24px rgba(21,14,51,0.08)",
+            boxShadow: "0 12px 26px rgba(14,124,136,0.14)",
           }}>
-            <div className="font-fredoka font-bold text-[14px] flex items-center gap-1.5" style={{ color: "var(--color-brand)" }}>
+            <div className="font-fredoka font-bold text-[15px] flex items-center gap-1.5" style={{ color: "var(--color-brand)" }}>
               Rota güncellendi <span>↗</span>
             </div>
           </div>
@@ -604,7 +607,7 @@ export default function HeroSection() {
            alan büyüyüp küçülmüyor. Masaüstünde sabit height (sağdaki
            floating kart grubu zaten 440px sabit), mobilde min-height
            (tek sütuna düşünce metin sarmasına göre taşma olmasın diye). */
-        .hero-slide-viewport { height: 690px; }
+        .hero-slide-viewport { height: 600px; }
         @media (max-width: 960px) {
           .hero-slide-viewport { height: auto; min-height: 600px; }
         }

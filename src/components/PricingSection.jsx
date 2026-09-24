@@ -389,7 +389,7 @@ export default function PricingSection() {
           </div>
           <h2 className="font-fredoka font-bold m-0 leading-[1]" style={{ letterSpacing: -1, fontSize: "clamp(34px, 4.5vw, 60px)" }}>
             <span className="block text-page-navy">YKS &amp; LGS</span>
-            <span className="block" style={{ color: "transparent", WebkitTextStroke: "2px var(--color-brand)" }}>Koçluk Paketleri</span>
+            <span className="block" style={{ color: "var(--color-brand)" }}>Koçluk Paketleri</span>
           </h2>
           <p className="font-nunito font-bold text-[#64748b] text-base leading-relaxed mt-4 mx-auto" style={{ maxWidth: 480 }}>
             İhtiyacına uygun koçluk paketini seç. Paket içeriklerini ve fiyatları aşağıda inceleyebilirsin.
