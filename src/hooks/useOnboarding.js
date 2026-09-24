@@ -5,8 +5,9 @@ const authHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem("toke
 
 // Kullanıcının kendi onboarding kaydı (sunucuda token'dan çözülür — başka
 // kullanıcının verisine erişim yok). data: { onboarding, prefill } | null
-export default function useOnboarding() {
-  const [state, setState] = useState({ loading: true, data: null, error: false });
+// skip=true iken (ör. admin önizleme modu) hiç istek atmaz.
+export default function useOnboarding(skip = false) {
+  const [state, setState] = useState({ loading: !skip, data: null, error: false });
 
   const load = useCallback(async () => {
     try {
@@ -18,8 +19,8 @@ export default function useOnboarding() {
   }, []);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    if (!skip) load();
+  }, [skip, load]);
 
   return { ...state, reload: load };
 }

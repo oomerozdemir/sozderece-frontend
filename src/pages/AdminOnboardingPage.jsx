@@ -296,6 +296,28 @@ const AdminOnboardingPage = () => {
   return (
     <div className="max-w-[1000px]">
       <h2 className="font-fredoka font-bold text-xl text-[#0f172a] mb-1">Onboarding</h2>
+
+      <div className="flex gap-2 flex-wrap mb-1">
+        <a
+          href="/onboarding/hos-geldin?preview=1"
+          target="_blank"
+          rel="noreferrer"
+          className="text-xs font-bold underline text-[#1C1B8A]"
+        >
+          Karşılama Ekranını Önizle ↗
+        </a>
+        <span className="text-xs text-[#cbd5e1]">·</span>
+        <a
+          href="/onboarding/surec?preview=1"
+          target="_blank"
+          rel="noreferrer"
+          className="text-xs font-bold underline text-[#1C1B8A]"
+        >
+          Süreç Slaytını Önizle ↗
+        </a>
+      </div>
+      <p className="text-xs text-[#94a3b8] mb-3">Sipariş oluşturmadan, gerçek bir öğrenciyi etkilemeden görüntüler.</p>
+
       <div className="flex gap-2 my-3">
         {[["students", "Öğrenciler"], ["form", "Formu Düzenle"]].map(([k, l]) => (
           <button

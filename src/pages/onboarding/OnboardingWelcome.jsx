@@ -1,8 +1,9 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import OnboardingShell, { OnboardingLoading } from "../../components/OnboardingShell";
 import useOnboarding from "../../hooks/useOnboarding";
+import { isAdminPreview, PREVIEW_ONBOARDING_WELCOME } from "../../utils/onboardingPreview";
 
 const JOURNEY = [
   { n: "01", t: "Seni Tanıyalım" },
@@ -13,14 +14,17 @@ const JOURNEY = [
 
 export default function OnboardingWelcome() {
   const navigate = useNavigate();
-  const { loading, data } = useOnboarding();
-  const ob = data?.onboarding;
+  const [searchParams] = useSearchParams();
+  const preview = isAdminPreview(searchParams);
+  const real = useOnboarding(preview);
+  const loading = preview ? false : real.loading;
+  const ob = preview ? PREVIEW_ONBOARDING_WELCOME : real.data?.onboarding;
 
   useEffect(() => {
-    if (loading) return;
+    if (preview || loading) return;
     if (!ob) navigate("/student/dashboard", { replace: true });
     else if (ob.formCompleted) navigate("/onboarding/tamamlandi", { replace: true });
-  }, [loading, ob, navigate]);
+  }, [preview, loading, ob, navigate]);
 
   if (loading || !ob || ob.formCompleted) return <OnboardingLoading />;
 
@@ -28,6 +32,11 @@ export default function OnboardingWelcome() {
 
   return (
     <OnboardingShell>
+      {preview && (
+        <div className="mb-4 text-center font-fredoka font-bold text-[12px] px-3 py-1.5 rounded-full inline-block mx-auto w-full" style={{ background: "#FFEDE3", color: "#C2410C" }}>
+          Önizleme modu — hiçbir şey kaydedilmiyor, öğrenciler bunu görmüyor
+        </div>
+      )}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -84,11 +93,11 @@ export default function OnboardingWelcome() {
 
         <button
           type="button"
-          onClick={() => navigate("/onboarding/tanisma")}
+          onClick={() => navigate(preview ? "/onboarding/surec?preview=1" : "/onboarding/tanisma")}
           className="w-full py-4 rounded-2xl font-fredoka font-bold text-[17px] border-0 cursor-pointer transition-transform hover:scale-[1.02]"
           style={{ background: "#D8FF4F", color: "#0D0A2E", boxShadow: "0 8px 24px rgba(216,255,79,0.35)" }}
         >
-          {started ? "Tanışma Formuna Devam Et →" : "Tanışma Formuna Başla →"}
+          {preview ? "Sürece Geç →" : started ? "Tanışma Formuna Devam Et →" : "Tanışma Formuna Başla →"}
         </button>
         <p className="text-center text-[#94a3b8] text-[13px] mt-3 mb-0">Yaklaşık 5 dakika sürer.</p>
       </motion.div>

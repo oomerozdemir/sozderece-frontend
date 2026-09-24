@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import OnboardingShell, { OnboardingLoading } from "../../components/OnboardingShell";
 import useOnboarding, { saveProcessStep, completeProcessIntro } from "../../hooks/useOnboarding";
+import { isAdminPreview, PREVIEW_ONBOARDING } from "../../utils/onboardingPreview";
 
 const TOTAL = 6;
 const NAVY = "#1C1B8A";
@@ -388,8 +389,12 @@ function Finished({ onReview, onGo }) {
 export default function OnboardingProcess() {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
-  const { loading, data } = useOnboarding();
-  const ob = data?.onboarding;
+  const preview = isAdminPreview(params);
+  const real = useOnboarding(preview);
+  const loading = preview ? false : real.loading;
+  // Önizlemede sunucuya hiç dokunulmuyor — kaldığı ekran/tamamlanma sadece bu
+  // sayfa açıkken bellekte tutulur, kapatınca sıfırlanır.
+  const ob = preview ? PREVIEW_ONBOARDING : real.data?.onboarding;
 
   const [dir, setDir] = useState(1);
   const [justFinished, setJustFinished] = useState(false);
@@ -402,16 +407,16 @@ export default function OnboardingProcess() {
   const showFinished = justFinished || (!!ob?.processCompleted && !hasParam);
 
   useEffect(() => {
-    if (loading) return;
+    if (preview || loading) return;
     if (!ob) navigate("/student/dashboard", { replace: true });
     else if (!ob.formCompleted) navigate("/onboarding/hos-geldin", { replace: true });
-  }, [loading, ob, navigate]);
+  }, [preview, loading, ob, navigate]);
 
   // Parametresiz açılışta kaldığı ekranı URL'ye yaz (geri tuşu ekranlar arasında çalışsın).
   useEffect(() => {
     if (!ob?.formCompleted || showFinished || hasParam) return;
-    setParams({ e: String(screen) }, { replace: true });
-  }, [ob, showFinished, hasParam, screen, setParams]);
+    setParams(preview ? { e: String(screen), preview: "1" } : { e: String(screen) }, { replace: true });
+  }, [ob, showFinished, hasParam, screen, preview, setParams]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -426,11 +431,15 @@ export default function OnboardingProcess() {
   const go = (n) => {
     if (n < 1 || n > TOTAL) return;
     setDir(n > screen ? 1 : -1);
-    setParams({ e: String(n) });
-    if (!ob.processCompleted) saveProcessStep(n).catch(() => {});
+    setParams(preview ? { e: String(n), preview: "1" } : { e: String(n) });
+    if (!preview && !ob.processCompleted) saveProcessStep(n).catch(() => {});
   };
 
   const finish = async () => {
+    if (preview) {
+      setJustFinished(true);
+      return;
+    }
     setBusy(true);
     try {
       await completeProcessIntro();
@@ -468,11 +477,11 @@ export default function OnboardingProcess() {
       <OnboardingShell maxWidth={1040}>
         <Styles />
         <Finished
-          onGo={() => navigate("/student/dashboard")}
+          onGo={() => navigate(preview ? "/admin" : "/student/dashboard")}
           onReview={() => {
             setJustFinished(false);
             setDir(1);
-            setParams({ e: "1" });
+            setParams(preview ? { e: "1", preview: "1" } : { e: "1" });
           }}
         />
       </OnboardingShell>
@@ -483,6 +492,11 @@ export default function OnboardingProcess() {
   return (
     <OnboardingShell maxWidth={1040}>
       <Styles />
+      {preview && (
+        <div className="mb-5 text-center font-fredoka font-bold text-[12px] px-3 py-1.5 rounded-full inline-block mx-auto" style={{ background: "#FFEDE3", color: "#C2410C" }}>
+          Önizleme modu — hiçbir şey kaydedilmiyor, öğrenciler bunu görmüyor
+        </div>
+      )}
       <div className="mb-7">
         <div className="flex items-center justify-between mb-2.5">
           <div className="flex gap-1.5" aria-hidden>
