@@ -133,6 +133,7 @@ export default function Navbar() {
 
         {/* LOGO */}
         <Link to="/" className="no-underline flex items-center gap-2">
+          <img src="/images/logo-bee.png" alt="" aria-hidden="true" className="w-6 h-6 max-[960px]:w-5 max-[960px]:h-5 flex-shrink-0" />
           <span className="font-fredoka text-brand-on-dark text-2xl max-[960px]:text-xl tracking-wide select-none">
             SÖZDERECE
           </span>

@@ -324,7 +324,7 @@ function WhyDifferentSection() {
           >
             <span className="text-page-dark">Bir Program Verip</span>
             <br />
-            <span style={{ color: "transparent", WebkitTextStroke: "2.5px var(--color-brand)" }}>Seni Yalnız Bırakmıyoruz.</span>
+            <span style={{ color: "var(--color-brand)" }}>Seni Yalnız Bırakmıyoruz.</span>
           </h2>
           <p className="font-nunito text-[#64748b] text-base mt-5 max-w-[500px]">
             Çalışma rotanı oluşturuyor, ilerlemeni takip ediyor ve sonuçlarına göre planını sürekli güncelliyoruz.
@@ -415,7 +415,7 @@ function HowItWorksSection() {
             style={{ fontSize: "clamp(36px, 4vw, 56px)", letterSpacing: -1 }}
           >
             <span className="text-page-dark">Koçluğa Nasıl </span>
-            <span style={{ color: "transparent", WebkitTextStroke: "2.5px var(--color-brand)" }}>Başlarsın?</span>
+            <span style={{ color: "var(--color-brand)" }}>Başlarsın?</span>
           </h2>
           <p className="font-nunito text-[#64748b] text-base mt-4 max-w-[460px] mx-auto">
             Satın aldıktan sonra seni ne beklediği net: dört adımda koçluk sürecin başlıyor.
@@ -587,7 +587,7 @@ function TestimonialsSection() {
             style={{ fontSize: "clamp(36px, 4vw, 56px)", letterSpacing: -1 }}
           >
             <span className="text-page-dark">Gerçek öğrenciler, </span>
-            <span style={{ color: "transparent", WebkitTextStroke: "2.5px var(--color-brand)" }}>gerçek sonuçlar.</span>
+            <span style={{ color: "var(--color-brand)" }}>gerçek sonuçlar.</span>
           </h2>
         </motion.div>
 
@@ -694,7 +694,7 @@ function ComparisonSection() {
           >
             <span className="text-page-dark">Bir Program Almakla,</span>
             <br />
-            <span style={{ color: "transparent", WebkitTextStroke: "2.5px var(--color-brand)" }}>Bir Süreci Yönetmek Aynı Şey Değil.</span>
+            <span style={{ color: "var(--color-brand)" }}>Bir Süreci Yönetmek Aynı Şey Değil.</span>
           </h2>
           <p className="font-nunito text-[#64748b] text-base mt-5 max-w-[560px] mx-auto">
             Sözderece'de amaç yalnızca program hazırlamak değil; rotanı belirlemek, ilerlemeni takip etmek ve gerektiğinde planını güncellemek.
@@ -781,7 +781,7 @@ function FaqSection() {
             style={{ fontSize: "clamp(36px, 4vw, 56px)", letterSpacing: -1 }}
           >
             <span className="text-page-dark">Aklındaki </span>
-            <span style={{ color: "transparent", WebkitTextStroke: "2.5px var(--color-brand)" }}>sorular.</span>
+            <span style={{ color: "var(--color-brand)" }}>sorular.</span>
           </h2>
           <p className="font-nunito text-[#94a3b8] text-sm mt-4">
             Cevabını bulamazsan bize ulaş, hemen dönüyoruz.

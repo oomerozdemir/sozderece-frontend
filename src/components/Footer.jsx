@@ -19,8 +19,11 @@ const Footer = () => {
 
           {/* Marka Sütunu */}
           <div className="col-span-1">
-            <span className="font-fredoka text-brand-on-dark text-2xl tracking-wide block mb-3">
-              SÖZDERECE
+            <span className="flex items-center gap-2 mb-3">
+              <img src="/images/logo-bee.png" alt="" aria-hidden="true" className="w-6 h-6 flex-shrink-0" />
+              <span className="font-fredoka text-brand-on-dark text-2xl tracking-wide">
+                SÖZDERECE
+              </span>
             </span>
             <p className="text-white/50 text-sm leading-relaxed mb-5">
               Günlük takip. Dinamik program. Gerçek sonuç.
