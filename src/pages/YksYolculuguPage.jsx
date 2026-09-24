@@ -30,7 +30,7 @@ function FaqAccordion({ faqData }) {
               <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: Math.min(i * 0.07, 0.35) }}>
                 <div
                   onClick={() => setOpen(isOpen ? null : i)}
-                  className={`relative rounded-2xl border overflow-hidden cursor-pointer transition-all duration-300 ${isOpen ? "border-page-navy shadow-[0_0_0_3px_rgba(28,27,138,0.06),0_8px_24px_rgba(28,27,138,0.08)] bg-white" : "border-[#e2e8f0] bg-white hover:border-page-navy/30"}`}
+                  className={`relative rounded-2xl border overflow-hidden cursor-pointer transition-all duration-300 ${isOpen ? "border-page-navy shadow-[0_0_0_3px_rgba(23,37,45,0.06),0_8px_24px_rgba(23,37,45,0.08)] bg-white" : "border-[#e2e8f0] bg-white hover:border-page-navy/30"}`}
                 >
                   <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl transition-all duration-300 ${isOpen ? "bg-lime" : "bg-transparent"}`} />
                   <div className="pl-6 pr-5 py-5">
@@ -228,7 +228,7 @@ export default function YksYolculuguPage() {
 
   if (!content) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#0D0A2E" }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--color-dark)" }}>
         <div className="font-nunito text-white/40 text-sm">Yükleniyor...</div>
       </div>
     );
@@ -262,20 +262,19 @@ export default function YksYolculuguPage() {
       <Navbar />
 
       {/* ── HERO ── */}
-      <section className="relative overflow-hidden py-24 px-5 text-white" style={{ background: "#0D0A2E" }}>
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 500, height: 500, background: "#1C1B8A", filter: "blur(120px)", opacity: 0.35, top: -120, right: -100, animation: "yksOrb1 7s ease-in-out infinite" }} />
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 360, height: 360, background: "#7340C8", filter: "blur(100px)", opacity: 0.22, bottom: -60, left: -80, animation: "yksOrb2 9s ease-in-out infinite" }} />
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#FF6B35", filter: "blur(80px)", opacity: 0.12, top: "38%", left: "32%" }} />
+      <section className="relative overflow-hidden py-24 px-5 text-white" style={{ background: "var(--color-dark)" }}>
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 500, height: 500, background: "var(--color-brand)", filter: "blur(120px)", opacity: 0.3, top: -120, right: -100, animation: "yksOrb1 7s ease-in-out infinite" }} />
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 360, height: 360, background: "var(--color-brand-hover)", filter: "blur(100px)", opacity: 0.22, bottom: -60, left: -80, animation: "yksOrb2 9s ease-in-out infinite" }} />
 
         <div className="max-w-3xl mx-auto text-center relative">
           <motion.div {...fadeUp}>
-            <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6 border font-nunito font-bold text-xs" style={{ background: "rgba(216,255,79,0.1)", borderColor: "rgba(216,255,79,0.25)", color: "#D8FF4F" }}>
+            <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6 border font-nunito font-bold text-xs" style={{ background: "rgba(14,124,136,0.14)", borderColor: "rgba(14,124,136,0.3)", color: "var(--color-brand-on-dark)" }}>
               🎓 2027 YKS Öğrencilerine Özel
             </div>
 
             <h1 className="font-fredoka font-bold leading-tight mb-4" style={{ fontSize: "clamp(28px,5vw,52px)", animation: "yksShimmer 4s ease-in-out infinite" }}>
               YKS'de En Zor Şey Daha Fazla Çalışmak Değil.{" "}
-              <span style={{ color: "#D8FF4F" }}>{hero.titleAccent || "Neye Çalışacağını Bilmek."}</span>
+              <span style={{ color: "var(--color-brand-on-dark)" }}>{hero.titleAccent || "Neye Çalışacağını Bilmek."}</span>
             </h1>
 
             <p className="font-nunito font-bold text-lg mb-4" style={{ color: "rgba(255,255,255,0.6)", fontSize: "clamp(15px,2vw,18px)" }}>
@@ -283,11 +282,11 @@ export default function YksYolculuguPage() {
             </p>
 
             <p className="font-fredoka font-bold text-sm mb-8" style={{ letterSpacing: 0.5 }}>
-              <span style={{ color: "#7340C8" }}>Kişisel Rota</span>{" "}
+              <span style={{ color: "rgba(255,255,255,0.55)" }}>Kişisel Rota</span>{" "}
               <span style={{ color: "rgba(255,255,255,0.3)" }}>→</span>{" "}
-              <span style={{ color: "#D8FF4F" }}>İlerleme Takibi</span>{" "}
+              <span style={{ color: "var(--color-brand-on-dark)" }}>İlerleme Takibi</span>{" "}
               <span style={{ color: "rgba(255,255,255,0.3)" }}>→</span>{" "}
-              <span style={{ color: "#FF6B35" }}>Dinamik Planlama</span>
+              <span style={{ color: "var(--color-brand-on-dark)" }}>Dinamik Planlama</span>
             </p>
 
             {remaining !== null && remaining > 0 && (
@@ -303,7 +302,7 @@ export default function YksYolculuguPage() {
               whileTap={{ scale: 0.96 }}
               onClick={scrollToOffer}
               className="font-fredoka font-bold text-base px-10 py-4 rounded-full"
-              style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 10px 32px rgba(216,255,79,0.35)" }}
+              style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 10px 32px rgba(14,124,136,0.35)" }}
             >
               {hero.ctaPrimary || "⚡ Yerimi Şimdi Ayırt →"}
             </motion.button>
@@ -331,7 +330,7 @@ export default function YksYolculuguPage() {
 
       {/* ── KENDİNİ BURADA GÖRÜYOR MUSUN? ── */}
       {painPoints.items?.length > 0 && (
-        <section className="py-20 px-5" style={{ background: "#f4f2fa" }}>
+        <section className="py-20 px-5" style={{ background: "var(--color-brand-light)" }}>
           <div className="max-w-2xl mx-auto">
             <motion.div {...fadeUp} className="text-center mb-10">
               <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>KENDİNİ BURADA GÖRÜYOR MUSUN?</div>
@@ -344,7 +343,7 @@ export default function YksYolculuguPage() {
               {painPoints.items.map((p, i) => (
                 <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }}
                   className="bg-white rounded-2xl px-5 py-4 border border-[#e2e8f0] shadow-sm flex items-center gap-3.5">
-                  <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#fff0ea", color: "#c2410c" }}>
+                  <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "var(--color-brand)", color: "#FFFFFF" }}>
                     <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6 L4.5 8.5 L10 2.5" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </span>
                   <p className="font-nunito font-bold text-[#0f172a] text-sm italic">"{p.title}"</p>
@@ -357,7 +356,7 @@ export default function YksYolculuguPage() {
                 Bunlardan biri bile sana tanıdık geliyorsa, ihtiyacın yalnızca daha fazla çalışmak olmayabilir.{" "}
                 <span className="text-page-navy">İhtiyacın, yönetebileceğin net bir çalışma rotası olabilir.</span>
               </p>
-              <button onClick={scrollToForm} className="font-fredoka font-bold text-sm px-8 py-3.5 rounded-full transition-all hover:scale-105 inline-flex items-center gap-2" style={{ background: "#1C1B8A", color: "#D8FF4F", boxShadow: "0 4px 16px rgba(28,27,138,0.25)" }}>
+              <button onClick={scrollToForm} className="font-fredoka font-bold text-sm px-8 py-3.5 rounded-full transition-all hover:scale-105 inline-flex items-center gap-2" style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 4px 16px rgba(14,124,136,0.3)" }}>
                 15 Dakikalık Görüşme Planla →
               </button>
             </motion.div>
@@ -366,27 +365,27 @@ export default function YksYolculuguPage() {
       )}
 
       {/* ── SÖZDERECE ROTA SİSTEMİ ── */}
-      <section className="py-20 px-5 text-white relative overflow-hidden" style={{ background: "#0D0A2E" }}>
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 340, height: 340, background: "#1C1B8A", filter: "blur(100px)", opacity: 0.4, top: -80, right: -60, animation: "yksOrb1 8s ease-in-out infinite" }} />
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 260, height: 260, background: "#7340C8", filter: "blur(90px)", opacity: 0.25, bottom: -50, left: -50, animation: "yksOrb2 10s ease-in-out infinite" }} />
+      <section className="py-20 px-5 text-white relative overflow-hidden" style={{ background: "var(--color-dark)" }}>
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 340, height: 340, background: "var(--color-brand)", filter: "blur(100px)", opacity: 0.35, top: -80, right: -60, animation: "yksOrb1 8s ease-in-out infinite" }} />
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 260, height: 260, background: "var(--color-brand-hover)", filter: "blur(90px)", opacity: 0.22, bottom: -50, left: -50, animation: "yksOrb2 10s ease-in-out infinite" }} />
         <div className="max-w-5xl mx-auto relative">
           <motion.div {...fadeUp} className="text-center mb-14">
             <div className="font-fredoka font-bold text-lime text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>SÖZDERECE ROTA SİSTEMİ</div>
             <h2 className="font-fredoka font-bold text-white m-0 leading-tight" style={{ fontSize: "clamp(26px,4vw,44px)" }}>
-              Nerede olduğunu belirle. <span style={{ color: "#D8FF4F" }}>Sana uygun rotayı oluştur.</span>
+              Nerede olduğunu belirle. <span style={{ color: "var(--color-brand-on-dark)" }}>Sana uygun rotayı oluştur.</span>
             </h2>
           </motion.div>
 
           <div className="grid grid-cols-3 gap-6 mb-14 max-[768px]:grid-cols-1">
             {[
-              { num: "01", title: "Kişisel Rota", desc: "Hedefin, mevcut seviyen, eksiklerin ve günlük düzenin değerlendirilir. Neye öncelik vereceğin ve nasıl ilerleyeceğin netleştirilir.", color: "#7340C8" },
-              { num: "02", title: "İlerleme Takibi", desc: "Plan hazırlanıp bırakılmaz. Çalışmaların, konu ilerleyişin ve denemelerin düzenli olarak takip edilir.", color: "#D8FF4F" },
-              { num: "03", title: "Dinamik Planlama", desc: "Denemelerin, ilerlemen veya ihtiyaçların değiştiğinde çalışma rotan da yeniden düzenlenir.", color: "#FF6B35" },
+              { num: "01", title: "Kişisel Rota", desc: "Hedefin, mevcut seviyen, eksiklerin ve günlük düzenin değerlendirilir. Neye öncelik vereceğin ve nasıl ilerleyeceğin netleştirilir.", color: "rgba(255,255,255,0.4)" },
+              { num: "02", title: "İlerleme Takibi", desc: "Plan hazırlanıp bırakılmaz. Çalışmaların, konu ilerleyişin ve denemelerin düzenli olarak takip edilir.", color: "var(--color-brand-on-dark)" },
+              { num: "03", title: "Dinamik Planlama", desc: "Denemelerin, ilerlemen veya ihtiyaçların değiştiğinde çalışma rotan da yeniden düzenlenir.", color: "var(--color-brand-on-dark)" },
             ].map((b, i) => (
               <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.1 }}
-                whileHover={{ y: -4, borderColor: "rgba(216,255,79,0.4)" }}
+                whileHover={{ y: -4, borderColor: "rgba(14,124,136,0.4)" }}
                 className="rounded-2xl p-6 border relative" style={{ background: "rgba(255,255,255,0.07)", borderColor: "rgba(255,255,255,0.14)" }}>
-                <div className="font-fredoka font-bold mb-3" style={{ fontSize: 44, color: `${b.color}30`, lineHeight: 1 }}>{b.num}</div>
+                <div className="font-fredoka font-bold mb-3" style={{ fontSize: 44, color: "rgba(255,255,255,0.14)", lineHeight: 1 }}>{b.num}</div>
                 <h3 className="font-fredoka font-bold text-white text-base mb-2">{b.title}</h3>
                 <p className="font-nunito text-white/55 text-sm leading-relaxed">{b.desc}</p>
                 <div className="absolute top-5 right-5 w-2.5 h-2.5 rounded-full" style={{ background: b.color }} />
@@ -397,7 +396,7 @@ export default function YksYolculuguPage() {
           <motion.div {...fadeUp} className="text-center">
             <p className="font-fredoka font-bold leading-snug" style={{ fontSize: "clamp(20px,3vw,32px)" }}>
               <span className="text-white/40">Sabit bir program değil.</span>{" "}
-              <span style={{ color: "#D8FF4F" }}>Sen ilerledikçe gelişen bir rota.</span>
+              <span style={{ color: "var(--color-brand-on-dark)" }}>Sen ilerledikçe gelişen bir rota.</span>
             </p>
           </motion.div>
         </div>
@@ -414,16 +413,16 @@ export default function YksYolculuguPage() {
           </motion.div>
 
           <div className="relative">
-            <div className="absolute top-0 bottom-0 w-[2px] max-[560px]:left-5" style={{ left: 19, background: "linear-gradient(to bottom, #7340C8, #D8FF4F, #FF6B35, #1C1B8A, #7340C8)", opacity: 0.25 }} />
+            <div className="absolute top-0 bottom-0 w-[2px] max-[560px]:left-5" style={{ left: 19, background: "linear-gradient(to bottom, var(--color-dark), var(--color-brand), var(--color-brand-hover), var(--color-dark), var(--color-brand))", opacity: 0.25 }} />
             {[
-              { day: "Pazartesi", desc: "Haftalık rotanı gör.", color: "#7340C8" },
-              { day: "Hafta Boyunca", desc: "Çalışmalarını uygula ve takip et.", color: "#D8FF4F" },
-              { day: "Deneme Sonrası", desc: "Sonuçlarını analiz et.", color: "#FF6B35" },
-              { day: "Aksayan Noktada", desc: "Koçundan geri bildirim al.", color: "#1C1B8A" },
-              { day: "Yeni Hafta", desc: "Sonuçlarına göre rotanı güncelle.", color: "#7340C8" },
+              { day: "Pazartesi", desc: "Haftalık rotanı gör.", color: "var(--color-dark)" },
+              { day: "Hafta Boyunca", desc: "Çalışmalarını uygula ve takip et.", color: "var(--color-brand)" },
+              { day: "Deneme Sonrası", desc: "Sonuçlarını analiz et.", color: "var(--color-brand-hover)" },
+              { day: "Aksayan Noktada", desc: "Koçundan geri bildirim al.", color: "var(--color-dark)" },
+              { day: "Yeni Hafta", desc: "Sonuçlarına göre rotanı güncelle.", color: "var(--color-brand)" },
             ].map((s, i) => (
               <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.08 }} className="relative flex items-start gap-5 pb-8 last:pb-0">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 font-fredoka font-bold text-sm relative z-10" style={{ background: s.color, color: s.color === "#D8FF4F" ? "#1C1B8A" : "#fff" }}>
+                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 font-fredoka font-bold text-sm relative z-10" style={{ background: s.color, color: "#fff" }}>
                   {i + 1}
                 </div>
                 <div className="pt-2">
@@ -437,7 +436,7 @@ export default function YksYolculuguPage() {
       </section>
 
       {/* ── ÖĞRENCİ PANELİ ── */}
-      <section className="py-20 px-5" style={{ background: "#f4f2fa" }}>
+      <section className="py-20 px-5" style={{ background: "var(--color-brand-light)" }}>
         <div className="max-w-5xl mx-auto grid grid-cols-2 gap-14 items-center max-[900px]:grid-cols-1 max-[900px]:gap-10">
           <motion.div {...fadeUp}>
             <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>ÖĞRENCİ PANELİ</div>
@@ -447,8 +446,8 @@ export default function YksYolculuguPage() {
             <div className="flex flex-col gap-3 mb-6">
               {["Bugün ne çalışacağın", "Bu hafta ne kadar ilerlediğin", "Deneme ve konu gelişimin"].map((c, i) => (
                 <div key={i} className="flex items-center gap-2.5">
-                  <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#D8FF4F" }}>
-                    <svg width="10" height="10" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" /></svg>
+                  <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "var(--color-brand)" }}>
+                    <svg width="10" height="10" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" /></svg>
                   </span>
                   <span className="font-nunito font-bold text-sm text-[#334155]">{c}</span>
                 </div>
@@ -460,17 +459,17 @@ export default function YksYolculuguPage() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, scale: 0.94 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-            <div className="rounded-[24px] p-5 max-w-[380px] mx-auto" style={{ background: "#1C1B8A" }}>
+            <div className="rounded-[24px] p-5 max-w-[380px] mx-auto" style={{ background: "var(--color-dark)" }}>
               <div className="bg-white rounded-[18px] p-5">
-                <p className="font-fredoka font-bold text-[10px] uppercase mb-3" style={{ color: "#FF6B35", letterSpacing: 2 }}>Bugünkü Rotam</p>
+                <p className="font-fredoka font-bold text-[10px] uppercase mb-3" style={{ color: "var(--color-brand)", letterSpacing: 2 }}>Bugünkü Rotam</p>
                 {[
                   { text: "Matematik — Fonksiyonlar", done: true },
                   { text: "Türkçe — Paragraf", done: true },
                   { text: "Fizik — Hareket", done: false },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-2.5 mb-2.5">
-                    <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: item.done ? "#D8FF4F" : "#f1f5f9" }}>
-                      {item.done && <svg width="9" height="9" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2.4" strokeLinecap="round" /></svg>}
+                    <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: item.done ? "var(--color-brand)" : "#f1f5f9" }}>
+                      {item.done && <svg width="9" height="9" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#FFFFFF" strokeWidth="2.4" strokeLinecap="round" /></svg>}
                     </div>
                     <span className="font-nunito font-bold text-xs" style={{ color: item.done ? "#0f172a" : "#94a3b8" }}>{item.text}</span>
                   </div>
@@ -480,7 +479,7 @@ export default function YksYolculuguPage() {
                   <span className="font-fredoka font-bold text-sm text-page-navy">8/12 görev</span>
                 </div>
                 <div className="h-1.5 rounded-full bg-[#f1f5f9] overflow-hidden mt-1.5">
-                  <div className="h-full rounded-full" style={{ width: "67%", background: "linear-gradient(90deg, #1C1B8A, #FF6B35)" }} />
+                  <div className="h-full rounded-full" style={{ width: "67%", background: "linear-gradient(90deg, var(--color-dark), var(--color-brand))" }} />
                 </div>
               </div>
             </div>
@@ -497,7 +496,7 @@ export default function YksYolculuguPage() {
               <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>SOSYAL KANIT</div>
               <h2 className="font-fredoka font-bold text-page-navy m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,40px)" }}>
                 {socialProof.title || "Sadece söz değil,"}{" "}
-                <span style={{ color: "#FF6B35" }}>{socialProof.titleAccent || "öğrenciler konuşuyor"}</span>
+                <span style={{ color: "var(--color-brand)" }}>{socialProof.titleAccent || "öğrenciler konuşuyor"}</span>
               </h2>
             </motion.div>
 
@@ -506,7 +505,7 @@ export default function YksYolculuguPage() {
                 {socialProof.stats.map((s, i) => (
                   <motion.div key={i} {...fadeUp} transition={{ delay: i * 0.1 }}
                     whileHover={{ scale: 1.03 }}
-                    className="rounded-2xl p-6 border border-[#e2e8f0] text-center shadow-sm" style={{ background: i % 2 === 0 ? "#f4f2fa" : "#fff0ea" }}>
+                    className="rounded-2xl p-6 border border-[#e2e8f0] text-center shadow-sm" style={{ background: "var(--color-brand-light)" }}>
                     <div className="font-fredoka font-bold text-page-navy mb-1" style={{ fontSize: "clamp(28px,3vw,40px)" }}>{s.val}</div>
                     <div className="font-nunito font-bold text-sm text-[#64748b]">{s.label}</div>
                   </motion.div>
@@ -514,8 +513,8 @@ export default function YksYolculuguPage() {
                 {remaining !== null && remaining > 0 && (
                   <motion.div {...fadeUp} transition={{ delay: (socialProof.stats?.length || 0) * 0.1 }}
                     whileHover={{ scale: 1.03 }}
-                    className="rounded-2xl p-6 border text-center shadow-sm" style={{ background: "#0D0A2E", borderColor: "#0D0A2E" }}>
-                    <div className="font-fredoka font-bold mb-1" style={{ fontSize: "clamp(28px,3vw,40px)", color: "#D8FF4F" }}>{remaining}</div>
+                    className="rounded-2xl p-6 border text-center shadow-sm" style={{ background: "var(--color-dark)", borderColor: "var(--color-dark)" }}>
+                    <div className="font-fredoka font-bold mb-1" style={{ fontSize: "clamp(28px,3vw,40px)", color: "var(--color-brand-on-dark)" }}>{remaining}</div>
                     <div className="font-nunito font-bold text-sm text-white/50">yer kaldı</div>
                   </motion.div>
                 )}
@@ -525,12 +524,14 @@ export default function YksYolculuguPage() {
             {socialProof.testimonials?.length > 0 && (
               <div className="grid grid-cols-3 gap-5 max-[900px]:grid-cols-1">
                 {socialProof.testimonials.map((t, i) => {
-                  const catColors = { "Düzen Kurma": "#7340C8", "İlerleme": "#c2410c", "Bağımsızlaşma": "#1C1B8A" };
-                  const color = catColors[t.category] || "#1C1B8A";
+                  // hex-alfa son eki (${color}18 vb.) CSS var() ile çalışmıyor, o yüzden bu
+                  // üçü token setinin gerçek hex karşılıkları (dark/brand/brand-hover).
+                  const catColors = { "Düzen Kurma": "#17252D", "İlerleme": "#0E7C88", "Bağımsızlaşma": "#0B6976" };
+                  const color = catColors[t.category] || "#0E7C88";
                   return (
                     <motion.div key={i} {...fadeUp} transition={{ delay: i * 0.1 }}
                       whileHover={{ y: -4 }}
-                      className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-[0_8px_24px_rgba(28,27,138,0.09)] transition-shadow duration-200 flex flex-col gap-3">
+                      className="bg-white rounded-2xl p-6 border border-[#e2e8f0] shadow-sm hover:shadow-[0_8px_24px_rgba(23,37,45,0.1)] transition-shadow duration-200 flex flex-col gap-3">
                       {t.category && (
                         <span className="inline-flex self-start font-fredoka font-bold text-[10px] uppercase px-2.5 py-1 rounded-full" style={{ background: `${color}18`, color, letterSpacing: 1 }}>
                           {t.category}
@@ -542,10 +543,10 @@ export default function YksYolculuguPage() {
                           {t.process && <p className="mt-0.5"><span className="font-bold text-[#94a3b8]">Süreç:</span> <span className="text-[#64748b]">{t.process}</span></p>}
                         </div>
                       )}
-                      <div className="flex gap-0.5">{Array(5).fill(0).map((_, j) => <span key={j} style={{ color: "#FF6B35" }}>★</span>)}</div>
+                      <div className="flex gap-0.5">{Array(5).fill(0).map((_, j) => <span key={j} style={{ color: "var(--color-brand)" }}>★</span>)}</div>
                       <p className="font-nunito text-[#374151] text-sm leading-relaxed italic flex-grow">"{t.quote}"</p>
                       <div className="flex items-center gap-3 pt-2 border-t border-[#f1f5f9]">
-                        <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-fredoka font-bold text-sm flex-shrink-0" style={{ background: t.isParent ? "#1C1B8A" : "#FF6B35" }}>
+                        <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-fredoka font-bold text-sm flex-shrink-0" style={{ background: t.isParent ? "var(--color-dark)" : "var(--color-brand)" }}>
                           {t.author?.[0]?.toUpperCase() || (t.isParent ? "V" : "Ö")}
                         </div>
                         <div>
@@ -585,8 +586,8 @@ export default function YksYolculuguPage() {
             ].map((f, i) => (
               <motion.div key={i} {...fadeUp} transition={{ duration: 0.45, delay: Math.min(i * 0.06, 0.3) }}
                 className="flex items-start gap-3.5 bg-[#f8fafc] rounded-2xl p-5">
-                <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "#D8FF4F" }}>
-                  <svg width="12" height="12" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2.2" strokeLinecap="round" /></svg>
+                <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "var(--color-brand)" }}>
+                  <svg width="12" height="12" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" /></svg>
                 </span>
                 <div>
                   <h3 className="font-fredoka font-bold text-page-navy text-sm mb-1">{f.title}</h3>
@@ -599,7 +600,7 @@ export default function YksYolculuguPage() {
       </section>
 
       {/* ── KİMLER İÇİN ── */}
-      <section className="py-20 px-5" style={{ background: "#f4f2fa" }}>
+      <section className="py-20 px-5" style={{ background: "var(--color-brand-light)" }}>
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-12">
             <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>KİMLER İÇİN</div>
@@ -609,7 +610,7 @@ export default function YksYolculuguPage() {
           </motion.div>
 
           <div className="grid grid-cols-2 gap-5 max-[768px]:grid-cols-1">
-            <motion.div {...fadeUp} className="bg-white rounded-2xl p-7 border-2" style={{ borderColor: "#D8FF4F" }}>
+            <motion.div {...fadeUp} className="bg-white rounded-2xl p-7 border-2" style={{ borderColor: "var(--color-brand)" }}>
               <h3 className="font-fredoka font-bold text-page-navy text-base mb-4">Bu koçluk sana uygunsa...</h3>
               <ul className="flex flex-col gap-3">
                 {[
@@ -653,29 +654,29 @@ export default function YksYolculuguPage() {
 
       {/* ── NASIL BAŞLARSIN (4 adım) ── */}
       {howItWorks.steps?.length > 0 && (
-        <section className="py-20 px-5 text-white relative overflow-hidden" style={{ background: "#1C1B8A" }}>
-          <div className="absolute rounded-full pointer-events-none" style={{ width: 320, height: 320, background: "#0D0A2E", filter: "blur(90px)", opacity: 0.5, top: -60, right: -60 }} />
-          <div className="absolute rounded-full pointer-events-none" style={{ width: 240, height: 240, background: "#7340C8", filter: "blur(80px)", opacity: 0.3, bottom: -40, left: -40 }} />
+        <section className="py-20 px-5 text-white relative overflow-hidden" style={{ background: "var(--color-dark)" }}>
+          <div className="absolute rounded-full pointer-events-none" style={{ width: 320, height: 320, background: "var(--color-brand)", filter: "blur(90px)", opacity: 0.3, top: -60, right: -60 }} />
+          <div className="absolute rounded-full pointer-events-none" style={{ width: 240, height: 240, background: "var(--color-brand-hover)", filter: "blur(80px)", opacity: 0.28, bottom: -40, left: -40 }} />
           <div className="max-w-5xl mx-auto relative">
             <motion.div {...fadeUp} className="text-center mb-12">
               <div className="font-fredoka font-bold text-lime text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>NASIL BAŞLARSIN</div>
               <h2 className="font-fredoka font-bold text-white m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,40px)" }}>
-                Koçluk Sürecine Başlamak <span style={{ color: "#D8FF4F" }}>Çok Kolay.</span>
+                Koçluk Sürecine Başlamak <span style={{ color: "var(--color-brand-on-dark)" }}>Çok Kolay.</span>
               </h2>
             </motion.div>
             <div className="grid grid-cols-4 gap-5 mb-4 max-[900px]:grid-cols-2 max-[560px]:grid-cols-1">
               {howItWorks.steps.map((s, i) => (
                 <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.1 }}
-                  whileHover={{ y: -4, borderColor: "rgba(216,255,79,0.4)" }}
+                  whileHover={{ y: -4, borderColor: "rgba(14,124,136,0.4)" }}
                   className="rounded-2xl p-6 border relative" style={{ background: "rgba(255,255,255,0.07)", borderColor: "rgba(255,255,255,0.14)" }}>
-                  <div className="font-fredoka font-bold mb-3" style={{ fontSize: 40, color: "rgba(216,255,79,0.18)", lineHeight: 1 }}>{String(i + 1).padStart(2, "0")}</div>
+                  <div className="font-fredoka font-bold mb-3" style={{ fontSize: 40, color: "rgba(255,255,255,0.14)", lineHeight: 1 }}>{String(i + 1).padStart(2, "0")}</div>
                   <h3 className="font-nunito font-bold text-white text-sm mb-2">{s.title}</h3>
                   <p className="font-nunito text-white/55 text-xs leading-relaxed">{s.desc}</p>
                 </motion.div>
               ))}
             </div>
             <div className="text-center mt-8">
-              <button onClick={scrollToOffer} className="font-fredoka font-bold text-base px-10 py-4 rounded-full transition-all hover:scale-105" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 8px 24px rgba(216,255,79,0.3)" }}>
+              <button onClick={scrollToOffer} className="font-fredoka font-bold text-base px-10 py-4 rounded-full transition-all hover:scale-105" style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 8px 24px rgba(14,124,136,0.35)" }}>
                 {howItWorks.comparisonCta || "Hemen Kayıt Ol →"}
               </button>
             </div>
@@ -684,7 +685,7 @@ export default function YksYolculuguPage() {
       )}
 
       {/* ── İTİRAZLAR ── */}
-      <section className="py-20 px-5" style={{ background: "#f4f2fa" }}>
+      <section className="py-20 px-5" style={{ background: "var(--color-brand-light)" }}>
         <div className="max-w-2xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-10">
             <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>MERAK ETTİKLERİN</div>
@@ -709,10 +710,9 @@ export default function YksYolculuguPage() {
       </section>
 
       {/* ── TEKLİF + FORM ── */}
-      <section id="yks-teklif" ref={offerRef} className="relative py-20 px-5 text-white overflow-hidden" style={{ background: "#0D0A2E" }}>
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 380, height: 380, background: "#1C1B8A", filter: "blur(110px)", opacity: 0.35, top: -60, right: -60, animation: "yksOrb1 8s ease-in-out infinite" }} />
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 280, height: 280, background: "#7340C8", filter: "blur(80px)", opacity: 0.2, bottom: -40, left: -40, animation: "yksOrb2 10s ease-in-out infinite" }} />
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 180, height: 180, background: "#FF6B35", filter: "blur(70px)", opacity: 0.1, top: "35%", left: "22%" }} />
+      <section id="yks-teklif" ref={offerRef} className="relative py-20 px-5 text-white overflow-hidden" style={{ background: "var(--color-dark)" }}>
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 380, height: 380, background: "var(--color-brand)", filter: "blur(110px)", opacity: 0.3, top: -60, right: -60, animation: "yksOrb1 8s ease-in-out infinite" }} />
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 280, height: 280, background: "var(--color-brand-hover)", filter: "blur(80px)", opacity: 0.2, bottom: -40, left: -40, animation: "yksOrb2 10s ease-in-out infinite" }} />
 
         <div className="max-w-5xl mx-auto relative">
           <motion.div {...fadeUp} className="text-center mb-8">
@@ -738,7 +738,7 @@ export default function YksYolculuguPage() {
                       <div key={i} className="relative bg-white rounded-3xl p-7 flex flex-col shadow-2xl">
                         {plan.badge && (
                           <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                            <span className="font-fredoka font-bold text-xs px-5 py-1.5 rounded-full shadow-lg whitespace-nowrap" style={{ background: "#D8FF4F", color: "#1C1B8A" }}>{plan.badge}</span>
+                            <span className="font-fredoka font-bold text-xs px-5 py-1.5 rounded-full shadow-lg whitespace-nowrap" style={{ background: "var(--color-brand)", color: "#FFFFFF" }}>{plan.badge}</span>
                           </div>
                         )}
                         <div className="pt-2 mb-5">
@@ -755,13 +755,13 @@ export default function YksYolculuguPage() {
                           <ul className="space-y-1.5 mb-6 flex-grow">
                             {planIncludes.map((item, j) => (
                               <li key={j} className="flex items-center gap-2 font-nunito text-xs text-[#374151]">
-                                <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0" style={{ background: "#D8FF4F", color: "#1C1B8A" }}>✓</span>
+                                <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0" style={{ background: "var(--color-brand)", color: "#FFFFFF" }}>✓</span>
                                 {item}
                               </li>
                             ))}
                           </ul>
                         )}
-                        <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.96 }} onClick={() => addToCartAndPay(plan, i)} className="w-full py-3.5 rounded-full font-fredoka font-bold text-sm" style={{ background: "#FF6B35", color: "white", boxShadow: "0 6px 20px rgba(255,107,53,0.3)" }}>
+                        <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.96 }} onClick={() => addToCartAndPay(plan, i)} className="w-full py-3.5 rounded-full font-fredoka font-bold text-sm" style={{ background: "var(--color-brand)", color: "white", boxShadow: "0 6px 20px rgba(14,124,136,0.35)" }}>
                           {plan.ctaText || "⚡ Yerimi Ayırt"}
                         </motion.button>
                       </div>
@@ -780,13 +780,13 @@ export default function YksYolculuguPage() {
                             {plan.priceText && <span className="font-nunito text-white/40 text-xs">{plan.priceText}</span>}
                           </div>
                           {plan.desc && <p className="font-nunito text-white/40 text-xs mt-1">{plan.desc}</p>}
-                          <p className="font-nunito font-bold text-xs mt-1" style={{ color: "#D8FF4F" }}>✓ 7 gün içinde memnun kalmazsan iade alırsın</p>
+                          <p className="font-nunito font-bold text-xs mt-1" style={{ color: "var(--color-brand-on-dark)" }}>✓ 7 gün içinde memnun kalmazsan iade alırsın</p>
                         </div>
                         {planIncludes.length > 0 && (
                           <ul className="space-y-1.5 mb-6 flex-grow">
                             {planIncludes.map((item, j) => (
                               <li key={j} className="flex items-center gap-2 font-nunito text-xs text-white/55">
-                                <span className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center font-black text-[10px] flex-shrink-0" style={{ color: "#D8FF4F" }}>✓</span>
+                                <span className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center font-black text-[10px] flex-shrink-0" style={{ color: "var(--color-brand-on-dark)" }}>✓</span>
                                 {item}
                               </li>
                             ))}
@@ -820,7 +820,7 @@ export default function YksYolculuguPage() {
                         <textarea name="message" value={form.message} onChange={handleFormChange} className={`${inp} resize-none h-16`} placeholder="Merak ettiklerinizi yazabilirsiniz..." />
                       </div>
                       {formError && <p className="font-nunito text-red-500 text-xs">{formError}</p>}
-                      <button type="submit" disabled={submitting} className="w-full py-3.5 rounded-full font-fredoka font-bold text-sm transition-all disabled:opacity-60 hover:-translate-y-0.5" style={{ background: "#1C1B8A", color: "#D8FF4F", boxShadow: "0 6px 20px rgba(28,27,138,0.25)" }}>
+                      <button type="submit" disabled={submitting} className="w-full py-3.5 rounded-full font-fredoka font-bold text-sm transition-all disabled:opacity-60 hover:-translate-y-0.5" style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 6px 20px rgba(14,124,136,0.3)" }}>
                         {submitting ? "Gönderiliyor..." : (formContent.submitText || "Gönder, Sizi Arayalım →")}
                       </button>
                     </form>
@@ -833,22 +833,22 @@ export default function YksYolculuguPage() {
             <div className="grid grid-cols-2 gap-8 max-[768px]:grid-cols-1">
               <motion.div {...fadeUp} className="rounded-3xl p-8 flex flex-col border" style={{ background: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.11)", backdropFilter: "blur(8px)" }}>
                 <div className="mb-6">
-                  <div className="font-fredoka font-bold" style={{ fontSize: "clamp(34px,4vw,52px)", color: "#D8FF4F" }}>₺{price}</div>
+                  <div className="font-fredoka font-bold" style={{ fontSize: "clamp(34px,4vw,52px)", color: "var(--color-brand-on-dark)" }}>₺{price}</div>
                   <p className="font-nunito text-white/40 text-xs mt-1">{offer.priceLabel || "4 Haftalık Program"}</p>
-                  <p className="font-nunito font-bold text-sm mt-1" style={{ color: "#D8FF4F" }}>✓ 7 gün içinde memnun kalmazsan iade alırsın</p>
+                  <p className="font-nunito font-bold text-sm mt-1" style={{ color: "var(--color-brand-on-dark)" }}>✓ 7 gün içinde memnun kalmazsan iade alırsın</p>
                 </div>
                 {offer.includes?.length > 0 && (
                   <ul className="space-y-2 mb-8 flex-grow">
                     {offer.includes.map((item, i) => (
                       <li key={i} className="flex items-center gap-2 font-nunito text-sm text-white/65">
-                        <span className="w-5 h-5 rounded-full flex items-center justify-center font-black text-xs flex-shrink-0" style={{ background: "rgba(216,255,79,0.15)", color: "#D8FF4F" }}>✓</span>
+                        <span className="w-5 h-5 rounded-full flex items-center justify-center font-black text-xs flex-shrink-0" style={{ background: "rgba(14,124,136,0.18)", color: "var(--color-brand-on-dark)" }}>✓</span>
                         {item}
                       </li>
                     ))}
                   </ul>
                 )}
                 <div className="flex flex-col gap-3">
-                  <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.96 }} onClick={() => navigate(offer.buyLink || "/paket-detay")} className="w-full py-4 rounded-full font-fredoka font-bold text-base" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 6px 20px rgba(216,255,79,0.3)" }}>
+                  <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.96 }} onClick={() => navigate(offer.buyLink || "/paket-detay")} className="w-full py-4 rounded-full font-fredoka font-bold text-base" style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 6px 20px rgba(14,124,136,0.35)" }}>
                     {offer.ctaPrimary || "⚡ Yerimi Ayırt"}
                   </motion.button>
                   <button onClick={scrollToForm} className="w-full py-3.5 rounded-full border-2 font-fredoka font-bold text-sm transition-all hover:bg-white/10" style={{ borderColor: "rgba(255,255,255,0.22)", color: "white" }}>
@@ -887,7 +887,7 @@ export default function YksYolculuguPage() {
                         <textarea name="message" value={form.message} onChange={handleFormChange} className={`${inp} resize-none h-20`} placeholder="Merak ettiklerinizi yazabilirsiniz..." />
                       </div>
                       {formError && <p className="font-nunito text-red-500 text-xs">{formError}</p>}
-                      <button type="submit" disabled={submitting} className="w-full py-4 rounded-full font-fredoka font-bold text-base transition-all disabled:opacity-60 hover:-translate-y-0.5" style={{ background: "#1C1B8A", color: "#D8FF4F", boxShadow: "0 6px 20px rgba(28,27,138,0.25)" }}>
+                      <button type="submit" disabled={submitting} className="w-full py-4 rounded-full font-fredoka font-bold text-base transition-all disabled:opacity-60 hover:-translate-y-0.5" style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 6px 20px rgba(14,124,136,0.3)" }}>
                         {submitting ? "Gönderiliyor..." : (formContent.submitText || "Gönder, Sizi Arayalım →")}
                       </button>
                     </form>
@@ -922,13 +922,13 @@ export default function YksYolculuguPage() {
 
       {/* Sticky CTA */}
       {showSticky && !stickyHidden && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 border-t" style={{ background: "rgba(13,10,46,0.95)", backdropFilter: "blur(16px)", borderColor: "rgba(255,255,255,0.08)" }}>
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 border-t" style={{ background: "rgba(23,37,45,0.95)", backdropFilter: "blur(16px)", borderColor: "rgba(255,255,255,0.08)" }}>
           <div className="max-w-lg mx-auto flex items-center justify-between gap-4">
             <div className="font-nunito font-bold text-sm text-white flex items-center gap-2">
               {remaining !== null && remaining > 0 && <span style={{ color: "#ef4444" }}>🔥 {remaining} yer kaldı ·</span>}
               <span className="text-white/45">₺{price} / 4 haftalık program</span>
             </div>
-            <button onClick={scrollToOffer} className="font-fredoka font-bold text-sm px-6 py-2.5 rounded-full transition-all hover:scale-105 whitespace-nowrap" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 4px 12px rgba(216,255,79,0.3)" }}>
+            <button onClick={scrollToOffer} className="font-fredoka font-bold text-sm px-6 py-2.5 rounded-full transition-all hover:scale-105 whitespace-nowrap" style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 4px 12px rgba(14,124,136,0.35)" }}>
               {hero.navbarCta || "⚡ Yerimi Ayırt →"}
             </button>
           </div>
