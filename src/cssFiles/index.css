@@ -2,9 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ══════════════════════════════════════════════
+   SÖZDERECE — merkezi marka renk token'ları (2026 rebrand)
+   Tek kaynak burası. tailwind.config.js'deki isimli renkler
+   (page-navy, page-dark, lime, deep-purple, accent-orange) bu
+   değişkenlere yönlendiriliyor — component'ler className'lerini
+   değiştirmeden yeni renklere geçiyor. Inline style kullanan yerler
+   de doğrudan var(--color-brand) gibi bu değişkenleri referans alır.
+   Marka turkuazı #19A9B7'ye yakın seçildi ama beyaz üzerinde 4.5:1
+   WCAG AA kontrastı sağlaması için #0E7C88'e koyulaştırıldı (ham
+   #19A9B7 beyaz yazıyla sadece 2.84:1 veriyor, yetersiz). */
+:root {
+  --color-brand: #0E7C88;
+  --color-brand-hover: #0B6976;
+  --color-brand-light: #E4F7F8;
+  /* Koyu lacivert zemin üzerindeki turkuaz METİN/kenarlık/hover için — bu,
+     kullanıcının verdiği orijinal referans ton (#19A9B7). Beyaz üzerinde
+     yalnızca 2.84:1 verdiği için CTA arka planında kullanılamıyor (bkz.
+     --color-brand), ama koyu lacivert (#17252D) zemin üzerinde 5.53:1 —
+     WCAG AA'yı rahatça geçiyor. İki ton, tek turkuaz kimliğin iki doğru
+     kullanım alanı: brand = açık zeminde aksiyon, brand-on-dark = koyu
+     zeminde metin/vurgu. */
+  --color-brand-on-dark: #19A9B7;
+
+  --color-dark: #17252D;
+  --color-background: #F7F7F2;
+  --color-surface: #FFFFFF;
+
+  --color-text-secondary: #647278;
+  --color-border: #DDE5E6;
+
+  --color-success: #059669;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
+}
+
 @layer base {
   body {
-    @apply font-poppins bg-gray-50;
+    @apply font-poppins;
+    background-color: var(--color-background);
   }
 }
 

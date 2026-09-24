@@ -57,7 +57,7 @@ export default function DiscountPopup() {
         </button>
 
         {/* Üst gradient başlık */}
-        <div className="bg-gradient-to-br from-brand-navy via-[#2563eb] to-[#7c3aed] px-6 pt-8 pb-6 text-white text-center">
+        <div className="bg-gradient-to-br from-brand-navy to-brand px-6 pt-8 pb-6 text-white text-center">
           <div className="text-4xl mb-2">🎁</div>
           <h3 className="text-lg font-black leading-tight">
             {settings.title || "İlk Siparişe Özel Fırsat!"}
@@ -88,7 +88,7 @@ export default function DiscountPopup() {
                 className={`text-xs font-bold px-3 py-1 rounded-xl transition-all flex-shrink-0 ${
                   copied
                     ? "bg-[#10b981] text-white"
-                    : "bg-brand-navy text-white group-hover:bg-[#1d4ed8]"
+                    : "bg-brand-navy text-white group-hover:bg-brand"
                 }`}
               >
                 {copied ? "✓ Kopyalandı" : "Kopyala"}
@@ -106,7 +106,7 @@ export default function DiscountPopup() {
           {/* CTA */}
           <button
             onClick={handleClose}
-            className="w-full py-3 bg-gradient-to-r from-brand-navy to-[#2563eb] text-white font-bold rounded-2xl hover:opacity-90 transition-all text-sm shadow-[0_4px_16px_rgba(16,4,129,0.3)]"
+            className="w-full py-3 bg-gradient-to-r from-brand-navy to-brand text-white font-bold rounded-2xl hover:opacity-90 transition-all text-sm shadow-[0_4px_16px_rgba(14,124,136,0.3)]"
           >
             Hemen Kullan 
           </button>

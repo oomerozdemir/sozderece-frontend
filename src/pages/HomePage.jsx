@@ -42,20 +42,22 @@ function ScrollCta({ to, className = "", style, children }) {
 // ══════════════════════════════════════════════
 // Her kartın shader rengi, kartın orijinal accent tonuyla aynı aile
 // (lime/turuncu/mor) — WebGL sırt planı marka paletinden kopmuyor.
-const shaderLime = {
-  proportion: 0.32, softness: 0.85, distortion: 0.16, swirl: 0.65, swirlIterations: 9,
-  shape: "dots", shapeScale: 0.1,
-  colors: ["hsl(70,90%,32%)", "hsl(80,100%,60%)", "hsl(60,85%,38%)", "hsl(85,100%,72%)"],
-};
-const shaderOrange = {
-  proportion: 0.38, softness: 1.0, distortion: 0.19, swirl: 0.8, swirlIterations: 11,
-  shape: "checks", shapeScale: 0.09,
-  colors: ["hsl(14,100%,38%)", "hsl(30,100%,58%)", "hsl(8,90%,42%)", "hsl(36,100%,70%)"],
-};
-const shaderPurple = {
+// 2026 rebrand: üç shader de aynı turkuaz/lacivert aileden — sadece
+// açıklık/doygunluk farklı, marka paletinden kopmuyorlar.
+const shaderDark = {
   proportion: 0.36, softness: 0.95, distortion: 0.17, swirl: 0.75, swirlIterations: 10,
   shape: "dots", shapeScale: 0.11,
-  colors: ["hsl(255,90%,32%)", "hsl(272,100%,64%)", "hsl(246,85%,38%)", "hsl(266,100%,74%)"],
+  colors: ["hsl(202,45%,12%)", "hsl(200,40%,26%)", "hsl(205,50%,17%)", "hsl(198,35%,33%)"],
+};
+const shaderBrand = {
+  proportion: 0.32, softness: 0.85, distortion: 0.16, swirl: 0.65, swirlIterations: 9,
+  shape: "dots", shapeScale: 0.1,
+  colors: ["hsl(186,80%,22%)", "hsl(188,75%,42%)", "hsl(184,85%,27%)", "hsl(190,70%,50%)"],
+};
+const shaderBrandHover = {
+  proportion: 0.38, softness: 1.0, distortion: 0.19, swirl: 0.8, swirlIterations: 11,
+  shape: "checks", shapeScale: 0.09,
+  colors: ["hsl(187,80%,18%)", "hsl(185,70%,38%)", "hsl(189,85%,23%)", "hsl(183,60%,46%)"],
 };
 
 // Sözderece Rota Sistemi — ana sayfada yalnızca 3 temel adım (mor=Kişisel
@@ -67,24 +69,24 @@ const routeSteps = [
     icon: <FaRoute />,
     title: "Kişisel Rota",
     desc: "Nereden başlayacağın ve neye öncelik vereceğin netleşir.",
-    accent: "#a78bfa",
-    shader: shaderPurple,
+    accent: "var(--color-dark)",
+    shader: shaderDark,
   },
   {
     num: "02",
     icon: <FaTasks />,
     title: "İlerleme Takibi",
     desc: "Programın uygulanması ve gelişimin düzenli takip edilir.",
-    accent: "#D8FF4F",
-    shader: shaderLime,
+    accent: "var(--color-brand)",
+    shader: shaderBrand,
   },
   {
     num: "03",
     icon: <FaSyncAlt />,
     title: "Dinamik Planlama",
     desc: "Sonuçlarına göre çalışma rotan güncellenir.",
-    accent: "#FF6B35",
-    shader: shaderOrange,
+    accent: "var(--color-brand-hover)",
+    shader: shaderBrandHover,
   },
 ];
 
@@ -103,15 +105,15 @@ const steps = [
     title: "Paketini Seç",
     desc: "YKS veya LGS için sana uygun paketi incele.",
     icon: <FaBoxOpen />,
-    circleColor: "#D8FF4F",
-    circleText: "#0D0A2E",
+    circleColor: "var(--color-brand)",
+    circleText: "#ffffff",
   },
   {
     num: "02",
     title: "Seni Tanıyalım",
     desc: "Kayıttan sonra kısa başlangıç formunu doldur.",
     icon: <FaClipboardList />,
-    circleColor: "#7340C8",
+    circleColor: "var(--color-dark)",
     circleText: "#ffffff",
   },
   {
@@ -119,7 +121,7 @@ const steps = [
     title: "Koçunla Tanış",
     desc: "Koçun seninle WhatsApp üzerinden iletişime geçsin.",
     icon: <FaWhatsapp />,
-    circleColor: "#FF6B35",
+    circleColor: "var(--color-brand)",
     circleText: "#ffffff",
   },
   {
@@ -127,8 +129,8 @@ const steps = [
     title: "İlk Rotan Hazırlansın",
     desc: "Kişisel çalışma programın hazırlanır ve koçluk sürecin başlar.",
     icon: <FaRoute />,
-    circleColor: "#1C1B8A",
-    circleText: "#D8FF4F",
+    circleColor: "var(--color-dark)",
+    circleText: "#ffffff",
   },
 ];
 
@@ -139,9 +141,9 @@ const testimonials = [
     name: "Şevval",
     role: "ÖĞRENCİ",
     badge: "+17 NET · 1. AY",
-    badgeColor: "#FF6B35",
+    badgeColor: "var(--color-brand)",
     avatar: "Ş",
-    avatarBg: "#1C1B8A",
+    avatarBg: "var(--color-brand)",
     year: "TYT-AYT 2024",
     before: "65 NET",
     after: "82 NET",
@@ -153,9 +155,9 @@ const testimonials = [
     name: "Serpil H.",
     role: "VELİ",
     badge: "LGS 2025",
-    badgeColor: "#7340C8",
+    badgeColor: "var(--color-dark)",
     avatar: "S",
-    avatarBg: "#7340C8",
+    avatarBg: "var(--color-dark)",
     year: "8. Sınıf Velisi",
     before: null,
     after: null,
@@ -167,9 +169,9 @@ const testimonials = [
     name: "Ege K.",
     role: "ÖĞRENCİ",
     badge: "+18 NET",
-    badgeColor: "#D8FF4F",
+    badgeColor: "var(--color-brand)",
     avatar: "E",
-    avatarBg: "#FF6B35",
+    avatarBg: "var(--color-brand)",
     year: "TYT 2025",
     before: "78 NET",
     after: "96 NET",
@@ -181,9 +183,9 @@ const testimonials = [
     name: "Nermin H.",
     role: "VELİ",
     badge: "LGS 2027",
-    badgeColor: "#7340C8",
+    badgeColor: "var(--color-dark)",
     avatar: "N",
-    avatarBg: "#7340C8",
+    avatarBg: "var(--color-dark)",
     year: "7. Sınıf Velisi",
     before: null,
     after: null,
@@ -194,9 +196,9 @@ const testimonials = [
     name: "Nisa",
     role: "ÖĞRENCİ",
     badge: "YKS 2027",
-    badgeColor: "#1C1B8A",
+    badgeColor: "var(--color-brand)",
     avatar: "N",
-    avatarBg: "#1C1B8A",
+    avatarBg: "var(--color-brand)",
     year: "YKS 2027",
     before: null,
     after: null,
@@ -208,9 +210,9 @@ const testimonials = [
     name: "Eylül",
     role: "ÖĞRENCİ",
     badge: "YKS 2027",
-    badgeColor: "#FF6B35",
+    badgeColor: "var(--color-dark)",
     avatar: "E",
-    avatarBg: "#FF6B35",
+    avatarBg: "var(--color-dark)",
     year: "YKS 2027",
     before: null,
     after: null,
@@ -222,9 +224,9 @@ const testimonials = [
     name: "Öykü",
     role: "ÖĞRENCİ",
     badge: "YKS 2027",
-    badgeColor: "#7340C8",
+    badgeColor: "var(--color-brand)",
     avatar: "Ö",
-    avatarBg: "#7340C8",
+    avatarBg: "var(--color-brand)",
     year: "YKS 2027",
     before: null,
     after: null,
@@ -305,7 +307,7 @@ function WhyDifferentSection() {
     <section className="relative overflow-hidden py-16 md:py-24 px-5 bg-white">
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(216,255,79,0.08) 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(14,124,136,0.08) 0%, transparent 70%)" }}
       />
 
       <div className="max-w-[1100px] mx-auto relative" style={{ zIndex: 1 }}>
@@ -322,7 +324,7 @@ function WhyDifferentSection() {
           >
             <span className="text-page-dark">Bir Program Verip</span>
             <br />
-            <span style={{ color: "transparent", WebkitTextStroke: "2.5px #1C1B8A" }}>Seni Yalnız Bırakmıyoruz.</span>
+            <span style={{ color: "transparent", WebkitTextStroke: "2.5px var(--color-brand)" }}>Seni Yalnız Bırakmıyoruz.</span>
           </h2>
           <p className="font-nunito text-[#64748b] text-base mt-5 max-w-[500px]">
             Çalışma rotanı oluşturuyor, ilerlemeni takip ediyor ve sonuçlarına göre planını sürekli güncelliyoruz.
@@ -363,17 +365,17 @@ function WhyDifferentSection() {
         </div>
 
         <p className="font-fredoka font-bold text-[13px] tracking-[0.06em] mt-6 text-center">
-          <span style={{ color: "#7340C8" }}>Kişisel Rota</span>{" "}
+          <span style={{ color: "var(--color-dark)" }}>Kişisel Rota</span>{" "}
           <span style={{ color: "#cbd5e1" }}>→</span>{" "}
-          <span style={{ color: "#3F6B0A" }}>İlerleme Takibi</span>{" "}
+          <span style={{ color: "var(--color-brand)" }}>İlerleme Takibi</span>{" "}
           <span style={{ color: "#cbd5e1" }}>→</span>{" "}
-          <span className="text-accent-orange">Dinamik Planlama</span>
+          <span style={{ color: "var(--color-brand-hover)" }}>Dinamik Planlama</span>
         </p>
 
         <motion.div {...fadeUp} className="grid grid-cols-3 gap-3 mt-8 max-[820px]:grid-cols-1">
           {supportItems.map((it) => (
-            <div key={it.title} className="flex items-start gap-3 rounded-2xl px-4 py-3.5" style={{ background: "#F4F2FA" }}>
-              <span className="text-lg mt-0.5" style={{ color: "#1C1B8A" }}>{it.icon}</span>
+            <div key={it.title} className="flex items-start gap-3 rounded-2xl px-4 py-3.5" style={{ background: "var(--color-brand-light)" }}>
+              <span className="text-lg mt-0.5" style={{ color: "var(--color-brand)" }}>{it.icon}</span>
               <div>
                 <div className="font-fredoka font-bold text-page-dark text-[15px] leading-tight">{it.title}</div>
                 <div className="font-nunito text-[#64748b] text-[13px] leading-snug mt-0.5">{it.desc}</div>
@@ -397,7 +399,7 @@ function HowItWorksSection() {
     >
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(216,255,79,0.07) 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(14,124,136,0.07) 0%, transparent 70%)" }}
       />
 
       <div className="max-w-[1100px] mx-auto relative" style={{ zIndex: 1 }}>
@@ -413,7 +415,7 @@ function HowItWorksSection() {
             style={{ fontSize: "clamp(36px, 4vw, 56px)", letterSpacing: -1 }}
           >
             <span className="text-page-dark">Koçluğa Nasıl </span>
-            <span style={{ color: "transparent", WebkitTextStroke: "2.5px #1C1B8A" }}>Başlarsın?</span>
+            <span style={{ color: "transparent", WebkitTextStroke: "2.5px var(--color-brand)" }}>Başlarsın?</span>
           </h2>
           <p className="font-nunito text-[#64748b] text-base mt-4 max-w-[460px] mx-auto">
             Satın aldıktan sonra seni ne beklediği net: dört adımda koçluk sürecin başlıyor.
@@ -426,7 +428,7 @@ function HowItWorksSection() {
             className="absolute max-[900px]:hidden"
             style={{
               top: 22, left: "12.5%", right: "12.5%", height: 2,
-              background: "linear-gradient(to right, #D8FF4F, #7340C8, #FF6B35, #1C1B8A)",
+              background: "linear-gradient(to right, var(--color-brand), var(--color-dark), var(--color-brand-hover), var(--color-dark))",
               opacity: 0.35, zIndex: 0,
             }}
           />
@@ -441,7 +443,7 @@ function HowItWorksSection() {
               className="relative"
               style={{ zIndex: 1 }}
             >
-              <div className="bg-white border border-gray-100 rounded-[24px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_32px_rgba(115,64,200,0.12)] transition-all h-full max-[580px]:flex max-[580px]:items-start max-[580px]:gap-4 max-[580px]:p-5">
+              <div className="bg-white border border-gray-100 rounded-[24px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_32px_rgba(14,124,136,0.14)] transition-all h-full max-[580px]:flex max-[580px]:items-start max-[580px]:gap-4 max-[580px]:p-5">
                 <div
                   className="w-11 h-11 rounded-full flex items-center justify-center mb-5 max-[580px]:mb-0 font-fredoka font-bold text-base flex-shrink-0"
                   style={{
@@ -453,7 +455,7 @@ function HowItWorksSection() {
                   {s.num}
                 </div>
                 <div>
-                  <div className="text-xl mb-3 max-[580px]:hidden" style={{ color: "#1C1B8A" }}>{s.icon}</div>
+                  <div className="text-xl mb-3 max-[580px]:hidden" style={{ color: "var(--color-brand)" }}>{s.icon}</div>
                   <h3 className="font-fredoka font-bold text-page-dark text-base mb-1.5">{s.title}</h3>
                   <p className="font-nunito text-[#64748b] text-sm leading-relaxed">{s.desc}</p>
                 </div>
@@ -470,7 +472,7 @@ function HowItWorksSection() {
           <ScrollCta
             to="paketler"
             className="inline-flex items-center gap-2 text-white font-fredoka font-bold text-base px-9 py-4 rounded-full no-underline transition-transform hover:scale-105 max-[480px]:w-full max-[480px]:justify-center"
-            style={{ background: "#FF6B35", boxShadow: "0 8px 28px rgba(255,107,53,0.3)" }}
+            style={{ background: "var(--color-brand)", boxShadow: "0 8px 28px rgba(14,124,136,0.3)" }}
           >
             Paketleri &amp; Fiyatları Gör →
           </ScrollCta>
@@ -486,11 +488,7 @@ function HowItWorksSection() {
 // Rozet/renk ailesi (koyu zemindeki parlak tonlar yerine, beyaz zeminde
 // okunaklı pastel bg + koyu metin ikilisi — PackageDetail'deki BADGE_COLORS
 // deseniyle aynı mantık).
-const testimonialBadgeStyle = (badgeColor) => {
-  if (badgeColor === "#D8FF4F") return { bg: "#dcfce7", text: "#166534", border: "#bbf7d0" };
-  if (badgeColor === "#7340C8") return { bg: "#ede9fe", text: "#6d28d9", border: "#ddd6fe" };
-  return { bg: "#fef3c7", text: "#92400e", border: "#fde68a" };
-};
+const testimonialBadgeStyle = () => ({ bg: "var(--color-brand-light)", text: "var(--color-brand)", border: "#C9E9EB" });
 
 function TestimonialsColumn({ items, duration, className }) {
   return (
@@ -573,7 +571,7 @@ function TestimonialsSection() {
     <section className="relative overflow-hidden py-16 md:py-24 px-5 bg-white">
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(216,255,79,0.08) 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(14,124,136,0.08) 0%, transparent 70%)" }}
       />
 
       <div className="max-w-[1100px] mx-auto relative" style={{ zIndex: 1 }}>
@@ -589,7 +587,7 @@ function TestimonialsSection() {
             style={{ fontSize: "clamp(36px, 4vw, 56px)", letterSpacing: -1 }}
           >
             <span className="text-page-dark">Gerçek öğrenciler, </span>
-            <span style={{ color: "transparent", WebkitTextStroke: "2.5px #1C1B8A" }}>gerçek sonuçlar.</span>
+            <span style={{ color: "transparent", WebkitTextStroke: "2.5px var(--color-brand)" }}>gerçek sonuçlar.</span>
           </h2>
         </motion.div>
 
@@ -608,8 +606,8 @@ function TestimonialsSection() {
           </p>
           <ScrollCta
             to="paketler"
-            className="inline-flex items-center gap-2 font-fredoka font-bold text-page-dark text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform max-[480px]:w-full max-[480px]:justify-center"
-            style={{ background: "#D8FF4F", boxShadow: "0 8px 28px rgba(216,255,79,0.25)" }}
+            className="inline-flex items-center gap-2 font-fredoka font-bold text-white text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform max-[480px]:w-full max-[480px]:justify-center"
+            style={{ background: "var(--color-brand)", boxShadow: "0 8px 28px rgba(14,124,136,0.25)" }}
           >
             Paketleri &amp; Fiyatları Gör →
           </ScrollCta>
@@ -626,14 +624,14 @@ const trackCards = [
   {
     to: "/yks-yolculugu",
     label: "YKS KOÇLUĞU",
-    color: "#1C1B8A",
+    color: "var(--color-dark)",
     title: "YKS'ye hazırlanıyorsan",
     desc: "Ne çalışacağını bilmek, ilerlemeni takip etmek ve rotanı sonuçlarına göre güncellemek isteyen öğrenciler için.",
   },
   {
     to: "/lgs-hazirlik",
     label: "LGS KOÇLUĞU",
-    color: "#7340C8",
+    color: "var(--color-brand)",
     title: "LGS'ye hazırlanıyorsan",
     desc: "Öğrencinin çalışma düzenini kuran, velinin de süreçten düzenli haberdar olduğu bir koçluk isteyenler için.",
   },
@@ -654,7 +652,7 @@ function TrackLinksSection() {
               key={c.to}
               {...fadeUp}
               className="rounded-[24px] p-7 flex flex-col"
-              style={{ border: "1px solid #ECEAF5", boxShadow: "0 8px 26px rgba(28,27,138,0.07)" }}
+              style={{ border: "1px solid #ECEAF5", boxShadow: "0 8px 26px rgba(23,37,45,0.08)" }}
             >
               <span className="font-fredoka font-bold text-[11px] uppercase mb-3" style={{ color: c.color, letterSpacing: 2 }}>
                 {c.label}
@@ -664,7 +662,7 @@ function TrackLinksSection() {
               <Link
                 to={c.to}
                 className="self-start font-fredoka font-bold text-[15px] px-6 py-3 rounded-full no-underline transition-transform hover:scale-105"
-                style={{ background: c.color, color: "#D8FF4F" }}
+                style={{ background: c.color, color: "#FFFFFF" }}
               >
                 Paketi İncele →
               </Link>
@@ -681,7 +679,7 @@ function TrackLinksSection() {
 // ══════════════════════════════════════════════
 function ComparisonSection() {
   return (
-    <section className="py-16 md:py-24 px-5" style={{ background: "#f4f2fa" }}>
+    <section className="py-16 md:py-24 px-5" style={{ background: "var(--color-brand-light)" }}>
       <div className="max-w-[900px] mx-auto">
         <motion.div {...fadeUp} className="text-center mb-12">
           <div
@@ -696,7 +694,7 @@ function ComparisonSection() {
           >
             <span className="text-page-dark">Bir Program Almakla,</span>
             <br />
-            <span style={{ color: "transparent", WebkitTextStroke: "2.5px #FF6B35" }}>Bir Süreci Yönetmek Aynı Şey Değil.</span>
+            <span style={{ color: "transparent", WebkitTextStroke: "2.5px var(--color-brand)" }}>Bir Süreci Yönetmek Aynı Şey Değil.</span>
           </h2>
           <p className="font-nunito text-[#64748b] text-base mt-5 max-w-[560px] mx-auto">
             Sözderece'de amaç yalnızca program hazırlamak değil; rotanı belirlemek, ilerlemeni takip etmek ve gerektiğinde planını güncellemek.
@@ -706,27 +704,27 @@ function ComparisonSection() {
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.1 }}
-          className="overflow-x-auto rounded-[24px] shadow-[0_8px_40px_rgba(28,27,138,0.1)]"
-          style={{ border: "1px solid rgba(28,27,138,0.08)" }}
+          className="overflow-x-auto rounded-[24px] shadow-[0_8px_40px_rgba(23,37,45,0.12)]"
+          style={{ border: "1px solid rgba(23,37,45,0.1)" }}
         >
           <table className="w-full min-w-[480px] border-collapse">
             <thead>
               <tr>
                 <th
                   className="text-left py-5 px-6 font-fredoka font-bold text-sm uppercase text-white/40"
-                  style={{ background: "#0D0A2E", letterSpacing: 2, width: "34%" }}
+                  style={{ background: "var(--color-dark)", letterSpacing: 2, width: "34%" }}
                 >
                   Süreç
                 </th>
                 <th
                   className="text-center py-5 px-4 font-fredoka font-bold text-sm uppercase text-white/40"
-                  style={{ background: "#0D0A2E", letterSpacing: 2 }}
+                  style={{ background: "var(--color-dark)", letterSpacing: 2 }}
                 >
                   Klasik Yaklaşım
                 </th>
                 <th
-                  className="text-center py-5 px-4 font-fredoka font-bold text-sm uppercase text-page-dark"
-                  style={{ background: "#D8FF4F", letterSpacing: 2 }}
+                  className="text-center py-5 px-4 font-fredoka font-bold text-sm uppercase text-white"
+                  style={{ background: "var(--color-brand)", letterSpacing: 2 }}
                 >
                   Sözderece Rota Sistemi
                 </th>
@@ -734,17 +732,17 @@ function ComparisonSection() {
             </thead>
             <tbody>
               {compRows.map((row, i) => (
-                <tr key={i} style={{ background: i % 2 === 0 ? "#ffffff" : "#faf9ff" }}>
-                  <td className="py-4 px-6 font-nunito font-bold text-sm text-[#475569]" style={{ borderBottom: "1px solid rgba(28,27,138,0.06)" }}>
+                <tr key={i} style={{ background: i % 2 === 0 ? "#ffffff" : "#F7FBFB" }}>
+                  <td className="py-4 px-6 font-nunito font-bold text-sm text-[#475569]" style={{ borderBottom: "1px solid rgba(23,37,45,0.07)" }}>
                     {row.label}
                   </td>
-                  <td className="py-4 px-4 text-center" style={{ borderBottom: "1px solid rgba(28,27,138,0.06)" }}>
+                  <td className="py-4 px-4 text-center" style={{ borderBottom: "1px solid rgba(23,37,45,0.07)" }}>
                     <span className="font-nunito font-semibold text-sm text-[#94a3b8]">{row.klasik}</span>
                   </td>
-                  <td className="py-4 px-4 text-center" style={{ borderBottom: "1px solid rgba(216,255,79,0.2)", background: "rgba(28,27,138,0.03)" }}>
+                  <td className="py-4 px-4 text-center" style={{ borderBottom: "1px solid rgba(14,124,136,0.15)", background: "rgba(14,124,136,0.04)" }}>
                     <span
                       className="inline-block font-fredoka font-bold text-sm px-3 py-1.5 rounded-full"
-                      style={{ background: "rgba(216,255,79,0.25)", color: "#1C1B8A" }}
+                      style={{ background: "#FFFFFF", color: "var(--color-brand)" }}
                     >
                       {row.sozderece}
                     </span>
@@ -783,7 +781,7 @@ function FaqSection() {
             style={{ fontSize: "clamp(36px, 4vw, 56px)", letterSpacing: -1 }}
           >
             <span className="text-page-dark">Aklındaki </span>
-            <span style={{ color: "transparent", WebkitTextStroke: "2.5px #7340C8" }}>sorular.</span>
+            <span style={{ color: "transparent", WebkitTextStroke: "2.5px var(--color-brand)" }}>sorular.</span>
           </h2>
           <p className="font-nunito text-[#94a3b8] text-sm mt-4">
             Cevabını bulamazsan bize ulaş, hemen dönüyoruz.
@@ -805,28 +803,28 @@ function FaqSection() {
                   onClick={() => setOpen(isOpen ? null : i)}
                   className="relative rounded-[20px] overflow-hidden cursor-pointer transition-all duration-300"
                   style={{
-                    border: isOpen ? "1px solid rgba(115,64,200,0.35)" : "1px solid rgba(28,27,138,0.08)",
-                    background: isOpen ? "#f5f3ff" : "#faf9ff",
-                    boxShadow: isOpen ? "0 0 0 3px rgba(115,64,200,0.06)" : "none",
+                    border: isOpen ? "1px solid rgba(14,124,136,0.35)" : "1px solid rgba(23,37,45,0.08)",
+                    background: isOpen ? "var(--color-brand-light)" : "#F7FBFB",
+                    boxShadow: isOpen ? "0 0 0 3px rgba(14,124,136,0.08)" : "none",
                   }}
                 >
                   <div
                     className="absolute left-0 top-0 bottom-0 w-1 rounded-l-[20px] transition-all duration-300"
-                    style={{ background: isOpen ? "#7340C8" : "transparent" }}
+                    style={{ background: isOpen ? "var(--color-brand)" : "transparent" }}
                   />
                   <div className="pl-6 pr-5 py-5">
                     <div className="flex items-center justify-between gap-4">
                       <h3
                         className="font-fredoka font-bold text-base transition-colors duration-200 m-0"
-                        style={{ color: isOpen ? "#7340C8" : "#0D0A2E" }}
+                        style={{ color: isOpen ? "var(--color-brand)" : "var(--color-dark)" }}
                       >
                         {faq.q}
                       </h3>
                       <div
                         className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-fredoka font-bold text-lg transition-all duration-300"
                         style={{
-                          background: isOpen ? "#7340C8" : "rgba(28,27,138,0.07)",
-                          color: isOpen ? "#D8FF4F" : "#94a3b8",
+                          background: isOpen ? "var(--color-brand)" : "rgba(23,37,45,0.07)",
+                          color: isOpen ? "#ffffff" : "#94a3b8",
                           transform: isOpen ? "rotate(45deg)" : "rotate(0deg)",
                         }}
                       >
@@ -864,8 +862,8 @@ function FaqSection() {
             href={WA_LINK}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 font-fredoka font-bold text-lime text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
-            style={{ background: "#1C1B8A", boxShadow: "0 6px 20px rgba(28,27,138,0.25)" }}
+            className="inline-flex items-center gap-2 font-fredoka font-bold text-white text-base px-9 py-4 rounded-full no-underline hover:scale-105 transition-transform"
+            style={{ background: "var(--color-brand)", boxShadow: "0 6px 20px rgba(14,124,136,0.3)" }}
           >
             Bize Ulaşın →
           </a>
@@ -890,21 +888,21 @@ function ContactCtaSection() {
     <section
       id="final-cta"
       className="relative overflow-hidden py-16 md:py-24 px-5"
-      style={{ background: "radial-gradient(ellipse 80% 60% at 50% 60%, #3d1a80 0%, #1A0A40 55%, #0d0520 100%)" }}
+      style={{ background: "radial-gradient(ellipse 80% 60% at 50% 60%, #1F3A44 0%, #17252D 55%, #0A1114 100%)" }}
     >
       <style>{`
         @keyframes ctaShimmer { 0%{background-position:200% center} 100%{background-position:-200% center} }
-        @keyframes ctaPulse { 0%{box-shadow:0 8px 28px rgba(255,107,53,0.45),0 0 0 0 rgba(255,107,53,0.5)} 70%{box-shadow:0 8px 28px rgba(255,107,53,0.45),0 0 0 20px rgba(255,107,53,0)} 100%{box-shadow:0 8px 28px rgba(255,107,53,0.45),0 0 0 0 rgba(255,107,53,0)} }
+        @keyframes ctaPulse { 0%{box-shadow:0 8px 28px rgba(14,124,136,0.5),0 0 0 0 rgba(14,124,136,0.55)} 70%{box-shadow:0 8px 28px rgba(14,124,136,0.5),0 0 0 20px rgba(14,124,136,0)} 100%{box-shadow:0 8px 28px rgba(14,124,136,0.5),0 0 0 0 rgba(14,124,136,0)} }
       `}</style>
 
       <div style={{
         position: "absolute", top: -100, right: -80, width: 480, height: 480,
-        borderRadius: "50%", background: "#4a1da0", filter: "blur(100px)", opacity: 0.3,
+        borderRadius: "50%", background: "var(--color-brand)", filter: "blur(100px)", opacity: 0.25,
         pointerEvents: "none",
       }} />
       <div style={{
         position: "absolute", bottom: -60, left: -60, width: 320, height: 320,
-        borderRadius: "50%", background: "#FF6B35", filter: "blur(100px)", opacity: 0.15,
+        borderRadius: "50%", background: "var(--color-brand-on-dark)", filter: "blur(100px)", opacity: 0.2,
         pointerEvents: "none",
       }} />
 
@@ -922,7 +920,7 @@ function ContactCtaSection() {
           >
             Bir görüşme{" "}
             <span style={{
-              background: "linear-gradient(90deg, #D8FF4F, #ffffff, #D8FF4F)",
+              background: "linear-gradient(90deg, var(--color-brand-on-dark), #ffffff, var(--color-brand-on-dark))",
               backgroundSize: "200% auto",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
@@ -940,7 +938,7 @@ function ContactCtaSection() {
             to="/ucretsiz-on-gorusme"
             className="inline-flex items-center gap-2 font-fredoka font-bold text-white text-[18px] px-10 py-5 rounded-full no-underline transition-transform hover:scale-105"
             style={{
-              background: "#FF6B35",
+              background: "var(--color-brand)",
               animation: "ctaPulse 2.5s ease-out infinite",
               letterSpacing: "0.3px",
             }}
@@ -1014,8 +1012,8 @@ function StickyMobileCta() {
         >
           <ScrollCta
             to="paketler"
-            className="block w-full font-fredoka font-bold text-page-dark text-base py-4 rounded-2xl text-center no-underline shadow-[0_-4px_24px_rgba(216,255,79,0.3)]"
-            style={{ background: "#D8FF4F" }}
+            className="block w-full font-fredoka font-bold text-white text-base py-4 rounded-2xl text-center no-underline shadow-[0_-4px_24px_rgba(14,124,136,0.35)]"
+            style={{ background: "var(--color-brand)" }}
           >
             Paketleri &amp; Fiyatları Gör →
           </ScrollCta>

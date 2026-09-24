@@ -205,14 +205,14 @@ function PackageCard({ pkg, index }) {
       className="relative flex flex-col h-full rounded-[28px] bg-white"
       style={
         featured
-          ? { border: "2px solid #1C1B8A", boxShadow: "0 20px 50px rgba(28,27,138,0.22)", padding: "36px 30px" }
+          ? { border: "2px solid var(--color-brand)", boxShadow: "0 20px 50px rgba(14,124,136,0.20)", padding: "36px 30px" }
           : { border: "1px solid #ECEAF5", boxShadow: "0 10px 30px rgba(28,27,138,0.08)", padding: "32px 28px" }
       }
     >
       {pkg.badge && (
         <span
           className="absolute -top-3 right-7 font-fredoka font-bold text-[12px] px-3 py-1.5 rounded-full whitespace-nowrap"
-          style={{ background: "#1C1B8A", color: "#D8FF4F", boxShadow: "0 4px 12px rgba(28,27,138,0.3)" }}
+          style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 4px 12px rgba(14,124,136,0.3)" }}
         >
           {pkg.badge}
         </span>
@@ -233,7 +233,7 @@ function PackageCard({ pkg, index }) {
               className="flex-1 font-fredoka font-bold text-[12px] px-3 py-2 rounded-full border-none cursor-pointer transition-all duration-200"
               style={{
                 background: activePlanIdx === i ? "#fff" : "transparent",
-                color: activePlanIdx === i ? "#1C1B8A" : "#8B87A6",
+                color: activePlanIdx === i ? "var(--color-brand)" : "#8B87A6",
                 boxShadow: activePlanIdx === i ? "0 2px 8px rgba(28,27,138,0.12)" : "none",
               }}
             >
@@ -255,7 +255,7 @@ function PackageCard({ pkg, index }) {
       )}
 
       {noteText && (
-        <p className="font-nunito font-bold text-[13px] mt-3 mb-0" style={{ color: "#3F6B0A" }}>{noteText}</p>
+        <p className="font-nunito font-bold text-[13px] mt-3 mb-0" style={{ color: "var(--color-brand)" }}>{noteText}</p>
       )}
 
       <div className="h-px my-5" style={{ background: "#F1EFF8" }} />
@@ -265,7 +265,7 @@ function PackageCard({ pkg, index }) {
           <div key={i} className="flex items-start gap-2.5">
             <span
               className="flex-shrink-0 flex items-center justify-center rounded-full text-[10px] font-bold mt-0.5"
-              style={{ width: 18, height: 18, background: "#ede8fa", color: "#1C1B8A" }}
+              style={{ width: 18, height: 18, background: "var(--color-brand-light)", color: "var(--color-brand)" }}
             >
               ✓
             </span>
@@ -288,7 +288,7 @@ function PackageCard({ pkg, index }) {
       <Link
         to={ctaHref}
         className="block text-center no-underline font-fredoka font-bold text-[15px] rounded-full mt-5 transition-transform hover:scale-105"
-        style={{ background: "#1C1B8A", color: "#D8FF4F", padding: "14px" }}
+        style={{ background: "var(--color-brand)", color: "#FFFFFF", padding: "14px" }}
       >
         {ctaLabel}
       </Link>
@@ -364,13 +364,13 @@ export default function PricingSection() {
       `}</style>
 
       {/* Sol dikey şerit */}
-      <div className="absolute left-0 top-0 bottom-0 w-2" style={{ background: "linear-gradient(to bottom, #1C1B8A, #FF6B35)", zIndex: 1 }} />
+      <div className="absolute left-0 top-0 bottom-0 w-2" style={{ background: "linear-gradient(to bottom, var(--color-dark), var(--color-brand))", zIndex: 1 }} />
 
       {/* Sağ üst dekoratif blok */}
-      <div className="absolute top-0 right-0" style={{ width: 340, height: 340, background: "#ede8fa", borderRadius: "0 0 0 100%", opacity: 0.6, zIndex: 0 }} />
+      <div className="absolute top-0 right-0" style={{ width: 340, height: 340, background: "var(--color-brand-light)", borderRadius: "0 0 0 100%", opacity: 0.6, zIndex: 0 }} />
 
       {/* Sol alt dekoratif daire */}
-      <div className="absolute" style={{ bottom: 0, left: 60, width: 200, height: 200, background: "#fff0ea", borderRadius: "50%", opacity: 0.6, zIndex: 0 }} />
+      <div className="absolute" style={{ bottom: 0, left: 60, width: 200, height: 200, background: "var(--color-brand-light)", borderRadius: "50%", opacity: 0.6, zIndex: 0 }} />
 
       <div
         className="mx-auto py-14 md:py-20 relative pricing-section-pad"
@@ -389,7 +389,7 @@ export default function PricingSection() {
           </div>
           <h2 className="font-fredoka font-bold m-0 leading-[1]" style={{ letterSpacing: -1, fontSize: "clamp(34px, 4.5vw, 60px)" }}>
             <span className="block text-page-navy">YKS &amp; LGS</span>
-            <span className="block" style={{ color: "transparent", WebkitTextStroke: "2px #FF6B35" }}>Koçluk Paketleri</span>
+            <span className="block" style={{ color: "transparent", WebkitTextStroke: "2px var(--color-brand)" }}>Koçluk Paketleri</span>
           </h2>
           <p className="font-nunito font-bold text-[#64748b] text-base leading-relaxed mt-4 mx-auto" style={{ maxWidth: 480 }}>
             İhtiyacına uygun koçluk paketini seç. Paket içeriklerini ve fiyatları aşağıda inceleyebilirsin.
@@ -417,8 +417,8 @@ export default function PricingSection() {
                 onClick={() => setTab(t.key)}
                 className="font-fredoka font-bold text-[17px] px-7 py-3 rounded-full border-none cursor-pointer transition-all duration-200"
                 style={{
-                  background: tab === t.key ? "#1C1B8A" : "transparent",
-                  color: tab === t.key ? "#D8FF4F" : "#6B6B8A",
+                  background: tab === t.key ? "var(--color-brand)" : "transparent",
+                  color: tab === t.key ? "#FFFFFF" : "#6B6B8A",
                   boxShadow: tab === t.key ? "0 4px 14px rgba(28,27,138,0.3)" : "none",
                 }}
               >
@@ -465,10 +465,10 @@ export default function PricingSection() {
                 className="relative rounded-[28px] overflow-hidden"
                 style={{
                   boxShadow: "0 20px 50px rgba(28,27,138,0.2)",
-                  border: "6px solid #1C1B8A",
+                  border: "6px solid var(--color-dark)",
                 }}
               >
-                <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#D8FF4F", filter: "blur(70px)", opacity: 0.35, top: -60, left: -40, zIndex: 0 }} />
+                <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "var(--color-brand)", filter: "blur(70px)", opacity: 0.35, top: -60, left: -40, zIndex: 0 }} />
                 <div className="aspect-video relative" style={{ zIndex: 1 }}>
                   <iframe
                     src={videoEmbedUrl}

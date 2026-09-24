@@ -61,8 +61,8 @@ export default function CookieConsent() {
       >
         {!showSettings ? (
           <div className="flex items-center gap-4 p-5 max-[640px]:flex-col max-[640px]:items-start max-[640px]:gap-3 max-[640px]:p-4">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#EEFBC7" }}>
-              <FaCookieBite size={18} color="#3F6B0A" />
+            <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "var(--color-brand-light)" }}>
+              <FaCookieBite size={18} color="var(--color-brand)" />
             </div>
             <p className="font-nunito text-sm text-[#374151] leading-relaxed flex-1 m-0">
               Sitemizi daha iyi hale getirmek ve deneyimini kişiselleştirmek için çerezler kullanıyoruz.{" "}
@@ -87,7 +87,7 @@ export default function CookieConsent() {
               <button
                 onClick={() => save(DEFAULT_PREFS)}
                 className="font-fredoka font-bold text-sm px-5 py-2.5 rounded-full text-white transition-transform hover:scale-105 cursor-pointer"
-                style={{ background: "#FF6B35" }}
+                style={{ background: "var(--color-brand)" }}
               >
                 Kabul Et
               </button>
@@ -137,7 +137,7 @@ export default function CookieConsent() {
               <button
                 onClick={() => save(prefs)}
                 className="font-fredoka font-bold text-sm px-5 py-2.5 rounded-full text-white transition-transform hover:scale-105 cursor-pointer"
-                style={{ background: "#FF6B35" }}
+                style={{ background: "var(--color-brand)" }}
               >
                 Tercihleri Kaydet
               </button>
@@ -165,7 +165,7 @@ function PrefRow({ title, description, checked, disabled, onChange }) {
         className="flex-shrink-0 rounded-full border-none transition-colors"
         style={{
           width: 40, height: 24, padding: 3,
-          background: checked ? "#D8FF4F" : "#e5e7eb",
+          background: checked ? "var(--color-brand)" : "#e5e7eb",
           cursor: disabled ? "default" : "pointer",
           opacity: disabled ? 0.7 : 1,
         }}

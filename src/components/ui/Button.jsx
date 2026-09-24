@@ -2,19 +2,22 @@ import { forwardRef } from "react";
 import { Link } from "react-router-dom";
 
 // Tüm sitede tekrarlanan buton stillerinin (her sayfanın kendi .xx-btn class'ı
-// veya inline hex'i) tek bir yerde toplandığı hâli. Varyantlar, kod tabanında
-// zaten var olan iki ayrı ama tutarlı dilin karşılığı:
-//  - "hero"                → pazarlama/navbar CTA'ları (lime, koyu zemin üstünde)
-//  - "primary"/"secondary" → form/checkout/auth birincil eylemleri (turuncu/lacivert)
-//  - "success"/"danger"/"neutral" → admin panelindeki soft-pill onay/iptal/sil dili
-//  - "outline"/"ghost"/"link"     → ikincil/az vurgulu eylemler
+// veya inline hex'i) tek bir yerde toplandığı hâli. 2026 rebrand: birincil
+// aksiyon rengi artık tek bir marka turkuazı (--color-brand) — eskiden
+// "hero" (lime) ve "primary" (turuncu) görsel olarak ayrı iki dildi, şimdi
+// ikisi de aynı turkuaza bağlanıyor (hangi bağlamda kullanıldığını kodda
+// belli etmek için isimler korundu).
+//  - "hero"/"primary"      → birincil eylemler (turkuaz zemin, beyaz yazı)
+//  - "secondary"           → dolu koyu buton (turkuaz dışında bir aksiyon gerektiğinde)
+//  - "outline"/"ghost"/"link" → ikincil/az vurgulu eylemler (turkuaz kenarlık/hover)
+//  - "success"/"danger"/"neutral"/"info" → admin panelindeki soft-pill durum dili — SEMANTİK, marka rengine bağlanmıyor
 const VARIANTS = {
-  hero: "bg-lime text-page-dark hover:bg-white shadow-[0_4px_14px_rgba(216,255,79,0.3)]",
-  primary: "bg-accent-orange text-white hover:bg-[#e55a2b] shadow-[0_4px_14px_rgba(255,107,53,0.3)]",
-  secondary: "bg-page-navy text-white hover:bg-[#151474]",
-  outline: "bg-transparent text-page-navy border border-page-navy/30 hover:bg-page-navy hover:text-white",
+  hero: "bg-brand text-white hover:bg-brand-hover shadow-[0_4px_14px_rgba(14,124,136,0.35)]",
+  primary: "bg-brand text-white hover:bg-brand-hover shadow-[0_4px_14px_rgba(14,124,136,0.3)]",
+  secondary: "bg-page-navy text-white hover:bg-[#0F1B21]",
+  outline: "bg-transparent text-page-navy border border-brand/40 hover:bg-brand hover:text-white hover:border-brand",
   ghost: "bg-transparent text-page-navy hover:bg-page-navy/5",
-  link: "bg-transparent text-page-navy underline p-0 hover:text-accent-orange",
+  link: "bg-transparent text-page-navy underline p-0 hover:text-brand",
   success: "bg-[#ecfdf5] text-[#065f46] border border-[#a7f3d0] hover:bg-[#d1fae5]",
   danger: "bg-[#fef2f2] text-[#991b1b] border border-[#fecaca] hover:bg-[#fee2e2]",
   neutral: "bg-[#f1f5f9] text-[#475569] border border-transparent hover:bg-[#e2e8f0]",

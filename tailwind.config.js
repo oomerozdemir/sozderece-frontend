@@ -4,18 +4,29 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // 2026 rebrand: gerçek renk değerleri src/cssFiles/index.css'teki
+        // :root CSS değişkenlerinde tanımlı (tek kaynak orası). Eski isimler
+        // (page-navy, lime, deep-purple, accent-orange...) className'ler
+        // hiç değişmeden yeni turkuaz sisteme aksın diye korunuyor.
         brand: {
-          orange: "#e45e04",
-          orange2: "#ff9203",
-          navy: "#100481",
-          "navy-dark": "#00073a",
+          DEFAULT: "var(--color-brand)",
+          hover: "var(--color-brand-hover)",
+          light: "var(--color-brand-light)",
+          // Koyu lacivert zeminde metin/hover için — bkz. index.css'teki not.
+          "on-dark": "var(--color-brand-on-dark)",
+          orange: "var(--color-brand)", // eski, artık neredeyse kullanılmıyor
+          orange2: "var(--color-brand)",
+          navy: "var(--color-dark)",
+          "navy-dark": "var(--color-dark)",
         },
-        /* ── Yeni marka renk sistemi ── */
-        lime: "#D8FF4F",
-        "deep-purple": "#7340C8",
-        "page-dark": "#0D0A2E",
-        "page-navy": "#1C1B8A",
-        "accent-orange": "#FF6B35",
+        cream: "var(--color-background)",
+
+        /* ── Eski "yeni marka" isimleri → yeni token'lara yönlendirildi ── */
+        lime: "var(--color-brand)",
+        "deep-purple": "var(--color-dark)",
+        "page-dark": "var(--color-dark)",
+        "page-navy": "var(--color-dark)",
+        "accent-orange": "var(--color-brand)",
       },
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],

@@ -23,11 +23,11 @@ const FILL_SOFT = "#F1F0F6";
 
 // Eyebrow etiketi: rozet/pill + nokta yerine sade, kesik bir "kicker" —
 // küçük renkli bir çentik + koyu, izli büyük harf metin. Kutu/arka plan yok.
-function Eyebrow({ children, accent = "#FF6B35" }) {
+function Eyebrow({ children, accent = "var(--color-brand)" }) {
   return (
     <span className="inline-flex items-center gap-3">
       <span style={{ width: 26, height: 3, borderRadius: 2, background: accent, display: "inline-block" }} />
-      <span className="font-fredoka text-sm font-bold tracking-[0.14em] uppercase" style={{ color: "#1C1B8A" }}>
+      <span className="font-fredoka text-sm font-bold tracking-[0.14em] uppercase" style={{ color: "var(--color-dark)" }}>
         {children}
       </span>
     </span>
@@ -52,7 +52,7 @@ function HeroCtas({ className = "" }) {
         onClick={go("paketler")}
         className="inline-flex items-center justify-center gap-2 text-white font-fredoka font-bold text-[18px] max-[640px]:text-[17px] px-9 py-4 rounded-full no-underline transition-transform hover:scale-105"
         style={{
-          background: "#FF6B35",
+          background: "var(--color-brand)",
           animation: "heroPulse 2.5s ease-out infinite",
           letterSpacing: "0.3px",
         }}
@@ -75,9 +75,9 @@ function HeroCtas({ className = "" }) {
 // kompakt bir şerit (ekranı uzatmadan).
 function MobileMechanism() {
   const items = [
-    { n: "1", t: "Kişisel Rota", c: "#7340C8" },
-    { n: "2", t: "İlerleme Takibi", c: "#3F6B0A" },
-    { n: "3", t: "Dinamik Planlama", c: "#c2410c" },
+    { n: "1", t: "Kişisel Rota", c: "var(--color-dark)" },
+    { n: "2", t: "İlerleme Takibi", c: "var(--color-brand)" },
+    { n: "3", t: "Dinamik Planlama", c: "var(--color-brand-hover)" },
   ];
   return (
     <div className="hidden max-[960px]:flex items-center gap-1.5 flex-wrap mb-7">
@@ -118,7 +118,7 @@ function DefaultSlide() {
       {/* Sol — metin */}
       <div>
         <motion.div {...fadeUp} className="mb-7">
-          <Eyebrow accent="#FF6B35">LGS &amp; YKS Koçluğu</Eyebrow>
+          <Eyebrow accent="var(--color-brand)">LGS &amp; YKS Koçluğu</Eyebrow>
         </motion.div>
 
         <motion.h1
@@ -129,7 +129,7 @@ function DefaultSlide() {
         >
           Sınava Çok Çalışarak Değil,{" "}
           <span style={{
-            background: "linear-gradient(90deg, #1C1B8A, #7340C8, #1C1B8A)",
+            background: "linear-gradient(90deg, var(--color-dark), var(--color-brand), var(--color-dark))",
             backgroundSize: "200% auto",
             WebkitBackgroundClip: "text",
             backgroundClip: "text",
@@ -151,7 +151,7 @@ function DefaultSlide() {
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.19 }}
           className="font-fredoka font-bold text-[13px] tracking-[0.06em] mb-10 max-[960px]:hidden"
-          style={{ color: "#7340C8" }}
+          style={{ color: "var(--color-brand)" }}
         >
           Kişisel Rota <span style={{ color: TEXT_40 }}>→</span> İlerleme Takibi <span style={{ color: TEXT_40 }}>→</span> Dinamik Planlama
         </motion.p>
@@ -170,9 +170,9 @@ function DefaultSlide() {
               className="inline-flex items-center gap-2 rounded-full pl-1.5 pr-4 py-1.5"
               style={{ border: `1px solid ${BORDER_SOFT}` }}
             >
-              <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#D8FF4F" }}>
+              <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "var(--color-brand)" }}>
                 <svg width="10" height="10" viewBox="0 0 12 12">
-                  <polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" />
+                  <polyline points="2 6 5 9 10 3" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" />
                 </svg>
               </span>
               <span className="font-nunito font-bold text-[13px]" style={{ color: TEXT_DARK }}>{t}</span>
@@ -200,19 +200,19 @@ function DefaultSlide() {
             animation: "heroFloat1 5s ease-in-out infinite",
             boxShadow: "0 24px 50px rgba(21,14,51,0.1)",
           }}>
-            <div className="font-fredoka font-bold text-sm tracking-[0.12em] uppercase mb-4" style={{ color: "#1C1B8A" }}>
+            <div className="font-fredoka font-bold text-sm tracking-[0.12em] uppercase mb-4" style={{ color: "var(--color-dark)" }}>
               Bu Haftaki Rotan
             </div>
             {weeklyItems.map((item, i) => (
               <div key={i} className="flex items-center gap-3 mb-3.5">
                 <div style={{
                   width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
-                  background: item.done ? "#D8FF4F" : FILL_SOFT,
+                  background: item.done ? "var(--color-brand)" : FILL_SOFT,
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   {item.done && (
                     <svg width="11" height="11" viewBox="0 0 12 12">
-                      <polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" />
+                      <polyline points="2 6 5 9 10 3" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   )}
                 </div>
@@ -226,9 +226,9 @@ function DefaultSlide() {
           {/* Turuncu rozet — haftalık plan tamamlanma oranı */}
           <div style={{
             position: "absolute", top: 0, left: 0,
-            background: "#FF6B35", borderRadius: 20, padding: "16px 22px",
+            background: "var(--color-brand)", borderRadius: 20, padding: "16px 22px",
             animation: "heroFloat2 4s ease-in-out infinite",
-            boxShadow: "0 12px 30px rgba(255,107,53,0.35)",
+            boxShadow: "0 12px 30px rgba(14,124,136,0.35)",
           }}>
             <div className="font-fredoka font-bold text-white text-[28px] leading-none">%82</div>
             <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">Haftalık plan tamamlandı</div>
@@ -237,14 +237,14 @@ function DefaultSlide() {
           {/* Sarı rozet — koç geri bildirimi */}
           <div style={{
             position: "absolute", bottom: 10, right: 0,
-            background: "#D8FF4F", borderRadius: 18, padding: "14px 20px",
+            background: "var(--color-brand-light)", borderRadius: 18, padding: "14px 20px",
             animation: "heroFloat3 6s ease-in-out infinite",
-            boxShadow: "0 10px 24px rgba(216,255,79,0.4)",
+            boxShadow: "0 10px 24px rgba(14,124,136,0.18)",
           }}>
             <div className="font-fredoka font-bold text-page-dark text-[15px] leading-snug flex items-center gap-1.5">
               Koç geri bildirimi
               <svg width="13" height="13" viewBox="0 0 12 12">
-                <polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2.2" strokeLinecap="round" />
+                <polyline points="2 6 5 9 10 3" fill="none" stroke="#17252D" strokeWidth="2.2" strokeLinecap="round" />
               </svg>
             </div>
           </div>
@@ -252,13 +252,13 @@ function DefaultSlide() {
           {/* Lacivert rozet — rota güncellendi */}
           <div style={{
             position: "absolute", top: 300, left: -18,
-            background: "#EEEEFB",
-            border: "1px solid #D6D6F5",
+            background: "var(--color-brand-light)",
+            border: "1px solid #C9E9EB",
             borderRadius: 18, padding: "12px 18px",
             animation: "heroFloat1 5.5s ease-in-out infinite",
             boxShadow: "0 10px 24px rgba(21,14,51,0.08)",
           }}>
-            <div className="font-fredoka font-bold text-[14px] flex items-center gap-1.5" style={{ color: "#1C1B8A" }}>
+            <div className="font-fredoka font-bold text-[14px] flex items-center gap-1.5" style={{ color: "var(--color-brand)" }}>
               Rota güncellendi <span>↗</span>
             </div>
           </div>
@@ -277,7 +277,7 @@ function LgsSlide() {
       {/* Sol — metin */}
       <div>
         <motion.div {...fadeUp} className="mb-7">
-          <Eyebrow accent="#7340C8">LGS Koçluğu</Eyebrow>
+          <Eyebrow accent="var(--color-brand)">LGS Koçluğu</Eyebrow>
         </motion.div>
 
         <motion.h1
@@ -288,7 +288,7 @@ function LgsSlide() {
         >
           8. Sınıf Stresi Bitsin, {" "}
           <span style={{
-            background: "linear-gradient(90deg, #7340C8, #1C1B8A, #7340C8)",
+            background: "linear-gradient(90deg, var(--color-brand), var(--color-dark), var(--color-brand))",
             backgroundSize: "200% auto",
             WebkitBackgroundClip: "text",
             backgroundClip: "text",
@@ -329,10 +329,10 @@ function LgsSlide() {
             boxShadow: "0 24px 50px rgba(21,14,51,0.1)",
           }}>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 rounded-full flex items-center justify-center font-fredoka font-bold text-white text-xs flex-shrink-0" style={{ background: "#7340C8" }}>
+              <div className="w-7 h-7 rounded-full flex items-center justify-center font-fredoka font-bold text-white text-xs flex-shrink-0" style={{ background: "var(--color-brand)" }}>
                 M
               </div>
-              <div className="font-fredoka font-bold text-sm tracking-[0.06em] uppercase" style={{ color: "#7340C8" }}>
+              <div className="font-fredoka font-bold text-sm tracking-[0.06em] uppercase" style={{ color: "var(--color-brand)" }}>
                 Mert'in Bu Haftası
               </div>
             </div>
@@ -344,12 +344,12 @@ function LgsSlide() {
               <div key={i} className="flex items-center gap-3 mb-3.5">
                 <div style={{
                   width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
-                  background: item.done ? "#D8FF4F" : FILL_SOFT,
+                  background: item.done ? "var(--color-brand)" : FILL_SOFT,
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   {item.done && (
                     <svg width="11" height="11" viewBox="0 0 12 12">
-                      <polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" />
+                      <polyline points="2 6 5 9 10 3" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   )}
                 </div>
@@ -361,10 +361,10 @@ function LgsSlide() {
             <div className="mt-4">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="font-nunito font-bold text-[11px] uppercase tracking-wide" style={{ color: TEXT_45 }}>Tamamlanma</span>
-                <span className="font-fredoka font-bold text-xs" style={{ color: "#7340C8" }}>%65</span>
+                <span className="font-fredoka font-bold text-xs" style={{ color: "var(--color-brand)" }}>%65</span>
               </div>
               <div style={{ height: 6, borderRadius: 999, background: FILL_SOFT, overflow: "hidden" }}>
-                <div style={{ height: "100%", width: "65%", borderRadius: 999, background: "#D8FF4F" }} />
+                <div style={{ height: "100%", width: "65%", borderRadius: 999, background: "var(--color-brand)" }} />
               </div>
             </div>
           </div>
@@ -372,13 +372,13 @@ function LgsSlide() {
           {/* Mor rozet — net artışı */}
           <div style={{
             position: "absolute", top: 0, left: 0,
-            background: "#7340C8", borderRadius: 20, padding: "16px 22px",
+            background: "var(--color-brand)", borderRadius: 20, padding: "16px 22px",
             animation: "heroFloat2 4s ease-in-out infinite",
-            boxShadow: "0 12px 30px rgba(115,64,200,0.35)",
+            boxShadow: "0 12px 30px rgba(14,124,136,0.35)",
           }}>
             <div className="flex items-center gap-1.5">
               <span className="font-fredoka font-bold text-white text-[28px] leading-none">+38</span>
-              <FaChartLine size={16} color="#D8FF4F" />
+              <FaChartLine size={16} color="#FFFFFF" />
             </div>
             <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">Net artışı</div>
           </div>
@@ -387,14 +387,14 @@ function LgsSlide() {
               ana kartla aynı beyaz dilde, mor bir vurgu şeridiyle) */}
           <div style={{
             position: "absolute", bottom: 10, right: 0,
-            background: "#F5F0FC",
-            border: "1px solid #E4D6F7",
+            background: "var(--color-brand-light)",
+            border: "1px solid #C9E9EB",
             borderRadius: 18, padding: "14px 20px",
             animation: "heroFloat3 6s ease-in-out infinite",
             boxShadow: "0 10px 24px rgba(21,14,51,0.08)",
           }}>
-            <div className="font-fredoka font-bold text-[15px] leading-snug" style={{ color: "#5B2E96" }}>Veli raporu</div>
-            <div className="font-fredoka font-bold text-[15px] flex items-center gap-1.5" style={{ color: "#5B2E96" }}>her hafta <FaClipboardList size={13} color="#7340C8" /></div>
+            <div className="font-fredoka font-bold text-[15px] leading-snug" style={{ color: "var(--color-brand)" }}>Veli raporu</div>
+            <div className="font-fredoka font-bold text-[15px] flex items-center gap-1.5" style={{ color: "var(--color-brand)" }}>her hafta <FaClipboardList size={13} color="var(--color-brand)" /></div>
           </div>
         </div>
       </motion.div>
@@ -411,7 +411,7 @@ function YksSlide() {
       {/* Sol — metin */}
       <div>
         <motion.div {...fadeUp} className="mb-7">
-          <Eyebrow accent="#1C1B8A">YKS Koçluğu</Eyebrow>
+          <Eyebrow accent="var(--color-brand)">YKS Koçluğu</Eyebrow>
         </motion.div>
 
         <motion.h1
@@ -422,7 +422,7 @@ function YksSlide() {
         >
           YKS'de En Zor Şey Daha Fazla Çalışmak Değil. {" "}
           <span style={{
-            background: "linear-gradient(90deg, #1C1B8A, #FF6B35, #1C1B8A)",
+            background: "linear-gradient(90deg, var(--color-dark), var(--color-brand), var(--color-dark))",
             backgroundSize: "200% auto",
             WebkitBackgroundClip: "text",
             backgroundClip: "text",
@@ -444,7 +444,7 @@ function YksSlide() {
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.19 }}
           className="font-fredoka font-bold text-[13px] tracking-[0.06em] mb-10"
-          style={{ color: "#FF6B35" }}
+          style={{ color: "var(--color-brand)" }}
         >
           Kişisel Rota <span style={{ color: TEXT_40 }}>→</span> İlerleme Takibi <span style={{ color: TEXT_40 }}>→</span> Dinamik Planlama
         </motion.p>
@@ -472,10 +472,10 @@ function YksSlide() {
             boxShadow: "0 24px 50px rgba(21,14,51,0.1)",
           }}>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 rounded-full flex items-center justify-center font-fredoka font-bold text-white text-xs flex-shrink-0" style={{ background: "#1C1B8A" }}>
+              <div className="w-7 h-7 rounded-full flex items-center justify-center font-fredoka font-bold text-white text-xs flex-shrink-0" style={{ background: "var(--color-brand)" }}>
                 Z
               </div>
-              <div className="font-fredoka font-bold text-sm tracking-[0.06em] uppercase" style={{ color: "#1C1B8A" }}>
+              <div className="font-fredoka font-bold text-sm tracking-[0.06em] uppercase" style={{ color: "var(--color-brand)" }}>
                 Zeynep'in Bu Haftası
               </div>
             </div>
@@ -487,12 +487,12 @@ function YksSlide() {
               <div key={i} className="flex items-center gap-3 mb-3.5">
                 <div style={{
                   width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
-                  background: item.done ? "#D8FF4F" : FILL_SOFT,
+                  background: item.done ? "var(--color-brand)" : FILL_SOFT,
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   {item.done && (
                     <svg width="11" height="11" viewBox="0 0 12 12">
-                      <polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" />
+                      <polyline points="2 6 5 9 10 3" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   )}
                 </div>
@@ -504,10 +504,10 @@ function YksSlide() {
             <div className="mt-4">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="font-nunito font-bold text-[11px] uppercase tracking-wide" style={{ color: TEXT_45 }}>Tamamlanma</span>
-                <span className="font-fredoka font-bold text-xs" style={{ color: "#1C1B8A" }}>%72</span>
+                <span className="font-fredoka font-bold text-xs" style={{ color: "var(--color-brand)" }}>%72</span>
               </div>
               <div style={{ height: 6, borderRadius: 999, background: FILL_SOFT, overflow: "hidden" }}>
-                <div style={{ height: "100%", width: "72%", borderRadius: 999, background: "#D8FF4F" }} />
+                <div style={{ height: "100%", width: "72%", borderRadius: 999, background: "var(--color-brand)" }} />
               </div>
             </div>
           </div>
@@ -515,9 +515,9 @@ function YksSlide() {
           {/* Lacivert rozet — hedef tamamlanma */}
           <div style={{
             position: "absolute", top: 0, left: 0,
-            background: "#1C1B8A", borderRadius: 20, padding: "16px 22px",
+            background: "var(--color-brand)", borderRadius: 20, padding: "16px 22px",
             animation: "heroFloat2 4s ease-in-out infinite",
-            boxShadow: "0 12px 30px rgba(28,27,138,0.35)",
+            boxShadow: "0 12px 30px rgba(14,124,136,0.35)",
           }}>
             <div className="font-fredoka font-bold text-white text-[28px] leading-none">3/4</div>
             <div className="font-nunito font-bold text-white/80 text-xs mt-0.5">Hedef tamamlandı</div>
@@ -527,14 +527,14 @@ function YksSlide() {
               çalmasın diye ana kartla aynı beyaz dilde, lacivert vurgu şeridiyle) */}
           <div style={{
             position: "absolute", bottom: 10, right: 0,
-            background: "#EEEEFB",
-            border: "1px solid #D6D6F5",
+            background: "var(--color-brand-light)",
+            border: "1px solid #C9E9EB",
             borderRadius: 18, padding: "14px 20px",
             animation: "heroFloat3 6s ease-in-out infinite",
             boxShadow: "0 10px 24px rgba(21,14,51,0.08)",
           }}>
-            <div className="font-fredoka font-bold text-[15px] leading-snug" style={{ color: "#1C1B8A" }}>Deneme takibi</div>
-            <div className="font-fredoka font-bold text-[15px] flex items-center gap-1.5" style={{ color: "#1C1B8A" }}>her hafta <FaClipboardList size={13} color="#1C1B8A" /></div>
+            <div className="font-fredoka font-bold text-[15px] leading-snug" style={{ color: "var(--color-brand)" }}>Deneme takibi</div>
+            <div className="font-fredoka font-bold text-[15px] flex items-center gap-1.5" style={{ color: "var(--color-brand)" }}>her hafta <FaClipboardList size={13} color="var(--color-brand)" /></div>
           </div>
         </div>
       </motion.div>
@@ -597,7 +597,7 @@ export default function HeroSection() {
         @keyframes heroFloat2   { 0%,100%{transform:translateY(0px) rotate(0deg)} 50%{transform:translateY(-12px) rotate(-8deg)} }
         @keyframes heroFloat3   { 0%,100%{transform:translateY(0px) rotate(0deg)} 50%{transform:translateY(-22px) rotate(4deg)} }
         @keyframes heroShimmer  { 0%{background-position:200% center} 100%{background-position:-200% center} }
-        @keyframes heroPulse    { 0%{box-shadow:0 8px 28px rgba(255,107,53,0.35),0 0 0 0 rgba(255,107,53,0.4)} 70%{box-shadow:0 8px 28px rgba(255,107,53,0.35),0 0 0 20px rgba(255,107,53,0)} 100%{box-shadow:0 8px 28px rgba(255,107,53,0.35),0 0 0 0 rgba(255,107,53,0)} }
+        @keyframes heroPulse    { 0%{box-shadow:0 8px 28px rgba(14,124,136,0.35),0 0 0 0 rgba(14,124,136,0.4)} 70%{box-shadow:0 8px 28px rgba(14,124,136,0.35),0 0 0 20px rgba(14,124,136,0)} 100%{box-shadow:0 8px 28px rgba(14,124,136,0.35),0 0 0 0 rgba(14,124,136,0)} }
         
         /* Slaytların hepsi birebir aynı boyutta olsun diye sabit bir
            "viewport" yüksekliği — içerik slayta göre değişse de kayan
@@ -668,7 +668,7 @@ export default function HeroSection() {
                 className="h-2 rounded-full transition-all duration-300 border-none cursor-pointer"
                 style={{
                   width: i === activeIdx ? 22 : 8,
-                  background: i === activeIdx ? "#D8FF4F" : "#E4E2EC",
+                  background: i === activeIdx ? "var(--color-brand)" : "#E4E2EC",
                 }}
               />
             ))}
