@@ -136,7 +136,7 @@ export default function LgsHazirlikPage() {
 
   if (!content) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#0D0A2E" }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--color-dark)" }}>
         <div className="font-nunito text-white/40 text-sm">Yükleniyor...</div>
       </div>
     );
@@ -166,20 +166,19 @@ export default function LgsHazirlikPage() {
       <Navbar />
 
       {/* ── HERO ── */}
-      <section className="relative overflow-hidden py-24 px-5 text-white" style={{ background: "#0D0A2E" }}>
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 500, height: 500, background: "#7340C8", filter: "blur(120px)", opacity: 0.22, top: -120, right: -100, animation: "lgsOrb1 7s ease-in-out infinite" }} />
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 340, height: 340, background: "#1C1B8A", filter: "blur(90px)", opacity: 0.4, bottom: -60, left: -80, animation: "lgsOrb2 9s ease-in-out infinite" }} />
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 220, height: 220, background: "#FF6B35", filter: "blur(80px)", opacity: 0.13, top: "40%", left: "28%" }} />
+      <section className="relative overflow-hidden py-24 px-5 text-white" style={{ background: "var(--color-dark)" }}>
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 500, height: 500, background: "var(--color-brand)", filter: "blur(120px)", opacity: 0.3, top: -120, right: -100, animation: "lgsOrb1 7s ease-in-out infinite" }} />
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 340, height: 340, background: "var(--color-brand-hover)", filter: "blur(90px)", opacity: 0.25, bottom: -60, left: -80, animation: "lgsOrb2 9s ease-in-out infinite" }} />
 
         <div className="max-w-3xl mx-auto text-center relative">
           <motion.div {...fadeUp}>
-            <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6 border font-nunito font-bold text-xs" style={{ background: "rgba(216,255,79,0.1)", borderColor: "rgba(216,255,79,0.25)", color: "#D8FF4F" }}>
+            <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6 border font-nunito font-bold text-xs" style={{ background: "rgba(14,124,136,0.14)", borderColor: "rgba(14,124,136,0.3)", color: "var(--color-brand-on-dark)" }}>
               🎯 2027 LGS Öğrencilerine Özel
             </div>
 
             <h1 className="font-fredoka font-bold leading-tight mb-4" style={{ fontSize: "clamp(28px,5vw,52px)", animation: "lgsShimmer 4s ease-in-out infinite" }}>
               Her Gün "Ders Çalıştın mı?"{" "}
-              <span style={{ color: "#D8FF4F" }}>{hero.titleAccent || "Diye Sormak Zorunda Kalmayın."}</span>
+              <span style={{ color: "var(--color-brand-on-dark)" }}>{hero.titleAccent || "Diye Sormak Zorunda Kalmayın."}</span>
             </h1>
 
             <p className="font-nunito font-bold text-lg mb-4" style={{ color: "rgba(255,255,255,0.6)", fontSize: "clamp(15px,2vw,18px)" }}>
@@ -187,11 +186,11 @@ export default function LgsHazirlikPage() {
             </p>
 
             <p className="font-fredoka font-bold text-sm mb-8" style={{ letterSpacing: 0.5 }}>
-              <span style={{ color: "#7340C8" }}>Kişisel Rota</span>{" "}
+              <span style={{ color: "rgba(255,255,255,0.55)" }}>Kişisel Rota</span>{" "}
               <span style={{ color: "rgba(255,255,255,0.3)" }}>→</span>{" "}
-              <span style={{ color: "#D8FF4F" }}>İlerleme Takibi</span>{" "}
+              <span style={{ color: "var(--color-brand-on-dark)" }}>İlerleme Takibi</span>{" "}
               <span style={{ color: "rgba(255,255,255,0.3)" }}>→</span>{" "}
-              <span style={{ color: "#FF6B35" }}>Dinamik Planlama</span>
+              <span style={{ color: "var(--color-brand-on-dark)" }}>Dinamik Planlama</span>
             </p>
 
             {remaining !== null && remaining > 0 && (
@@ -208,7 +207,7 @@ export default function LgsHazirlikPage() {
                 whileTap={{ scale: 0.96 }}
                 onClick={scrollToOffer}
                 className="font-fredoka font-bold text-base px-10 py-4 rounded-full"
-                style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 10px 32px rgba(216,255,79,0.35)" }}
+                style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 10px 32px rgba(14,124,136,0.35)" }}
               >
                 {hero.ctaPrimary || "LGS Koçluğu İçin Görüşme Talep Et →"}
               </motion.button>
@@ -220,7 +219,7 @@ export default function LgsHazirlikPage() {
             {/* Ürünün gerçek işlevini gösteren küçük mockup — net iddiası yerine */}
             <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.2 }} className="mt-12 max-w-[320px] mx-auto">
               <div className="bg-white rounded-[20px] p-5 text-left">
-                <p className="font-fredoka font-bold text-[10px] uppercase mb-3" style={{ color: "#FF6B35", letterSpacing: 2 }}>Mert'in Bu Haftaki Rotası</p>
+                <p className="font-fredoka font-bold text-[10px] uppercase mb-3" style={{ color: "var(--color-brand)", letterSpacing: 2 }}>Mert'in Bu Haftaki Rotası</p>
                 <div className="flex items-center justify-between mb-3">
                   <span className="font-nunito font-bold text-xs text-[#64748b]">İlerleme</span>
                   <span className="font-fredoka font-bold text-sm text-page-navy">8 / 11 görev</span>
@@ -231,8 +230,8 @@ export default function LgsHazirlikPage() {
                   { text: "Fen — Devam ediyor", done: false },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-2.5 mb-2">
-                    <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: item.done ? "#D8FF4F" : "#f1f5f9" }}>
-                      {item.done && <svg width="9" height="9" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2.4" strokeLinecap="round" /></svg>}
+                    <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: item.done ? "var(--color-brand)" : "#f1f5f9" }}>
+                      {item.done && <svg width="9" height="9" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#FFFFFF" strokeWidth="2.4" strokeLinecap="round" /></svg>}
                     </div>
                     <span className="font-nunito font-bold text-xs" style={{ color: item.done ? "#0f172a" : "#94a3b8" }}>{item.text}</span>
                   </div>
@@ -249,7 +248,7 @@ export default function LgsHazirlikPage() {
 
       {/* ── SİZDE DE BÖYLE Mİ? ── */}
       {painPoints.items?.length > 0 && (
-        <section className="py-20 px-5" style={{ background: "#f4f2fa" }}>
+        <section className="py-20 px-5" style={{ background: "var(--color-brand-light)" }}>
           <div className="max-w-2xl mx-auto">
             <motion.div {...fadeUp} className="text-center mb-10">
               <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>SİZDE DE BÖYLE Mİ?</div>
@@ -262,7 +261,7 @@ export default function LgsHazirlikPage() {
               {painPoints.items.map((p, i) => (
                 <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }}
                   className="bg-white rounded-2xl px-5 py-4 border border-[#e2e8f0] shadow-sm flex items-center gap-3.5">
-                  <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#fff0ea", color: "#c2410c" }}>
+                  <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "var(--color-brand)", color: "#FFFFFF" }}>
                     <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6 L4.5 8.5 L10 2.5" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </span>
                   <p className="font-nunito font-bold text-[#0f172a] text-sm">{p.title}</p>
@@ -275,7 +274,7 @@ export default function LgsHazirlikPage() {
                 Amaç çocuğunuza daha fazla baskı kurmak değil.{" "}
                 <span className="text-page-navy">Kendi çalışma sürecini daha sistemli yönetebileceği bir yapı oluşturmak.</span>
               </p>
-              <button onClick={scrollToForm} className="font-fredoka font-bold text-sm px-8 py-3.5 rounded-full transition-all hover:scale-105 inline-flex items-center gap-2" style={{ background: "#1C1B8A", color: "#D8FF4F", boxShadow: "0 4px 16px rgba(28,27,138,0.25)" }}>
+              <button onClick={scrollToForm} className="font-fredoka font-bold text-sm px-8 py-3.5 rounded-full transition-all hover:scale-105 inline-flex items-center gap-2" style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 4px 16px rgba(14,124,136,0.3)" }}>
                 Bu Yükü Biz Devralalım → Ücretsiz Veli Görüşmesi
               </button>
             </motion.div>
@@ -295,9 +294,9 @@ export default function LgsHazirlikPage() {
 
           <div className="flex flex-col items-center">
             {[
-              { label: "ÖĞRENCİ", desc: "Rotasını uygular, sorumluluk alır.", color: "#FF6B35" },
-              { label: "KOÇ", desc: "Planlar, takip eder, geri bildirim verir, rotayı günceller.", color: "#7340C8" },
-              { label: "VELİ", desc: "Sürecin nasıl ilerlediğini görür.", color: "#1C1B8A" },
+              { label: "ÖĞRENCİ", desc: "Rotasını uygular, sorumluluk alır.", color: "#0E7C88" },
+              { label: "KOÇ", desc: "Planlar, takip eder, geri bildirim verir, rotayı günceller.", color: "#17252D" },
+              { label: "VELİ", desc: "Sürecin nasıl ilerlediğini görür.", color: "#0B6976" },
             ].map((p, i) => (
               <div key={i} className="w-full max-w-sm">
                 <motion.div {...fadeUp} transition={{ duration: 0.5, delay: i * 0.12 }}
@@ -322,28 +321,28 @@ export default function LgsHazirlikPage() {
       </section>
 
       {/* ── SÖZDERECE ROTA SİSTEMİ ── */}
-      <section className="py-20 px-5 text-white relative overflow-hidden" style={{ background: "#0D0A2E" }}>
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 340, height: 340, background: "#7340C8", filter: "blur(100px)", opacity: 0.3, top: -80, right: -60, animation: "lgsOrb1 8s ease-in-out infinite" }} />
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 260, height: 260, background: "#1C1B8A", filter: "blur(90px)", opacity: 0.4, bottom: -50, left: -50, animation: "lgsOrb2 10s ease-in-out infinite" }} />
+      <section className="py-20 px-5 text-white relative overflow-hidden" style={{ background: "var(--color-dark)" }}>
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 340, height: 340, background: "var(--color-brand)", filter: "blur(100px)", opacity: 0.35, top: -80, right: -60, animation: "lgsOrb1 8s ease-in-out infinite" }} />
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 260, height: 260, background: "var(--color-brand-hover)", filter: "blur(90px)", opacity: 0.22, bottom: -50, left: -50, animation: "lgsOrb2 10s ease-in-out infinite" }} />
         <div className="max-w-5xl mx-auto relative">
           <motion.div {...fadeUp} className="text-center mb-14">
             <div className="font-fredoka font-bold text-lime text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>SÖZDERECE ROTA SİSTEMİ</div>
             <h2 className="font-fredoka font-bold text-white m-0 leading-tight" style={{ fontSize: "clamp(26px,4vw,44px)" }}>
               Çocuğunuza Yalnızca Bir Program Değil,{" "}
-              <span style={{ color: "#D8FF4F" }}>Takip Edilen Bir Çalışma Süreci.</span>
+              <span style={{ color: "var(--color-brand-on-dark)" }}>Takip Edilen Bir Çalışma Süreci.</span>
             </h2>
           </motion.div>
 
           <div className="grid grid-cols-3 gap-6 mb-14 max-[768px]:grid-cols-1">
             {[
-              { num: "01", title: "Kişisel Rota", desc: "Öğrencinin seviyesi, eksikleri, okul düzeni ve hedefleri değerlendirilerek çalışma rotası oluşturulur.", color: "#7340C8" },
-              { num: "02", title: "İlerleme Takibi", desc: "Programın yalnızca hazırlanması değil, uygulanması da takip edilir. Aksayan noktalar görünür hale gelir.", color: "#D8FF4F" },
-              { num: "03", title: "Dinamik Planlama", desc: "Deneme sonuçları, konu ilerleyişi ve öğrencinin ihtiyaçlarına göre rota güncellenir.", color: "#FF6B35" },
+              { num: "01", title: "Kişisel Rota", desc: "Öğrencinin seviyesi, eksikleri, okul düzeni ve hedefleri değerlendirilerek çalışma rotası oluşturulur.", color: "rgba(255,255,255,0.4)" },
+              { num: "02", title: "İlerleme Takibi", desc: "Programın yalnızca hazırlanması değil, uygulanması da takip edilir. Aksayan noktalar görünür hale gelir.", color: "var(--color-brand-on-dark)" },
+              { num: "03", title: "Dinamik Planlama", desc: "Deneme sonuçları, konu ilerleyişi ve öğrencinin ihtiyaçlarına göre rota güncellenir.", color: "var(--color-brand-on-dark)" },
             ].map((b, i) => (
               <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.1 }}
-                whileHover={{ y: -4, borderColor: "rgba(216,255,79,0.4)" }}
+                whileHover={{ y: -4, borderColor: "rgba(14,124,136,0.4)" }}
                 className="rounded-2xl p-6 border relative" style={{ background: "rgba(255,255,255,0.07)", borderColor: "rgba(255,255,255,0.14)" }}>
-                <div className="font-fredoka font-bold mb-3" style={{ fontSize: 44, color: `${b.color}30`, lineHeight: 1 }}>{b.num}</div>
+                <div className="font-fredoka font-bold mb-3" style={{ fontSize: 44, color: "rgba(255,255,255,0.14)", lineHeight: 1 }}>{b.num}</div>
                 <h3 className="font-fredoka font-bold text-white text-base mb-2">{b.title}</h3>
                 <p className="font-nunito text-white/55 text-sm leading-relaxed">{b.desc}</p>
                 <div className="absolute top-5 right-5 w-2.5 h-2.5 rounded-full" style={{ background: b.color }} />
@@ -364,16 +363,16 @@ export default function LgsHazirlikPage() {
           </motion.div>
 
           <div className="relative">
-            <div className="absolute top-0 bottom-0 w-[2px]" style={{ left: 19, background: "linear-gradient(to bottom, #7340C8, #D8FF4F, #FF6B35, #1C1B8A, #7340C8)", opacity: 0.25 }} />
+            <div className="absolute top-0 bottom-0 w-[2px]" style={{ left: 19, background: "linear-gradient(to bottom, var(--color-dark), var(--color-brand), var(--color-brand-hover), var(--color-dark), var(--color-brand))", opacity: 0.25 }} />
             {[
-              { day: "Pazartesi", desc: "Haftalık çalışma rotası belli.", color: "#7340C8" },
-              { day: "Hafta Boyunca", desc: "Öğrenci planını uygular, ilerleyişi takip edilir.", color: "#D8FF4F" },
-              { day: "Takıldığı Noktada", desc: "Koçundan destek ve geri bildirim alır.", color: "#FF6B35" },
-              { day: "Deneme Sonrası", desc: "Sonuç yalnızca kaydedilmez; eksikler değerlendirilir.", color: "#1C1B8A" },
-              { day: "Yeni Hafta", desc: "Gerekiyorsa çalışma rotası güncellenir.", color: "#7340C8" },
+              { day: "Pazartesi", desc: "Haftalık çalışma rotası belli.", color: "var(--color-dark)" },
+              { day: "Hafta Boyunca", desc: "Öğrenci planını uygular, ilerleyişi takip edilir.", color: "var(--color-brand)" },
+              { day: "Takıldığı Noktada", desc: "Koçundan destek ve geri bildirim alır.", color: "var(--color-brand-hover)" },
+              { day: "Deneme Sonrası", desc: "Sonuç yalnızca kaydedilmez; eksikler değerlendirilir.", color: "var(--color-dark)" },
+              { day: "Yeni Hafta", desc: "Gerekiyorsa çalışma rotası güncellenir.", color: "var(--color-brand)" },
             ].map((s, i) => (
               <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.08 }} className="relative flex items-start gap-5 pb-8 last:pb-0">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 font-fredoka font-bold text-sm relative z-10" style={{ background: s.color, color: s.color === "#D8FF4F" ? "#1C1B8A" : "#fff" }}>
+                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 font-fredoka font-bold text-sm relative z-10" style={{ background: s.color, color: "#fff" }}>
                   {i + 1}
                 </div>
                 <div className="pt-2">
@@ -384,14 +383,14 @@ export default function LgsHazirlikPage() {
             ))}
           </div>
 
-          <motion.p {...fadeUp} className="text-center font-fredoka font-bold mt-6" style={{ fontSize: "clamp(17px,2.4vw,24px)", color: "#1C1B8A" }}>
+          <motion.p {...fadeUp} className="text-center font-fredoka font-bold mt-6" style={{ fontSize: "clamp(17px,2.4vw,24px)", color: "var(--color-dark)" }}>
             Planla → Uygula → Takip Et → Güncelle
           </motion.p>
         </div>
       </section>
 
       {/* ── ÖĞRENCİ PANELİ ── */}
-      <section className="py-20 px-5" style={{ background: "#f4f2fa" }}>
+      <section className="py-20 px-5" style={{ background: "var(--color-brand-light)" }}>
         <div className="max-w-5xl mx-auto grid grid-cols-2 gap-14 items-center max-[900px]:grid-cols-1 max-[900px]:gap-10">
           <motion.div {...fadeUp}>
             <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>ÖĞRENCİ PANELİ</div>
@@ -406,8 +405,8 @@ export default function LgsHazirlikPage() {
                 { title: "Koç Desteği", desc: "Takıldığı noktada koçuyla iletişim kurar." },
               ].map((c, i) => (
                 <div key={i} className="flex items-start gap-2">
-                  <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "#D8FF4F" }}>
-                    <svg width="10" height="10" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2" strokeLinecap="round" /></svg>
+                  <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "var(--color-brand)" }}>
+                    <svg width="10" height="10" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" /></svg>
                   </span>
                   <div>
                     <p className="font-fredoka font-bold text-page-navy text-xs">{c.title}</p>
@@ -419,17 +418,17 @@ export default function LgsHazirlikPage() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, scale: 0.94 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-            <div className="rounded-[24px] p-5 max-w-[380px] mx-auto" style={{ background: "#1C1B8A" }}>
+            <div className="rounded-[24px] p-5 max-w-[380px] mx-auto" style={{ background: "var(--color-dark)" }}>
               <div className="bg-white rounded-[18px] p-5">
-                <p className="font-fredoka font-bold text-[10px] uppercase mb-3" style={{ color: "#FF6B35", letterSpacing: 2 }}>Bugünkü Rotam</p>
+                <p className="font-fredoka font-bold text-[10px] uppercase mb-3" style={{ color: "var(--color-brand)", letterSpacing: 2 }}>Bugünkü Rotam</p>
                 {[
                   { text: "Matematik — Denklemler", done: true },
                   { text: "Türkçe — Paragraf", done: true },
                   { text: "Fen — Kuvvet ve Hareket", done: false },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-2.5 mb-2.5">
-                    <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: item.done ? "#D8FF4F" : "#f1f5f9" }}>
-                      {item.done && <svg width="9" height="9" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2.4" strokeLinecap="round" /></svg>}
+                    <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: item.done ? "var(--color-brand)" : "#f1f5f9" }}>
+                      {item.done && <svg width="9" height="9" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#FFFFFF" strokeWidth="2.4" strokeLinecap="round" /></svg>}
                     </div>
                     <span className="font-nunito font-bold text-xs" style={{ color: item.done ? "#0f172a" : "#94a3b8" }}>{item.text}</span>
                   </div>
@@ -439,7 +438,7 @@ export default function LgsHazirlikPage() {
                   <span className="font-fredoka font-bold text-sm text-page-navy">8/11 görev</span>
                 </div>
                 <div className="h-1.5 rounded-full bg-[#f1f5f9] overflow-hidden mt-1.5">
-                  <div className="h-full rounded-full" style={{ width: "73%", background: "linear-gradient(90deg, #1C1B8A, #FF6B35)" }} />
+                  <div className="h-full rounded-full" style={{ width: "73%", background: "linear-gradient(90deg, var(--color-dark), var(--color-brand))" }} />
                 </div>
               </div>
             </div>
@@ -477,8 +476,8 @@ export default function LgsHazirlikPage() {
                   <p className="font-nunito font-bold text-[10px] text-[#94a3b8]">Son Deneme Net</p>
                 </div>
               </div>
-              <div className="bg-[#f5f3ff] rounded-xl p-3">
-                <p className="font-nunito font-bold text-[10px] uppercase text-[#7340C8] mb-1">Koçtan Not</p>
+              <div style={{ background: "var(--color-brand-light)" }} className="rounded-xl p-3">
+                <p className="font-nunito font-bold text-[10px] uppercase mb-1" style={{ color: "var(--color-brand)" }}>Koçtan Not</p>
                 <p className="font-nunito text-xs text-[#475569] leading-relaxed">"Bu hafta fen konularında güzel ilerleme kaydetti, önümüzdeki hafta matematik tekrarına ağırlık veriyoruz."</p>
               </div>
             </div>
@@ -494,7 +493,7 @@ export default function LgsHazirlikPage() {
               <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>SOSYAL KANIT</div>
               <h2 className="font-fredoka font-bold text-page-navy m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,40px)" }}>
                 {socialProof.title || "Sadece söz değil,"}{" "}
-                <span style={{ color: "#FF6B35" }}>{socialProof.titleAccent || "aileler konuşuyor"}</span>
+                <span style={{ color: "var(--color-brand)" }}>{socialProof.titleAccent || "aileler konuşuyor"}</span>
               </h2>
             </motion.div>
 
@@ -503,7 +502,7 @@ export default function LgsHazirlikPage() {
                 {socialProof.stats.map((s, i) => (
                   <motion.div key={i} {...fadeUp} transition={{ delay: i * 0.1 }}
                     whileHover={{ scale: 1.03 }}
-                    className="rounded-2xl p-6 border border-[#e2e8f0] text-center shadow-sm" style={{ background: i % 2 === 0 ? "#f4f2fa" : "#fff0ea" }}>
+                    className="rounded-2xl p-6 border border-[#e2e8f0] text-center shadow-sm" style={{ background: "var(--color-brand-light)" }}>
                     <div className="font-fredoka font-bold text-page-navy mb-1" style={{ fontSize: "clamp(28px,3vw,40px)" }}>{s.val}</div>
                     <div className="font-nunito font-bold text-sm text-[#64748b]">{s.label}</div>
                   </motion.div>
@@ -511,8 +510,8 @@ export default function LgsHazirlikPage() {
                 {remaining !== null && remaining > 0 && (
                   <motion.div {...fadeUp} transition={{ delay: socialProof.stats.length * 0.1 }}
                     whileHover={{ scale: 1.03 }}
-                    className="rounded-2xl p-6 border text-center shadow-sm" style={{ background: "#0D0A2E", borderColor: "#0D0A2E" }}>
-                    <div className="font-fredoka font-bold mb-1" style={{ fontSize: "clamp(28px,3vw,40px)", color: "#D8FF4F" }}>{remaining}</div>
+                    className="rounded-2xl p-6 border text-center shadow-sm" style={{ background: "var(--color-dark)", borderColor: "var(--color-dark)" }}>
+                    <div className="font-fredoka font-bold mb-1" style={{ fontSize: "clamp(28px,3vw,40px)", color: "var(--color-brand-on-dark)" }}>{remaining}</div>
                     <div className="font-nunito font-bold text-sm text-white/50">yer kaldı</div>
                   </motion.div>
                 )}
@@ -522,8 +521,8 @@ export default function LgsHazirlikPage() {
             {socialProof.testimonials?.length > 0 && (
               <div className="grid grid-cols-3 gap-5 max-[900px]:grid-cols-1">
                 {socialProof.testimonials.map((t, i) => {
-                  const catColors = { "Düzen": "#7340C8", "Sorumluluk": "#c2410c", "Akademik İlerleme": "#1C1B8A" };
-                  const color = catColors[t.category] || "#1C1B8A";
+                  const catColors = { "Düzen": "#17252D", "Sorumluluk": "#0E7C88", "Akademik İlerleme": "#0B6976" };
+                  const color = catColors[t.category] || "#0B6976";
                   return (
                     <motion.div key={i} {...fadeUp} transition={{ delay: i * 0.1 }}
                       whileHover={{ y: -4 }}
@@ -539,10 +538,10 @@ export default function LgsHazirlikPage() {
                           {t.process && <p className="mt-0.5"><span className="font-bold text-[#94a3b8]">Süreç:</span> <span className="text-[#64748b]">{t.process}</span></p>}
                         </div>
                       )}
-                      <div className="flex gap-0.5">{Array(5).fill(0).map((_, j) => <span key={j} style={{ color: "#FF6B35" }}>★</span>)}</div>
+                      <div className="flex gap-0.5">{Array(5).fill(0).map((_, j) => <span key={j} style={{ color: "var(--color-brand)" }}>★</span>)}</div>
                       <p className="font-nunito text-[#374151] text-sm leading-relaxed italic flex-grow">"{t.quote}"</p>
                       <div className="flex items-center gap-3 pt-2 border-t border-[#f1f5f9]">
-                        <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-fredoka font-bold text-sm flex-shrink-0" style={{ background: t.isParent ? "#1C1B8A" : "#FF6B35" }}>
+                        <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-fredoka font-bold text-sm flex-shrink-0" style={{ background: t.isParent ? "var(--color-dark)" : "var(--color-brand)" }}>
                           {t.author?.[0]?.toUpperCase() || (t.isParent ? "V" : "Ö")}
                         </div>
                         <div>
@@ -582,8 +581,8 @@ export default function LgsHazirlikPage() {
             ].map((f, i) => (
               <motion.div key={i} {...fadeUp} transition={{ duration: 0.45, delay: Math.min(i * 0.06, 0.3) }}
                 className="flex items-start gap-3.5 bg-[#f8fafc] rounded-2xl p-5">
-                <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "#D8FF4F" }}>
-                  <svg width="12" height="12" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#0D0A2E" strokeWidth="2.2" strokeLinecap="round" /></svg>
+                <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "var(--color-brand)" }}>
+                  <svg width="12" height="12" viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" /></svg>
                 </span>
                 <div>
                   <h3 className="font-fredoka font-bold text-page-navy text-sm mb-1">{f.title}</h3>
@@ -596,7 +595,7 @@ export default function LgsHazirlikPage() {
       </section>
 
       {/* ── KİMLER İÇİN ── */}
-      <section className="py-20 px-5" style={{ background: "#f4f2fa" }}>
+      <section className="py-20 px-5" style={{ background: "var(--color-brand-light)" }}>
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-12">
             <div className="font-fredoka font-bold text-accent-orange text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>KİMLER İÇİN</div>
@@ -606,7 +605,7 @@ export default function LgsHazirlikPage() {
           </motion.div>
 
           <div className="grid grid-cols-2 gap-5 max-[768px]:grid-cols-1">
-            <motion.div {...fadeUp} className="bg-white rounded-2xl p-7 border-2" style={{ borderColor: "#D8FF4F" }}>
+            <motion.div {...fadeUp} className="bg-white rounded-2xl p-7 border-2" style={{ borderColor: "var(--color-brand)" }}>
               <h3 className="font-fredoka font-bold text-page-navy text-base mb-4">Bu koçluk çocuğunuz için uygun olabilir eğer...</h3>
               <ul className="flex flex-col gap-3">
                 {[
@@ -649,14 +648,14 @@ export default function LgsHazirlikPage() {
 
       {/* ── BAŞVURU SÜRECİ (4 adım) ── */}
       {howItWorks.steps?.length > 0 && (
-        <section className="py-20 px-5 text-white relative overflow-hidden" style={{ background: "#1C1B8A" }}>
-          <div className="absolute rounded-full pointer-events-none" style={{ width: 320, height: 320, background: "#7340C8", filter: "blur(90px)", opacity: 0.3, top: -60, right: -60 }} />
-          <div className="absolute rounded-full pointer-events-none" style={{ width: 220, height: 220, background: "#0D0A2E", filter: "blur(70px)", opacity: 0.5, bottom: -40, left: -40 }} />
+        <section className="py-20 px-5 text-white relative overflow-hidden" style={{ background: "var(--color-dark)" }}>
+          <div className="absolute rounded-full pointer-events-none" style={{ width: 320, height: 320, background: "var(--color-brand)", filter: "blur(90px)", opacity: 0.3, top: -60, right: -60 }} />
+          <div className="absolute rounded-full pointer-events-none" style={{ width: 220, height: 220, background: "var(--color-brand-hover)", filter: "blur(70px)", opacity: 0.25, bottom: -40, left: -40 }} />
           <div className="max-w-5xl mx-auto relative">
             <motion.div {...fadeUp} className="text-center mb-12">
               <div className="font-fredoka font-bold text-lime text-[12px] uppercase mb-3" style={{ letterSpacing: 4 }}>BAŞVURU SÜRECİ</div>
               <h2 className="font-fredoka font-bold text-white m-0 leading-tight" style={{ fontSize: "clamp(24px,4vw,40px)" }}>
-                Sürece Başlamak <span style={{ color: "#D8FF4F" }}>Çok Kolay.</span>
+                Sürece Başlamak <span style={{ color: "var(--color-brand-on-dark)" }}>Çok Kolay.</span>
               </h2>
             </motion.div>
             <div className="grid grid-cols-4 gap-5 mb-4 max-[900px]:grid-cols-2 max-[560px]:grid-cols-1">
@@ -671,7 +670,7 @@ export default function LgsHazirlikPage() {
               ))}
             </div>
             <div className="text-center mt-8">
-              <button onClick={scrollToOffer} className="font-fredoka font-bold text-base px-10 py-4 rounded-full transition-all hover:scale-105" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 8px 24px rgba(216,255,79,0.3)" }}>
+              <button onClick={scrollToOffer} className="font-fredoka font-bold text-base px-10 py-4 rounded-full transition-all hover:scale-105" style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 8px 24px rgba(14,124,136,0.35)" }}>
                 {howItWorks.comparisonCta || "Hemen Kayıt Ol →"}
               </button>
             </div>
@@ -680,10 +679,9 @@ export default function LgsHazirlikPage() {
       )}
 
       {/* ── TEKLİF + FORM ── */}
-      <section id="lgs-teklif" ref={offerRef} className="relative py-20 px-5 text-white overflow-hidden" style={{ background: "#0D0A2E" }}>
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 380, height: 380, background: "#7340C8", filter: "blur(110px)", opacity: 0.2, top: -60, right: -60, animation: "lgsOrb1 8s ease-in-out infinite" }} />
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 280, height: 280, background: "#1C1B8A", filter: "blur(80px)", opacity: 0.35, bottom: -40, left: -40, animation: "lgsOrb2 10s ease-in-out infinite" }} />
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 180, height: 180, background: "#FF6B35", filter: "blur(70px)", opacity: 0.1, top: "35%", left: "22%" }} />
+      <section id="lgs-teklif" ref={offerRef} className="relative py-20 px-5 text-white overflow-hidden" style={{ background: "var(--color-dark)" }}>
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 380, height: 380, background: "var(--color-brand)", filter: "blur(110px)", opacity: 0.3, top: -60, right: -60, animation: "lgsOrb1 8s ease-in-out infinite" }} />
+        <div className="absolute rounded-full pointer-events-none" style={{ width: 280, height: 280, background: "var(--color-brand-hover)", filter: "blur(80px)", opacity: 0.2, bottom: -40, left: -40, animation: "lgsOrb2 10s ease-in-out infinite" }} />
 
         <div className="max-w-5xl mx-auto relative">
           <motion.div {...fadeUp} className="text-center mb-8">
@@ -709,7 +707,7 @@ export default function LgsHazirlikPage() {
                       <div key={i} className="relative bg-white rounded-3xl p-7 flex flex-col shadow-2xl">
                         {plan.badge && (
                           <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                            <span className="font-fredoka font-bold text-xs px-5 py-1.5 rounded-full shadow-lg whitespace-nowrap" style={{ background: "#D8FF4F", color: "#1C1B8A" }}>{plan.badge}</span>
+                            <span className="font-fredoka font-bold text-xs px-5 py-1.5 rounded-full shadow-lg whitespace-nowrap" style={{ background: "var(--color-brand)", color: "#FFFFFF" }}>{plan.badge}</span>
                           </div>
                         )}
                         <div className="pt-2 mb-5">
@@ -726,13 +724,13 @@ export default function LgsHazirlikPage() {
                           <ul className="space-y-1.5 mb-6 flex-grow">
                             {planIncludes.map((item, j) => (
                               <li key={j} className="flex items-center gap-2 font-nunito text-xs text-[#374151]">
-                                <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0" style={{ background: "#D8FF4F", color: "#1C1B8A" }}>✓</span>
+                                <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0" style={{ background: "var(--color-brand)", color: "#FFFFFF" }}>✓</span>
                                 {item}
                               </li>
                             ))}
                           </ul>
                         )}
-                        <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.96 }} onClick={() => addToCartAndPay(plan, i)} className="w-full py-3.5 rounded-full font-fredoka font-bold text-sm" style={{ background: "#FF6B35", color: "white", boxShadow: "0 6px 20px rgba(255,107,53,0.3)" }}>
+                        <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.96 }} onClick={() => addToCartAndPay(plan, i)} className="w-full py-3.5 rounded-full font-fredoka font-bold text-sm" style={{ background: "var(--color-brand)", color: "white", boxShadow: "0 6px 20px rgba(14,124,136,0.35)" }}>
                           {plan.ctaText || "⚡ Yerimi Ayırt"}
                         </motion.button>
                       </div>
@@ -751,13 +749,13 @@ export default function LgsHazirlikPage() {
                             {plan.priceText && <span className="font-nunito text-white/40 text-xs">{plan.priceText}</span>}
                           </div>
                           {plan.desc && <p className="font-nunito text-white/40 text-xs mt-1">{plan.desc}</p>}
-                          <p className="font-nunito font-bold text-xs mt-1" style={{ color: "#D8FF4F" }}>✓ 7 gün içinde memnun kalmazsanız iade alırsınız</p>
+                          <p className="font-nunito font-bold text-xs mt-1" style={{ color: "var(--color-brand-on-dark)" }}>✓ 7 gün içinde memnun kalmazsanız iade alırsınız</p>
                         </div>
                         {planIncludes.length > 0 && (
                           <ul className="space-y-1.5 mb-6 flex-grow">
                             {planIncludes.map((item, j) => (
                               <li key={j} className="flex items-center gap-2 font-nunito text-xs text-white/55">
-                                <span className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center font-black text-[10px] flex-shrink-0" style={{ color: "#D8FF4F" }}>✓</span>
+                                <span className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center font-black text-[10px] flex-shrink-0" style={{ color: "var(--color-brand-on-dark)" }}>✓</span>
                                 {item}
                               </li>
                             ))}
@@ -791,7 +789,7 @@ export default function LgsHazirlikPage() {
                         <textarea name="message" value={form.message} onChange={handleFormChange} className={`${inp} resize-none h-16`} placeholder="Merak ettiklerinizi yazabilirsiniz..." />
                       </div>
                       {formError && <p className="font-nunito text-red-500 text-xs">{formError}</p>}
-                      <button type="submit" disabled={submitting} className="w-full py-3.5 rounded-full font-fredoka font-bold text-sm transition-all disabled:opacity-60 hover:-translate-y-0.5" style={{ background: "#1C1B8A", color: "#D8FF4F", boxShadow: "0 6px 20px rgba(28,27,138,0.25)" }}>
+                      <button type="submit" disabled={submitting} className="w-full py-3.5 rounded-full font-fredoka font-bold text-sm transition-all disabled:opacity-60 hover:-translate-y-0.5" style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 6px 20px rgba(14,124,136,0.3)" }}>
                         {submitting ? "Gönderiliyor..." : (formContent.submitText || "Gönder, Sizi Arayalım →")}
                       </button>
                     </form>
@@ -804,22 +802,22 @@ export default function LgsHazirlikPage() {
             <div className="grid grid-cols-2 gap-8 max-[768px]:grid-cols-1">
               <motion.div {...fadeUp} className="rounded-3xl p-8 flex flex-col border" style={{ background: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.11)", backdropFilter: "blur(8px)" }}>
                 <div className="mb-6">
-                  <div className="font-fredoka font-bold" style={{ fontSize: "clamp(34px,4vw,52px)", color: "#D8FF4F" }}>₺{price}</div>
+                  <div className="font-fredoka font-bold" style={{ fontSize: "clamp(34px,4vw,52px)", color: "var(--color-brand-on-dark)" }}>₺{price}</div>
                   <p className="font-nunito text-white/40 text-xs mt-1">{offer.priceLabel || "LGS'ye kadar, tek seferlik"}</p>
-                  <p className="font-nunito font-bold text-sm mt-1" style={{ color: "#D8FF4F" }}>✓ 7 gün içinde memnun kalmazsanız iade alırsınız</p>
+                  <p className="font-nunito font-bold text-sm mt-1" style={{ color: "var(--color-brand-on-dark)" }}>✓ 7 gün içinde memnun kalmazsanız iade alırsınız</p>
                 </div>
                 {offer.includes?.length > 0 && (
                   <ul className="space-y-2 mb-8 flex-grow">
                     {offer.includes.map((item, i) => (
                       <li key={i} className="flex items-center gap-2 font-nunito text-sm text-white/65">
-                        <span className="w-5 h-5 rounded-full flex items-center justify-center font-black text-xs flex-shrink-0" style={{ background: "rgba(216,255,79,0.15)", color: "#D8FF4F" }}>✓</span>
+                        <span className="w-5 h-5 rounded-full flex items-center justify-center font-black text-xs flex-shrink-0" style={{ background: "rgba(14,124,136,0.18)", color: "var(--color-brand-on-dark)" }}>✓</span>
                         {item}
                       </li>
                     ))}
                   </ul>
                 )}
                 <div className="flex flex-col gap-3">
-                  <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.96 }} onClick={() => navigate(offer.buyLink || "/paket-detay")} className="w-full py-4 rounded-full font-fredoka font-bold text-base" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 6px 20px rgba(216,255,79,0.3)" }}>
+                  <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.96 }} onClick={() => navigate(offer.buyLink || "/paket-detay")} className="w-full py-4 rounded-full font-fredoka font-bold text-base" style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 6px 20px rgba(14,124,136,0.35)" }}>
                     {offer.ctaPrimary || "⚡ Yerimi Ayırt"}
                   </motion.button>
                   <button onClick={scrollToForm} className="w-full py-3.5 rounded-full border-2 font-fredoka font-bold text-sm transition-all hover:bg-white/10" style={{ borderColor: "rgba(255,255,255,0.22)", color: "white" }}>
@@ -855,7 +853,7 @@ export default function LgsHazirlikPage() {
                         <textarea name="message" value={form.message} onChange={handleFormChange} className={`${inp} resize-none h-20`} placeholder="Merak ettiklerinizi yazabilirsiniz..." />
                       </div>
                       {formError && <p className="font-nunito text-red-500 text-xs">{formError}</p>}
-                      <button type="submit" disabled={submitting} className="w-full py-4 rounded-full font-fredoka font-bold text-base transition-all disabled:opacity-60 hover:-translate-y-0.5" style={{ background: "#1C1B8A", color: "#D8FF4F", boxShadow: "0 6px 20px rgba(28,27,138,0.25)" }}>
+                      <button type="submit" disabled={submitting} className="w-full py-4 rounded-full font-fredoka font-bold text-base transition-all disabled:opacity-60 hover:-translate-y-0.5" style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 6px 20px rgba(14,124,136,0.3)" }}>
                         {submitting ? "Gönderiliyor..." : (formContent.submitText || "Gönder, Sizi Arayalım →")}
                       </button>
                     </form>
@@ -890,13 +888,13 @@ export default function LgsHazirlikPage() {
 
       {/* Sticky CTA */}
       {showSticky && !stickyHidden && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 border-t" style={{ background: "rgba(13,10,46,0.95)", backdropFilter: "blur(16px)", borderColor: "rgba(255,255,255,0.08)" }}>
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 border-t" style={{ background: "rgba(23,37,45,0.95)", backdropFilter: "blur(16px)", borderColor: "rgba(255,255,255,0.08)" }}>
           <div className="max-w-lg mx-auto flex items-center justify-between gap-4">
             <div className="font-nunito font-bold text-sm text-white flex items-center gap-2">
               {remaining !== null && remaining > 0 && <span style={{ color: "#ef4444" }}>🔥 {remaining} yer kaldı ·</span>}
               <span className="text-white/45">₺{price} / LGS'ye kadar</span>
             </div>
-            <button onClick={scrollToOffer} className="font-fredoka font-bold text-sm px-6 py-2.5 rounded-full transition-all hover:scale-105 whitespace-nowrap" style={{ background: "#D8FF4F", color: "#1C1B8A", boxShadow: "0 4px 12px rgba(216,255,79,0.3)" }}>
+            <button onClick={scrollToOffer} className="font-fredoka font-bold text-sm px-6 py-2.5 rounded-full transition-all hover:scale-105 whitespace-nowrap" style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 4px 12px rgba(14,124,136,0.35)" }}>
               {hero.navbarCta || "⚡ Yerimi Ayırt →"}
             </button>
           </div>
