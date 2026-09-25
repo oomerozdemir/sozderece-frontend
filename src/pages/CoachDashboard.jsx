@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
-import StudentPanelEditor from "./coach/StudentPanelEditor";
 import StreakBadge from "./panel/StreakBadge";
 import {
   FaExclamationTriangle, FaClock, FaBrain, FaUsers,
@@ -32,7 +31,6 @@ const initialsOf = (name) =>
 const CoachDashboard = () => {
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
-  const [editingStudent, setEditingStudent] = useState(null);
   const [sosAlerts, setSosAlerts] = useState([]);
   const [resolvingId, setResolvingId] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -241,95 +239,64 @@ const CoachDashboard = () => {
           )}
 
           {students.length > 0 ? (
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-5">
+            <div className="flex flex-col gap-3">
               {students.map((student) => {
-                const latestOrder = student.orders?.[0];
                 const progress = student.todayProgress || { done: 0, total: 0 };
 
                 return (
                   <div
                     key={student.id}
-                    className="bg-white rounded-[24px] p-6 border shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-all hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)]"
+                    className="bg-white rounded-2xl px-5 py-4 border shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.07)] flex items-center gap-4 flex-wrap"
                     style={{
                       borderColor: student.strugglingToday ? "#fca5a5" : student.partialToday ? "#fcd34d" : "#f1f5f9",
                     }}
                   >
-                    <div className="flex items-center gap-2 flex-wrap mb-3">
-                      {(student.strugglingToday || student.partialToday) && (
-                        <span
-                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-nunito font-bold text-xs"
-                          style={
-                            student.strugglingToday
-                              ? { background: "#fef2f2", color: "#dc2626" }
-                              : { background: "#fff7ed", color: "#c2410c" }
-                          }
-                        >
-                          {student.strugglingToday ? "😓 Bugün zorlandı — kontrol et" : "⏳ Bugün yarıda kaldı"}
-                        </span>
-                      )}
-                      {student.streak?.current > 0 && <StreakBadge current={student.streak.current} compact />}
-                      {student.recurringWeaknessCount > 0 && (
-                        <span
-                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-nunito font-bold text-xs"
-                          style={{ background: "#f5f3ff", color: "#7340C8" }}
-                        >
-                          <FaBrain size={10} /> {student.recurringWeaknessCount} tekrar eden hata
-                        </span>
-                      )}
-                    </div>
+                    {student.streak?.current > 0 && <StreakBadge current={student.streak.current} compact />}
 
-                    {/* Bugünkü ilerleme + gerçek çalışma süresi — modalı açmadan tek bakış */}
-                    {progress.total > 0 && (
-                      <div className="mb-3 rounded-xl px-3.5 py-2.5" style={{ background: "#f8fafc" }}>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="font-nunito font-bold text-xs text-[#334155]">Bugünkü İlerleme</span>
-                          <span className="font-nunito font-bold text-xs text-page-navy">{progress.done}/{progress.total}</span>
-                        </div>
-                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "#e2e8f0" }}>
-                          <div
-                            className="h-full rounded-full"
-                            style={{
-                              width: `${Math.max(progress.done > 0 ? 6 : 0, Math.round((progress.done / progress.total) * 100))}%`,
-                              background: "linear-gradient(90deg, #1C1B8A, #FF6B35)",
-                            }}
-                          />
-                        </div>
-                        {student.actualStudyMinutesToday > 0 && (
-                          <p className="flex items-center gap-1 font-nunito font-semibold text-[11px] text-[#64748b] mt-1.5">
-                            <FaClock size={9} /> {student.actualStudyMinutesToday} dk gerçek çalışma (Pomodoro)
-                          </p>
+                    <div className="min-w-[180px] flex-1">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <p className="font-fredoka font-bold text-page-navy text-sm">{student.name}</p>
+                        {(student.strugglingToday || student.partialToday) && (
+                          <span
+                            className="inline-flex items-center px-2.5 py-0.5 rounded-full font-nunito font-bold text-[11px]"
+                            style={
+                              student.strugglingToday
+                                ? { background: "#fef2f2", color: "#dc2626" }
+                                : { background: "#fff7ed", color: "#c2410c" }
+                            }
+                          >
+                            {student.strugglingToday ? "😓 Bugün Zorlandı" : "⏳ Yarıda Kaldı"}
+                          </span>
+                        )}
+                        {student.recurringWeaknessCount > 0 && (
+                          <span
+                            className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-nunito font-bold text-[11px]"
+                            style={{ background: "#f5f3ff", color: "#7340C8" }}
+                          >
+                            <FaBrain size={9} /> {student.recurringWeaknessCount} tekrar eden hata
+                          </span>
                         )}
                       </div>
-                    )}
-
-                    <div className="space-y-1.5 mb-1">
-                      <p className="font-nunito text-sm text-[#475569]"><strong className="text-page-navy">👤 İsim:</strong> {student.name}</p>
-                      <p className="font-nunito text-sm text-[#475569]"><strong className="text-page-navy">📧 Email:</strong> {student.email}</p>
-                      <p className="font-nunito text-sm text-[#475569]"><strong className="text-page-navy">📞 Telefon:</strong> {student.phone || "Yok"}</p>
-                      <p className="font-nunito text-sm text-[#475569]"><strong className="text-page-navy">🎓 Sınıf:</strong> {student.grade || "Belirtilmemiş"}</p>
-                      {["9", "10", "11", "12", "Mezun"].includes(student.grade) && (
-                        <p className="font-nunito text-sm text-[#475569]"><strong className="text-page-navy">📚 Alan:</strong> {student.track || "Belirtilmemiş"}</p>
+                      <p className="font-nunito text-xs text-[#64748b]">
+                        {student.grade || "Sınıf belirtilmemiş"}
+                        {["9", "10", "11", "12", "Mezun"].includes(student.grade) && student.track ? ` · ${student.track}` : ""}
+                        {" · "}{student.email}
+                      </p>
+                      {progress.total > 0 && (
+                        <p className="font-nunito text-xs text-[#64748b] mt-1 flex items-center gap-1.5">
+                          <span>Bugün {progress.done}/{progress.total} görev</span>
+                          {student.actualStudyMinutesToday > 0 && (
+                            <span className="flex items-center gap-1"><FaClock size={9} /> {student.actualStudyMinutesToday} dk</span>
+                          )}
+                        </p>
                       )}
-                      <p className="font-nunito text-sm text-[#475569]"><strong className="text-page-navy">📅 Atanma Tarihi:</strong> {new Date(student.createdAt).toLocaleDateString("tr-TR")}</p>
                     </div>
 
-                    {latestOrder ? (
-                      <div className="mt-3 rounded-xl px-4 py-2.5" style={{ background: "#f8fafc", borderLeft: "4px solid #22c55e" }}>
-                        <p className="font-nunito text-sm text-[#475569]"><strong className="text-page-navy">📦 Paket:</strong> {latestOrder.package}</p>
-                        <p className="font-nunito text-sm text-[#475569]"><strong className="text-page-navy">🟢 Başlangıç:</strong> {latestOrder.startDate ? new Date(latestOrder.startDate).toLocaleDateString("tr-TR") : "—"}</p>
-                        <p className="font-nunito text-sm text-[#475569]"><strong className="text-page-navy">📆 Bitiş:</strong> {latestOrder.endDate ? new Date(latestOrder.endDate).toLocaleDateString("tr-TR") : "—"}</p>
-                        <p className="font-nunito text-sm text-[#475569]"><strong className="text-page-navy">🔄 Durum:</strong> {latestOrder.status}</p>
-                      </div>
-                    ) : (
-                      <p className="mt-2 font-nunito italic text-sm text-[#94a3b8]">📭 Sipariş bilgisi bulunamadı.</p>
-                    )}
-
                     <button
-                      onClick={() => setEditingStudent(student)}
-                      className="mt-4 w-full py-3 rounded-full font-fredoka font-bold text-sm text-white transition-transform hover:scale-[1.02]"
-                      style={{ background: "#1C1B8A" }}
+                      onClick={() => navigate(`/coach/students/${student.id}`, { state: { student } })}
+                      className="flex-shrink-0 px-5 py-2.5 rounded-full font-fredoka font-bold text-xs text-white bg-brand-navy transition-transform hover:scale-[1.02]"
                     >
-                      🗓️ Program / Deneme Girişi
+                      Öğrenciye Git →
                     </button>
                   </div>
                 );
@@ -382,9 +349,6 @@ const CoachDashboard = () => {
         </div>
       )}
 
-      {editingStudent && (
-        <StudentPanelEditor student={editingStudent} onClose={() => setEditingStudent(null)} />
-      )}
     </div>
   );
 };

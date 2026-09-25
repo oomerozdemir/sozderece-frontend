@@ -18,6 +18,7 @@ import "slick-carousel/slick/slick-theme.css";
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
 const CoachDashboard = lazy(() => import("./pages/CoachDashboard"));
+const StudentWorkspace = lazy(() => import("./pages/coach/workspace/StudentWorkspace"));
 const StudentDashboard = lazy(() => import("./pages/StudentDashboard"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
@@ -132,6 +133,7 @@ function App() {
 
             {/* Korunan sayfalar */}
             <Route path="/coach/dashboard" element={<RoleRoute allowedRoles={["coach"]}><CoachDashboard /></RoleRoute>} />
+            <Route path="/coach/students/:studentId" element={<RoleRoute allowedRoles={["coach"]}><StudentWorkspace /></RoleRoute>} />
             <Route path="/student/dashboard" element={<RoleRoute allowedRoles={["student"]}><StudentDashboard /></RoleRoute>} />
             {/* Satın alma sonrası onboarding — sadece giriş yapmış öğrenci, veriler sunucuda token'dan çözülür */}
             <Route path="/onboarding/hos-geldin" element={<RoleRoute allowedRoles={["student", "admin"]}><OnboardingWelcome /></RoleRoute>} />
