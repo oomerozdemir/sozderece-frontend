@@ -55,10 +55,15 @@ export default function StudentPanelEditor({ student, onClose }) {
   /* ── Program sekmesi ── */
   const [weekStart, setWeekStart] = useState(() => toMonday(new Date()));
   const [planTitle, setPlanTitle] = useState("");
-  const [rows, setRows] = useState([{ dayOfWeek: 0, subject: "", topic: "", durationMin: "" }]);
+  const [rows, setRows] = useState([{ dayOfWeek: 0, subject: "", topic: "", durationMin: "", source: "manual" }]);
   const [planLoading, setPlanLoading] = useState(false);
   const [planSaving, setPlanSaving] = useState(false);
   const [planMsg, setPlanMsg] = useState("");
+  const [planMsgError, setPlanMsgError] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageMsg, setImageMsg] = useState("");
+  const [imageMsgError, setImageMsgError] = useState(false);
+  const imageInputRef = useRef(null);
 
   useEffect(() => {
     if (tab !== "program") return;
@@ -75,11 +80,12 @@ export default function StudentPanelEditor({ student, onClose }) {
               subject: it.subject,
               topic: it.topic || "",
               durationMin: it.durationMin || "",
+              source: "manual",
             }))
           );
         } else {
           setPlanTitle("");
-          setRows([{ dayOfWeek: 0, subject: "", topic: "", durationMin: "" }]);
+          setRows([{ dayOfWeek: 0, subject: "", topic: "", durationMin: "", source: "manual" }]);
         }
       })
       .catch(() => {})
@@ -87,18 +93,66 @@ export default function StudentPanelEditor({ student, onClose }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, weekStart, student.id]);
 
-  const updateRow = (i, field, value) => setRows((prev) => prev.map((r, idx) => (idx === i ? { ...r, [field]: value } : r)));
-  const addRow = () => setRows((prev) => [...prev, { dayOfWeek: 0, subject: "", topic: "", durationMin: "" }]);
+  const updateRow = (i, field, value) =>
+    setRows((prev) => prev.map((r, idx) => (idx === i ? { ...r, [field]: value, source: r.source === "ai" ? "manual" : r.source } : r)));
+  const addRow = () => setRows((prev) => [...prev, { dayOfWeek: 0, subject: "", topic: "", durationMin: "", source: "manual" }]);
   const removeRow = (i) => setRows((prev) => prev.filter((_, idx) => idx !== i));
 
+  const handleImageChange = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // aynı dosya tekrar seçilebilsin
+    if (!file) return;
+    setImageUploading(true);
+    setImageMsg("");
+    setImageMsgError(false);
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      const res = await axios.post(`/api/coach/students/${student.id}/study-plan/parse-image`, formData, authHeaders);
+      const parsedRows = (res.data?.rows || []).map((r) => ({
+        dayOfWeek: r.dayOfWeek, // null kalabilir — koç "— seç —" ile tamamlayana kadar
+        subject: r.subject || "",
+        topic: r.topic || "",
+        durationMin: r.durationMin != null ? String(r.durationMin) : "",
+        source: "ai",
+      }));
+      setRows((prev) => {
+        const meaningful = prev.filter((r) => r.subject.trim());
+        return [...meaningful, ...parsedRows];
+      });
+      const reviewNote = res.data?.reviewStatus === "needs_review" ? " Bazı satırlarda eksik bilgi var, tamamlamayı unutma." : "";
+      setImageMsg(`✓ Görselden ${parsedRows.length} satır okundu.${reviewNote} Kontrol edip kaydetmeyi unutma.`);
+    } catch (err) {
+      setImageMsgError(true);
+      setImageMsg(err?.response?.data?.message || "Görsel okunamadı, tekrar dene.");
+    } finally {
+      setImageUploading(false);
+    }
+  };
+
+  // Tamamen boş bir satır (yeni eklenen şablon satırı gibi) sessizce yok
+  // sayılır. Ama içinde bir şeyler olup (AI'dan gelmiş ya da elle kısmen
+  // doldurulmuş) subject'i ya da dayOfWeek'i eksik kalan bir satır artık
+  // sessizce atılmıyor — kayıt bu satır düzeltilene/silinene kadar engellenir.
+  const isBlankRow = (r) => !r.subject?.trim() && !r.topic?.trim() && !String(r.durationMin ?? "").trim();
+  const isIncompleteRow = (r) => !isBlankRow(r) && (!r.subject?.trim() || r.dayOfWeek === null || r.dayOfWeek === undefined);
+
   const savePlan = async () => {
-    const validRows = rows.filter((r) => r.subject.trim());
+    const incompleteCount = rows.filter(isIncompleteRow).length;
+    if (incompleteCount > 0) {
+      setPlanMsgError(true);
+      setPlanMsg(`${incompleteCount} satırda eksik bilgi var — tamamla ya da satırı sil.`);
+      return;
+    }
+    const validRows = rows.filter((r) => !isBlankRow(r)).map(({ source, ...rest }) => rest);
     if (validRows.length === 0) {
+      setPlanMsgError(true);
       setPlanMsg("En az bir satıra ders girmelisin.");
       return;
     }
     setPlanSaving(true);
     setPlanMsg("");
+    setPlanMsgError(false);
     try {
       await axios.post(
         `/api/coach/students/${student.id}/study-plan`,
@@ -107,6 +161,7 @@ export default function StudentPanelEditor({ student, onClose }) {
       );
       setPlanMsg("Program kaydedildi ✓");
     } catch {
+      setPlanMsgError(true);
       setPlanMsg("Kaydedilemedi, tekrar dene.");
     } finally {
       setPlanSaving(false);
@@ -687,26 +742,61 @@ export default function StudentPanelEditor({ student, onClose }) {
 
               <input className={inputCls} placeholder="Program başlığı (opsiyonel, ör. 12. Hafta)" value={planTitle} onChange={(e) => setPlanTitle(e.target.value)} />
 
+              <div className="flex items-center gap-2 bg-[#f8fafc] border border-dashed border-[#cbd5e1] rounded-xl px-3 py-2.5">
+                <input ref={imageInputRef} type="file" accept="image/*,application/pdf" className="hidden" onChange={handleImageChange} />
+                <button
+                  onClick={() => imageInputRef.current?.click()}
+                  disabled={imageUploading}
+                  className="text-xs font-black text-white bg-brand-navy px-3 py-2 rounded-lg disabled:opacity-60 flex-shrink-0"
+                >
+                  {imageUploading ? "Okunuyor…" : "📷 Görselden Oluştur"}
+                </button>
+                <p className="text-[11px] text-[#94a3b8] leading-snug">
+                  Elle yazılmış, fotoğraflanmış ya da PDF bir programı yükle, satırlar otomatik doldurulsun.
+                </p>
+              </div>
+              {imageMsg && (
+                <p className={`text-xs font-bold ${imageMsgError ? "text-[#dc2626]" : "text-[#059669]"}`}>{imageMsg}</p>
+              )}
+
               {planLoading ? (
                 <p className="text-xs text-[#94a3b8]">Yükleniyor…</p>
               ) : (
                 <div className="space-y-2">
-                  {rows.map((r, i) => (
-                    <div key={i} className="grid grid-cols-[100px_1fr_1fr_70px_auto] gap-1.5 items-center max-[560px]:grid-cols-2">
-                      <select className={inputCls} value={r.dayOfWeek} onChange={(e) => updateRow(i, "dayOfWeek", parseInt(e.target.value))}>
-                        {DAY_OPTIONS.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}
-                      </select>
-                      <input className={inputCls} placeholder="Ders (Matematik)" value={r.subject} onChange={(e) => updateRow(i, "subject", e.target.value)} />
-                      <input className={inputCls} placeholder="Nokta atışı görev (ör. 3D Yayınları, Syf 45-52, 4 Test)" value={r.topic} onChange={(e) => updateRow(i, "topic", e.target.value)} />
-                      <input className={inputCls} type="number" placeholder="dk" value={r.durationMin} onChange={(e) => updateRow(i, "durationMin", e.target.value)} />
-                      <button onClick={() => removeRow(i)} className="text-[#ef4444] p-2"><FaTrash size={12} /></button>
-                    </div>
-                  ))}
+                  {rows.map((r, i) => {
+                    const incomplete = isIncompleteRow(r);
+                    return (
+                      <div key={i} className="space-y-1">
+                        {r.source === "ai" && (
+                          <span className="inline-block text-[9px] font-black text-white bg-brand-navy px-1.5 py-0.5 rounded">AI</span>
+                        )}
+                        <div className="grid grid-cols-[100px_1fr_1fr_70px_auto] gap-1.5 items-center max-[560px]:grid-cols-2">
+                          <select
+                            className={`${inputCls} ${incomplete && r.dayOfWeek === null ? "border-[#ef4444]" : ""}`}
+                            value={r.dayOfWeek === null || r.dayOfWeek === undefined ? "" : r.dayOfWeek}
+                            onChange={(e) => updateRow(i, "dayOfWeek", e.target.value === "" ? null : parseInt(e.target.value))}
+                          >
+                            <option value="" disabled>— seç —</option>
+                            {DAY_OPTIONS.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}
+                          </select>
+                          <input
+                            className={`${inputCls} ${incomplete && !r.subject?.trim() ? "border-[#ef4444]" : ""}`}
+                            placeholder="Ders (Matematik)"
+                            value={r.subject}
+                            onChange={(e) => updateRow(i, "subject", e.target.value)}
+                          />
+                          <input className={inputCls} placeholder="Nokta atışı görev (ör. 3D Yayınları, Syf 45-52, 4 Test)" value={r.topic} onChange={(e) => updateRow(i, "topic", e.target.value)} />
+                          <input className={inputCls} type="number" placeholder="dk" value={r.durationMin} onChange={(e) => updateRow(i, "durationMin", e.target.value)} />
+                          <button onClick={() => removeRow(i)} className="text-[#ef4444] p-2"><FaTrash size={12} /></button>
+                        </div>
+                      </div>
+                    );
+                  })}
                   <button onClick={addRow} className="flex items-center gap-1.5 text-xs font-bold text-page-navy"><FaPlus size={10} /> Satır Ekle</button>
                 </div>
               )}
 
-              {planMsg && <p className="text-xs font-bold text-[#059669]">{planMsg}</p>}
+              {planMsg && <p className={`text-xs font-bold ${planMsgError ? "text-[#dc2626]" : "text-[#059669]"}`}>{planMsg}</p>}
               <button onClick={savePlan} disabled={planSaving} className="w-full py-3 bg-brand-navy text-white rounded-xl text-sm font-black disabled:opacity-60">
                 {planSaving ? "Kaydediliyor…" : "Programı Kaydet"}
               </button>

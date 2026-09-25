@@ -33,6 +33,7 @@ const PackageDetail = lazy(() => import("./pages/PackageDetail"));
 const CoachDetail = lazy(() => import("./pages/CoachDetailPage"));
 const AdminCoachPage = lazy(() => import("./pages/AdminCoachPage"));
 const AdminCouponPage = lazy(() => import("./pages/AdminCouponPage"));
+const AdminAiUsagePage = lazy(() => import("./pages/AdminAiUsagePage"));
 const AdminCountdownPage = lazy(() => import("./pages/AdminCountdownPage"));
 const AdminPopupPage = lazy(() => import("./pages/AdminPopupPage"));
 const AdminConsultationSlotsPage = lazy(() => import("./pages/AdminConsultationSlotsPage"));
@@ -171,6 +172,7 @@ function App() {
             <Route path="/admin/*" element={<RoleRoute allowedRoles={["admin"]}><AdminApp /></RoleRoute>} />
             <Route path="/admin/coaches" element={<RoleRoute allowedRoles={["admin"]}><AdminCoachPage /></RoleRoute>} />
             <Route path="/admin/coupons" element={<RoleRoute allowedRoles={["admin"]}><AdminCouponPage /></RoleRoute>} />
+            <Route path="/admin/ai-usage" element={<RoleRoute allowedRoles={["admin"]}><AdminAiUsagePage /></RoleRoute>} />
             <Route path="/admin/refund-requests" element={<RoleRoute allowedRoles={["admin"]}><RefundRequests /></RoleRoute>} />
             <Route path="/admin/countdown" element={<RoleRoute allowedRoles={["admin"]}><AdminCountdownPage /></RoleRoute>} />
             <Route path="/admin/popup" element={<RoleRoute allowedRoles={["admin"]}><AdminPopupPage /></RoleRoute>} />

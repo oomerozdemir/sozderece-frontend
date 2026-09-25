@@ -55,7 +55,7 @@ const RoleBadge = ({ role }) => {
   );
 };
 
-const StatCard = ({ icon, label, value, color }) => (
+export const StatCard = ({ icon, label, value, color }) => (
   <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] flex items-center gap-4 border border-[#f1f5f9]">
     <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${color}`}>
       {icon}
@@ -609,6 +609,12 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
+            <Link
+              to="/admin/ai-usage"
+              className="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-4 py-2 rounded-xl text-sm font-bold no-underline transition-all"
+            >
+              🤖 AI Kullanımı
+            </Link>
             <Link
               to="/admin/coupons"
               className="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-4 py-2 rounded-xl text-sm font-bold no-underline transition-all"
