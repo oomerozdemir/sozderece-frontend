@@ -1,165 +1,195 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "../../../utils/axios";
-import { Line, Radar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  LineElement,
-  PointElement,
-  CategoryScale,
-  LinearScale,
-  RadialLinearScale,
-  RadarController,
-  Tooltip,
-  Legend,
-  Filler,
-} from "chart.js";
-import { FaExclamationTriangle, FaBolt, FaDiceD20 } from "react-icons/fa";
+import { FaPlus, FaExclamationTriangle, FaBolt, FaPen, FaClipboardList } from "react-icons/fa";
+import Button from "../../../components/ui/Button";
+import NewExamChoiceModal from "./deneme/NewExamChoiceModal";
+import ExamSetupForm from "./deneme/ExamSetupForm";
+import ActiveExamTimer from "./deneme/ActiveExamTimer";
+import ExamResultForm from "./deneme/ExamResultForm";
+import ExamSelfAnalysis from "./deneme/ExamSelfAnalysis";
+import ExamSummary from "./deneme/ExamSummary";
+import ManualExamForm from "./deneme/ManualExamForm";
+import ExamDashboard from "./deneme/ExamDashboard";
+import ExamHistoryList from "./deneme/ExamHistoryList";
+import ExamDetail from "./deneme/ExamDetail";
 
-ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, RadialLinearScale, RadarController, Tooltip, Legend, Filler);
+const authHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem("token")}` });
 
-const fmtDate = (d) => (d ? new Date(d).toLocaleDateString("tr-TR", { day: "numeric", month: "short" }) : "");
+// Bir denemenin status'üne göre hangi akış adımının gösterileceğini belirler
+// — hem mount'ta (yarım kalmış deneme resume) hem her PATCH sonrası (bir
+// sonraki adıma geçiş) aynı fonksiyon kullanılır.
+function viewForStatus(status) {
+  if (status === "IN_PROGRESS") return "timer";
+  if (status === "RESULT_PENDING") return "results";
+  if (status === "ANALYSIS_PENDING") return "analysis";
+  return "summary";
+}
 
-// "Siber" tema için neon renk paleti — brand'ın lime'ı da içinde, ama bu
-// grafikler bilinçli olarak sitenin geri kalanından ayrı, koyu bir zeminde.
-const NEON_PALETTE = ["#00e5ff", "#D8FF4F", "#ff2ea6", "#a78bfa", "#ff9f1c", "#34d399"];
-
-const radarOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { display: false },
-    tooltip: { backgroundColor: "#0a0a2e", titleColor: "#fff", bodyColor: "#fff", borderColor: "rgba(255,255,255,0.15)", borderWidth: 1 },
-  },
-  scales: {
-    r: {
-      beginAtZero: true,
-      angleLines: { color: "rgba(255,255,255,0.12)" },
-      grid: { color: "rgba(255,255,255,0.1)" },
-      pointLabels: { color: "rgba(255,255,255,0.85)", font: { family: "Nunito", weight: "700", size: 11 } },
-      ticks: { display: false, backdropColor: "transparent" },
-    },
-  },
-};
-
-const cyberChartOptions = (dark) => ({
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { display: dark, position: "bottom", labels: { color: "rgba(255,255,255,0.75)", font: { family: "Nunito", weight: "700", size: 11 }, boxWidth: 10, padding: 14 } },
-    tooltip: { backgroundColor: "#0a0a2e", titleColor: "#fff", bodyColor: "#fff", borderColor: "rgba(255,255,255,0.15)", borderWidth: 1 },
-  },
-  scales: {
-    x: { ticks: { color: "rgba(255,255,255,0.5)", font: { size: 10 } }, grid: { color: "rgba(255,255,255,0.06)" } },
-    y: { ticks: { color: "rgba(255,255,255,0.5)", font: { size: 10 } }, grid: { color: "rgba(255,255,255,0.06)" } },
-  },
-});
-
+// Deneme Merkezi kabuğu — eski salt-okunur "Deneme Analizim" ekranının
+// yerine geçer. Öğrenci kendi denemesini başlatabilir/zamanlayabilir/
+// sonucunu girebilir/analiz edebilir; koç tarafı (ExamsTab.jsx) bu veriyi
+// ayrıca salt okunur gösterir, o taraf değişmedi.
 export default function DenemeAnalizi({ onNavigate }) {
+  const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
   const [insights, setInsights] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const token = useMemo(() => localStorage.getItem("token"), []);
+  const [student, setStudent] = useState(null);
+  const [view, setView] = useState("dashboard");
+  const [activeExam, setActiveExam] = useState(null);
+  const [detailExam, setDetailExam] = useState(null);
+  const [showChoice, setShowChoice] = useState(false);
+  const [starting, setStarting] = useState(false);
+
+  const loadAll = useCallback(() => {
+    setLoading(true);
+    return Promise.all([
+      axios.get("/api/v1/ogrenci/me", { headers: authHeaders() }).then((res) => res.data).catch(() => null),
+      axios.get("/api/v1/ogrenci/me/exam-results", { headers: authHeaders() }).then((res) => res.data?.results || []),
+      axios.get("/api/v1/ogrenci/me/exam-results/active", { headers: authHeaders() }).then((res) => res.data?.exam || null).catch(() => null),
+      axios.get("/api/v1/ogrenci/me/insights", { headers: authHeaders() }).then((res) => res.data?.insights || []).catch(() => []),
+    ]).then(([me, r, active, ins]) => {
+      setStudent(me);
+      setResults(r);
+      setInsights(ins);
+      if (active) {
+        setActiveExam(active);
+        setView(viewForStatus(active.status));
+      } else {
+        setActiveExam(null);
+        setView("dashboard");
+      }
+      setLoading(false);
+    });
+  }, []);
 
   useEffect(() => {
-    const headers = { Authorization: `Bearer ${token}` };
-    Promise.all([
-      axios.get("/api/v1/ogrenci/me/exam-results", { headers }).then((res) => res.data?.results || []),
-      axios.get("/api/v1/ogrenci/me/insights", { headers }).then((res) => res.data?.insights || []).catch(() => []),
-    ])
-      .then(([r, i]) => { setResults(r); setInsights(i); })
-      .finally(() => setLoading(false));
-  }, [token]);
+    loadAll();
+  }, [loadAll]);
 
-  const totalChartData = useMemo(
-    () => ({
-      labels: results.map((r) => fmtDate(r.examDate)),
-      datasets: [
-        {
-          label: "Toplam Net",
-          data: results.map((r) => r.totalNet ?? null),
-          borderColor: "#D8FF4F",
-          backgroundColor: "rgba(216,255,79,0.12)",
-          pointBackgroundColor: "#D8FF4F",
-          tension: 0.35,
-          fill: true,
-        },
-      ],
-    }),
-    [results]
-  );
+  const refetchResults = () => {
+    axios.get("/api/v1/ogrenci/me/exam-results", { headers: authHeaders() }).then((res) => setResults(res.data?.results || []));
+  };
 
-  // RPG "yetenek radarı" — son 3 denemenin branş bazlı ORTALAMA netleri.
-  // Kasıtlı olarak curriculuma göre normalize edilmiyor (TYT Matematik'in
-  // maksimum 40, Fizik'in 7 net olması gibi farklar konuya göre hep
-  // değişir) — chart.js radial eksen kendi ölçeğini veriye göre otomatik
-  // kuruyor, bu yüzden en güçlü branş dış çembere, zayıf branş içe doğru
-  // çöküyor. Öğrenci "hangi yönüm içe çökük" sorusunu tam da bu sayede
-  // görsel olarak yakalıyor.
-  const radarData = useMemo(() => {
-    const last3 = results.slice(-3);
-    const sums = {};
-    const counts = {};
-    for (const r of last3) {
-      for (const s of r.subjectNets || []) {
-        sums[s.subject] = (sums[s.subject] || 0) + (s.net || 0);
-        counts[s.subject] = (counts[s.subject] || 0) + 1;
-      }
+  const handleChooseLive = () => {
+    setShowChoice(false);
+    setView("setup");
+  };
+  const handleChooseManual = () => {
+    setShowChoice(false);
+    setView("manual");
+  };
+
+  const handleSetupSubmit = async (payload) => {
+    setStarting(true);
+    try {
+      const res = await axios.post("/api/v1/ogrenci/me/exam-results/live/start", payload, { headers: authHeaders() });
+      const exam = res.data.exam;
+      setActiveExam(exam);
+      setView(viewForStatus(exam.status));
+    } finally {
+      setStarting(false);
     }
-    const subjects = Object.keys(sums);
-    if (subjects.length < 3) return null; // radar 3'ten az eksende anlamsız görünür
-    return {
-      labels: subjects,
-      datasets: [
-        {
-          label: "Ortalama Net (son 3 deneme)",
-          data: subjects.map((s) => Number((sums[s] / counts[s]).toFixed(1))),
-          backgroundColor: "rgba(167,139,250,0.25)",
-          borderColor: "#a78bfa",
-          pointBackgroundColor: "#a78bfa",
-          pointBorderColor: "#fff",
-          borderWidth: 2,
-        },
-      ],
-    };
-  }, [results]);
+  };
 
-  const subjectChartData = useMemo(() => {
-    const subjects = [...new Set(results.flatMap((r) => (Array.isArray(r.subjectNets) ? r.subjectNets.map((s) => s.subject) : [])))];
-    return {
-      labels: results.map((r) => fmtDate(r.examDate)),
-      datasets: subjects.map((subject, i) => ({
-        label: subject,
-        data: results.map((r) => {
-          const s = (r.subjectNets || []).find((x) => x.subject === subject);
-          return s ? s.net : null;
-        }),
-        borderColor: NEON_PALETTE[i % NEON_PALETTE.length],
-        backgroundColor: "transparent",
-        tension: 0.35,
-        spanGaps: true,
-      })),
-    };
-  }, [results]);
+  const handleTimerFinished = (exam) => {
+    setActiveExam(exam);
+    setView(viewForStatus(exam.status));
+  };
+
+  const handleResultsSubmitted = (exam) => {
+    setActiveExam(exam);
+    setView(viewForStatus(exam.status));
+  };
+
+  const handleAnalysisSubmitted = (exam) => {
+    setActiveExam(exam);
+    setView(viewForStatus(exam.status));
+    refetchResults();
+  };
+
+  const handleManualSubmitted = (exam) => {
+    setActiveExam(exam);
+    setView(viewForStatus(exam.status));
+    refetchResults();
+  };
+
+  const handleSummaryDone = () => {
+    setActiveExam(null);
+    setView("dashboard");
+    refetchResults();
+  };
+
+  const handleSelectHistory = (exam) => {
+    setDetailExam(exam);
+    setView("detail");
+  };
 
   if (loading) {
     return <div className="bg-white border border-dashed border-[#e2e8f0] rounded-2xl p-8 text-center text-[#94a3b8] font-nunito text-sm">Yükleniyor…</div>;
   }
 
-  if (results.length === 0) {
+  if (view === "setup") {
     return (
-      <div className="bg-white border border-dashed border-[#e2e8f0] rounded-2xl p-10 text-center">
-        <div className="text-3xl mb-3 opacity-40">📊</div>
-        <p className="font-nunito text-sm text-[#94a3b8]">Henüz deneme sonucun girilmemiş. Koçun ilk deneme sonucunu eklediğinde burada göreceksin.</p>
+      <div className="max-w-lg mx-auto bg-white rounded-2xl border border-[#f1f5f9] p-6">
+        <p className="font-fredoka font-bold text-page-navy text-base mb-4">Deneme Öncesi</p>
+        <ExamSetupForm student={student} defaultExamType="TYT" onSubmit={handleSetupSubmit} onCancel={() => setView("dashboard")} submitting={starting} />
       </div>
     );
   }
 
-  const reversed = [...results].reverse(); // en yeni en üstte listelensin
-  const hasSubjectData = subjectChartData.datasets.length > 0;
+  if (view === "timer" && activeExam) {
+    return (
+      <div className="max-w-lg mx-auto">
+        <ActiveExamTimer exam={activeExam} onFinished={handleTimerFinished} />
+      </div>
+    );
+  }
+
+  if (view === "results" && activeExam) {
+    return (
+      <div className="max-w-lg mx-auto">
+        <ExamResultForm exam={activeExam} student={student} onSubmitted={handleResultsSubmitted} />
+      </div>
+    );
+  }
+
+  if (view === "analysis" && activeExam) {
+    return (
+      <div className="max-w-lg mx-auto">
+        <ExamSelfAnalysis exam={activeExam} onSubmitted={handleAnalysisSubmitted} />
+      </div>
+    );
+  }
+
+  if (view === "summary" && activeExam) {
+    return (
+      <div className="max-w-lg mx-auto">
+        <ExamSummary exam={activeExam} allResults={results} onDone={handleSummaryDone} />
+      </div>
+    );
+  }
+
+  if (view === "manual") {
+    return (
+      <div className="max-w-lg mx-auto">
+        <ManualExamForm student={student} onSubmitted={handleManualSubmitted} onCancel={() => setView("dashboard")} />
+      </div>
+    );
+  }
+
+  if (view === "detail" && detailExam) {
+    return <ExamDetail exam={detailExam} onBack={() => { setView("dashboard"); setDetailExam(null); }} />;
+  }
 
   return (
     <div className="flex flex-col gap-5">
-      {/* ── Akıllı Deneme Analizi: tekrar eden hatalar ── */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <p className="font-fredoka font-bold text-page-navy text-lg">Deneme Merkezi</p>
+        <Button variant="primary" onClick={() => setShowChoice(true)}>
+          <FaPlus size={11} className="mr-1.5 inline" /> Yeni Deneme
+        </Button>
+      </div>
+
       {insights.length > 0 && (
         <div className="bg-white rounded-2xl border-2 border-amber-300 shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-5">
           <p className="flex items-center gap-2 font-fredoka font-bold text-amber-700 text-sm mb-3">
@@ -179,78 +209,21 @@ export default function DenemeAnalizi({ onNavigate }) {
         </div>
       )}
 
-      {/* ── Siber temalı grafikler ── */}
-      <div className="rounded-[20px] p-5 relative overflow-hidden" style={{ background: "linear-gradient(160deg, #05051a 0%, #0d0b2e 60%, #150a35 100%)" }}>
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 240, height: 240, background: "#00e5ff", filter: "blur(90px)", opacity: 0.15, top: -80, left: -60 }} />
-        <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#ff2ea6", filter: "blur(90px)", opacity: 0.12, bottom: -60, right: -40 }} />
-        <div className="relative">
-          {radarData && (
-            <>
-              <div className="flex items-center gap-2 mb-1">
-                <FaDiceD20 className="text-[#a78bfa]" size={13} />
-                <span className="font-fredoka font-bold text-[11px] uppercase text-[#a78bfa]" style={{ letterSpacing: 2 }}>Yetenek Radarın</span>
-              </div>
-              <p className="font-nunito text-[11px] mb-2" style={{ color: "rgba(255,255,255,0.5)" }}>
-                Dış çembere yakın = güçlü yönün. İçe çöken köşe = orada saldırman gereken yer.
-              </p>
-              <div style={{ height: 260 }}>
-                <Radar data={radarData} options={radarOptions} />
-              </div>
-            </>
-          )}
-
-          <div className="flex items-center gap-2 mb-1 mt-6">
-            <FaBolt className="text-[#00e5ff]" size={13} />
-            <span className="font-fredoka font-bold text-[11px] uppercase text-[#00e5ff]" style={{ letterSpacing: 2 }}>Net Trendi</span>
+      {results.length === 0 ? (
+        <div className="bg-white border border-dashed border-[#e2e8f0] rounded-2xl p-10 text-center">
+          <FaClipboardList className="mx-auto mb-3 text-[#cbd5e1]" size={28} />
+          <p className="font-nunito text-sm text-[#94a3b8] mb-4">Henüz bir denemen yok. İlk denemeni başlat, kendi gelişimini takip etmeye başla.</p>
+          <div className="flex items-center justify-center gap-2">
+            <Button variant="primary" size="sm" onClick={() => setShowChoice(true)}><FaBolt size={10} className="mr-1.5 inline" /> Deneme Başlat</Button>
+            <Button variant="ghost" size="sm" onClick={() => setView("manual")}><FaPen size={10} className="mr-1.5 inline" /> Geçmiş Deneme Ekle</Button>
           </div>
-          <div style={{ height: 220 }}>
-            <Line data={totalChartData} options={cyberChartOptions(false)} />
-          </div>
-
-          {hasSubjectData && (
-            <>
-              <div className="flex items-center gap-2 mt-6 mb-1">
-                <FaBolt className="text-[#D8FF4F]" size={13} />
-                <span className="font-fredoka font-bold text-[11px] uppercase text-[#D8FF4F]" style={{ letterSpacing: 2 }}>Branş Bazlı Trend</span>
-              </div>
-              <div style={{ height: 240 }}>
-                <Line data={subjectChartData} options={cyberChartOptions(true)} />
-              </div>
-            </>
-          )}
         </div>
-      </div>
-
-      <div className="grid gap-3">
-        {reversed.map((r) => (
-          <div key={r.id} className="bg-white rounded-2xl border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-5">
-            <div className="flex items-start justify-between gap-3 mb-3 flex-wrap">
-              <div>
-                <p className="font-fredoka font-bold text-page-navy text-base">{r.examName}</p>
-                <p className="font-nunito text-xs text-[#94a3b8] mt-0.5">{r.examType} · {fmtDate(r.examDate)}{r.ranking ? ` · Sıralama: ${r.ranking.toLocaleString("tr-TR")}` : ""}</p>
-              </div>
-              {r.totalNet != null && (
-                <span className="font-fredoka font-bold text-lg px-3 py-1 rounded-full" style={{ background: "#ede8fa", color: "#1C1B8A" }}>
-                  {r.totalNet} net
-                </span>
-              )}
-            </div>
-            {Array.isArray(r.subjectNets) && r.subjectNets.length > 0 && (
-              <div className="flex flex-wrap gap-2 pt-3 border-t border-[#f1f5f9]">
-                {r.subjectNets.map((s, i) => (
-                  <span key={i} className="font-nunito text-xs font-semibold text-[#334155] bg-[#f8fafc] px-2.5 py-1 rounded-full">
-                    {s.subject}: <strong className="text-[#0f172a]">{s.net}</strong>
-                    {Array.isArray(s.wrongTopicIds) && s.wrongTopicIds.length > 0 && (
-                      <span className="text-amber-600"> · {s.wrongTopicIds.length} konu tekrar gerekiyor</span>
-                    )}
-                  </span>
-                ))}
-              </div>
-            )}
-            {r.notes && <p className="font-nunito text-xs text-[#64748b] mt-3 leading-relaxed">{r.notes}</p>}
-          </div>
-        ))}
-      </div>
+      ) : (
+        <>
+          <ExamDashboard results={results} />
+          <ExamHistoryList results={results} onSelect={handleSelectHistory} />
+        </>
+      )}
 
       <button
         onClick={() => onNavigate && onNavigate("konular")}
@@ -258,6 +231,10 @@ export default function DenemeAnalizi({ onNavigate }) {
       >
         Konu Ağacımı Aç →
       </button>
+
+      {showChoice && (
+        <NewExamChoiceModal onClose={() => setShowChoice(false)} onChooseLive={handleChooseLive} onChooseManual={handleChooseManual} />
+      )}
     </div>
   );
 }

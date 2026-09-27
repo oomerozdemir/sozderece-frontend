@@ -1,6 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { FaPlus, FaTrash, FaBolt } from "react-icons/fa";
 import axios from "../../../utils/axios";
+
+const DIFFICULTY_REASON_LABELS = {
+  bilgi_eksikligi: "Bilgi eksikliği", sure_yetmedi: "Süre yetişmedi", dikkat_hatasi: "Dikkat hatası",
+  islem_hatasi: "İşlem hatası", soruyu_yanlis_okudum: "Soruyu yanlış okudum",
+  iki_secenek_arasinda_kaldim: "İki seçenek arasında kaldım", zor_soruda_fazla_zaman: "Zor soruda fazla zaman harcadım",
+  stres_odak: "Stres / odak problemi", diger: "Diğer",
+};
+const FOCUS_AREA_LABELS = {
+  sure_yonetimi: "Süre yönetimi", dikkat: "Dikkat", islem_hatalari: "İşlem hataları",
+  turlama: "Turlama tekniği", zor_soruda_takilmama: "Zor soruda takılmama", odak: "Odak", diger: "Diğer",
+};
 
 const inputCls =
   "w-full py-2.5 px-3 border border-[#e2e8f0] rounded-lg text-sm bg-white outline-none focus:border-page-navy transition-colors";
@@ -170,12 +181,44 @@ export default function ExamsTab({ student }) {
       {pastExams.length > 0 && (
         <div className="pt-3 border-t border-[#f1f5f9]">
           <p className="text-xs font-bold text-[#475569] mb-2">Girilmiş Denemeler</p>
-          <div className="space-y-1.5 max-h-[220px] overflow-y-auto">
-            {pastExams.map((r) => (
-              <div key={r.id} className="text-xs text-[#475569] bg-[#f8fafc] rounded-lg px-3 py-2">
-                {r.examName} — {r.totalNet ?? "—"} net ({new Date(r.examDate).toLocaleDateString("tr-TR")})
-              </div>
-            ))}
+          <div className="space-y-1.5 max-h-[320px] overflow-y-auto">
+            {pastExams.map((r) => {
+              const hasAnalysis = r.difficultyReasons?.length > 0 || r.didWell || r.nextImprovement || r.studentNote;
+              return (
+                <div key={r.id} className="text-xs text-[#475569] bg-[#f8fafc] rounded-lg px-3 py-2 space-y-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {r.entryMode === "LIVE" && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-brand-light text-brand"><FaBolt size={8} /> Canlı</span>
+                    )}
+                    <span>{r.examName} — {r.totalNet ?? "—"} net ({new Date(r.examDate).toLocaleDateString("tr-TR")})</span>
+                    {r.durationSeconds != null && <span className="text-[#94a3b8]">· {Math.round(r.durationSeconds / 60)} dk</span>}
+                    {r.targetNet != null && <span className="text-[#94a3b8]">· Hedef: {r.targetNet} net</span>}
+                    {r.targetDurationMinutes != null && <span className="text-[#94a3b8]">· Hedef süre: {r.targetDurationMinutes} dk</span>}
+                  </div>
+                  {Array.isArray(r.focusAreas) && r.focusAreas.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {r.focusAreas.map((f) => (
+                        <span key={f} className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white border border-[#e2e8f0] text-[#64748b]">{FOCUS_AREA_LABELS[f] || f}</span>
+                      ))}
+                    </div>
+                  )}
+                  {hasAnalysis && (
+                    <div className="pt-1.5 border-t border-[#e2e8f0] space-y-1">
+                      {r.difficultyReasons?.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {r.difficultyReasons.map((d) => (
+                            <span key={d} className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#fef2f2] text-[#dc2626]">{DIFFICULTY_REASON_LABELS[d] || d}</span>
+                          ))}
+                        </div>
+                      )}
+                      {r.didWell && <p><strong className="text-page-navy">İyi yaptığı:</strong> {r.didWell}</p>}
+                      {r.nextImprovement && <p><strong className="text-page-navy">Değiştireceği:</strong> {r.nextImprovement}</p>}
+                      {r.studentNote && <p><strong className="text-page-navy">Notu:</strong> {r.studentNote}</p>}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
