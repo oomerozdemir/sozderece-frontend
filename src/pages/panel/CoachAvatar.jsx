@@ -11,7 +11,7 @@ export default function CoachAvatar({ daysSinceLastActivity, size = 52 }) {
       : "happy";
 
   const MOOD_META = {
-    happy: { bg: "#D8FF4F", face: "#1C1B8A" },
+    happy: { bg: "#E4F7F8", face: "#0E7C88" },
     neutral: { bg: "#fde68a", face: "#78350f" },
     concerned: { bg: "#fecaca", face: "#7f1d1d" },
   };

@@ -14,7 +14,7 @@ const fmtMinutes = (mins) => {
 
 const fmtNet = (n) => (n == null ? "—" : n.toLocaleString("tr-TR", { minimumFractionDigits: 0, maximumFractionDigits: 2 }));
 
-function SectionEyebrow({ children, color = "#1C1B8A" }) {
+function SectionEyebrow({ children, color = "var(--color-dark)" }) {
   return (
     <span className="font-fredoka font-bold text-[11px] uppercase" style={{ color, letterSpacing: 2 }}>
       {children}
@@ -72,7 +72,7 @@ export default function GenelBakis({ onNavigate }) {
         {/* Bugünkü Rotam — panelin en değerli alanı */}
         <div className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6 flex flex-col">
           <div className="flex items-center justify-between gap-3 mb-1 flex-wrap">
-            <SectionEyebrow color="#FF6B35">Bugünkü Rotam</SectionEyebrow>
+            <SectionEyebrow color="var(--color-warning)">Bugünkü Rotam</SectionEyebrow>
             {todayFocus.length > 0 && (
               <span className="font-nunito font-bold text-xs text-[#94a3b8]">
                 {todayFocus.length} görev · Tahmini {fmtMinutes(todayMinutes)}
@@ -109,7 +109,7 @@ export default function GenelBakis({ onNavigate }) {
           <button
             onClick={() => onNavigate && onNavigate("program")}
             className="mt-5 inline-flex items-center gap-2 self-start font-fredoka font-bold text-sm px-5 py-2.5 rounded-full transition-transform hover:scale-[1.02]"
-            style={{ background: "#1C1B8A", color: "#D8FF4F" }}
+            style={{ background: "var(--color-dark)", color: "var(--color-brand-on-dark)" }}
           >
             Bugünü Aç <FaArrowRight size={11} />
           </button>
@@ -124,7 +124,7 @@ export default function GenelBakis({ onNavigate }) {
           <div className="h-2.5 rounded-full bg-[#f1f5f9] overflow-hidden mt-2.5 mb-5">
             <div
               className="h-full rounded-full"
-              style={{ width: `${Math.max(4, weeklyPercent)}%`, background: "linear-gradient(90deg, #1C1B8A, #FF6B35)" }}
+              style={{ width: `${Math.max(4, weeklyPercent)}%`, background: "linear-gradient(90deg, var(--color-dark), var(--color-brand))" }}
             />
           </div>
           <div className="grid grid-cols-3 gap-2.5">
@@ -138,11 +138,11 @@ export default function GenelBakis({ onNavigate }) {
       {/* ── Koçumdan + Rotam ── */}
       <div className="grid gap-5 lg:grid-cols-2">
         <div className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6 flex flex-col">
-          <SectionEyebrow color="#7340C8">Koçumdan</SectionEyebrow>
+          <SectionEyebrow color="var(--color-brand)">Koçumdan</SectionEyebrow>
           {coachNote ? (
             <>
               <div className="flex items-center gap-2.5 mt-3 mb-1">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm" style={{ background: "#ede8fa" }}>
+                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm" style={{ background: "var(--color-brand-light)" }}>
                   💌
                 </div>
                 <p className="font-fredoka font-bold text-page-navy text-sm">{coachNote.coachName}</p>
@@ -164,14 +164,14 @@ export default function GenelBakis({ onNavigate }) {
             target="_blank"
             rel="noreferrer"
             className="mt-auto pt-4 inline-flex items-center gap-1.5 self-start font-nunito font-bold text-sm no-underline hover:underline"
-            style={{ color: "#7340C8" }}
+            style={{ color: "var(--color-brand)" }}
           >
             <FaWhatsapp size={13} /> Koçuma Yaz →
           </a>
         </div>
 
         <div className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6 flex flex-col">
-          <SectionEyebrow color="#1C1B8A">Rotam</SectionEyebrow>
+          <SectionEyebrow>Rotam</SectionEyebrow>
           {subjectProgress.length > 0 ? (
             <div className="mt-3 flex flex-col gap-3">
               {subjectProgress.map((s) => (
@@ -181,7 +181,7 @@ export default function GenelBakis({ onNavigate }) {
                     <span className="font-nunito font-bold text-xs text-[#0f172a]">%{s.percent}</span>
                   </div>
                   <div className="h-2 rounded-full bg-[#f1f5f9] overflow-hidden">
-                    <div className="h-full rounded-full" style={{ width: `${Math.max(4, s.percent)}%`, background: "#1C1B8A" }} />
+                    <div className="h-full rounded-full" style={{ width: `${Math.max(4, s.percent)}%`, background: "var(--color-brand)" }} />
                   </div>
                 </div>
               ))}
@@ -260,7 +260,7 @@ export default function GenelBakis({ onNavigate }) {
           onClick={() => onNavigate && onNavigate("gundem")}
           className="bg-white rounded-2xl border border-[#f1f5f9] p-4 flex items-center gap-2.5 text-left hover:border-page-navy/30 transition-colors"
         >
-          <FaCheckCircle size={14} style={{ color: "#7340C8" }} className="flex-shrink-0" />
+          <FaCheckCircle size={14} style={{ color: "var(--color-brand)" }} className="flex-shrink-0" />
           <p className="font-nunito font-bold text-sm text-page-navy truncate">Duyurular ({announcementCount})</p>
         </button>
       </div>

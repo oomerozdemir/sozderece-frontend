@@ -108,7 +108,7 @@ export default function KonuAgaci() {
   return (
     <div className="flex flex-col gap-5">
       {/* ── Genel özet + lejant ── */}
-      <div className="rounded-[20px] p-5 text-white relative overflow-hidden" style={{ background: "linear-gradient(135deg, #1C1B8A 0%, #2a1f9e 100%)" }}>
+      <div className="rounded-[20px] p-5 text-white relative overflow-hidden" style={{ background: "var(--color-dark)" }}>
         <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: "#f59e0b", filter: "blur(70px)", opacity: 0.25, top: -70, right: -50 }} />
         <div className="flex items-center justify-between gap-4 flex-wrap relative">
           <div>

@@ -35,9 +35,9 @@ export default function OverviewTab({ student }) {
     <div className="space-y-5">
       {/* 2) Dikkat edilmesi gerekenler */}
       {student.recurringWeaknessCount > 0 && (
-        <div className="flex items-center gap-2.5 rounded-xl px-4 py-3" style={{ background: "#f5f3ff" }}>
-          <FaBrain className="flex-shrink-0" size={14} style={{ color: "#7340C8" }} />
-          <p className="text-sm font-bold" style={{ color: "#7340C8" }}>
+        <div className="flex items-center gap-2.5 rounded-xl px-4 py-3" style={{ background: "#fef3c7" }}>
+          <FaBrain className="flex-shrink-0" size={14} style={{ color: "var(--color-warning)" }} />
+          <p className="text-sm font-bold" style={{ color: "var(--color-warning)" }}>
             {student.recurringWeaknessCount} tekrar eden hata — Takip sekmesinde detayları gör
           </p>
         </div>

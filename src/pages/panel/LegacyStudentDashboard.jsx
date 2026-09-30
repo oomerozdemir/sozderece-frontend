@@ -172,7 +172,7 @@ export default function LegacyStudentDashboard() {
   const tabCls = (t) =>
     `inline-flex items-center gap-2 font-fredoka font-bold text-sm px-5 py-2.5 rounded-full transition-all ${
       tab === t
-        ? "text-white shadow-[0_6px_16px_rgba(28,27,138,0.25)]"
+        ? "text-white shadow-[0_6px_16px_rgba(14,124,136,0.25)]"
         : "bg-white text-[#475569] border border-[#e5e7eb] hover:border-page-navy/30"
     }`;
 
@@ -197,7 +197,7 @@ export default function LegacyStudentDashboard() {
               <>
                 <div
                   className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 text-2xl"
-                  style={{ background: "rgba(115,64,200,0.12)", color: "#7340C8" }}
+                  style={{ background: "var(--color-brand-light)", color: "var(--color-brand)" }}
                 >
                   <FaUserTie />
                 </div>
@@ -209,14 +209,14 @@ export default function LegacyStudentDashboard() {
                   <a
                     href="/paket-detay"
                     className="text-center font-fredoka font-bold text-sm px-5 py-3 rounded-full transition-transform hover:scale-[1.02]"
-                    style={{ background: "#1C1B8A", color: "white" }}
+                    style={{ background: "var(--color-dark)", color: "white" }}
                   >
                     📦 Paketleri İncele
                   </a>
                   <a
                     href="/ucretsiz-on-gorusme"
                     className="text-center font-fredoka font-bold text-sm px-5 py-3 rounded-full transition-transform hover:scale-[1.02]"
-                    style={{ background: "#D8FF4F", color: "#1C1B8A" }}
+                    style={{ background: "var(--color-brand)", color: "white" }}
                   >
                     🗓️ Ücretsiz Görüşme Al
                   </a>
@@ -240,7 +240,7 @@ export default function LegacyStudentDashboard() {
                   src={student.assignedCoach.image}
                   alt={student.assignedCoach.name}
                   className="w-24 h-24 object-cover rounded-full border-4 mx-auto mb-4 block"
-                  style={{ borderColor: "#D8FF4F" }}
+                  style={{ borderColor: "var(--color-brand)" }}
                 />
                 <h3 className="font-fredoka font-bold text-page-navy text-lg text-center mb-4">
                   {student.assignedCoach.name}
@@ -282,10 +282,10 @@ export default function LegacyStudentDashboard() {
           {/* Sağ: Sekmeler */}
           <div>
             <div className="flex items-center gap-2 mb-5 flex-wrap">
-              <button onClick={() => setTab("orders")} className={tabCls("orders")} style={tab === "orders" ? { background: "#1C1B8A" } : undefined}>
+              <button onClick={() => setTab("orders")} className={tabCls("orders")} style={tab === "orders" ? { background: "var(--color-brand)" } : undefined}>
                 <FaBoxOpen /> Koçluk Siparişlerim
               </button>
-              <button onClick={() => setTab("past")} className={tabCls("past")} style={tab === "past" ? { background: "#1C1B8A" } : undefined}>
+              <button onClick={() => setTab("past")} className={tabCls("past")} style={tab === "past" ? { background: "var(--color-brand)" } : undefined}>
                 <FaHistory /> Geçmiş Derslerim
               </button>
 
@@ -293,7 +293,7 @@ export default function LegacyStudentDashboard() {
                 onClick={onRefresh}
                 disabled={isAnyLoading}
                 className="ml-auto inline-flex items-center gap-2 font-fredoka font-bold text-xs px-4 py-2.5 rounded-full transition-all disabled:opacity-60"
-                style={{ background: "rgba(216,255,79,0.15)", color: "#7340C8" }}
+                style={{ background: "var(--color-brand-light)", color: "var(--color-brand)" }}
                 title="Yenile"
               >
                 <FaSyncAlt className={isAnyLoading ? "animate-spin" : ""} />
@@ -362,7 +362,7 @@ function PastLessons({ loading, items }) {
         <div key={a.id} className="bg-white border border-[#f1f5f9] rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-5 flex items-center gap-4">
           <div
             className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
-            style={{ background: "rgba(216,255,79,0.15)", color: "#7340C8" }}
+            style={{ background: "var(--color-brand-light)", color: "var(--color-brand)" }}
           >
             <FaCalendarAlt />
           </div>

@@ -34,7 +34,7 @@ export default function Gundem() {
     <div className="grid gap-3 max-w-[640px]">
       {announcements.map((a) => (
         <div key={a.id} className="bg-white rounded-2xl border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-5 flex gap-3.5">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#fff0ea", color: "#FF6B35" }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#fef3c7", color: "var(--color-warning)" }}>
             <FaBullhorn size={14} />
           </div>
           <div className="min-w-0">

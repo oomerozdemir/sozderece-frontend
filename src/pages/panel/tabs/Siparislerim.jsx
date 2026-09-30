@@ -83,23 +83,23 @@ export default function Siparislerim() {
   const isAnyLoading = ordersLoading || pastLoading;
   const tabCls = (t) =>
     `inline-flex items-center gap-2 font-fredoka font-bold text-sm px-5 py-2.5 rounded-full transition-all ${
-      tab === t ? "text-white shadow-[0_6px_16px_rgba(28,27,138,0.25)]" : "bg-white text-[#475569] border border-[#e5e7eb] hover:border-page-navy/30"
+      tab === t ? "text-white shadow-[0_6px_16px_rgba(14,124,136,0.25)]" : "bg-white text-[#475569] border border-[#e5e7eb] hover:border-page-navy/30"
     }`;
 
   return (
     <div>
       <div className="flex items-center gap-2 mb-5 flex-wrap">
-        <button onClick={() => setTab("orders")} className={tabCls("orders")} style={tab === "orders" ? { background: "#1C1B8A" } : undefined}>
+        <button onClick={() => setTab("orders")} className={tabCls("orders")} style={tab === "orders" ? { background: "var(--color-brand)" } : undefined}>
           <FaBoxOpen /> Koçluk Siparişlerim
         </button>
-        <button onClick={() => setTab("past")} className={tabCls("past")} style={tab === "past" ? { background: "#1C1B8A" } : undefined}>
+        <button onClick={() => setTab("past")} className={tabCls("past")} style={tab === "past" ? { background: "var(--color-brand)" } : undefined}>
           <FaHistory /> Geçmiş Derslerim
         </button>
         <button
           onClick={() => (tab === "orders" ? loadOrders() : loadPast())}
           disabled={isAnyLoading}
           className="ml-auto inline-flex items-center gap-2 font-fredoka font-bold text-xs px-4 py-2.5 rounded-full transition-all disabled:opacity-60"
-          style={{ background: "rgba(216,255,79,0.15)", color: "#7340C8" }}
+          style={{ background: "var(--color-brand-light)", color: "var(--color-brand)" }}
         >
           <FaSyncAlt className={isAnyLoading ? "animate-spin" : ""} /> {isAnyLoading ? "Yükleniyor…" : "Yenile"}
         </button>
@@ -140,7 +140,7 @@ export default function Siparislerim() {
         <div className="grid gap-3">
           {pastLessons.map((a) => (
             <div key={a.id} className="bg-white border border-[#f1f5f9] rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-5 flex items-center gap-4">
-              <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(216,255,79,0.15)", color: "#7340C8" }}>
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "var(--color-brand-light)", color: "var(--color-brand)" }}>
                 <FaCalendarAlt />
               </div>
               <div className="min-w-0">

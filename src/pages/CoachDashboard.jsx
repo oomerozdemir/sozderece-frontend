@@ -107,19 +107,13 @@ const CoachDashboard = () => {
   }, [students]);
 
   return (
-    <div className="min-h-screen bg-[#F5F4FB] md:h-screen md:overflow-hidden flex flex-col md:flex-row font-nunito">
+    <div className="min-h-screen bg-cream md:h-screen md:overflow-hidden flex flex-col md:flex-row font-nunito">
       {/* ── Sol menü (masaüstü) ── */}
       <aside
-        className="hidden md:flex md:flex-col w-64 flex-shrink-0 h-screen sticky top-0"
-        style={{ background: "linear-gradient(180deg, #1C1B8A 0%, #14136f 100%)" }}
+        className="hidden md:flex md:flex-col w-64 flex-shrink-0 h-screen sticky top-0 bg-page-navy"
       >
         <div className="px-6 py-7 flex items-center gap-2.5 flex-shrink-0">
-          <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center font-fredoka font-bold text-sm flex-shrink-0"
-            style={{ background: "#D8FF4F", color: "#1C1B8A" }}
-          >
-            S
-          </div>
+          <img src="/images/logo-bee.png" alt="" aria-hidden="true" className="w-9 h-9 flex-shrink-0" />
           <div className="min-w-0">
             <p className="font-fredoka font-bold text-white text-base leading-tight truncate">Sözderece</p>
             <p className="text-white/40 text-[10px] font-nunito font-bold uppercase truncate" style={{ letterSpacing: 1.5 }}>
@@ -133,8 +127,8 @@ const CoachDashboard = () => {
             className="relative flex items-center gap-3 font-nunito font-bold text-sm px-3.5 py-2.5 rounded-xl"
             style={{ background: "rgba(255,255,255,0.09)", color: "#ffffff" }}
           >
-            <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full" style={{ background: "#D8FF4F" }} />
-            <FaUsers size={15} style={{ color: "#D8FF4F", flexShrink: 0 }} />
+            <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-brand-on-dark" />
+            <FaUsers size={15} style={{ color: "var(--color-brand-on-dark)", flexShrink: 0 }} />
             Öğrencilerim
           </div>
         </nav>
@@ -179,7 +173,7 @@ const CoachDashboard = () => {
             )}
             <div
               className="w-10 h-10 rounded-full flex items-center justify-center font-fredoka font-bold text-sm flex-shrink-0"
-              style={{ background: "#D8FF4F", color: "#1C1B8A" }}
+              style={{ background: "var(--color-brand-light)", color: "var(--color-brand)" }}
             >
               {initialsOf(coachName)}
             </div>
@@ -222,7 +216,7 @@ const CoachDashboard = () => {
           )}
 
           <div className="flex items-center gap-2 mb-1">
-            <span className="inline-block w-5 h-[3px] rounded-full" style={{ background: "#FF6B35" }} />
+            <span className="inline-block w-5 h-[3px] rounded-full" style={{ background: "var(--color-brand)" }} />
             <span className="font-fredoka font-bold text-[11px] uppercase text-accent-orange" style={{ letterSpacing: 3 }}>
               Öğrencilerim
             </span>
@@ -234,7 +228,7 @@ const CoachDashboard = () => {
               <TriageTile value={triage.struggling} label="Bugün Zorlandı" emoji="😓" color="#dc2626" bg={triage.struggling > 0 ? "#fef2f2" : "#ffffff"} />
               <TriageTile value={triage.partial} label="Yarıda Kaldı" emoji="⏳" color="#c2410c" bg={triage.partial > 0 ? "#fff7ed" : "#ffffff"} />
               <TriageTile value={triage.inactive3Days} label="Seri Yok / Pasif" emoji="💤" color="#475569" bg={triage.inactive3Days > 0 ? "#f8fafc" : "#ffffff"} />
-              <TriageTile value={triage.weaknesses} label="Tekrar Eden Hata" emoji="🧠" color="#7340C8" bg={triage.weaknesses > 0 ? "#f5f3ff" : "#ffffff"} />
+              <TriageTile value={triage.weaknesses} label="Tekrar Eden Hata" emoji="🧠" color="var(--color-warning)" bg={triage.weaknesses > 0 ? "#fef3c7" : "#ffffff"} />
             </div>
           )}
 
@@ -271,7 +265,7 @@ const CoachDashboard = () => {
                         {student.recurringWeaknessCount > 0 && (
                           <span
                             className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-nunito font-bold text-[11px]"
-                            style={{ background: "#f5f3ff", color: "#7340C8" }}
+                            style={{ background: "#fef3c7", color: "var(--color-warning)" }}
                           >
                             <FaBrain size={9} /> {student.recurringWeaknessCount} tekrar eden hata
                           </span>

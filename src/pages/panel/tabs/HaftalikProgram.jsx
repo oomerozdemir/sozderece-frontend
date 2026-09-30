@@ -74,7 +74,7 @@ const fmtClock = (totalSeconds) => {
   return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
 };
 
-function SectionEyebrow({ children, color = "#FF6B35" }) {
+function SectionEyebrow({ children, color = "var(--color-warning)" }) {
   return (
     <span className="font-fredoka font-bold text-[11px] uppercase" style={{ color, letterSpacing: 2 }}>
       {children}
@@ -175,7 +175,7 @@ function ReasonPrompt({ onSubmit, onCancel }) {
           type="button"
           onClick={() => onSubmit(reason, note)}
           className="font-nunito font-bold text-xs px-4 py-2 rounded-full text-white"
-          style={{ background: "#1C1B8A" }}
+          style={{ background: "var(--color-brand)" }}
         >
           Gönder
         </button>
@@ -283,7 +283,7 @@ function TodayTaskCard({
                     type="button"
                     onClick={() => onFinishActive(item)}
                     className="flex items-center gap-1.5 font-nunito font-bold text-xs px-3.5 py-2 rounded-full text-white"
-                    style={{ background: "#1C1B8A" }}
+                    style={{ background: "var(--color-brand)" }}
                   >
                     <FaStop size={9} /> Bitir
                   </button>
@@ -298,7 +298,7 @@ function TodayTaskCard({
                     disabled={disabledStart}
                     onClick={() => onStart(item)}
                     className="flex items-center gap-1.5 font-nunito font-bold text-xs px-3.5 py-2 rounded-full text-white disabled:opacity-30"
-                    style={{ background: "#1C1B8A" }}
+                    style={{ background: "var(--color-brand)" }}
                   >
                     <FaPlay size={9} /> Başla
                   </button>
@@ -391,7 +391,7 @@ function KocumdanCard({ note }) {
         👋
       </div>
       <div className="min-w-0 flex-1">
-        <p className="font-fredoka font-bold text-[10px] uppercase text-[#7340C8] mb-1" style={{ letterSpacing: 1 }}>Koçumdan</p>
+        <p className="font-fredoka font-bold text-[10px] uppercase text-brand mb-1" style={{ letterSpacing: 1 }}>Koçumdan</p>
         {note.type === "text" ? (
           <p className="font-nunito font-bold text-sm text-[#334155]">"{note.text}"</p>
         ) : (
@@ -399,7 +399,7 @@ function KocumdanCard({ note }) {
         )}
         <div className="flex items-center justify-between mt-1.5">
           <p className="font-nunito text-[11px] text-[#94a3b8]">{note.coachName} · {note.isToday ? "Bugün" : ""}</p>
-          <a href="https://wa.me/905312546701" target="_blank" rel="noreferrer" className="flex items-center gap-1 font-nunito font-bold text-[11px] no-underline" style={{ color: "#7340C8" }}>
+          <a href="https://wa.me/905312546701" target="_blank" rel="noreferrer" className="flex items-center gap-1 font-nunito font-bold text-[11px] no-underline" style={{ color: "var(--color-brand)" }}>
             <FaWhatsapp size={11} /> Koçuma Yaz
           </a>
         </div>
@@ -631,7 +631,7 @@ export default function HaftalikProgram({ student }) {
               <div className="text-3xl mb-3 opacity-40">🗓️</div>
               <p className="font-fredoka font-bold text-page-navy text-sm mb-1.5">Bugünkü rotan henüz hazırlanmadı.</p>
               <p className="font-nunito text-sm text-[#94a3b8] leading-relaxed mb-3">Koçun programını hazırladığında burada göreceksin.</p>
-              <a href="https://wa.me/905312546701" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 font-nunito font-bold text-sm no-underline" style={{ color: "#7340C8" }}>
+              <a href="https://wa.me/905312546701" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 font-nunito font-bold text-sm no-underline" style={{ color: "var(--color-brand)" }}>
                 <FaWhatsapp size={12} /> Koçuma Yaz
               </a>
             </>

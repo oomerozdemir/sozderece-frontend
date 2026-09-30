@@ -98,19 +98,13 @@ export default function StudentPanel() {
       : `${active.label} · Programını buradan takip et`;
 
   return (
-    <div className="min-h-screen bg-[#F5F4FB] md:h-screen md:overflow-hidden flex flex-col md:flex-row font-nunito">
+    <div className="min-h-screen bg-cream md:h-screen md:overflow-hidden flex flex-col md:flex-row font-nunito">
       {/* ── Sol menü (masaüstü) ── */}
       <aside
-        className="hidden md:flex md:flex-col w-64 flex-shrink-0 h-screen sticky top-0"
-        style={{ background: "linear-gradient(180deg, #1C1B8A 0%, #14136f 100%)" }}
+        className="hidden md:flex md:flex-col w-64 flex-shrink-0 h-screen sticky top-0 bg-page-navy"
       >
         <div className="px-6 py-7 flex items-center gap-2.5 flex-shrink-0">
-          <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center font-fredoka font-bold text-sm flex-shrink-0"
-            style={{ background: "#D8FF4F", color: "#1C1B8A" }}
-          >
-            S
-          </div>
+          <img src="/images/logo-bee.png" alt="" aria-hidden="true" className="w-9 h-9 flex-shrink-0" />
           <div className="min-w-0">
             <p className="font-fredoka font-bold text-white text-base leading-tight truncate">Sözderece</p>
             <p className="text-white/40 text-[10px] font-nunito font-bold uppercase truncate" style={{ letterSpacing: 1.5 }}>
@@ -131,9 +125,9 @@ export default function StudentPanel() {
                 style={navItemStyle(isActive)}
               >
                 {isActive && (
-                  <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full" style={{ background: "#D8FF4F" }} />
+                  <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-brand-on-dark" />
                 )}
-                <Icon size={15} style={{ color: isActive ? "#D8FF4F" : undefined, flexShrink: 0 }} />
+                <Icon size={15} style={{ color: isActive ? "var(--color-brand-on-dark)" : undefined, flexShrink: 0 }} />
                 <span className="truncate">{t.label}</span>
               </button>
             );
@@ -175,8 +169,7 @@ export default function StudentPanel() {
               href={`https://wa.me/${COACH_WHATSAPP}`}
               target="_blank"
               rel="noreferrer"
-              className="hidden sm:inline-flex items-center gap-2 font-fredoka font-bold text-xs md:text-sm px-4 md:px-5 py-2.5 rounded-full no-underline transition-transform hover:scale-[1.03]"
-              style={{ background: "#D8FF4F", color: "#1C1B8A" }}
+              className="hidden sm:inline-flex items-center gap-2 font-fredoka font-bold text-xs md:text-sm px-4 md:px-5 py-2.5 rounded-full no-underline text-white bg-[#25d366] hover:bg-[#1ebc59] transition-colors"
             >
               <FaWhatsapp size={13} /> Koçuma Yaz
             </a>
@@ -185,8 +178,7 @@ export default function StudentPanel() {
               target="_blank"
               rel="noreferrer"
               aria-label="Koçuma yaz"
-              className="sm:hidden w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-              style={{ background: "#D8FF4F", color: "#1C1B8A" }}
+              className="sm:hidden w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white bg-[#25d366] hover:bg-[#1ebc59] transition-colors"
             >
               <FaWhatsapp size={16} />
             </a>
@@ -213,10 +205,10 @@ export default function StudentPanel() {
               onClick={() => goTab(t.key)}
               className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 py-2"
             >
-              <Icon size={17} style={{ color: isActive ? "#1C1B8A" : "#a8a4c4" }} />
+              <Icon size={17} style={{ color: isActive ? "var(--color-dark)" : "#a8a4c4" }} />
               <span
                 className="font-nunito font-bold text-[9.5px] truncate max-w-full px-0.5"
-                style={{ color: isActive ? "#1C1B8A" : "#a8a4c4" }}
+                style={{ color: isActive ? "var(--color-dark)" : "#a8a4c4" }}
               >
                 {t.label}
               </span>
@@ -227,10 +219,10 @@ export default function StudentPanel() {
           onClick={() => setMoreOpen(true)}
           className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 py-2"
         >
-          <FaEllipsisH size={17} style={{ color: secondaryMobileTabs.some((t) => t.key === tab) ? "#1C1B8A" : "#a8a4c4" }} />
+          <FaEllipsisH size={17} style={{ color: secondaryMobileTabs.some((t) => t.key === tab) ? "var(--color-dark)" : "#a8a4c4" }} />
           <span
             className="font-nunito font-bold text-[9.5px]"
-            style={{ color: secondaryMobileTabs.some((t) => t.key === tab) ? "#1C1B8A" : "#a8a4c4" }}
+            style={{ color: secondaryMobileTabs.some((t) => t.key === tab) ? "var(--color-dark)" : "#a8a4c4" }}
           >
             Diğer
           </span>
@@ -265,7 +257,7 @@ export default function StudentPanel() {
                     key={t.key}
                     onClick={() => goTab(t.key)}
                     className="flex items-center gap-2.5 rounded-2xl px-4 py-3.5 text-left"
-                    style={isActive ? { background: "#1C1B8A", color: "#D8FF4F" } : { background: "#f8fafc", color: "#334155" }}
+                    style={isActive ? { background: "var(--color-dark)", color: "var(--color-brand-on-dark)" } : { background: "#f8fafc", color: "#334155" }}
                   >
                     <Icon size={15} className="flex-shrink-0" />
                     <span className="font-nunito font-bold text-sm truncate">{t.label}</span>

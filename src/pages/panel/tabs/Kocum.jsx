@@ -12,7 +12,7 @@ export default function Kocum({ student }) {
       <div className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-7 max-w-[460px]">
         <div
           className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 text-2xl"
-          style={{ background: "rgba(115,64,200,0.12)", color: "#7340C8" }}
+          style={{ background: "var(--color-brand-light)", color: "var(--color-brand)" }}
         >
           <FaUserTie />
         </div>
@@ -21,10 +21,10 @@ export default function Kocum({ student }) {
           Aşağıdaki seçeneklerle paketlerimizi inceleyebilir ya da ücretsiz bir ön görüşme planlayabilirsin.
         </p>
         <div className="flex flex-col gap-2.5">
-          <a href="/paket-detay" className="text-center font-fredoka font-bold text-sm px-5 py-3 rounded-full transition-transform hover:scale-[1.02]" style={{ background: "#1C1B8A", color: "white" }}>
+          <a href="/paket-detay" className="text-center font-fredoka font-bold text-sm px-5 py-3 rounded-full transition-transform hover:scale-[1.02]" style={{ background: "var(--color-dark)", color: "white" }}>
             📦 Paketleri İncele
           </a>
-          <a href="/ucretsiz-on-gorusme" className="text-center font-fredoka font-bold text-sm px-5 py-3 rounded-full transition-transform hover:scale-[1.02]" style={{ background: "#D8FF4F", color: "#1C1B8A" }}>
+          <a href="/ucretsiz-on-gorusme" className="text-center font-fredoka font-bold text-sm px-5 py-3 rounded-full transition-transform hover:scale-[1.02]" style={{ background: "var(--color-brand)", color: "white" }}>
             🗓️ Ücretsiz Görüşme Al
           </a>
           <a href="https://wa.me/905312546701" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 font-fredoka font-bold text-sm px-5 py-3 rounded-full border-2 transition-colors hover:bg-[#f0fdf4]" style={{ borderColor: "#22c55e", color: "#15803d" }}>
@@ -41,7 +41,7 @@ export default function Kocum({ student }) {
       <p className="font-fredoka font-bold text-accent-orange text-[11px] uppercase mb-3" style={{ letterSpacing: 3 }}>
         Atanmış Koçun
       </p>
-      <img src={coach.image} alt={coach.name} className="w-24 h-24 object-cover rounded-full border-4 mx-auto mb-4 block" style={{ borderColor: "#D8FF4F" }} />
+      <img src={coach.image} alt={coach.name} className="w-24 h-24 object-cover rounded-full border-4 mx-auto mb-4 block" style={{ borderColor: "var(--color-brand)" }} />
       <h3 className="font-fredoka font-bold text-page-navy text-lg text-center mb-4">{coach.name}</h3>
       <div className="space-y-2 mb-5">
         {coach.subject && (

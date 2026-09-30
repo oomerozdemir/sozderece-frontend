@@ -6,7 +6,7 @@ const TYPE_META = {
   video: { icon: FaVideo, label: "Video", color: "#dc2626", bg: "#fef2f2" },
   pdf: { icon: FaFilePdf, label: "PDF", color: "#b91c1c", bg: "#fef2f2" },
   link: { icon: FaLink, label: "Link", color: "#1d4ed8", bg: "#eff6ff" },
-  document: { icon: FaFileAlt, label: "Belge", color: "#7340C8", bg: "#ede8fa" },
+  document: { icon: FaFileAlt, label: "Belge", color: "var(--color-brand)", bg: "var(--color-brand-light)" },
 };
 
 export default function Kaynaklarim() {

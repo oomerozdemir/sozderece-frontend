@@ -43,7 +43,7 @@ export default function StudentWorkspace() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f8fafc]">
+      <div className="min-h-screen flex items-center justify-center bg-cream">
         <p className="text-sm text-[#94a3b8]">Yükleniyor…</p>
       </div>
     );
@@ -51,7 +51,7 @@ export default function StudentWorkspace() {
 
   if (notFound || !student) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-[#f8fafc] px-5 text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-cream px-5 text-center">
         <p className="text-sm font-bold text-[#475569]">Bu öğrenci bulunamadı ya da artık sizin öğrenciniz değil.</p>
         <button
           onClick={() => navigate("/coach/dashboard")}
@@ -64,7 +64,7 @@ export default function StudentWorkspace() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
+    <div className="min-h-screen bg-cream">
       <div className="sticky top-0 z-10 bg-white border-b border-[#e2e8f0]">
         <div className="flex items-center gap-3 px-5 py-3.5 max-w-5xl mx-auto">
           <button
