@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "../../utils/axios";
 import {
   FaHome, FaCalendarWeek, FaChartLine, FaBookOpen, FaBullhorn, FaUserTie, FaBoxOpen, FaTree,
-  FaLifeRing, FaSignOutAlt, FaEllipsisH, FaTimes, FaWhatsapp,
+  FaLifeRing, FaSignOutAlt, FaEllipsisH, FaTimes, FaWhatsapp, FaRobot,
 } from "react-icons/fa";
 import GenelBakis from "./tabs/GenelBakis";
 import HaftalikProgram from "./tabs/HaftalikProgram";
@@ -13,6 +13,7 @@ import Kaynaklarim from "./tabs/Kaynaklarim";
 import Gundem from "./tabs/Gundem";
 import Kocum from "./tabs/Kocum";
 import Siparislerim from "./tabs/Siparislerim";
+import AiAsistan from "./tabs/ai-asistan/AiAsistan";
 import SosButton from "./SosButton";
 import StreakBadge from "./StreakBadge";
 import CoachAvatar from "./CoachAvatar";
@@ -28,6 +29,7 @@ const TABS = [
   { key: "genel", label: "Genel Bakış", icon: FaHome, Component: GenelBakis },
   { key: "program", label: "Bugünüm", icon: FaCalendarWeek, Component: HaftalikProgram },
   { key: "deneme", label: "Deneme Analizim", icon: FaChartLine, Component: DenemeAnalizi },
+  { key: "ai-asistan", label: "AI Soru Asistanı", icon: FaRobot, Component: AiAsistan },
   { key: "konular", label: "Konu Ağacım", icon: FaTree, Component: KonuAgaci },
   { key: "kaynaklar", label: "Kaynaklarım", icon: FaBookOpen, Component: Kaynaklarim },
   { key: "gundem", label: "Gündem", icon: FaBullhorn, Component: Gundem },
