@@ -26,7 +26,7 @@ export default function UploadEmptyState({ onUpload, error }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl border-2 border-dashed border-[#e2e8f0] p-10 text-center">
+    <div data-tour="ai-assistant-upload" className="bg-white rounded-2xl border-2 border-dashed border-[#e2e8f0] p-10 text-center">
       <div className="w-16 h-16 rounded-2xl bg-brand-light flex items-center justify-center mx-auto mb-4 text-brand">
         <FaCamera size={24} />
       </div>

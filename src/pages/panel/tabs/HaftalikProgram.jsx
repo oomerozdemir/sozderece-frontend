@@ -600,7 +600,7 @@ export default function HaftalikProgram({ student }) {
   })();
 
   return (
-    <div className="flex flex-col gap-4">
+    <div data-tour="weekly-program" className="flex flex-col gap-4">
       {/* ── Bugünkü Rotam başlığı ── */}
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>

@@ -70,7 +70,7 @@ export default function GenelBakis({ onNavigate }) {
       {/* ── Bugünkü Rotam + Bu Hafta ── */}
       <div className="grid gap-5 lg:grid-cols-[1.3fr_1fr]">
         {/* Bugünkü Rotam — panelin en değerli alanı */}
-        <div className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6 flex flex-col">
+        <div data-tour="today-summary" className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6 flex flex-col">
           <div className="flex items-center justify-between gap-3 mb-1 flex-wrap">
             <SectionEyebrow color="var(--color-warning)">Bugünkü Rotam</SectionEyebrow>
             {todayFocus.length > 0 && (

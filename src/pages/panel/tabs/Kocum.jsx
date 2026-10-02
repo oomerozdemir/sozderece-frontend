@@ -9,7 +9,7 @@ export default function Kocum({ student }) {
 
   if (!student.assignedCoach) {
     return (
-      <div className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-7 max-w-[460px]">
+      <div data-tour="coach" className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-7 max-w-[460px]">
         <div
           className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 text-2xl"
           style={{ background: "var(--color-brand-light)", color: "var(--color-brand)" }}
@@ -37,7 +37,7 @@ export default function Kocum({ student }) {
 
   const coach = student.assignedCoach;
   return (
-    <div className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-7 max-w-[420px]">
+    <div data-tour="coach" className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-7 max-w-[420px]">
       <p className="font-fredoka font-bold text-accent-orange text-[11px] uppercase mb-3" style={{ letterSpacing: 3 }}>
         Atanmış Koçun
       </p>

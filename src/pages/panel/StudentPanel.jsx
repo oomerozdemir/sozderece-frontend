@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "../../utils/axios";
 import {
   FaHome, FaCalendarWeek, FaChartLine, FaBookOpen, FaBullhorn, FaUserTie, FaBoxOpen, FaTree,
-  FaLifeRing, FaSignOutAlt, FaEllipsisH, FaTimes, FaWhatsapp, FaRobot,
+  FaLifeRing, FaSignOutAlt, FaEllipsisH, FaTimes, FaWhatsapp, FaRobot, FaCompass,
 } from "react-icons/fa";
 import GenelBakis from "./tabs/GenelBakis";
 import HaftalikProgram from "./tabs/HaftalikProgram";
@@ -17,6 +17,7 @@ import AiAsistan from "./tabs/ai-asistan/AiAsistan";
 import SosButton from "./SosButton";
 import StreakBadge from "./StreakBadge";
 import CoachAvatar from "./CoachAvatar";
+import PanelTour from "./tour/PanelTour";
 
 const COACH_WHATSAPP = "905312546701";
 
@@ -45,6 +46,7 @@ export default function StudentPanel() {
   const [student, setStudent] = useState(null);
   const [tab, setTab] = useState("genel");
   const [moreOpen, setMoreOpen] = useState(false);
+  const [tourRestartSignal, setTourRestartSignal] = useState(0);
   const [headerStats, setHeaderStats] = useState({
     streak: { current: 0, longest: 0 },
     daysSinceLastActivity: null,
@@ -115,7 +117,7 @@ export default function StudentPanel() {
           </div>
         </div>
 
-        <nav className="flex-1 px-3 flex flex-col gap-1 overflow-y-auto">
+        <nav data-tour="sidebar-navigation" className="flex-1 px-3 flex flex-col gap-1 overflow-y-auto">
           {TABS.map((t) => {
             const isActive = t.key === tab;
             const Icon = t.icon;
@@ -145,6 +147,13 @@ export default function StudentPanel() {
           >
             <FaLifeRing size={15} /> Yardım
           </a>
+          <button
+            data-tour="tour-restart"
+            onClick={() => setTourRestartSignal((n) => n + 1)}
+            className="flex items-center gap-3 font-nunito font-bold text-sm px-3.5 py-2.5 rounded-xl text-white/55 hover:text-white hover:bg-white/5 text-left transition-colors"
+          >
+            <FaCompass size={15} /> Panel Turunu Tekrar Başlat
+          </button>
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 font-nunito font-bold text-sm px-3.5 py-2.5 rounded-xl text-white/55 hover:text-white hover:bg-white/5 text-left transition-colors"
@@ -195,6 +204,7 @@ export default function StudentPanel() {
 
       {/* ── Alt sekme çubuğu (mobil) ── */}
       <nav
+        data-tour="mobile-navigation"
         className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-[#ece9f7] flex items-stretch"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
@@ -278,6 +288,15 @@ export default function StudentPanel() {
               <span className="font-nunito font-bold text-sm">Yardım</span>
             </a>
             <button
+              data-tour="tour-restart"
+              onClick={() => { setMoreOpen(false); setTourRestartSignal((n) => n + 1); }}
+              className="w-full flex items-center gap-2.5 rounded-2xl px-4 py-3.5 mb-2 text-left"
+              style={{ background: "#f8fafc", color: "#334155" }}
+            >
+              <FaCompass size={15} className="flex-shrink-0" />
+              <span className="font-nunito font-bold text-sm">Panel Turunu Tekrar Başlat</span>
+            </button>
+            <button
               onClick={handleLogout}
               className="w-full flex items-center gap-2.5 rounded-2xl px-4 py-3.5 text-left"
               style={{ background: "#fef2f2", color: "#b91c1c" }}
@@ -290,6 +309,17 @@ export default function StudentPanel() {
       )}
 
       {!moreOpen && <SosButton studentName={student?.name} />}
+
+      {student && (
+        <PanelTour
+          student={student}
+          tab={tab}
+          setTab={setTab}
+          moreOpen={moreOpen}
+          setMoreOpen={setMoreOpen}
+          manualStartSignal={tourRestartSignal}
+        />
+      )}
     </div>
   );
 }

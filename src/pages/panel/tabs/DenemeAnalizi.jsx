@@ -182,7 +182,7 @@ export default function DenemeAnalizi({ onNavigate }) {
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div data-tour="exams" className="flex flex-col gap-5">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <p className="font-fredoka font-bold text-page-navy text-lg">Deneme Merkezi</p>
         <Button variant="primary" onClick={() => setShowChoice(true)}>
