@@ -3,6 +3,8 @@
 // önizleme için); otorite her zaman sunucuda, burası yalnızca anlık
 // gösterim.
 
+import { comparisonKey, comparisonLabel } from "./examConfig";
+
 export function netDivisor(examType, track) {
   if (examType === "LGS") return 3;
   if (examType === "BRANS") return track === "lgs" ? 3 : 4;
@@ -81,4 +83,127 @@ export function fmtDate(d) {
 
 export function fmtDateLong(d) {
   return d ? new Date(d).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) : "";
+}
+
+// ─── Deneme Merkezi: gelişim dashboard'u helper'ları ───
+// Hepsi saf/null-safe — null totalNet/targetNet/durationSeconds hiçbir
+// zaman 0 gibi kullanılmaz, eksik veri grafikten dışlanır veya null bırakılır.
+
+const PERIOD_DAYS = { "30d": 30, "3m": 90, "6m": 180 };
+
+// IN_PROGRESS/RESULT_PENDING (sonuç henüz girilmemiş) kayıtlar hiçbir
+// KPI/grafik/hareketli-ortalama/ders-trendi hesabına girmez. Eski koç-girişli
+// kayıtlarda status hiç set edilmez (bkz. addStudentExamResult) — Prisma
+// şemasındaki `status String @default("COMPLETED")` bunları güvenle
+// COMPLETED yapar; null-guard yine de savunma amaçlı tutulur.
+export function isReportableExam(r) {
+  return !!r && (r.status == null || r.status === "COMPLETED" || r.status === "ANALYSIS_PENDING");
+}
+
+export function filterResultsByPeriod(results, period) {
+  const days = PERIOD_DAYS[period];
+  if (!days) return results; // "all" veya tanınmayan değer — filtrelenmez
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  return results.filter((r) => r.examDate && new Date(r.examDate).getTime() >= cutoff);
+}
+
+// Mutasyon yok — her zaman yeni bir dizi döner.
+export function sortResultsChronologically(results) {
+  return [...results].sort((a, b) => new Date(a.examDate) - new Date(b.examDate));
+}
+
+// TYT/AYT/LGS/BRANS:{branch} ayrımının tek kaynağı examConfig#comparisonKey —
+// burada tekrarlanmaz, yalnızca sarmalanır.
+export function getAvailableComparisonFilters(results) {
+  const seen = new Map();
+  for (const r of results) {
+    const key = comparisonKey(r);
+    if (!seen.has(key)) seen.set(key, comparisonLabel(r));
+  }
+  return [...seen.entries()];
+}
+
+export function filterResultsByComparisonKey(results, key) {
+  if (key == null) return results;
+  return results.filter((r) => comparisonKey(r) === key);
+}
+
+// En güncel (tarihçe olarak en yeni) reportable kaydın comparisonKey'i —
+// varsayılan tip filtresi bunu kullanır, öğrenci paneli açtığında doğrudan
+// en güncel çalıştığı sınavın gelişimini görür.
+export function getMostRecentComparisonKey(results) {
+  if (!results.length) return null;
+  const chronological = sortResultsChronologically(results);
+  return comparisonKey(chronological[chronological.length - 1]);
+}
+
+// input: kronolojik sıralı sonuç dizisi. Çıktı AYNI uzunlukta/sırada —
+// null totalNet'li kayıtlar diziden silinmez, yalnızca ortalama penceresine
+// dahil edilmez (chart x-ekseniyle index hizası bu yüzden korunur).
+export function calculateMovingAverage(results, windowSize = 3) {
+  const validWindow = [];
+  return results.map((r) => {
+    const rawNet = r.totalNet != null ? r.totalNet : null;
+    let movingAverage = null;
+    if (rawNet != null) {
+      validWindow.push(rawNet);
+      if (validWindow.length > windowSize) validWindow.shift();
+      if (validWindow.length >= windowSize) {
+        movingAverage = validWindow.reduce((sum, v) => sum + v, 0) / validWindow.length;
+      }
+    }
+    return { examId: r.id, examDate: r.examDate, rawNet, movingAverage };
+  });
+}
+
+// input: kronolojik sıralı sonuç dizisi (zaten reportable+filtrelenmiş).
+export function calculateDevelopmentSummary(results) {
+  const totalExams = results.length;
+  const valid = results.filter((r) => r.totalNet != null);
+  if (valid.length === 0) {
+    return { firstNet: null, latestNet: null, change: null, recentAverage: null, recentAverageCount: 0, bestNet: null, totalExams };
+  }
+  const firstNet = valid[0].totalNet;
+  const latestNet = valid[valid.length - 1].totalNet;
+  const change = valid.length >= 2 ? latestNet - firstNet : null; // tek kayıtta karşılaştırma anlamsız — null
+  const recentAverageCount = Math.min(5, valid.length);
+  const recentSlice = valid.slice(-recentAverageCount);
+  const recentAverage = recentSlice.reduce((sum, r) => sum + r.totalNet, 0) / recentAverageCount;
+  const bestNet = valid.reduce((best, r) => (best == null || r.totalNet > best ? r.totalNet : best), null);
+  return { firstNet, latestNet, change, recentAverage, recentAverageCount, bestNet, totalExams };
+}
+
+export function getAvailableSubjects(results) {
+  return [...new Set(results.flatMap((r) => (Array.isArray(r.subjectNets) ? r.subjectNets.map((s) => s.subject) : [])))];
+}
+
+// input: kronolojik sıralı sonuç dizisi. Çıktı chart x-ekseniyle index hizalı.
+export function buildSubjectTrend(results, subject) {
+  return results.map((r) => {
+    const row = (r.subjectNets || []).find((s) => s.subject === subject);
+    return { examId: r.id, examDate: r.examDate, net: row && row.net != null ? row.net : null };
+  });
+}
+
+// Her ders için KENDİ ilk ve son geçerli (net mevcut) görülme noktası
+// karşılaştırılır (sınavın ilk/son kaydı değil) — delta = son - ilk.
+// En az 2 geçerli noktası olmayan dersler elenir. Yalnızca en yüksek delta
+// POZİTİFSE sonuç döner; tüm dersler sabit/düşüşteyse null (AI kullanılmaz,
+// tamamen deterministic).
+export function calculateMostImprovedSubject(results) {
+  const subjects = getAvailableSubjects(results);
+  let best = null;
+  for (const subject of subjects) {
+    const points = [];
+    for (const r of results) {
+      const row = (r.subjectNets || []).find((s) => s.subject === subject);
+      if (row && row.net != null) points.push(row.net);
+    }
+    if (points.length < 2) continue;
+    const delta = points[points.length - 1] - points[0];
+    if (delta > 0 && (best == null || delta > best.delta)) {
+      best = { subject, delta };
+    }
+  }
+  return best;
 }
