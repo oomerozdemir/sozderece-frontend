@@ -22,6 +22,37 @@ export function formatNet(net) {
   return net.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+// Öğrenci yalnızca correct/wrong girer — blank her zaman buradan türetilir,
+// hiçbir satır state'inde ayrı bir "blank" alanı tutulmaz.
+export function computeBlank(questionCount, correct, wrong) {
+  const qc = Number(questionCount) || 0;
+  const c = Number(correct) || 0;
+  const w = Number(wrong) || 0;
+  return Math.max(0, qc - c - w);
+}
+
+// Tek bir satırın submit'i engelleyecek hatasını döner (yoksa null). Backend
+// validateExamResultPayload ile aynı kuralları uygular — otorite yine de
+// backend'dedir, bu yalnızca erken/anlık geri bildirim içindir.
+export function subjectRowError(row) {
+  const qc = row.questionCount !== "" && row.questionCount != null ? Number(row.questionCount) : null;
+  if (qc == null || !Number.isFinite(qc) || qc < 0) return "Soru sayısı girilmeli.";
+  const c = Number(row.correct) || 0;
+  const w = Number(row.wrong) || 0;
+  if (c + w > qc) return "Doğru ve yanlış toplamı soru sayısını geçemez.";
+  return null;
+}
+
+// ExamResultForm ve ManualExamForm'un submit öncesi ortaklaşa kullandığı
+// kapı — ikisinde de aynı satır listesi aynı kurallarla kontrol edilir.
+export function validateSubjectRows(rows) {
+  for (const r of rows) {
+    const err = subjectRowError(r);
+    if (err) return { valid: false, message: `${r.subject}: ${err}` };
+  }
+  return { valid: true, message: null };
+}
+
 // Eksik/legacy veri kuralı: null/undefined değerler "0" değil "—" olarak
 // gösterilir — hiçbir component kendi başına `?? 0` kısayoluna başvurmaz.
 export function formatMetric(value, unit = "") {

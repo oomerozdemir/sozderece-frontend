@@ -3,6 +3,7 @@ import axios from "../../../../utils/axios";
 import Button from "../../../../components/ui/Button";
 import SubjectNetRows from "./SubjectNetRows";
 import { EXAM_TYPE_LABELS, EXAM_TYPE_DEFAULTS, getDefaultSubjects, DIFFICULTY_REASON_OPTIONS } from "./examConfig";
+import { validateSubjectRows } from "./examHelpers";
 
 const inputCls =
   "w-full py-2.5 px-3 border border-[#e2e8f0] rounded-lg text-sm bg-white outline-none focus:border-brand transition-colors font-nunito";
@@ -41,6 +42,8 @@ export default function ManualExamForm({ student, onSubmitted, onCancel }) {
     if (examType === "BRANS" && !branch) return setError("Branş denemesi için bir ders seçmelisin.");
     const rows = subjectNets.filter((r) => r.subject.trim());
     if (rows.length === 0) return setError("En az bir ders sonucu girmelisin.");
+    const validation = validateSubjectRows(rows);
+    if (!validation.valid) return setError(validation.message);
 
     setSaving(true);
     setError("");
@@ -57,7 +60,7 @@ export default function ManualExamForm({ student, onSubmitted, onCancel }) {
           durationMinutes: durationMinutes || null,
           targetNet: targetNet || null,
           targetDurationMinutes: targetDurationMinutes || null,
-          subjectNets: rows.map((r) => ({ subject: r.subject, questionCount: r.questionCount || null, correct: Number(r.correct) || 0, wrong: Number(r.wrong) || 0, blank: Number(r.blank) || 0 })),
+          subjectNets: rows.map((r) => ({ subject: r.subject, questionCount: Number(r.questionCount), correct: Number(r.correct) || 0, wrong: Number(r.wrong) || 0 })),
           difficultyReasons,
           didWell: didWell.trim(),
           nextImprovement: nextImprovement.trim(),
