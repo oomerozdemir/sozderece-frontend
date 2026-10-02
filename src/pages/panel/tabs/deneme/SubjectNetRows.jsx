@@ -2,8 +2,12 @@ import { useEffect, useState } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { netDivisor, computeSubjectNet, computeBlank, subjectRowError, formatNet } from "./examHelpers";
 
-const cellCls = "py-2 px-2.5 border border-[#e2e8f0] rounded-lg text-sm bg-white outline-none focus:border-brand transition-colors font-nunito";
-const readOnlyCellCls = "py-2 px-2.5 rounded-lg text-sm bg-[#f8fafc] text-[#475569] font-nunito text-center tabular-nums";
+// min-w-0: grid hücrelerinin varsayılan min-width:auto'su (number input'ların
+// intrinsic içerik genişliği) sütunu 60/70px'in ötesine genişletip sağdaki
+// tüm sütunları kaydırıyordu — w-full + min-w-0 + box-border bu grid'in her
+// hücresini kendi sütun genişliğine kilitler.
+const cellCls = "w-full min-w-0 box-border py-2 px-2.5 border border-[#e2e8f0] rounded-lg text-sm bg-white outline-none focus:border-brand transition-colors font-nunito";
+const readOnlyCellCls = "w-full min-w-0 box-border py-2 px-2.5 rounded-lg text-sm bg-[#f8fafc] text-[#475569] font-nunito text-center tabular-nums";
 
 // Ders bazlı Doğru|Yanlış girişi — hem canlı denemenin sonuç adımında
 // (ExamResultForm) hem geçmiş deneme eklerken (ManualExamForm) kullanılan
@@ -68,7 +72,7 @@ export default function SubjectNetRows({ examType, track, initialSubjects, onCha
               <input className={cellCls} type="number" min="0" value={r.correct} onChange={(e) => updateRow(i, "correct", e.target.value)} />
               <input className={cellCls} type="number" min="0" value={r.wrong} onChange={(e) => updateRow(i, "wrong", e.target.value)} />
               <span className={readOnlyCellCls}>{r.questionCount !== "" ? blank : "—"}</span>
-              <span className="text-sm font-bold text-page-navy text-center tabular-nums">{net != null ? formatNet(net) : "—"}</span>
+              <span className="w-full min-w-0 box-border text-sm font-bold text-page-navy text-center tabular-nums">{net != null ? formatNet(net) : "—"}</span>
               <button onClick={() => removeRow(i)} className="text-[#ef4444] p-1.5 justify-self-center"><FaTrash size={11} /></button>
             </div>
             {error && <p className="text-[10px] font-bold text-[#dc2626] mt-0.5">⚠ {r.subject ? `${r.subject}: ` : ""}{error}</p>}
