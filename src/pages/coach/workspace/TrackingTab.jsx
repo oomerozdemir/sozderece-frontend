@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 import axios from "../../../utils/axios";
 import { MASTERY_META } from "./statusMeta";
+import AiQuestionInsightsCard from "./AiQuestionInsightsCard";
 
 const SUB_TABS = [
   { key: "history", label: "Tarihçe" },
@@ -28,6 +29,8 @@ export default function TrackingTab({ student }) {
   const [insightsLoading, setInsightsLoading] = useState(false);
   const [addingInsightId, setAddingInsightId] = useState(null);
   const [addedInsightIds, setAddedInsightIds] = useState([]);
+  const [aiQuestionInsights, setAiQuestionInsights] = useState(null);
+  const [aiQuestionInsightsLoading, setAiQuestionInsightsLoading] = useState(false);
 
   /* ── Konu Ağacı ── */
   const [masteryTopics, setMasteryTopics] = useState([]);
@@ -50,6 +53,12 @@ export default function TrackingTab({ student }) {
         .then((res) => setInsights(res.data?.insights || []))
         .catch(() => {})
         .finally(() => setInsightsLoading(false));
+      setAiQuestionInsightsLoading(true);
+      axios
+        .get(`/api/coach/students/${student.id}/ai-question-insights`, authHeaders)
+        .then((res) => setAiQuestionInsights(res.data))
+        .catch(() => {})
+        .finally(() => setAiQuestionInsightsLoading(false));
       setFetched((f) => ({ ...f, insights: true }));
     }
     if (subTab === "mastery" && !fetched.mastery) {
@@ -128,7 +137,9 @@ export default function TrackingTab({ student }) {
         )}
 
         {subTab === "insights" && (
-          <div className="space-y-3">
+          <div className="space-y-5">
+            <AiQuestionInsightsCard insights={aiQuestionInsights} loading={aiQuestionInsightsLoading} />
+
             <p className="text-xs text-[#64748b] mb-1">
               Son 3 denemenin en az 2'sinde yanlış işaretlenen konular — tekrar eden hatalar. Tek tıkla bugünün programına ekleyebilirsin.
             </p>

@@ -25,3 +25,36 @@ export const FOLLOWUP_TYPE_LABELS = {
   EXPLAIN_STEP: "Bu adımı açıkla",
   SIMILAR_EXAMPLE: "Benzer bir örnek göster",
 };
+
+// V2 — öğrenme sinyali etiketleri. Yargılayıcı/sert dil YOK (plan madde 21):
+// "zayıf olduğun konu" değil "üzerinde çalıştığın konu" / "daha fazla pratik
+// gerektirebilir".
+export const LEARNING_SIGNAL_LABELS = {
+  NEEDS_PRACTICE: "Daha fazla pratik gerektirebilir",
+  IMPROVING: "Gelişim gösteriyorsun",
+  VERIFIED_ONCE: "Bir kez doğruladın",
+};
+
+export const QUESTION_TYPE_LABELS = {
+  KNOWLEDGE: "Bilgi",
+  CALCULATION: "Hesaplama",
+  INTERPRETATION: "Yorumlama",
+  REASONING: "Akıl Yürütme",
+  GRAPH: "Grafik",
+  PROBLEM_SOLVING: "Problem Çözme",
+  PARAGRAPH: "Paragraf",
+  FORMULA_APPLICATION: "Formül Uygulama",
+  OTHER: "Diğer",
+};
+
+export const DIFFICULTY_LABELS = {
+  EASY: "Kolay",
+  MEDIUM: "Orta",
+  HARD: "Zor",
+};
+
+export const UNDERSTANDING_LABELS = {
+  SELF_REPORTED_UNDERSTOOD: "Anladım",
+  NEEDS_MORE_HELP: "Daha fazla açıklama istedi",
+  REQUESTED_PRACTICE: "Pratik sorusu istedi",
+};

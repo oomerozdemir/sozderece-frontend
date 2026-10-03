@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaLightbulb, FaListOl, FaCheckCircle, FaStar, FaQuestionCircle, FaExclamationTriangle } from "react-icons/fa";
 import Button from "../../../../components/ui/Button";
+import VerificationQuestion from "./VerificationQuestion";
 import { FOLLOWUP_TYPE_LABELS } from "./aiAsistanHelpers";
 
 const NON_SOLVED_MESSAGES = {
@@ -13,8 +14,10 @@ const NON_SOLVED_MESSAGES = {
 
 // Hem "az önce çözüldü" (AiAsistan.jsx'in upload sonrası) hem "geçmişten
 // açıldı" (QuestionDetail.jsx) akışında kullanılan paylaşılan sonuç görünümü.
-export default function QuestionResult({ question, onFollowup, followupLoading, onReset }) {
+export default function QuestionResult({ question, onFollowup, followupLoading, onReset, onUnderstanding }) {
   const [globalError, setGlobalError] = useState("");
+  const [understandingPending, setUnderstandingPending] = useState(false);
+  const [showVerification, setShowVerification] = useState(false);
 
   if (question.status !== "COMPLETED") {
     return (
@@ -41,6 +44,24 @@ export default function QuestionResult({ question, onFollowup, followupLoading, 
       await onFollowup(type, stepIndex);
     } catch (err) {
       setGlobalError(err?.response?.data?.message || "Bir şeyler ters gitti, tekrar dene.");
+    }
+  };
+
+  // "Bu soruyu şimdi anladın mı?" — Evet/Biraz daha anlat/Benzer soru (plan
+  // madde 3). "Biraz daha anlat" mevcut EXPLAIN_SIMPLER follow-up'ını aynen
+  // tetikler (mantık tekrarlanmıyor); "Benzer soru" VerificationQuestion'ı açar.
+  const handleUnderstanding = async (status) => {
+    if (!onUnderstanding) return;
+    setGlobalError("");
+    setUnderstandingPending(true);
+    try {
+      await onUnderstanding(status);
+      if (status === "NEEDS_MORE_HELP") await triggerFollowup("EXPLAIN_SIMPLER");
+      if (status === "REQUESTED_PRACTICE") setShowVerification(true);
+    } catch (err) {
+      setGlobalError(err?.response?.data?.message || "Bir şeyler ters gitti, tekrar dene.");
+    } finally {
+      setUnderstandingPending(false);
     }
   };
 
@@ -134,6 +155,28 @@ export default function QuestionResult({ question, onFollowup, followupLoading, 
       </div>
       {atFollowupLimit && <p className="font-nunito text-[11px] text-[#94a3b8]">Bu soru için follow-up hakkın doldu.</p>}
       {globalError && <p className="font-nunito text-xs font-bold text-[#dc2626]">{globalError}</p>}
+
+      {onUnderstanding && (
+        <div className="pt-4 border-t border-[#f1f5f9] space-y-2.5">
+          <p className="font-fredoka font-bold text-page-navy text-sm">Bu soruyu şimdi anladın mı?</p>
+          {question.understandingStatus ? (
+            <p className="font-nunito text-xs text-[#94a3b8]">Geri bildirimin için teşekkürler.</p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" onClick={() => handleUnderstanding("SELF_REPORTED_UNDERSTOOD")} disabled={understandingPending}>
+                Evet, anladım
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => handleUnderstanding("NEEDS_MORE_HELP")} disabled={understandingPending || atFollowupLimit}>
+                Biraz daha anlat
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => handleUnderstanding("REQUESTED_PRACTICE")} disabled={understandingPending}>
+                Benzer soru çözmek istiyorum
+              </Button>
+            </div>
+          )}
+          {showVerification && <VerificationQuestion questionId={question.id} onClose={() => setShowVerification(false)} />}
+        </div>
+      )}
 
       {onReset && (
         <div className="pt-3 border-t border-[#f1f5f9]">

@@ -8,6 +8,7 @@ import QuestionResult from "./QuestionResult";
 import QuestionHistoryList from "./QuestionHistoryList";
 import QuestionDetail from "./QuestionDetail";
 import QuotaReachedState from "./QuotaReachedState";
+import QuestionProfile from "./QuestionProfile";
 
 const authHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem("token")}` });
 
@@ -80,6 +81,17 @@ export default function AiAsistan() {
     }
   };
 
+  const handleUnderstanding = async (status) => {
+    const res = await axios.patch(
+      `/api/v1/ogrenci/me/ai-question/${activeQuestion.id}/understanding`,
+      { status },
+      { headers: authHeaders() }
+    );
+    // Yalnızca skaler alanlar döner (followups/verifications relation'ları
+    // dahil değil) — mevcut state'in üzerine merge edilir, ilişkiler kaybolmaz.
+    setActiveQuestion((prev) => ({ ...prev, ...res.data.question }));
+  };
+
   const handleReset = () => {
     setActiveQuestion(null);
     setUploadError("");
@@ -109,7 +121,13 @@ export default function AiAsistan() {
       {view === "quota" && <QuotaReachedState />}
 
       {view === "result" && activeQuestion && (
-        <QuestionResult question={activeQuestion} onFollowup={handleFollowup} followupLoading={followupLoading} onReset={handleReset} />
+        <QuestionResult
+          question={activeQuestion}
+          onFollowup={handleFollowup}
+          followupLoading={followupLoading}
+          onReset={handleReset}
+          onUnderstanding={handleUnderstanding}
+        />
       )}
 
       {view === "detail" && detailQuestion && (
@@ -119,6 +137,7 @@ export default function AiAsistan() {
       {view === "upload" && (
         <>
           <UploadEmptyState onUpload={handleUpload} error={uploadError} />
+          <QuestionProfile />
           <div>
             <p className="font-fredoka font-bold text-page-navy text-sm mb-3">Geçmişim</p>
             <QuestionHistoryList questions={questions} onSelect={handleSelectHistory} />

@@ -121,6 +121,8 @@ export default function AdminAiUsagePage() {
               <StatCard icon="📊" label="Öğrenci Başına Maliyet" value={fmtUsd(questionStats.avgCostPerStudent)} color="bg-[#fef3c7]" />
               <StatCard icon="❓" label="Öğrenci Başına Soru" value={questionStats.avgQuestionsPerStudent ?? "—"} color="bg-[#f0fdf4]" />
               <StatCard icon="🔤" label="Toplam Token" value={(questionStats.totalInputTokens + questionStats.totalOutputTokens).toLocaleString("tr-TR")} color="bg-[#f1f5f9]" />
+              <StatCard icon="🧪" label="Doğrulama Çağrısı (Ay)" value={questionStats.totalVerificationCalls ?? 0} color="bg-[#ecfeff]" />
+              <StatCard icon="🧪" label="Doğrulama Maliyeti (Ay)" value={fmtUsd(questionStats.totalVerificationCostUsd)} color="bg-[#ecfeff]" />
             </div>
 
             {studentBreakdown.length > 0 && (
