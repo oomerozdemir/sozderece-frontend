@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import axios from "../../../utils/axios";
 import {
-  FaClock, FaCheck, FaChevronLeft, FaChevronRight,
+  FaClock, FaCheck,
   FaRegCircle, FaFrown, FaPlay, FaStop, FaWhatsapp,
 } from "react-icons/fa";
 import { playTaskDoneSound, playLevelUpSound } from "../../../utils/sound";
-
-const DAY_LABELS = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
+import WeeklyProgramSection from "./program/WeeklyProgramSection";
+import { toMonday, toISO, fmtMinutes } from "./program/programHelpers";
 
 // Görevler bitince çıkan didaktik kutlama mesajları — sadece "tebrikler"
 // demek yerine bilimsel bir tavsiye de veriyor.
@@ -32,39 +32,12 @@ const NOT_COMPLETED_REASONS = [
   "Diğer",
 ];
 
-const toMonday = (date) => {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = day === 0 ? -6 : 1 - day;
-  d.setDate(d.getDate() + diff);
-  d.setHours(0, 0, 0, 0);
-  return d;
-};
-
-const fmtRange = (monday) => {
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
-  const opts = { day: "numeric", month: "long" };
-  return `${monday.toLocaleDateString("tr-TR", opts)} — ${sunday.toLocaleDateString("tr-TR", opts)}`;
-};
-
-// d.toISOString() UTC'ye çevirir — İstanbul (+3) yerel gece yarısı bir
-// önceki güne kayar (Pazartesi 00:00 -> Pazar 21:00 UTC). Bu yüzden yerel
-// takvim bileşenlerinden elle string kuruyoruz, backend'e her zaman doğru
-// (bir gün kaymamış) tarih gitsin diye.
-const toISO = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+// toMonday/toISO/fmtMinutes artık ./program/programHelpers.js'ten import
+// ediliyor (tek kaynak, WeeklyProgramSection ile paylaşılıyor).
 
 const fmtToday = (iso) => {
   if (!iso) return "";
   return new Date(iso).toLocaleDateString("tr-TR", { weekday: "long", day: "numeric", month: "long" });
-};
-
-const fmtMinutes = (mins) => {
-  const m = Math.max(0, Math.round(mins || 0));
-  if (m < 60) return `${m} dk`;
-  const h = Math.floor(m / 60);
-  const rem = m % 60;
-  return rem ? `${h} sa ${rem} dk` : `${h} sa`;
 };
 
 const fmtClock = (totalSeconds) => {
@@ -324,28 +297,6 @@ function TodayTaskCard({
   );
 }
 
-// Hafta görünümü için sade, salt-görüntüleme satırı (birincil etkileşim
-// alanı bugünkü kartlar olsun diye burası bilinçli olarak basit tutuldu).
-function WeekTaskRow({ item }) {
-  const color = item.status === "done" ? "#059669" : item.status === "stuck" ? "#dc2626" : item.status === "partial" ? "#c2740c" : "#cbd5e1";
-  return (
-    <div className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 bg-[#f8fafc]">
-      <span className="flex-shrink-0 flex items-center justify-center" style={{ width: 18, height: 18, color }}>
-        {item.status === "done" ? <FaCheck size={10} /> : <FaRegCircle size={10} />}
-      </span>
-      <span className="flex-1 min-w-0">
-        <span className="block font-nunito font-bold text-sm text-[#0f172a]">{item.subject}</span>
-        {item.topic && <span className="block font-nunito text-xs text-[#64748b]">{item.topic}</span>}
-      </span>
-      {item.durationMin && (
-        <span className="flex items-center gap-1 font-nunito text-[11px] text-[#94a3b8] flex-shrink-0">
-          <FaClock size={9} /> {item.durationMin} dk
-        </span>
-      )}
-    </div>
-  );
-}
-
 function ZRaporuCard({ report }) {
   const tip = useMemo(() => (report ? pickTip(ALL_DONE_TIPS, report.id + report.doneTasks) : ""), [report]);
   if (!report) return null;
@@ -411,9 +362,9 @@ function KocumdanCard({ note }) {
 export default function HaftalikProgram({ student }) {
   const [today, setToday] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [weekOpen, setWeekOpen] = useState(false);
   const [weekStart, setWeekStart] = useState(() => toMonday(new Date()));
   const [plan, setPlan] = useState(null);
+  const [planWeekStartISO, setPlanWeekStartISO] = useState(null);
   const [weekLoading, setWeekLoading] = useState(false);
   const [coachNote, setCoachNote] = useState(null);
   const [activeSession, setActiveSession] = useState(null); // {id, studyPlanItemId, startedAt}
@@ -422,6 +373,14 @@ export default function HaftalikProgram({ student }) {
   const [reasonPromptId, setReasonPromptId] = useState(null);
   const hydratedRef = useRef(false);
   const prevReportIdRef = useRef(undefined);
+  const weeklyRef = useRef(null);
+
+  // Haftalık Rotam artık her zaman görünür (K1) — "Yarının Rotasını Gör"
+  // artık bir şey "açmıyor", yalnızca zaten görünür olan bölüme kaydırıyor.
+  const scrollToWeekly = () => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    weeklyRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+  };
   const token = useMemo(() => localStorage.getItem("token"), []);
   const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
 
@@ -449,6 +408,15 @@ export default function HaftalikProgram({ student }) {
       try {
         const { data } = await axios.get("/api/v1/ogrenci/me/study-plan", { headers, params: { weekStart: toISO(ws) } });
         setPlan(data?.plan || null);
+        // K4: dönen plan'ın gerçekten hangi haftaya ait olduğunu (backend
+        // echo'su) ayrıca tutuyoruz — WeeklyProgramSection, selectedDay'i
+        // yalnızca bu, istenen weekStart'a eşitse yeniden çözüyor. Backend
+        // weekStart'ı ham UTC ISO timestamp olarak döner (ör.
+        // "2026-10-04T21:00:00.000Z") — toISO() ise yerel "YYYY-MM-DD"
+        // üretiyor; karşılaştırmanın anlamlı olması için aynı normalize
+        // formata çevriliyor (new Date(...) + toISO), yoksa iki string asla
+        // eşleşmez ve gün hiç çözülmez.
+        setPlanWeekStartISO(data?.weekStart ? toISO(new Date(data.weekStart)) : toISO(ws));
       } catch {
         setPlan(null);
       } finally {
@@ -458,10 +426,12 @@ export default function HaftalikProgram({ student }) {
     [headers]
   );
 
+  // Haftalık bölüm artık her zaman görünür (K1) — toggle'a değil mount'a ve
+  // hafta değişimine bağlı yükleniyor, "Bugünkü Rotam" ile paralel.
   useEffect(() => {
-    if (weekOpen) loadWeek(weekStart);
+    loadWeek(weekStart);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [weekOpen, weekStart]);
+  }, [weekStart]);
 
   // Sayfa yenilendiğinde sunucudaki aktif turu bir kereliğine devral.
   useEffect(() => {
@@ -579,14 +549,6 @@ export default function HaftalikProgram({ student }) {
   const distinctSubjects = useMemo(() => new Set(items.filter((i) => i.status === "done").map((i) => i.subject)).size, [items]);
   const firstName = student?.name?.split(" ")[0] || "";
 
-  const itemsByDay = useMemo(() => {
-    const map = Array.from({ length: 7 }, () => []);
-    (plan?.items || []).forEach((it) => {
-      if (it.dayOfWeek >= 0 && it.dayOfWeek <= 6) map[it.dayOfWeek].push(it);
-    });
-    return map;
-  }, [plan]);
-
   // Ekran öğrencinin gününe tepki versin: sabah / yarı yolda / hepsi bitti /
   // gün kapandı ama hepsi "tamam" değil (bazıları "yapamadım" — bunu sahte
   // bir kutlamayla örtmüyoruz, nötr bir kapanış mesajı veriyoruz).
@@ -622,7 +584,7 @@ export default function HaftalikProgram({ student }) {
               <div className="text-3xl mb-3 opacity-40">🌿</div>
               <p className="font-fredoka font-bold text-page-navy text-sm mb-1.5">Bugün dinlenme günü.</p>
               <p className="font-nunito text-sm text-[#94a3b8] leading-relaxed">Rotanda bugün planlı çalışma bulunmuyor. Yarın kaldığın yerden devam edeceksin.</p>
-              <button onClick={() => setWeekOpen(true)} className="font-nunito font-bold text-sm text-page-navy underline mt-3">
+              <button onClick={scrollToWeekly} className="font-nunito font-bold text-sm text-page-navy underline mt-3">
                 Yarının Rotasını Gör →
               </button>
             </>
@@ -692,62 +654,18 @@ export default function HaftalikProgram({ student }) {
         </>
       )}
 
-      {/* ── Haftalık Rotam — ikincil, küçük bir erişim noktası ── */}
-      <div className="text-center pt-1">
-        <button onClick={() => setWeekOpen((v) => !v)} className="font-nunito font-bold text-xs text-[#94a3b8] hover:text-page-navy underline transition-colors">
-          {weekOpen ? "Haftalık Rotamı Gizle" : "Haftalık Rotamı Gör →"}
-        </button>
+      {/* ── Haftalık Rotam — her zaman görünür (K1) ── */}
+      <div ref={weeklyRef}>
+        <WeeklyProgramSection
+          plan={plan}
+          planWeekStartISO={planWeekStartISO}
+          weekStart={weekStart}
+          weekLoading={weekLoading}
+          activeSession={activeSession}
+          setWeekStart={setWeekStart}
+          onToggleStatus={cycleWeekStatus}
+        />
       </div>
-
-      {weekOpen && (
-        <div className="bg-white rounded-[20px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] px-5 pb-5 pt-4">
-          <div className="flex items-center gap-2 mb-4">
-            <button
-              onClick={() => setWeekStart((w) => { const n = new Date(w); n.setDate(n.getDate() - 7); return n; })}
-              className="w-8 h-8 rounded-full bg-[#f8fafc] border border-[#e5e7eb] flex items-center justify-center hover:border-page-navy/40 transition-colors"
-            >
-              <FaChevronLeft size={11} className="text-[#475569]" />
-            </button>
-            <span className="font-fredoka font-bold text-page-navy text-xs px-1">{fmtRange(weekStart)}</span>
-            <button
-              onClick={() => setWeekStart((w) => { const n = new Date(w); n.setDate(n.getDate() + 7); return n; })}
-              className="w-8 h-8 rounded-full bg-[#f8fafc] border border-[#e5e7eb] flex items-center justify-center hover:border-page-navy/40 transition-colors"
-            >
-              <FaChevronRight size={11} className="text-[#475569]" />
-            </button>
-            {toISO(weekStart) !== toISO(toMonday(new Date())) && (
-              <button onClick={() => setWeekStart(toMonday(new Date()))} className="font-nunito font-bold text-xs text-page-navy underline ml-1">
-                Bu hafta
-              </button>
-            )}
-          </div>
-
-          {weekLoading ? (
-            <p className="font-nunito text-sm text-[#94a3b8] text-center py-6">Yükleniyor…</p>
-          ) : !plan || (plan.items || []).length === 0 ? (
-            <p className="font-nunito text-sm text-[#94a3b8] text-center py-6">Bu hafta için henüz bir program hazırlanmadı.</p>
-          ) : (
-            <div className="grid gap-3">
-              {DAY_LABELS.map((label, dayIdx) => {
-                const dItems = itemsByDay[dayIdx];
-                if (dItems.length === 0) return null;
-                return (
-                  <div key={dayIdx}>
-                    <p className="font-fredoka font-bold text-[#334155] text-xs mb-2">{label}</p>
-                    <div className="flex flex-col gap-2">
-                      {dItems.map((it) => (
-                        <div key={it.id} onClick={() => cycleWeekStatus(it)} className="cursor-pointer">
-                          <WeekTaskRow item={it} />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }

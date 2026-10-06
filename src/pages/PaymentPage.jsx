@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import useCart from "../hooks/useCart";
 import axios from "../utils/axios";
-import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
+import { useLocation, useSearchParams, useNavigate, Link } from "react-router-dom";
 import { FaUserGraduate } from "react-icons/fa";
 import { isValidEmail, isValidName, isValidPhone, isValidPostalCode, isValidAddress, isValidTcNo } from "../utils/validation";
 import { lineTL, computeCartTotals, computeCouponDiscount, computeFinalCalculations } from "../utils/checkoutPricing";
@@ -14,7 +14,6 @@ const user = JSON.parse(localStorage.getItem("user"));
 const trPrice = (n) => Math.round(Number(n) || 0).toLocaleString("tr-TR");
 
 const DEFAULT_SETTINGS = {
-  logoUrl: "/images/hero-logo.webp",
   slogan: "Başarıya giden yol buradan geçiyor",
   socialProofText: "+200 Mutlu Öğrenci",
   socialProofStars: 5,
@@ -213,33 +212,33 @@ const PaymentPage = () => {
     localStorage.removeItem("activeRequestIds");
   }, []);
 
-  const inputBase = "py-[18px] px-3 h-14 border border-[#e2e8f0] rounded-2xl text-base bg-white w-full box-border focus:outline-none focus:border-[#f35900] focus:shadow-[0_0_0_3px_rgba(243,89,0,0.1)] placeholder:text-[#aaa] text-[#0f172a]";
+  const inputBase = "py-[18px] px-3 h-14 border border-[#e2e8f0] rounded-2xl text-base font-nunito bg-white w-full box-border focus:outline-none focus:border-brand focus:shadow-[0_0_0_3px_rgba(14,124,136,0.1)] placeholder:text-[#aaa] text-[#0f172a]";
   const errCls = "border border-red-500 bg-[#fff0f0]";
 
   const stars = Array.from({ length: 5 }, (_, i) => i < (settings.socialProofStars || 5));
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc]">
+    <div className="min-h-screen flex flex-col bg-cream font-nunito">
       {/* ── Navbar ── */}
-      <header className="bg-white border-b border-[#e2e8f0] shadow-sm sticky top-0 z-50">
+      <header className="sticky top-0 z-50" style={{ background: "var(--color-dark)" }}>
         <div className="max-w-[1200px] mx-auto px-5 py-3 flex items-center justify-between gap-4 max-[480px]:px-3">
           <div className="flex items-center gap-4 max-[480px]:gap-2">
-            <img
-              src={settings.logoUrl || "/images/hero-logo.webp"}
-              alt="Sözderece"
-              className="h-10 w-auto max-[480px]:h-8"
-            />
+            <Link to="/" className="flex items-center gap-2 no-underline">
+              <img src="/images/logo-bee.png" alt="" aria-hidden="true" className="w-7 h-7 max-[480px]:w-6 max-[480px]:h-6 flex-shrink-0" />
+              <span className="font-fredoka text-brand-on-dark text-2xl max-[480px]:text-xl tracking-wide select-none">SÖZDERECE</span>
+            </Link>
             {settings.slogan && (
-              <span className="text-sm font-semibold text-[#475569] italic border-l border-[#e2e8f0] pl-4 max-[640px]:hidden">
+              <span className="text-sm font-nunito font-semibold text-white/60 italic border-l border-white/15 pl-4 max-[640px]:hidden">
                 {settings.slogan}
               </span>
             )}
           </div>
-          <div className="flex items-center gap-2 text-xs font-bold text-[#059669] bg-[#ecfdf5] border border-[#a7f3d0] px-3 py-1.5 rounded-full whitespace-nowrap">
+          <div className="flex items-center gap-2 text-xs font-bold text-emerald-300 bg-emerald-500/10 border border-emerald-400/25 px-3 py-1.5 rounded-full whitespace-nowrap">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
-            256-bit SSL Güvenli Ödeme
+            <span className="max-[480px]:hidden">256-bit SSL Güvenli Ödeme</span>
+            <span className="hidden max-[480px]:inline">SSL Güvenli</span>
           </div>
         </div>
       </header>
@@ -255,10 +254,10 @@ const PaymentPage = () => {
               onSubmit={handleSubmit}
             >
               <div className="flex justify-between items-center mb-2 max-[480px]:flex-col max-[480px]:items-start max-[480px]:gap-1.5">
-                <h2 className="m-0 text-[#f35900] text-xl font-bold">İletişim Bilgileri</h2>
+                <h2 className="m-0 font-fredoka text-brand text-xl font-bold">İletişim Bilgileri</h2>
                 {user
                   ? <span className="text-sm text-[#64748b]">{user.name}</span>
-                  : <a href="/giris-yap" className="text-sm text-[#f35900] hover:underline">Oturum aç</a>
+                  : <a href="/giris-yap" className="text-sm text-brand hover:underline">Oturum aç</a>
                 }
               </div>
 
@@ -278,11 +277,11 @@ const PaymentPage = () => {
               )}
 
               <label className="flex items-center gap-2 text-sm text-[#475569] cursor-pointer">
-                <input type="checkbox" checked={formData.allowEmails} name="allowEmails" onChange={handleInputChange} className="w-4 h-4 accent-[#f35900]" />
+                <input type="checkbox" checked={formData.allowEmails} name="allowEmails" onChange={handleInputChange} className="w-4 h-4 accent-brand" />
                 Bana e-posta gönderilmesine izin veriyorum.
               </label>
 
-              <h3 className="text-[#f35900] font-semibold m-0 mt-2">Fatura Adresi</h3>
+              <h3 className="font-fredoka text-brand font-semibold m-0 mt-2">Fatura Adresi</h3>
               <div className="flex flex-wrap gap-3">
                 <div className="flex-[1_1_48%] min-w-[140px]">
                   <input name="name" value={formData.name} placeholder="Ad" onChange={handleInputChange} className={`${inputBase}${errors.name ? ` ${errCls}` : ""}`} required />
@@ -349,7 +348,7 @@ const PaymentPage = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="mt-4 py-4 bg-[#f35900] hover:bg-[#d44e00] text-white text-lg font-bold rounded-2xl cursor-pointer w-full transition-colors shadow-[0_4px_16px_rgba(243,89,0,0.3)] max-[480px]:text-base max-[480px]:py-3.5 disabled:opacity-60"
+                className="mt-4 py-4 bg-brand hover:bg-brand-hover text-white font-fredoka text-lg font-bold rounded-2xl cursor-pointer w-full transition-colors shadow-[0_4px_16px_rgba(14,124,136,0.3)] max-[480px]:text-base max-[480px]:py-3.5 disabled:opacity-60"
               >
                 {submitting ? "Hazırlanıyor…" : (settings.ctaButtonText || "Güvenli Ödemeye Geç")}
               </button>
@@ -366,7 +365,7 @@ const PaymentPage = () => {
             <div className="flex-1 flex flex-col gap-4 max-[768px]:w-full">
 
               {/* Sosyal kanıt */}
-              <div className="bg-gradient-to-br from-brand-navy to-[#1a05b3] rounded-2xl p-5 text-white">
+              <div className="bg-gradient-to-br from-page-navy to-brand rounded-2xl p-5 text-white">
                 <div className="flex items-center gap-3 mb-3">
                   <div
                     className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
@@ -388,7 +387,7 @@ const PaymentPage = () => {
 
               {/* Sepet özeti */}
               <div className="bg-white rounded-2xl border border-[#e2e8f0] shadow-[0_2px_12px_rgba(0,0,0,0.05)] p-6 flex flex-col gap-4">
-                <h4 className="text-[#0f172a] text-lg font-bold m-0">Sepet Özeti</h4>
+                <h4 className="font-fredoka text-page-navy text-lg font-bold m-0">Sepet Özeti</h4>
                 <ul className="list-none p-0 m-0 space-y-3">
                   {items.map((item, i) => (
                     <li key={i} className="pb-3 border-b border-[#f1f5f9] last:border-b-0">
@@ -397,7 +396,7 @@ const PaymentPage = () => {
                           <strong className="text-[#0f172a] text-sm block">{item.name}</strong>
                           {item.description && <p className="m-0 text-[#64748b] text-xs leading-relaxed mt-0.5">{item.description}</p>}
                         </div>
-                        <span className="text-[#f35900] font-bold text-sm whitespace-nowrap">₺{trPrice(lineTL(item))}</span>
+                        <span className="text-brand font-bold text-sm whitespace-nowrap">₺{trPrice(lineTL(item))}</span>
                       </div>
                     </li>
                   ))}
@@ -410,7 +409,7 @@ const PaymentPage = () => {
                     <ul className="space-y-2">
                       {(settings.includes || []).map((item, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-[#374151]">
-                          <svg className="w-4 h-4 text-[#f35900] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-brand flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                           {item}
@@ -429,7 +428,7 @@ const PaymentPage = () => {
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                       placeholder="İNDİRİM10"
-                      className="border border-[#e2e8f0] p-2.5 rounded-xl w-full text-sm focus:outline-none focus:border-[#f35900] text-[#0f172a]"
+                      className="border border-[#e2e8f0] p-2.5 rounded-xl w-full text-sm focus:outline-none focus:border-brand text-[#0f172a]"
                     />
                     <button
                       onClick={handleApplyCoupon}
@@ -469,9 +468,9 @@ const PaymentPage = () => {
                     </div>
                   )}
                   <hr className="border-[#e2e8f0] my-2" />
-                  <div className="flex justify-between text-[#0f172a] font-black text-base">
+                  <div className="flex justify-between text-page-navy font-fredoka font-black text-base">
                     <span>Toplam</span>
-                    <span className="text-[#f35900]">₺{trPrice(finalCalculations.payable)}</span>
+                    <span className="text-brand">₺{trPrice(finalCalculations.payable)}</span>
                   </div>
                 </div>
 
