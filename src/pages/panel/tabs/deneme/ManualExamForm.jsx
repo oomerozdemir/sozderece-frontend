@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "../../../../utils/axios";
 import Button from "../../../../components/ui/Button";
 import SubjectNetRows from "./SubjectNetRows";
-import { EXAM_TYPE_LABELS, EXAM_TYPE_DEFAULTS, getDefaultSubjects, DIFFICULTY_REASON_OPTIONS } from "./examConfig";
+import { EXAM_TYPE_LABELS, EXAM_TYPE_DEFAULTS, DIFFICULTY_REASON_OPTIONS } from "./examConfig";
 import { validateSubjectRows } from "./examHelpers";
 
 const inputCls =
@@ -33,9 +33,12 @@ export default function ManualExamForm({ student, onSubmitted, onCancel }) {
   const toggleReason = (value) =>
     setDifficultyReasons((prev) => (prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]));
 
+  // Branş denemesinde tek, doğru satır önceden dolu gelir; TYT/AYT/LGS'de
+  // artık varsayılan ders YOK — öğrenci her dersi "Ders Ekle" ile kendisi
+  // ekler, "Toplam Soru Sayısı"ndan bağımsız sabit bir dağılımla karşılaşmaz.
   const initialSubjects = examType === "BRANS"
     ? (branch ? [{ subject: branch, questionCount: totalQuestions || null }] : [])
-    : getDefaultSubjects(examType, student?.track);
+    : [];
 
   const handleSubmit = async () => {
     if (!examName.trim()) return setError("Deneme adı zorunlu.");
@@ -121,7 +124,13 @@ export default function ManualExamForm({ student, onSubmitted, onCancel }) {
 
       <div>
         <label className="text-xs font-bold text-[#475569] block mb-2">Ders Bazlı Sonuçlar *</label>
-        <SubjectNetRows examType={examType} track={student?.track} initialSubjects={initialSubjects} onChange={setSubjectNets} />
+        <SubjectNetRows
+          examType={examType}
+          track={student?.track}
+          initialSubjects={initialSubjects}
+          onChange={setSubjectNets}
+          totalQuestions={totalQuestions ? parseInt(totalQuestions) : null}
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-3 pt-3 border-t border-[#f1f5f9]">

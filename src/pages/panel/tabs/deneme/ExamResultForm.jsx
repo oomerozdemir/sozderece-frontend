@@ -2,7 +2,6 @@ import { useState } from "react";
 import axios from "../../../../utils/axios";
 import Button from "../../../../components/ui/Button";
 import SubjectNetRows from "./SubjectNetRows";
-import { getDefaultSubjects } from "./examConfig";
 import { validateSubjectRows } from "./examHelpers";
 
 // LIVE akışında "Denemeyi Bitir"den sonraki adım: ders bazlı sonuç girişi.
@@ -18,9 +17,13 @@ export default function ExamResultForm({ exam, student, onSubmitted }) {
   // temizler.
   const [resetKey, setResetKey] = useState(0);
 
+  // Branş denemesinde tek, doğru satır (gerçek totalQuestions) önceden
+  // dolu gelir; TYT/AYT/LGS'de artık hiçbir varsayılan ders YOK — öğrenci
+  // her dersi "Ders Ekle" ile kendisi ekler, alakasız sabit bir dağılımla
+  // (ör. her zaman TYT'nin 120 sorusu) karşılaşmaz.
   const initialSubjects = exam.branch
     ? [{ subject: exam.branch, questionCount: exam.totalQuestions }]
-    : getDefaultSubjects(exam.examType, student?.track);
+    : [];
 
   const handleReset = () => {
     setResetKey((k) => k + 1);
@@ -70,7 +73,14 @@ export default function ExamResultForm({ exam, student, onSubmitted }) {
           Baştan Gir
         </button>
       </div>
-      <SubjectNetRows key={resetKey} examType={exam.examType} track={student?.track} initialSubjects={initialSubjects} onChange={setSubjectNets} />
+      <SubjectNetRows
+        key={resetKey}
+        examType={exam.examType}
+        track={student?.track}
+        initialSubjects={initialSubjects}
+        onChange={setSubjectNets}
+        totalQuestions={exam.totalQuestions}
+      />
       {error && <p className="text-xs font-bold text-[#dc2626]">{error}</p>}
       <Button variant="primary" fullWidth onClick={handleSubmit} loading={saving}>Sonuçları Kaydet</Button>
     </div>

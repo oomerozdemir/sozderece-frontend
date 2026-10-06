@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { FaPlus, FaTrash, FaLightbulb } from "react-icons/fa";
 import { netDivisor, computeSubjectNet, computeBlank, subjectRowError, formatNet } from "./examHelpers";
 
 // min-w-0: grid hücrelerinin varsayılan min-width:auto'su (number input'ların
@@ -16,7 +16,7 @@ const readOnlyCellCls = "w-full min-w-0 box-border py-2 px-2.5 rounded-lg text-s
 // Boş ve Net her zaman buradan türetilir, hiçbir zaman ayrı bir input değildir.
 // Net/Boş yalnızca client-side ÖNİZLEME için burada hesaplanır — otorite her
 // zaman sunucuda (bkz. utils/examCalculations.js).
-export default function SubjectNetRows({ examType, track, initialSubjects, onChange }) {
+export default function SubjectNetRows({ examType, track, initialSubjects, onChange, totalQuestions }) {
   const [rows, setRows] = useState(() =>
     (initialSubjects || []).map((s) => ({ subject: s.subject, questionCount: s.questionCount ?? "", correct: "", wrong: "", isCustom: false }))
   );
@@ -44,6 +44,15 @@ export default function SubjectNetRows({ examType, track, initialSubjects, onCha
 
   return (
     <div className="space-y-2">
+      {rows.length === 0 && (
+        <div className="flex items-start gap-2.5 bg-brand-light border border-[#bfe8ea] rounded-xl p-3.5">
+          <FaLightbulb size={13} className="text-brand flex-shrink-0 mt-0.5" />
+          <p className="font-nunito text-xs text-[#334155] leading-relaxed">
+            Çözdüğün her ders için <strong>"Ders Ekle"</strong>ye bas, ders adını ve o dersten kaç soru çözdüğünü gir. Ardından doğru/yanlış sayılarını yaz — boş ve net otomatik hesaplanır.
+            {totalQuestions ? <> Derslerin soru sayıları toplamda <strong>{totalQuestions}</strong> olmalı.</> : null}
+          </p>
+        </div>
+      )}
       <div className="grid grid-cols-[1.4fr_70px_60px_60px_60px_70px_auto] gap-1.5 items-center max-[640px]:hidden">
         <span className="text-[10px] font-bold text-[#94a3b8] uppercase">Ders</span>
         <span className="text-[10px] font-bold text-[#94a3b8] uppercase">Soru</span>
