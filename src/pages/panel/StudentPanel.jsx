@@ -8,13 +8,12 @@ import {
 import GenelBakis from "./tabs/GenelBakis";
 import HaftalikProgram from "./tabs/HaftalikProgram";
 import DenemeAnalizi from "./tabs/DenemeAnalizi";
-import KonuAgaci from "./tabs/KonuAgaci";
+import KonuAgaci from "./tabs/konular/KonuAgaci";
 import Kaynaklarim from "./tabs/Kaynaklarim";
 import Gundem from "./tabs/Gundem";
 import Kocum from "./tabs/Kocum";
 import Siparislerim from "./tabs/Siparislerim";
 import AiAsistan from "./tabs/ai-asistan/AiAsistan";
-import SosButton from "./SosButton";
 import StreakBadge from "./StreakBadge";
 import CoachAvatar from "./CoachAvatar";
 import PanelTour from "./tour/PanelTour";
@@ -307,8 +306,6 @@ export default function StudentPanel() {
           </div>
         </div>
       )}
-
-      {!moreOpen && <SosButton studentName={student?.name} />}
 
       {student && (
         <PanelTour
