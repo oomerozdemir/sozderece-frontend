@@ -2,6 +2,8 @@
 // yardımcı fonksiyonlar. Backend'e dokunmaz; sadece /me/topics'ten gelen
 // ham listeyi ekranın ihtiyacı olan şekle sokar.
 
+import { AYT_SUBJECTS_BY_TRACK, RECOGNIZED_TRACKS } from "../../../../config/academicSubjects";
+
 export const STAGE_ORDER = ["none", "studied", "practiced", "mastered"];
 
 // Semantik renkler: nötr gri / soft mavi / marka turkuazı / soft yeşil —
@@ -14,22 +16,6 @@ export const STAGE_META = {
   practiced: { label: "Pratik Yapıldı", bg: "#E4F7F8", border: "#0E7C88", color: "#0E7C88" },
   mastered: { label: "Güçlü", bg: "#ecfdf5", border: "#059669", color: "#059669" },
 };
-
-// AYT alan (track) filtresi. ÖNEMLİ SINIR: DB'deki Topic.subject alanı
-// Tarih/Coğrafya için Tarih-1/Tarih-2 veya Coğrafya-1/Coğrafya-2 şeklinde
-// ayrılmıyor — tek bir "Tarih"/"Coğrafya" değeri var. Bu yüzden bu eşleme
-// ders (subject) seviyesinde best-effort'tur, konu seviyesinde değil
-// (örn. bir Sözel öğrencisi Tarih dersinin TÜM konularını görür, yalnızca
-// kendi alanına giren alt-konuları değil). Gerçek ayrım için Topic şemasına
-// bir taksonomi migration'ı gerekir — bu task kapsamında yapılmıyor.
-export const AYT_SUBJECTS_BY_TRACK = {
-  "Sayısal": ["Matematik", "Fizik", "Kimya", "Biyoloji"],
-  "Eşit Ağırlık": ["Matematik", "Edebiyat", "Tarih", "Coğrafya"],
-  "Sözel": ["Edebiyat", "Tarih", "Coğrafya", "Felsefe Grubu"],
-  "Dil": [],
-};
-
-const RECOGNIZED_TRACKS = Object.keys(AYT_SUBJECTS_BY_TRACK);
 
 // Türkçe İ/i, I/ı karakterlerini doğru küçülten normalize — "tr-TR" locale'i
 // olmadan "İstanbul".toLowerCase() === "i̇stanbul" gibi hatalı sonuçlar çıkar.

@@ -7,6 +7,7 @@ import OverviewTab from "./OverviewTab";
 import ProgramTab from "./ProgramTab";
 import ExamsTab from "./ExamsTab";
 import TrackingTab from "./TrackingTab";
+import ResourcesTab from "./ResourcesTab";
 import NotesTab from "./NotesTab";
 
 const TABS = [
@@ -14,6 +15,7 @@ const TABS = [
   { key: "program", label: "Program" },
   { key: "exams", label: "Denemeler" },
   { key: "tracking", label: "Takip" },
+  { key: "resources", label: "Kaynaklar" },
   { key: "notes", label: "Notlar" },
 ];
 
@@ -109,6 +111,7 @@ export default function StudentWorkspace() {
         {tab === "program" && <ProgramTab student={student} onDirtyChange={setProgramDirty} />}
         {tab === "exams" && <ExamsTab student={student} />}
         {tab === "tracking" && <TrackingTab student={student} />}
+        {tab === "resources" && <ResourcesTab student={student} />}
         {tab === "notes" && <NotesTab student={student} />}
       </div>
     </div>
