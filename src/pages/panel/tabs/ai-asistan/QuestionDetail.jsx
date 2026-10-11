@@ -6,7 +6,9 @@ import { fmtDateTime } from "./aiAsistanHelpers";
 
 // Geçmişten tıklanan bir sorunun tam görünümü — QuestionResult'ı reuse eder,
 // follow-up akışı burada da aynı şekilde çalışır (soru zaten COMPLETED ise).
-export default function QuestionDetail({ question: initial, onBack }) {
+// aiActionsEnabled=false: AiAsistan.jsx'ten gelen güncel paket hakkı — soru
+// salt-okunur görülebilir, yeni follow-up tetiklenemez.
+export default function QuestionDetail({ question: initial, onBack, aiActionsEnabled = true, onAccessRevoked }) {
   const [question, setQuestion] = useState(initial);
   const [followupLoading, setFollowupLoading] = useState(false);
 
@@ -21,6 +23,11 @@ export default function QuestionDetail({ question: initial, onBack }) {
       );
       const res = await axios.get(`/api/v1/ogrenci/me/ai-question/${question.id}`, { headers: { Authorization: `Bearer ${token}` } });
       setQuestion(res.data.question);
+    } catch (err) {
+      if (err?.response?.data?.code === "AI_ASSISTANT_PACKAGE_REQUIRED") {
+        onAccessRevoked?.();
+      }
+      throw err;
     } finally {
       setFollowupLoading(false);
     }
@@ -45,7 +52,13 @@ export default function QuestionDetail({ question: initial, onBack }) {
         <img src={question.imageUrl} alt="Soru" className="w-full max-w-xs mx-auto rounded-2xl border border-[#f1f5f9] block" />
       )}
       <p className="font-nunito text-xs text-[#94a3b8] text-center">{fmtDateTime(question.createdAt)}</p>
-      <QuestionResult question={question} onFollowup={handleFollowup} followupLoading={followupLoading} onUnderstanding={handleUnderstanding} />
+      <QuestionResult
+        question={question}
+        onFollowup={handleFollowup}
+        followupLoading={followupLoading}
+        onUnderstanding={handleUnderstanding}
+        aiActionsEnabled={aiActionsEnabled}
+      />
     </div>
   );
 }

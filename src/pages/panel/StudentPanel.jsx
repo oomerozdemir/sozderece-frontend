@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "../../utils/axios";
 import {
   FaHome, FaCalendarWeek, FaChartLine, FaBookOpen, FaBullhorn, FaUserTie, FaBoxOpen, FaTree,
-  FaLifeRing, FaSignOutAlt, FaEllipsisH, FaTimes, FaWhatsapp, FaRobot, FaCompass,
+  FaLifeRing, FaSignOutAlt, FaEllipsisH, FaTimes, FaWhatsapp, FaRobot, FaCompass, FaLock,
 } from "react-icons/fa";
 import GenelBakis from "./tabs/GenelBakis";
 import HaftalikProgram from "./tabs/HaftalikProgram";
@@ -68,11 +68,27 @@ export default function StudentPanel() {
       .catch(() => {});
   }, []);
 
+  // "AI Soru Asistanı" sekmesine her girişte paket hakkını tazele — koç/admin
+  // paketi değiştirdiğinde öğrenci logout-login yapmadan erişim açılsın/
+  // kapansın diye. Sürekli polling değil, yalnızca bu sekmeye girişte.
+  useEffect(() => {
+    if (tab !== "ai-asistan") return;
+    const token = localStorage.getItem("token");
+    axios
+      .get("/api/v1/ogrenci/me", { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => setStudent(res.data))
+      .catch(() => {});
+  }, [tab]);
+
   const active = TABS.find((t) => t.key === tab) || TABS[0];
   const ActiveComponent = active.Component;
   const primaryMobileTabs = TABS.filter((t) => PRIMARY_MOBILE_KEYS.includes(t.key));
   const secondaryMobileTabs = TABS.filter((t) => !PRIMARY_MOBILE_KEYS.includes(t.key));
   const firstName = student?.name?.split(" ")[0] || "Öğrenci";
+  // student henüz yüklenmediyse kilit rozetini hiç göstermiyoruz (ne açık ne
+  // kilitli — veri gelene kadar nötr), prematüre "açık" görünüp sonra
+  // kilitlenmesin diye.
+  const aiAssistantLocked = !!student && !student?.entitlements?.aiQuestionAssistant?.enabled;
 
   const goTab = (key) => {
     setTab(key);
@@ -120,18 +136,21 @@ export default function StudentPanel() {
           {TABS.map((t) => {
             const isActive = t.key === tab;
             const Icon = t.icon;
+            const locked = t.key === "ai-asistan" && aiAssistantLocked;
             return (
               <button
                 key={t.key}
                 onClick={() => setTab(t.key)}
                 className="relative flex items-center gap-3 font-nunito font-bold text-sm px-3.5 py-2.5 rounded-xl transition-colors text-left"
                 style={navItemStyle(isActive)}
+                aria-label={locked ? `${t.label} — mevcut pakete dahil değil` : undefined}
               >
                 {isActive && (
                   <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-brand-on-dark" />
                 )}
                 <Icon size={15} style={{ color: isActive ? "var(--color-brand-on-dark)" : undefined, flexShrink: 0 }} />
-                <span className="truncate">{t.label}</span>
+                <span className="truncate flex-1">{t.label}</span>
+                {locked && <FaLock size={11} className="flex-shrink-0 opacity-60" />}
               </button>
             );
           })}
@@ -263,15 +282,18 @@ export default function StudentPanel() {
               {secondaryMobileTabs.map((t) => {
                 const isActive = t.key === tab;
                 const Icon = t.icon;
+                const locked = t.key === "ai-asistan" && aiAssistantLocked;
                 return (
                   <button
                     key={t.key}
                     onClick={() => goTab(t.key)}
                     className="flex items-center gap-2.5 rounded-2xl px-4 py-3.5 text-left"
                     style={isActive ? { background: "var(--color-dark)", color: "var(--color-brand-on-dark)" } : { background: "#f8fafc", color: "#334155" }}
+                    aria-label={locked ? `${t.label} — mevcut pakete dahil değil` : undefined}
                   >
                     <Icon size={15} className="flex-shrink-0" />
-                    <span className="font-nunito font-bold text-sm truncate">{t.label}</span>
+                    <span className="font-nunito font-bold text-sm truncate flex-1">{t.label}</span>
+                    {locked && <FaLock size={11} className="flex-shrink-0 opacity-60" />}
                   </button>
                 );
               })}

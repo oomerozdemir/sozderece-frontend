@@ -3,6 +3,7 @@ import { FaRobot } from "react-icons/fa";
 import axios from "../../../../utils/axios";
 import UsageIndicator from "./UsageIndicator";
 import UploadEmptyState from "./UploadEmptyState";
+import AiAssistantLockedState from "./AiAssistantLockedState";
 import SolvingLoadingState from "./SolvingLoadingState";
 import QuestionResult from "./QuestionResult";
 import QuestionHistoryList from "./QuestionHistoryList";
@@ -14,7 +15,16 @@ const authHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem("toke
 
 // AI Soru Asistanı kabuğu — DenemeAnalizi.jsx ile aynı orkestrasyon rolü.
 // view: "upload" (varsayılan, usage+history altta) | "solving" | "result" | "detail"
-export default function AiAsistan() {
+//
+// Paket bazlı erişim: `student` StudentPanel.jsx'ten gelir (ilk mount'ta
+// null olabilir — bu, "henüz bilinmiyor" anlamına gelir ve upload UI'ını
+// göstermeden önce skeleton'da bekletir, prematüre "açık" görünüp sonra
+// kilitlenmesin diye). `accessRevoked`, bir AI aksiyonu sırasında backend'den
+// 403 AI_ASSISTANT_PACKAGE_REQUIRED dönerse (paket oturum ortasında düştüyse)
+// `student` prop'u henüz güncellenmemiş olsa bile anında kilitli görünüme
+// geçmek için yerel bir override — StudentPanel zaten tab-enter'da /me'yi
+// tazeler, ama açık sekmedeyken gerçek zamanlı buradan yakalanır.
+export default function AiAsistan({ student }) {
   const [loading, setLoading] = useState(true);
   const [usage, setUsage] = useState(null);
   const [questions, setQuestions] = useState([]);
@@ -23,6 +33,10 @@ export default function AiAsistan() {
   const [detailQuestion, setDetailQuestion] = useState(null);
   const [uploadError, setUploadError] = useState("");
   const [followupLoading, setFollowupLoading] = useState(false);
+  const [accessRevoked, setAccessRevoked] = useState(false);
+
+  const entitled = !accessRevoked && !!student?.entitlements?.aiQuestionAssistant?.enabled;
+  const handleAccessRevoked = () => setAccessRevoked(true);
 
   const loadAll = () => {
     setLoading(true);
@@ -40,6 +54,12 @@ export default function AiAsistan() {
   useEffect(() => {
     loadAll();
   }, []);
+
+  // Paket yeniden açılırsa (tab-enter refetch, admin upgrade sonrası) yerel
+  // override'ı temizle — taze veri her zaman kazanır.
+  useEffect(() => {
+    if (student?.entitlements?.aiQuestionAssistant?.enabled) setAccessRevoked(false);
+  }, [student?.entitlements?.aiQuestionAssistant?.enabled]);
 
   const handleUpload = async (file) => {
     setUploadError("");
@@ -61,6 +81,11 @@ export default function AiAsistan() {
         setView("quota");
         return;
       }
+      if (err?.response?.data?.code === "AI_ASSISTANT_PACKAGE_REQUIRED") {
+        handleAccessRevoked();
+        setView("upload");
+        return;
+      }
       setUploadError(err?.response?.data?.message || "Soru işlenemedi, lütfen tekrar dene.");
       setView("upload");
     }
@@ -76,6 +101,11 @@ export default function AiAsistan() {
       );
       const res = await axios.get(`/api/v1/ogrenci/me/ai-question/${activeQuestion.id}`, { headers: authHeaders() });
       setActiveQuestion(res.data.question);
+    } catch (err) {
+      if (err?.response?.data?.code === "AI_ASSISTANT_PACKAGE_REQUIRED") {
+        handleAccessRevoked();
+      }
+      throw err;
     } finally {
       setFollowupLoading(false);
     }
@@ -103,7 +133,9 @@ export default function AiAsistan() {
     setView("detail");
   };
 
-  if (loading) {
+  // `!student`: StudentPanel.jsx'teki /me isteği henüz dönmedi — paket
+  // hakkı bilinmeden upload UI'ını bir an gösterip sonra kilitlemeyelim.
+  if (loading || !student) {
     return <div className="bg-white border border-dashed border-[#e2e8f0] rounded-2xl p-8 text-center text-[#94a3b8] font-nunito text-sm">Yükleniyor…</div>;
   }
 
@@ -127,16 +159,23 @@ export default function AiAsistan() {
           followupLoading={followupLoading}
           onReset={handleReset}
           onUnderstanding={handleUnderstanding}
+          aiActionsEnabled={entitled}
+          onAccessRevoked={handleAccessRevoked}
         />
       )}
 
       {view === "detail" && detailQuestion && (
-        <QuestionDetail question={detailQuestion} onBack={() => { setView("upload"); setDetailQuestion(null); }} />
+        <QuestionDetail
+          question={detailQuestion}
+          onBack={() => { setView("upload"); setDetailQuestion(null); }}
+          aiActionsEnabled={entitled}
+          onAccessRevoked={handleAccessRevoked}
+        />
       )}
 
       {view === "upload" && (
         <>
-          <UploadEmptyState onUpload={handleUpload} error={uploadError} />
+          {entitled ? <UploadEmptyState onUpload={handleUpload} error={uploadError} /> : <AiAssistantLockedState />}
           <QuestionProfile />
           <div>
             <p className="font-fredoka font-bold text-page-navy text-sm mb-3">Geçmişim</p>

@@ -15,7 +15,9 @@ const EVALUATION_META = {
 // değerlendirir. Resmi bir ölçme-değerlendirme skoru değildir, yalnızca
 // ürün-içi öğrenme sinyali — beklenen cevap (expectedAnswerJson) hiçbir
 // zaman backend'den bu bileşene gönderilmez (R5), burada da gösterilmez.
-export default function VerificationQuestion({ questionId, onClose }) {
+const PACKAGE_REQUIRED_MESSAGE = "Bu özellik mevcut paketine dahil değil.";
+
+export default function VerificationQuestion({ questionId, onClose, onAccessRevoked }) {
   const [loading, setLoading] = useState(true);
   const [verification, setVerification] = useState(null);
   const [answer, setAnswer] = useState("");
@@ -28,8 +30,16 @@ export default function VerificationQuestion({ questionId, onClose }) {
     axios
       .post(`/api/v1/ogrenci/me/ai-question/${questionId}/verification/generate`, {}, { headers: authHeaders() })
       .then((res) => setVerification(res.data.verification))
-      .catch((err) => setError(err?.response?.data?.message || "Pratik sorusu üretilemedi, lütfen tekrar dene."))
+      .catch((err) => {
+        if (err?.response?.data?.code === "AI_ASSISTANT_PACKAGE_REQUIRED") {
+          setError(PACKAGE_REQUIRED_MESSAGE);
+          onAccessRevoked?.();
+          return;
+        }
+        setError(err?.response?.data?.message || "Pratik sorusu üretilemedi, lütfen tekrar dene.");
+      })
       .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questionId]);
 
   const handleSubmit = async () => {
@@ -44,6 +54,11 @@ export default function VerificationQuestion({ questionId, onClose }) {
       );
       setVerification(res.data.verification);
     } catch (err) {
+      if (err?.response?.data?.code === "AI_ASSISTANT_PACKAGE_REQUIRED") {
+        setError(PACKAGE_REQUIRED_MESSAGE);
+        onAccessRevoked?.();
+        return;
+      }
       setError(err?.response?.data?.message || "Cevap gönderilemedi, lütfen tekrar dene.");
     } finally {
       setSubmitting(false);

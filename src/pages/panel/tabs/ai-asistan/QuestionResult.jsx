@@ -14,7 +14,10 @@ const NON_SOLVED_MESSAGES = {
 
 // Hem "az önce çözüldü" (AiAsistan.jsx'in upload sonrası) hem "geçmişten
 // açıldı" (QuestionDetail.jsx) akışında kullanılan paylaşılan sonuç görünümü.
-export default function QuestionResult({ question, onFollowup, followupLoading, onReset, onUnderstanding }) {
+// aiActionsEnabled=false (paket hakkı yok): geçmiş çözüm salt-okunur kalır,
+// yalnızca YENİ AI maliyeti oluşturan aksiyonlar (follow-up/benzer soru)
+// devre dışı bırakılır — "Evet, anladım" (AI çağırmıyor) etkilenmez.
+export default function QuestionResult({ question, onFollowup, followupLoading, onReset, onUnderstanding, aiActionsEnabled = true, onAccessRevoked }) {
   const [globalError, setGlobalError] = useState("");
   const [understandingPending, setUnderstandingPending] = useState(false);
   const [showVerification, setShowVerification] = useState(false);
@@ -98,7 +101,7 @@ export default function QuestionResult({ question, onFollowup, followupLoading, 
                   <p className="font-nunito text-sm text-[#334155] leading-relaxed">{step}</p>
                   <button
                     onClick={() => triggerFollowup("EXPLAIN_STEP", i)}
-                    disabled={followupLoading || atFollowupLimit}
+                    disabled={followupLoading || atFollowupLimit || !aiActionsEnabled}
                     className="font-nunito font-bold text-[11px] text-brand hover:underline mt-0.5 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     Bu adımı açıkla →
@@ -146,14 +149,17 @@ export default function QuestionResult({ question, onFollowup, followupLoading, 
       )}
 
       <div className="flex flex-wrap gap-2 pt-2">
-        <Button variant="outline" size="sm" onClick={() => triggerFollowup("EXPLAIN_SIMPLER")} disabled={followupLoading || atFollowupLimit}>
+        <Button variant="outline" size="sm" onClick={() => triggerFollowup("EXPLAIN_SIMPLER")} disabled={followupLoading || atFollowupLimit || !aiActionsEnabled}>
           Daha basit anlat
         </Button>
-        <Button variant="outline" size="sm" onClick={() => triggerFollowup("SIMILAR_EXAMPLE")} disabled={followupLoading || atFollowupLimit}>
+        <Button variant="outline" size="sm" onClick={() => triggerFollowup("SIMILAR_EXAMPLE")} disabled={followupLoading || atFollowupLimit || !aiActionsEnabled}>
           Benzer bir örnek göster
         </Button>
       </div>
       {atFollowupLimit && <p className="font-nunito text-[11px] text-[#94a3b8]">Bu soru için follow-up hakkın doldu.</p>}
+      {!aiActionsEnabled && (
+        <p className="font-nunito text-[11px] text-[#94a3b8]">Yeni açıklama için AI Soru Asistanı paketine ihtiyacın var.</p>
+      )}
       {globalError && <p className="font-nunito text-xs font-bold text-[#dc2626]">{globalError}</p>}
 
       {onUnderstanding && (
@@ -166,15 +172,20 @@ export default function QuestionResult({ question, onFollowup, followupLoading, 
               <Button variant="outline" size="sm" onClick={() => handleUnderstanding("SELF_REPORTED_UNDERSTOOD")} disabled={understandingPending}>
                 Evet, anladım
               </Button>
-              <Button variant="outline" size="sm" onClick={() => handleUnderstanding("NEEDS_MORE_HELP")} disabled={understandingPending || atFollowupLimit}>
+              <Button variant="outline" size="sm" onClick={() => handleUnderstanding("NEEDS_MORE_HELP")} disabled={understandingPending || atFollowupLimit || !aiActionsEnabled}>
                 Biraz daha anlat
               </Button>
-              <Button variant="outline" size="sm" onClick={() => handleUnderstanding("REQUESTED_PRACTICE")} disabled={understandingPending}>
+              <Button variant="outline" size="sm" onClick={() => handleUnderstanding("REQUESTED_PRACTICE")} disabled={understandingPending || !aiActionsEnabled}>
                 Benzer soru çözmek istiyorum
               </Button>
             </div>
           )}
-          {showVerification && <VerificationQuestion questionId={question.id} onClose={() => setShowVerification(false)} />}
+          {!aiActionsEnabled && !question.understandingStatus && (
+            <p className="font-nunito text-[11px] text-[#94a3b8]">Yeni pratik sorusu için AI Soru Asistanı paketine ihtiyacın var.</p>
+          )}
+          {showVerification && (
+            <VerificationQuestion questionId={question.id} onClose={() => setShowVerification(false)} onAccessRevoked={onAccessRevoked} />
+          )}
         </div>
       )}
 

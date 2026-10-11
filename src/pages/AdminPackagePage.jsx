@@ -50,6 +50,7 @@ const emptyForm = {
   videoUrl: "",
   guaranteeText: "",
   noRefund: false,
+  aiQuestionAssistantAccess: false,
 };
 
 const emptyVideoSettings = {
@@ -158,6 +159,7 @@ const AdminPackagePage = () => {
       videoUrl: pkg.videoUrl || "",
       guaranteeText: pkg.guaranteeText || "",
       noRefund: pkg.noRefund || false,
+      aiQuestionAssistantAccess: pkg.aiQuestionAssistantAccess || false,
     });
     setShowForm(true);
   };
@@ -828,6 +830,18 @@ const AdminPackagePage = () => {
                   />
                   <label htmlFor="no-refund-toggle" className="text-sm font-semibold text-[#475569] cursor-pointer">
                     İade yok — kutuyu yeşil "güvence" yerine nötr bir bilgilendirme olarak göster
+                  </label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="ai-assistant-access-toggle"
+                    checked={form.aiQuestionAssistantAccess}
+                    onChange={(e) => setForm({ ...form, aiQuestionAssistantAccess: e.target.checked })}
+                    className="w-4 h-4 accent-brand"
+                  />
+                  <label htmlFor="ai-assistant-access-toggle" className="text-sm font-semibold text-[#475569] cursor-pointer">
+                    AI Soru Asistanı erişimi — bu pakete aktif sahip öğrenciler AI Soru Asistanı'nı kullanabilir
                   </label>
                 </div>
               </div>
