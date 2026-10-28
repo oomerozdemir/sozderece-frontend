@@ -3,6 +3,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import WeekDayStrip from "./WeekDayStrip";
 import SelectedDayPanel from "./SelectedDayPanel";
 import WeeklyProgressSummary from "./WeeklyProgressSummary";
+import WeeklyGridView from "./WeeklyGridView";
 import { toMonday, toISO, fmtRange, groupTasksByDay, getWeekStats, getDefaultSelectedDay } from "./programHelpers";
 
 // "Haftalık Rotam" — eski collapse-edilmiş Pazartesi→Pazar dikey listenin
@@ -65,6 +66,15 @@ export default function WeeklyProgramSection({ plan, planWeekStartISO, weekStart
           </button>
         </div>
       </div>
+
+      {/* Haftalık çizelge — masaüstünde 7 günü aynı anda gösteren ek özet
+          (gün-strip + tek-gün-paneli ikilisinin YANINA, yerine değil; o ikili
+          hem mobilde hem masaüstünde aynen çalışmaya devam eder). */}
+      {!weekLoading && (
+        <div className="order-2">
+          <WeeklyGridView weekStart={weekStart} weekDays={weekDays} todayDate={todayDate} onToggleStatus={onToggleStatus} />
+        </div>
+      )}
 
       {/* Day strip */}
       <div className="order-2">

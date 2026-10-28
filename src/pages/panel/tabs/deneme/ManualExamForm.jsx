@@ -27,6 +27,7 @@ export default function ManualExamForm({ student, onSubmitted, onCancel }) {
   const [didWell, setDidWell] = useState("");
   const [nextImprovement, setNextImprovement] = useState("");
   const [studentNote, setStudentNote] = useState("");
+  const [reviewNotes, setReviewNotes] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -68,6 +69,7 @@ export default function ManualExamForm({ student, onSubmitted, onCancel }) {
           didWell: didWell.trim(),
           nextImprovement: nextImprovement.trim(),
           studentNote: studentNote.trim(),
+          reviewNotes: reviewNotes.trim(),
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -160,6 +162,7 @@ export default function ManualExamForm({ student, onSubmitted, onCancel }) {
         <textarea className={`${inputCls} resize-none`} rows={2} placeholder="İyi yaptığım şey" value={didWell} onChange={(e) => setDidWell(e.target.value)} />
         <textarea className={`${inputCls} resize-none`} rows={2} placeholder="Bir sonraki denemede değiştireceğim şey" value={nextImprovement} onChange={(e) => setNextImprovement(e.target.value)} />
         <textarea className={`${inputCls} resize-none`} rows={2} placeholder="Kendime not" value={studentNote} onChange={(e) => setStudentNote(e.target.value)} />
+        <textarea className={`${inputCls} resize-none`} rows={2} placeholder="Bilmediğim / tekrar etmem gereken sorular" value={reviewNotes} onChange={(e) => setReviewNotes(e.target.value)} />
       </div>
 
       {error && <p className="text-xs font-bold text-[#dc2626]">{error}</p>}

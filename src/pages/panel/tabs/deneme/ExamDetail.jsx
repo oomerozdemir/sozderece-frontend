@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
+import axios from "../../../../utils/axios";
 import { EXAM_TYPE_LABELS, comparisonLabel } from "./examConfig";
 import { fmtDate, fmtDurationMinutes, formatNet, formatMetric } from "./examHelpers";
 
@@ -14,7 +16,28 @@ const FIELD_LABELS = {
 // Tek deneme detay ekranı — geçmiş listesinden gelinen exam objesi doğrudan
 // kullanılır (liste zaten tüm alanları döndüğü için ayrıca bir GET
 // /:id çağrısına gerek yok).
-export default function ExamDetail({ exam, onBack }) {
+export default function ExamDetail({ exam, onBack, onReviewNotesSaved }) {
+  const [reviewNotes, setReviewNotes] = useState(exam.reviewNotes || "");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const handleSaveReviewNotes = async () => {
+    setSaving(true);
+    setSaved(false);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.patch(
+        `/api/v1/ogrenci/me/exam-results/${exam.id}/review-notes`,
+        { reviewNotes: reviewNotes.trim() },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setSaved(true);
+      onReviewNotesSaved?.(res.data.exam);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <button onClick={onBack} className="flex items-center gap-1.5 font-nunito font-bold text-xs text-[#64748b] hover:text-page-navy">
@@ -91,6 +114,29 @@ export default function ExamDetail({ exam, onBack }) {
             {exam.studentNote && <p className="font-nunito text-sm text-[#334155]"><strong className="text-page-navy">Not:</strong> {exam.studentNote}</p>}
           </div>
         )}
+
+        <div className="pt-4 border-t border-[#f1f5f9] space-y-2">
+          <p className="font-nunito font-bold text-xs text-[#475569]">Bilmediğim / Tekrar Etmem Gereken Sorular</p>
+          <textarea
+            className="w-full py-2.5 px-3 border border-[#e2e8f0] rounded-lg text-sm bg-white outline-none focus:border-brand transition-colors font-nunito resize-none"
+            rows={2}
+            placeholder="Örn: Üslü sayılarda bileşke işlemler, Osmanlı kuruluş dönemi..."
+            value={reviewNotes}
+            onChange={(e) => { setReviewNotes(e.target.value); setSaved(false); }}
+          />
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleSaveReviewNotes}
+              disabled={saving}
+              className="font-nunito font-bold text-xs px-4 py-2 rounded-full text-white disabled:opacity-60"
+              style={{ background: "var(--color-brand)" }}
+            >
+              {saving ? "Kaydediliyor…" : "Kaydet"}
+            </button>
+            {saved && <span className="font-nunito text-xs text-[#059669]">Kaydedildi ✓</span>}
+          </div>
+        </div>
 
         {exam.notes && (
           <div className="pt-4 border-t border-[#f1f5f9]">

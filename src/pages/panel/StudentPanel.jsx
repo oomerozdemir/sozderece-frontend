@@ -27,7 +27,7 @@ const COACH_WHATSAPP = "905312546701";
 // (bkz. ../StudentDashboard.jsx seçicisi).
 const TABS = [
   { key: "genel", label: "Genel Bakış", icon: FaHome, Component: GenelBakis },
-  { key: "program", label: "Bugünüm", icon: FaCalendarWeek, Component: HaftalikProgram },
+  { key: "program", label: "Programım", icon: FaCalendarWeek, Component: HaftalikProgram },
   { key: "deneme", label: "Deneme Analizim", icon: FaChartLine, Component: DenemeAnalizi },
   { key: "ai-asistan", label: "AI Soru Asistanı", icon: FaRobot, Component: AiAsistan },
   { key: "konular", label: "Konu Ağacım", icon: FaTree, Component: KonuAgaci },

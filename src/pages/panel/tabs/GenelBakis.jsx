@@ -3,6 +3,9 @@ import axios from "../../../utils/axios";
 import {
   FaCheckCircle, FaBookOpen, FaArrowRight, FaWhatsapp, FaChartLine,
 } from "react-icons/fa";
+import useTodayTasks from "./program/useTodayTasks";
+import TodayTaskCard from "./program/TodayTaskCard";
+import KocumdanCard from "./program/KocumdanCard";
 
 const fmtMinutes = (mins) => {
   const m = Math.max(0, Math.round(mins || 0));
@@ -29,6 +32,22 @@ export default function GenelBakis({ onNavigate }) {
   const [coachNote, setCoachNote] = useState(null);
   const [topics, setTopics] = useState(null);
   const token = useMemo(() => localStorage.getItem("token"), []);
+
+  // "Bugünkü Rotam" kartı artık salt-okunur bir liste değil — Programım
+  // (HaftalikProgram.jsx) sekmesindeki ile BİREBİR aynı Başla/Bitir/sayaç
+  // davranışını kullanır (video geri bildirimi: "buraya sayaç eklenebilir,
+  // öğrenci durdurup tik atabilir"). İki ekran da aynı useTodayTasks()
+  // hook'unu ayrı ayrı monte eder (tab mimarisi gereği aynı anda ikisi de
+  // ekranda değil), davranış tek kaynaktan (hook+TodayTaskCard) gelir.
+  const {
+    today, loading: todayLoading,
+    activeSession, elapsedSeconds,
+    feelingPromptId, reasonPromptId,
+    handleStart, handleCancelActive, handleFinishActive, handleDirectComplete,
+    handleSubmitFeeling, handleSkipFeeling,
+    handleOpenReason, handleCancelReason, handleSubmitReason,
+  } = useTodayTasks();
+  const todayItems = today?.items || [];
 
   useEffect(() => {
     const headers = { Authorization: `Bearer ${token}` };
@@ -60,44 +79,49 @@ export default function GenelBakis({ onNavigate }) {
     return <div className="bg-white border border-dashed border-[#e2e8f0] rounded-2xl p-8 text-center text-[#94a3b8] font-nunito text-sm">Yükleniyor…</div>;
   }
 
-  const todayFocus = summary.todayFocus || [];
-  const todayMinutes = todayFocus.reduce((sum, t) => sum + (t.durationMin || 0), 0);
   const weeklyPercent = summary.weeklyTaskTotal > 0 ? Math.round((summary.weeklyTaskDone / summary.weeklyTaskTotal) * 100) : 0;
   const subjectDeltas = summary.subjectNetDeltas || [];
+  const todayEstimatedMin = todayItems.reduce((sum, t) => sum + (t.durationMin || 0), 0);
 
   return (
     <div className="flex flex-col gap-5">
       {/* ── Bugünkü Rotam + Bu Hafta ── */}
       <div className="grid gap-5 lg:grid-cols-[1.3fr_1fr]">
-        {/* Bugünkü Rotam — panelin en değerli alanı */}
+        {/* Bugünkü Rotam — panelin en değerli alanı. Programım sekmesiyle
+            BİREBİR aynı Başla/Bitir/sayaç davranışı (useTodayTasks). */}
         <div data-tour="today-summary" className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6 flex flex-col">
           <div className="flex items-center justify-between gap-3 mb-1 flex-wrap">
             <SectionEyebrow color="var(--color-warning)">Bugünkü Rotam</SectionEyebrow>
-            {todayFocus.length > 0 && (
+            {todayItems.length > 0 && (
               <span className="font-nunito font-bold text-xs text-[#94a3b8]">
-                {todayFocus.length} görev · Tahmini {fmtMinutes(todayMinutes)}
+                {todayItems.length} görev {todayEstimatedMin > 0 && `· Tahmini ${fmtMinutes(todayEstimatedMin)}`}
               </span>
             )}
           </div>
 
-          {todayFocus.length > 0 ? (
+          {todayLoading ? (
+            <p className="font-nunito text-sm text-[#94a3b8] mt-3">Yükleniyor…</p>
+          ) : todayItems.length > 0 ? (
             <div className="mt-3 flex flex-col gap-2.5">
-              {todayFocus.map((item, i) => (
-                <div key={i} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: "#f8fafc" }}>
-                  <span
-                    className="w-5 h-5 rounded-[6px] border-2 flex-shrink-0"
-                    style={{ borderColor: "#cbd5e1" }}
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-fredoka font-bold text-page-navy text-sm truncate">
-                      {item.subject}
-                      {item.topic && <span className="text-[#64748b] font-nunito text-xs font-bold"> — {item.topic}</span>}
-                    </p>
-                  </div>
-                  {item.durationMin && (
-                    <span className="font-nunito font-bold text-xs text-[#94a3b8] flex-shrink-0">{item.durationMin} dk</span>
-                  )}
-                </div>
+              {todayItems.map((item) => (
+                <TodayTaskCard
+                  key={item.id}
+                  item={item}
+                  isActive={activeSession?.studyPlanItemId === item.id}
+                  elapsedSeconds={elapsedSeconds}
+                  disabledStart={!!activeSession && activeSession.studyPlanItemId !== item.id}
+                  onStart={handleStart}
+                  onCancelActive={handleCancelActive}
+                  onFinishActive={handleFinishActive}
+                  onDirectComplete={handleDirectComplete}
+                  feelingOpen={feelingPromptId === item.id}
+                  onSubmitFeeling={handleSubmitFeeling}
+                  onSkipFeeling={handleSkipFeeling}
+                  reasonOpen={reasonPromptId === item.id}
+                  onOpenReason={handleOpenReason}
+                  onSubmitReason={handleSubmitReason}
+                  onCancelReason={handleCancelReason}
+                />
               ))}
             </div>
           ) : (
@@ -111,7 +135,7 @@ export default function GenelBakis({ onNavigate }) {
             className="mt-5 inline-flex items-center gap-2 self-start font-fredoka font-bold text-sm px-5 py-2.5 rounded-full transition-transform hover:scale-[1.02]"
             style={{ background: "var(--color-dark)", color: "var(--color-brand-on-dark)" }}
           >
-            Bugünü Aç <FaArrowRight size={11} />
+            Haftalık Programı Aç <FaArrowRight size={11} />
           </button>
         </div>
 
@@ -137,38 +161,23 @@ export default function GenelBakis({ onNavigate }) {
 
       {/* ── Koçumdan + Rotam ── */}
       <div className="grid gap-5 lg:grid-cols-2">
-        <div className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6 flex flex-col">
-          <SectionEyebrow color="var(--color-brand)">Koçumdan</SectionEyebrow>
-          {coachNote ? (
-            <>
-              <div className="flex items-center gap-2.5 mt-3 mb-1">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm" style={{ background: "var(--color-brand-light)" }}>
-                  💌
-                </div>
-                <p className="font-fredoka font-bold text-page-navy text-sm">{coachNote.coachName}</p>
-              </div>
-              {coachNote.type === "text" ? (
-                <p className="font-nunito text-sm text-[#334155] leading-relaxed mt-1">"{coachNote.text}"</p>
-              ) : (
-                <audio controls src={coachNote.audioUrl} className="h-9 mt-2 w-full" />
-              )}
-              <p className="font-nunito text-xs text-[#94a3b8] mt-2">
-                {coachNote.isToday ? "Bugün" : new Date(coachNote.createdAt).toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}
-              </p>
-            </>
-          ) : (
-            <p className="font-nunito text-sm text-[#64748b] mt-3">Koçundan henüz bir not yok — merak ettiğin bir şey varsa sen de yazabilirsin.</p>
-          )}
-          <a
-            href="https://wa.me/905312546701"
-            target="_blank"
-            rel="noreferrer"
-            className="mt-auto pt-4 inline-flex items-center gap-1.5 self-start font-nunito font-bold text-sm no-underline hover:underline"
-            style={{ color: "var(--color-brand)" }}
-          >
-            <FaWhatsapp size={13} /> Koçuma Yaz →
-          </a>
-        </div>
+        {coachNote ? (
+          <KocumdanCard note={coachNote} />
+        ) : (
+          <div className="bg-white rounded-2xl border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-4 flex flex-col">
+            <p className="font-fredoka font-bold text-[10px] uppercase text-brand mb-1" style={{ letterSpacing: 1 }}>Koçumdan</p>
+            <p className="font-nunito text-sm text-[#64748b] mt-1">Koçundan henüz bir not yok — merak ettiğin bir şey varsa sen de yazabilirsin.</p>
+            <a
+              href="https://wa.me/905312546701"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-2 inline-flex items-center gap-1.5 self-start font-nunito font-bold text-xs no-underline hover:underline"
+              style={{ color: "var(--color-brand)" }}
+            >
+              <FaWhatsapp size={11} /> Koçuma Yaz
+            </a>
+          </div>
+        )}
 
         <div className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6 flex flex-col">
           <SectionEyebrow>Rotam</SectionEyebrow>

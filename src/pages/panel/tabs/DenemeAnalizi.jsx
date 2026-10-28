@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import axios from "../../../utils/axios";
-import { FaPlus, FaExclamationTriangle, FaBolt, FaPen, FaClipboardList } from "react-icons/fa";
+import { FaPlus, FaExclamationTriangle, FaBolt, FaPen, FaClipboardList, FaClipboardCheck } from "react-icons/fa";
 import Button from "../../../components/ui/Button";
 import NewExamChoiceModal from "./deneme/NewExamChoiceModal";
 import ExamSetupForm from "./deneme/ExamSetupForm";
@@ -178,8 +178,24 @@ export default function DenemeAnalizi({ onNavigate }) {
   }
 
   if (view === "detail" && detailExam) {
-    return <ExamDetail exam={detailExam} onBack={() => { setView("dashboard"); setDetailExam(null); }} />;
+    return (
+      <ExamDetail
+        exam={detailExam}
+        onBack={() => { setView("dashboard"); setDetailExam(null); }}
+        onReviewNotesSaved={(updated) => {
+          setDetailExam(updated);
+          setResults((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+        }}
+      />
+    );
   }
+
+  // En güncel sonuçlanmış (COMPLETED) denemede "bilmediğim/tekrar etmem
+  // gereken sorular" henüz girilmemişse küçük bir hatırlatma gösterilir —
+  // yalnızca en günceli, eski denemeler için geriye dönük rahatsız etmiyoruz.
+  const completedResults = results.filter((r) => r.status === "COMPLETED");
+  const latestResult = completedResults[completedResults.length - 1] || null;
+  const needsReviewReminder = !!latestResult && !latestResult.reviewNotes?.trim();
 
   return (
     <div data-tour="exams" className="flex flex-col gap-5">
@@ -189,6 +205,21 @@ export default function DenemeAnalizi({ onNavigate }) {
           <FaPlus size={11} className="mr-1.5 inline" /> Yeni Deneme
         </Button>
       </div>
+
+      {needsReviewReminder && (
+        <button
+          onClick={() => handleSelectHistory(latestResult)}
+          className="bg-brand-light border border-[#bfe8ea] rounded-2xl p-4 flex items-center gap-3 text-left hover:border-brand/40 transition-colors"
+        >
+          <FaClipboardCheck size={16} className="text-brand flex-shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="font-fredoka font-bold text-page-navy text-sm">Son denemenin analizini tamamla</p>
+            <p className="font-nunito text-xs text-[#64748b] mt-0.5">
+              {latestResult.examName} — bilmediğin/tekrar etmen gereken soruları henüz not etmedin.
+            </p>
+          </div>
+        </button>
+      )}
 
       {insights.length > 0 && (
         <div className="bg-white rounded-2xl border-2 border-amber-300 shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-5">

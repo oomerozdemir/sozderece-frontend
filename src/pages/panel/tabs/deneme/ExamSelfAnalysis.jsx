@@ -13,6 +13,7 @@ export default function ExamSelfAnalysis({ exam, onSubmitted }) {
   const [didWell, setDidWell] = useState("");
   const [nextImprovement, setNextImprovement] = useState("");
   const [studentNote, setStudentNote] = useState("");
+  const [reviewNotes, setReviewNotes] = useState("");
   const [saving, setSaving] = useState(false);
 
   const toggleReason = (value) =>
@@ -24,7 +25,13 @@ export default function ExamSelfAnalysis({ exam, onSubmitted }) {
       const token = localStorage.getItem("token");
       const res = await axios.patch(
         `/api/v1/ogrenci/me/exam-results/${exam.id}/analysis`,
-        { difficultyReasons, didWell: didWell.trim(), nextImprovement: nextImprovement.trim(), studentNote: studentNote.trim() },
+        {
+          difficultyReasons,
+          didWell: didWell.trim(),
+          nextImprovement: nextImprovement.trim(),
+          studentNote: studentNote.trim(),
+          reviewNotes: reviewNotes.trim(),
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       onSubmitted(res.data.exam);
@@ -72,6 +79,16 @@ export default function ExamSelfAnalysis({ exam, onSubmitted }) {
       <div>
         <label className="text-xs font-bold text-[#475569] block mb-1">Kendime not</label>
         <textarea className={inputCls} rows={2} value={studentNote} onChange={(e) => setStudentNote(e.target.value)} />
+      </div>
+      <div>
+        <label className="text-xs font-bold text-[#475569] block mb-1">Bilmediğim / tekrar etmem gereken sorular</label>
+        <textarea
+          className={inputCls}
+          rows={2}
+          placeholder="Örn: Üslü sayılarda bileşke işlemler, Osmanlı kuruluş dönemi..."
+          value={reviewNotes}
+          onChange={(e) => setReviewNotes(e.target.value)}
+        />
       </div>
 
       <Button variant="primary" fullWidth onClick={handleSubmit} loading={saving}>Analizi Tamamla</Button>
