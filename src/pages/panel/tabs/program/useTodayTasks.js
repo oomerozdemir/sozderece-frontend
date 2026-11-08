@@ -130,6 +130,42 @@ export default function useTodayTasks() {
     setStatus(item.id, "stuck", { notCompletedReason: reason, note: note?.trim() || undefined });
   };
 
+  // Genel Bakış'taki görev-bağımsız odak sayacı — herhangi bir studyPlanItem'a
+  // bağlı değil, öğrencinin girdiği hedef süreyle (plannedSeconds) açık uçlu
+  // çalışır. Sunucu zaten aynı anda tek aktif tura izin verdiği için
+  // (handleStart ile) aynı activeSession state'ini paylaşır.
+  const handleStartFocusTimer = async (totalMinutes) => {
+    if (activeSession) return;
+    try {
+      const { data } = await axios.post(
+        "/api/v1/ogrenci/me/pomodoro/start",
+        { plannedSeconds: Math.round(totalMinutes * 60) },
+        { headers }
+      );
+      setActiveSession(data.session);
+    } catch {
+      // sessizce yut
+    }
+  };
+
+  const handleStopFocusTimer = async () => {
+    const id = activeSession?.id;
+    setActiveSession(null);
+    if (id) {
+      try {
+        await axios.patch(`/api/v1/ogrenci/me/pomodoro/${id}/stop`, {}, { headers });
+      } catch {
+        // sessizce yut
+      } finally {
+        loadToday();
+      }
+    }
+  };
+
+  // "Bu Hafta" checklist'i — tek tıkla tamamla, feeling prompt açılmaz
+  // (handleSkipFeeling'in aynısı, farklı bir tetikleyiciden çağrılıyor).
+  const handleQuickComplete = (item) => setStatus(item.id, "done", {});
+
   return {
     today, loading, headers,
     activeSession, elapsedSeconds,
@@ -138,5 +174,6 @@ export default function useTodayTasks() {
     handleStart, handleCancelActive, handleFinishActive, handleDirectComplete,
     handleSubmitFeeling, handleSkipFeeling,
     handleOpenReason, handleCancelReason, handleSubmitReason,
+    handleStartFocusTimer, handleStopFocusTimer, handleQuickComplete,
   };
 }

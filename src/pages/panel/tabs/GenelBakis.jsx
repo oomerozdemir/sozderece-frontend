@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "../../../utils/axios";
 import {
-  FaCheckCircle, FaBookOpen, FaArrowRight, FaWhatsapp, FaChartLine,
+  FaCheckCircle, FaBookOpen, FaArrowRight, FaWhatsapp, FaChartLine, FaCheck,
 } from "react-icons/fa";
 import useTodayTasks from "./program/useTodayTasks";
 import TodayTaskCard from "./program/TodayTaskCard";
 import KocumdanCard from "./program/KocumdanCard";
+import FocusTimerCard from "./program/FocusTimerCard";
 
 const fmtMinutes = (mins) => {
   const m = Math.max(0, Math.round(mins || 0));
@@ -46,6 +47,7 @@ export default function GenelBakis({ onNavigate }) {
     handleStart, handleCancelActive, handleFinishActive, handleDirectComplete,
     handleSubmitFeeling, handleSkipFeeling,
     handleOpenReason, handleCancelReason, handleSubmitReason,
+    handleStartFocusTimer, handleStopFocusTimer, handleQuickComplete,
   } = useTodayTasks();
   const todayItems = today?.items || [];
 
@@ -85,62 +87,22 @@ export default function GenelBakis({ onNavigate }) {
 
   return (
     <div className="flex flex-col gap-5">
-      {/* ── Bugünkü Rotam + Bu Hafta ── */}
+      {/* ── Odak Sayacı + Bu Hafta ── */}
       <div className="grid gap-5 lg:grid-cols-[1.3fr_1fr]">
-        {/* Bugünkü Rotam — panelin en değerli alanı. Programım sekmesiyle
-            BİREBİR aynı Başla/Bitir/sayaç davranışı (useTodayTasks). */}
-        <div data-tour="today-summary" className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6 flex flex-col">
-          <div className="flex items-center justify-between gap-3 mb-1 flex-wrap">
-            <SectionEyebrow color="var(--color-warning)">Bugünkü Rotam</SectionEyebrow>
-            {todayItems.length > 0 && (
-              <span className="font-nunito font-bold text-xs text-[#94a3b8]">
-                {todayItems.length} görev {todayEstimatedMin > 0 && `· Tahmini ${fmtMinutes(todayEstimatedMin)}`}
-              </span>
-            )}
-          </div>
-
-          {todayLoading ? (
-            <p className="font-nunito text-sm text-[#94a3b8] mt-3">Yükleniyor…</p>
-          ) : todayItems.length > 0 ? (
-            <div className="mt-3 flex flex-col gap-2.5">
-              {todayItems.map((item) => (
-                <TodayTaskCard
-                  key={item.id}
-                  item={item}
-                  isActive={activeSession?.studyPlanItemId === item.id}
-                  elapsedSeconds={elapsedSeconds}
-                  disabledStart={!!activeSession && activeSession.studyPlanItemId !== item.id}
-                  onStart={handleStart}
-                  onCancelActive={handleCancelActive}
-                  onFinishActive={handleFinishActive}
-                  onDirectComplete={handleDirectComplete}
-                  feelingOpen={feelingPromptId === item.id}
-                  onSubmitFeeling={handleSubmitFeeling}
-                  onSkipFeeling={handleSkipFeeling}
-                  reasonOpen={reasonPromptId === item.id}
-                  onOpenReason={handleOpenReason}
-                  onSubmitReason={handleSubmitReason}
-                  onCancelReason={handleCancelReason}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="font-nunito text-sm text-[#64748b] mt-3">
-              Bugün için planlı görev yok — istersen yaklaşan çalışmalarına göz atabilirsin.
-            </p>
-          )}
-
-          <button
-            onClick={() => onNavigate && onNavigate("program")}
-            className="mt-5 inline-flex items-center gap-2 self-start font-fredoka font-bold text-sm px-5 py-2.5 rounded-full transition-transform hover:scale-[1.02]"
-            style={{ background: "var(--color-dark)", color: "var(--color-brand-on-dark)" }}
-          >
-            Haftalık Programı Aç <FaArrowRight size={11} />
-          </button>
+        {/* Odak Sayacı — görev-bağımsız, öğrenci kaç saat çalışacağını girip
+            başlatır (video geri bildirimi: "sayaç başlatabilsin"). */}
+        <div className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6 flex flex-col">
+          <SectionEyebrow color="var(--color-warning)">Odak Sayacı</SectionEyebrow>
+          <FocusTimerCard
+            activeSession={activeSession}
+            elapsedSeconds={elapsedSeconds}
+            onStart={handleStartFocusTimer}
+            onStop={handleStopFocusTimer}
+          />
         </div>
 
-        {/* Bu Hafta */}
-        <div className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6">
+        {/* Bu Hafta — stat özeti + bugünün görevlerinin tek-tıkla checklist'i. */}
+        <div data-tour="today-summary" className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6">
           <SectionEyebrow>Bu Hafta</SectionEyebrow>
           <p className="font-fredoka font-bold text-page-navy text-xl mt-2">
             {summary.weeklyTaskDone} / {summary.weeklyTaskTotal} <span className="text-sm font-nunito font-bold text-[#64748b]">görev tamamlandı</span>
@@ -156,7 +118,89 @@ export default function GenelBakis({ onNavigate }) {
             <MiniStat value={fmtMinutes(summary.weeklyMinutesCompleted)} label="Çalışma" />
             <MiniStat value={summary.topicsMasteredThisWeek > 0 ? `+${summary.topicsMasteredThisWeek}` : "0"} label="Tamamlanan Konu" />
           </div>
+
+          {todayItems.length > 0 && (
+            <div className="mt-5 pt-4 border-t border-[#f1f5f9] flex flex-col gap-1.5">
+              <p className="font-nunito font-bold text-[10px] uppercase text-[#94a3b8] mb-1" style={{ letterSpacing: 1 }}>Bugün</p>
+              {todayItems.map((item) => {
+                const done = item.status === "done";
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    disabled={done}
+                    onClick={() => handleQuickComplete(item)}
+                    className="flex items-center gap-2.5 text-left py-1 disabled:cursor-default"
+                  >
+                    <span
+                      className="w-4 h-4 rounded-[5px] border-2 flex-shrink-0 flex items-center justify-center"
+                      style={{ borderColor: done ? "#059669" : "#cbd5e1", background: done ? "#059669" : "transparent" }}
+                    >
+                      {done && <FaCheck size={8} className="text-white" />}
+                    </span>
+                    <span
+                      className="font-nunito font-bold text-xs truncate"
+                      style={{ color: done ? "#94a3b8" : "#334155", textDecoration: done ? "line-through" : "none" }}
+                    >
+                      {item.subject}{item.topic ? ` — ${item.topic}` : ""}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
+      </div>
+
+      {/* ── Bugünkü Rotam — tam görev listesi, Başla/Bitir/sayaç ── */}
+      <div className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6 flex flex-col">
+        <div className="flex items-center justify-between gap-3 mb-1 flex-wrap">
+          <SectionEyebrow color="var(--color-warning)">Bugünkü Rotam</SectionEyebrow>
+          {todayItems.length > 0 && (
+            <span className="font-nunito font-bold text-xs text-[#94a3b8]">
+              {todayItems.length} görev {todayEstimatedMin > 0 && `· Tahmini ${fmtMinutes(todayEstimatedMin)}`}
+            </span>
+          )}
+        </div>
+
+        {todayLoading ? (
+          <p className="font-nunito text-sm text-[#94a3b8] mt-3">Yükleniyor…</p>
+        ) : todayItems.length > 0 ? (
+          <div className="mt-3 flex flex-col gap-2.5">
+            {todayItems.map((item) => (
+              <TodayTaskCard
+                key={item.id}
+                item={item}
+                isActive={activeSession?.studyPlanItemId === item.id}
+                elapsedSeconds={elapsedSeconds}
+                disabledStart={!!activeSession && activeSession.studyPlanItemId !== item.id}
+                onStart={handleStart}
+                onCancelActive={handleCancelActive}
+                onFinishActive={handleFinishActive}
+                onDirectComplete={handleDirectComplete}
+                feelingOpen={feelingPromptId === item.id}
+                onSubmitFeeling={handleSubmitFeeling}
+                onSkipFeeling={handleSkipFeeling}
+                reasonOpen={reasonPromptId === item.id}
+                onOpenReason={handleOpenReason}
+                onSubmitReason={handleSubmitReason}
+                onCancelReason={handleCancelReason}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="font-nunito text-sm text-[#64748b] mt-3">
+            Bugün için planlı görev yok — istersen yaklaşan çalışmalarına göz atabilirsin.
+          </p>
+        )}
+
+        <button
+          onClick={() => onNavigate && onNavigate("program")}
+          className="mt-5 inline-flex items-center gap-2 self-start font-fredoka font-bold text-sm px-5 py-2.5 rounded-full transition-transform hover:scale-[1.02]"
+          style={{ background: "var(--color-dark)", color: "var(--color-brand-on-dark)" }}
+        >
+          Haftalık Programı Aç <FaArrowRight size={11} />
+        </button>
       </div>
 
       {/* ── Koçumdan + Rotam ── */}
