@@ -9,6 +9,7 @@ import ExamResultForm from "./deneme/ExamResultForm";
 import ExamSelfAnalysis from "./deneme/ExamSelfAnalysis";
 import ExamSummary from "./deneme/ExamSummary";
 import ManualExamForm from "./deneme/ManualExamForm";
+import ExamAnalysisOnlyForm from "./deneme/ExamAnalysisOnlyForm";
 import ExamDashboard from "./deneme/ExamDashboard";
 import ExamHistoryList from "./deneme/ExamHistoryList";
 import ExamDetail from "./deneme/ExamDetail";
@@ -78,6 +79,10 @@ export default function DenemeAnalizi({ onNavigate }) {
     setShowChoice(false);
     setView("manual");
   };
+  const handleChooseAnalysisOnly = () => {
+    setShowChoice(false);
+    setView("analysisOnly");
+  };
 
   const handleSetupSubmit = async (payload) => {
     setStarting(true);
@@ -110,6 +115,13 @@ export default function DenemeAnalizi({ onNavigate }) {
   const handleManualSubmitted = (exam) => {
     setActiveExam(exam);
     setView(viewForStatus(exam.status));
+    refetchResults();
+  };
+
+  // Net'siz bir kayıt için ExamSummary'nin net-kutlama ekranı anlamsız —
+  // doğrudan dashboard'a dönülür.
+  const handleAnalysisOnlySubmitted = () => {
+    setView("dashboard");
     refetchResults();
   };
 
@@ -177,12 +189,20 @@ export default function DenemeAnalizi({ onNavigate }) {
     );
   }
 
+  if (view === "analysisOnly") {
+    return (
+      <div className="max-w-lg mx-auto">
+        <ExamAnalysisOnlyForm onSubmitted={handleAnalysisOnlySubmitted} onCancel={() => setView("dashboard")} />
+      </div>
+    );
+  }
+
   if (view === "detail" && detailExam) {
     return (
       <ExamDetail
         exam={detailExam}
         onBack={() => { setView("dashboard"); setDetailExam(null); }}
-        onReviewNotesSaved={(updated) => {
+        onExamUpdated={(updated) => {
           setDetailExam(updated);
           setResults((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
         }}
@@ -190,12 +210,17 @@ export default function DenemeAnalizi({ onNavigate }) {
     );
   }
 
-  // En güncel sonuçlanmış (COMPLETED) denemede "bilmediğim/tekrar etmem
-  // gereken sorular" henüz girilmemişse küçük bir hatırlatma gösterilir —
-  // yalnızca en günceli, eski denemeler için geriye dönük rahatsız etmiyoruz.
+  // En güncel sonuçlanmış (COMPLETED) denemede analiz eksikse küçük bir
+  // hatırlatma gösterilir — yalnızca en günceli, eski denemeler için geriye
+  // dönük rahatsız etmiyoruz. "Deneme Analizi Yap" (net'siz) kayıtları
+  // reviewNotes değil reviewItems kullanır — bu yüzden latestResult'ın hangi
+  // türde olduğuna göre iki ayrı koşul: net'siz + bekleyen (done:false)
+  // madde varsa, ya da net'li + reviewNotes boşsa.
   const completedResults = results.filter((r) => r.status === "COMPLETED");
   const latestResult = completedResults[completedResults.length - 1] || null;
-  const needsReviewReminder = !!latestResult && !latestResult.reviewNotes?.trim();
+  const isLatestAnalysisOnly = !!latestResult && latestResult.totalNet == null && (latestResult.reviewItems || []).length > 0;
+  const pendingReviewItems = isLatestAnalysisOnly ? latestResult.reviewItems.filter((i) => !i.done) : [];
+  const needsReviewReminder = !!latestResult && (isLatestAnalysisOnly ? pendingReviewItems.length > 0 : !latestResult.reviewNotes?.trim());
 
   return (
     <div data-tour="exams" className="flex flex-col gap-5">
@@ -213,9 +238,13 @@ export default function DenemeAnalizi({ onNavigate }) {
         >
           <FaClipboardCheck size={16} className="text-brand flex-shrink-0" />
           <div className="min-w-0 flex-1">
-            <p className="font-fredoka font-bold text-page-navy text-sm">Son denemenin analizini tamamla</p>
+            <p className="font-fredoka font-bold text-page-navy text-sm">
+              {isLatestAnalysisOnly ? "Tekrar listeni tamamla" : "Son denemenin analizini tamamla"}
+            </p>
             <p className="font-nunito text-xs text-[#64748b] mt-0.5">
-              {latestResult.examName} — bilmediğin/tekrar etmen gereken soruları henüz not etmedin.
+              {isLatestAnalysisOnly
+                ? `${latestResult.examName} — ${pendingReviewItems.length} maddeyi tekrar etmen gerekiyor.`
+                : `${latestResult.examName} — bilmediğin/tekrar etmen gereken soruları henüz not etmedin.`}
             </p>
           </div>
         </button>
@@ -264,7 +293,12 @@ export default function DenemeAnalizi({ onNavigate }) {
       </button>
 
       {showChoice && (
-        <NewExamChoiceModal onClose={() => setShowChoice(false)} onChooseLive={handleChooseLive} onChooseManual={handleChooseManual} />
+        <NewExamChoiceModal
+          onClose={() => setShowChoice(false)}
+          onChooseLive={handleChooseLive}
+          onChooseManual={handleChooseManual}
+          onChooseAnalysisOnly={handleChooseAnalysisOnly}
+        />
       )}
     </div>
   );

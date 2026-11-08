@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "../../../utils/axios";
 import {
-  FaCheckCircle, FaBookOpen, FaArrowRight, FaWhatsapp, FaChartLine, FaCheck,
+  FaCheckCircle, FaBookOpen, FaArrowRight, FaWhatsapp, FaChartLine, FaCheck, FaClipboardCheck,
 } from "react-icons/fa";
 import useTodayTasks from "./program/useTodayTasks";
 import TodayTaskCard from "./program/TodayTaskCard";
@@ -23,6 +23,42 @@ function SectionEyebrow({ children, color = "var(--color-dark)" }) {
     <span className="font-fredoka font-bold text-[11px] uppercase" style={{ color, letterSpacing: 2 }}>
       {children}
     </span>
+  );
+}
+
+// Bugünün görevlerinin tek-tıkla tamamlanan kısa listesi — "Bu Hafta" ve
+// "Koçumdan" kartlarının yanındaki slotta BİREBİR aynı görünüm/davranışla
+// kullanılıyor (feeling-prompt'suz, handleQuickComplete).
+function TodayChecklist({ items, onComplete }) {
+  if (items.length === 0) return null;
+  return (
+    <div className="flex flex-col gap-1.5">
+      {items.map((item) => {
+        const done = item.status === "done";
+        return (
+          <button
+            key={item.id}
+            type="button"
+            disabled={done}
+            onClick={() => onComplete(item)}
+            className="flex items-center gap-2.5 text-left py-1 disabled:cursor-default"
+          >
+            <span
+              className="w-4 h-4 rounded-[5px] border-2 flex-shrink-0 flex items-center justify-center"
+              style={{ borderColor: done ? "#059669" : "#cbd5e1", background: done ? "#059669" : "transparent" }}
+            >
+              {done && <FaCheck size={8} className="text-white" />}
+            </span>
+            <span
+              className="font-nunito font-bold text-xs truncate"
+              style={{ color: done ? "#94a3b8" : "#334155", textDecoration: done ? "line-through" : "none" }}
+            >
+              {item.subject}{item.topic ? ` — ${item.topic}` : ""}
+            </span>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
@@ -120,33 +156,9 @@ export default function GenelBakis({ onNavigate }) {
           </div>
 
           {todayItems.length > 0 && (
-            <div className="mt-5 pt-4 border-t border-[#f1f5f9] flex flex-col gap-1.5">
-              <p className="font-nunito font-bold text-[10px] uppercase text-[#94a3b8] mb-1" style={{ letterSpacing: 1 }}>Bugün</p>
-              {todayItems.map((item) => {
-                const done = item.status === "done";
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    disabled={done}
-                    onClick={() => handleQuickComplete(item)}
-                    className="flex items-center gap-2.5 text-left py-1 disabled:cursor-default"
-                  >
-                    <span
-                      className="w-4 h-4 rounded-[5px] border-2 flex-shrink-0 flex items-center justify-center"
-                      style={{ borderColor: done ? "#059669" : "#cbd5e1", background: done ? "#059669" : "transparent" }}
-                    >
-                      {done && <FaCheck size={8} className="text-white" />}
-                    </span>
-                    <span
-                      className="font-nunito font-bold text-xs truncate"
-                      style={{ color: done ? "#94a3b8" : "#334155", textDecoration: done ? "line-through" : "none" }}
-                    >
-                      {item.subject}{item.topic ? ` — ${item.topic}` : ""}
-                    </span>
-                  </button>
-                );
-              })}
+            <div className="mt-5 pt-4 border-t border-[#f1f5f9]">
+              <p className="font-nunito font-bold text-[10px] uppercase text-[#94a3b8] mb-1.5" style={{ letterSpacing: 1 }}>Bugün</p>
+              <TodayChecklist items={todayItems} onComplete={handleQuickComplete} />
             </div>
           )}
         </div>
@@ -224,32 +236,44 @@ export default function GenelBakis({ onNavigate }) {
         )}
 
         <div className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6 flex flex-col">
-          <SectionEyebrow>Rotam</SectionEyebrow>
-          {subjectProgress.length > 0 ? (
-            <div className="mt-3 flex flex-col gap-3">
-              {subjectProgress.map((s) => (
-                <div key={s.subject}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-nunito font-bold text-xs text-[#334155]">{s.subject}</span>
-                    <span className="font-nunito font-bold text-xs text-[#0f172a]">%{s.percent}</span>
-                  </div>
-                  <div className="h-2 rounded-full bg-[#f1f5f9] overflow-hidden">
-                    <div className="h-full rounded-full" style={{ width: `${Math.max(4, s.percent)}%`, background: "var(--color-brand)" }} />
-                  </div>
-                </div>
-              ))}
+          <SectionEyebrow>Bugün</SectionEyebrow>
+          {todayItems.length > 0 ? (
+            <div className="mt-3">
+              <TodayChecklist items={todayItems} onComplete={handleQuickComplete} />
             </div>
           ) : (
-            <p className="font-nunito text-sm text-[#64748b] mt-3">Henüz konu ağacın oluşturulmadı.</p>
+            <p className="font-nunito text-sm text-[#64748b] mt-3">
+              Bugün için planlı görev yok — istersen yaklaşan çalışmalarına göz atabilirsin.
+            </p>
           )}
           <button
-            onClick={() => onNavigate && onNavigate("konular")}
+            onClick={() => onNavigate && onNavigate("program")}
             className="mt-auto pt-4 font-nunito font-bold text-sm text-page-navy text-left hover:underline self-start"
           >
-            Haftalık Rotamı Gör →
+            Haftalık Programı Aç →
           </button>
         </div>
       </div>
+
+      {/* ── Deneme Analizi Hatırlatması — bekleyen bir analiz varsa ── */}
+      {summary.examReviewReminder && (
+        <button
+          onClick={() => onNavigate && onNavigate("deneme")}
+          className="bg-brand-light border border-[#bfe8ea] rounded-2xl p-4 flex items-center gap-3 text-left hover:border-brand/40 transition-colors"
+        >
+          <FaClipboardCheck size={16} className="text-brand flex-shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="font-fredoka font-bold text-page-navy text-sm">
+              {summary.examReviewReminder.type === "pending_items" ? "Tekrar listeni tamamla" : "Son denemenin analizini tamamla"}
+            </p>
+            <p className="font-nunito text-xs text-[#64748b] mt-0.5">
+              {summary.examReviewReminder.type === "pending_items"
+                ? `${summary.examReviewReminder.examName} — ${summary.examReviewReminder.pendingCount} maddeyi tekrar etmen gerekiyor.`
+                : `${summary.examReviewReminder.examName} — bilmediğin/tekrar etmen gereken soruları henüz not etmedin.`}
+            </p>
+          </div>
+        </button>
+      )}
 
       {/* ── Son Denemem ── */}
       <div className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6">
@@ -298,6 +322,34 @@ export default function GenelBakis({ onNavigate }) {
             </a>
           </>
         )}
+      </div>
+
+      {/* ── Rotam — ders bazlı konu ağacı ilerlemesi ── */}
+      <div className="bg-white rounded-[24px] border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6">
+        <SectionEyebrow>Rotam</SectionEyebrow>
+        {subjectProgress.length > 0 ? (
+          <div className="mt-3 flex flex-col gap-3">
+            {subjectProgress.map((s) => (
+              <div key={s.subject}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-nunito font-bold text-xs text-[#334155]">{s.subject}</span>
+                  <span className="font-nunito font-bold text-xs text-[#0f172a]">%{s.percent}</span>
+                </div>
+                <div className="h-2 rounded-full bg-[#f1f5f9] overflow-hidden">
+                  <div className="h-full rounded-full" style={{ width: `${Math.max(4, s.percent)}%`, background: "var(--color-brand)" }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="font-nunito text-sm text-[#64748b] mt-3">Henüz konu ağacın oluşturulmadı.</p>
+        )}
+        <button
+          onClick={() => onNavigate && onNavigate("konular")}
+          className="mt-4 font-nunito font-bold text-sm text-page-navy hover:underline"
+        >
+          Haftalık Rotamı Gör →
+        </button>
       </div>
 
       {/* ── Kaynaklarım / Gündem — küçük, kompakt ── */}

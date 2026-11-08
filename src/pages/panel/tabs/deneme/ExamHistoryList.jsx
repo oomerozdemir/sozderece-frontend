@@ -18,6 +18,7 @@ export default function ExamHistoryList({ results, onSelect }) {
       <div className="grid gap-3">
         {reversed.map((r) => {
           const statusMeta = STATUS_LABELS[r.status];
+          const isAnalysisOnly = r.totalNet == null && Array.isArray(r.reviewItems) && r.reviewItems.length > 0;
           return (
             <button
               key={r.id}
@@ -42,6 +43,11 @@ export default function ExamHistoryList({ results, onSelect }) {
                   {r.totalNet != null && (
                     <span className="font-fredoka font-bold text-base px-3 py-1 rounded-full bg-brand-light text-brand">
                       {formatNet(r.totalNet)} net
+                    </span>
+                  )}
+                  {isAnalysisOnly && (
+                    <span className="font-nunito font-bold text-[11px] px-2.5 py-1 rounded-full bg-[#f1f5f9] text-[#475569]">
+                      Sadece Analiz
                     </span>
                   )}
                 </div>

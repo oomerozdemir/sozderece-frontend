@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaCheck } from "react-icons/fa";
 import axios from "../../../../utils/axios";
 import { EXAM_TYPE_LABELS, comparisonLabel } from "./examConfig";
 import { fmtDate, fmtDurationMinutes, formatNet, formatMetric } from "./examHelpers";
@@ -16,10 +16,14 @@ const FIELD_LABELS = {
 // Tek deneme detay ekranı — geçmiş listesinden gelinen exam objesi doğrudan
 // kullanılır (liste zaten tüm alanları döndüğü için ayrıca bir GET
 // /:id çağrısına gerek yok).
-export default function ExamDetail({ exam, onBack, onReviewNotesSaved }) {
+export default function ExamDetail({ exam, onBack, onExamUpdated }) {
   const [reviewNotes, setReviewNotes] = useState(exam.reviewNotes || "");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [reviewItems, setReviewItems] = useState(exam.reviewItems || []);
+  const [togglingId, setTogglingId] = useState(null);
+
+  const isAnalysisOnly = exam.totalNet == null && !(Array.isArray(exam.subjectNets) && exam.subjectNets.length > 0);
 
   const handleSaveReviewNotes = async () => {
     setSaving(true);
@@ -32,9 +36,28 @@ export default function ExamDetail({ exam, onBack, onReviewNotesSaved }) {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setSaved(true);
-      onReviewNotesSaved?.(res.data.exam);
+      onExamUpdated?.(res.data.exam);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleToggleItem = async (item) => {
+    setTogglingId(item.id);
+    const nextItems = reviewItems.map((it) => (it.id === item.id ? { ...it, done: !it.done } : it));
+    setReviewItems(nextItems);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.patch(
+        `/api/v1/ogrenci/me/exam-results/review-items/${item.id}/toggle`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      onExamUpdated?.({ ...exam, reviewItems: nextItems });
+    } catch {
+      setReviewItems(reviewItems); // geri al
+    } finally {
+      setTogglingId(null);
     }
   };
 
@@ -52,24 +75,26 @@ export default function ExamDetail({ exam, onBack, onReviewNotesSaved }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="bg-[#f8fafc] rounded-xl p-3 text-center">
-            <p className="font-fredoka font-bold text-page-navy text-lg">{formatNet(exam.totalNet)}</p>
-            <p className="font-nunito text-[10px] text-[#94a3b8]">Toplam Net</p>
+        {!isAnalysisOnly && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="bg-[#f8fafc] rounded-xl p-3 text-center">
+              <p className="font-fredoka font-bold text-page-navy text-lg">{formatNet(exam.totalNet)}</p>
+              <p className="font-nunito text-[10px] text-[#94a3b8]">Toplam Net</p>
+            </div>
+            <div className="bg-[#f8fafc] rounded-xl p-3 text-center">
+              <p className="font-fredoka font-bold text-page-navy text-lg">{fmtDurationMinutes(exam.durationSeconds)}</p>
+              <p className="font-nunito text-[10px] text-[#94a3b8]">Süre</p>
+            </div>
+            <div className="bg-[#f8fafc] rounded-xl p-3 text-center">
+              <p className="font-fredoka font-bold text-page-navy text-lg">{formatMetric(exam.targetNet)}</p>
+              <p className="font-nunito text-[10px] text-[#94a3b8]">Hedef Net</p>
+            </div>
+            <div className="bg-[#f8fafc] rounded-xl p-3 text-center">
+              <p className="font-fredoka font-bold text-page-navy text-lg">{exam.targetDurationMinutes != null ? `${exam.targetDurationMinutes} dk` : "—"}</p>
+              <p className="font-nunito text-[10px] text-[#94a3b8]">Hedef Süre</p>
+            </div>
           </div>
-          <div className="bg-[#f8fafc] rounded-xl p-3 text-center">
-            <p className="font-fredoka font-bold text-page-navy text-lg">{fmtDurationMinutes(exam.durationSeconds)}</p>
-            <p className="font-nunito text-[10px] text-[#94a3b8]">Süre</p>
-          </div>
-          <div className="bg-[#f8fafc] rounded-xl p-3 text-center">
-            <p className="font-fredoka font-bold text-page-navy text-lg">{formatMetric(exam.targetNet)}</p>
-            <p className="font-nunito text-[10px] text-[#94a3b8]">Hedef Net</p>
-          </div>
-          <div className="bg-[#f8fafc] rounded-xl p-3 text-center">
-            <p className="font-fredoka font-bold text-page-navy text-lg">{exam.targetDurationMinutes != null ? `${exam.targetDurationMinutes} dk` : "—"}</p>
-            <p className="font-nunito text-[10px] text-[#94a3b8]">Hedef Süre</p>
-          </div>
-        </div>
+        )}
 
         {Array.isArray(exam.subjectNets) && exam.subjectNets.length > 0 && (
           <div>
@@ -112,6 +137,39 @@ export default function ExamDetail({ exam, onBack, onReviewNotesSaved }) {
             {exam.didWell && <p className="font-nunito text-sm text-[#334155]"><strong className="text-page-navy">İyi yaptığım:</strong> {exam.didWell}</p>}
             {exam.nextImprovement && <p className="font-nunito text-sm text-[#334155]"><strong className="text-page-navy">Bir sonraki denemede:</strong> {exam.nextImprovement}</p>}
             {exam.studentNote && <p className="font-nunito text-sm text-[#334155]"><strong className="text-page-navy">Not:</strong> {exam.studentNote}</p>}
+          </div>
+        )}
+
+        {reviewItems.length > 0 && (
+          <div className="pt-4 border-t border-[#f1f5f9] space-y-2">
+            <p className="font-nunito font-bold text-xs text-[#475569]">Tekrar Listesi</p>
+            <div className="flex flex-col gap-1.5">
+              {reviewItems.map((item) => {
+                const done = item.done;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    disabled={togglingId === item.id}
+                    onClick={() => handleToggleItem(item)}
+                    className="flex items-center gap-2.5 text-left py-1"
+                  >
+                    <span
+                      className="w-4 h-4 rounded-[5px] border-2 flex-shrink-0 flex items-center justify-center"
+                      style={{ borderColor: done ? "#059669" : "#cbd5e1", background: done ? "#059669" : "transparent" }}
+                    >
+                      {done && <FaCheck size={8} className="text-white" />}
+                    </span>
+                    <span
+                      className="font-nunito text-sm"
+                      style={{ color: done ? "#94a3b8" : "#334155", textDecoration: done ? "line-through" : "none" }}
+                    >
+                      {item.text}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
 

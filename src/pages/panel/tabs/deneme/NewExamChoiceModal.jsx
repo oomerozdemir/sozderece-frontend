@@ -1,8 +1,8 @@
-import { FaBolt, FaPen } from "react-icons/fa";
+import { FaBolt, FaPen, FaClipboardList } from "react-icons/fa";
 
-// "+ Yeni Deneme" → A) Deneme Başlat / B) Geçmiş Deneme Ekle seçimi.
-// RefundModal.jsx'in basit fixed-inset-0 kalıbıyla aynı.
-export default function NewExamChoiceModal({ onClose, onChooseLive, onChooseManual }) {
+// "+ Yeni Deneme" → A) Deneme Başlat / B) Geçmiş Deneme Ekle / C) Deneme
+// Analizi Yap seçimi. RefundModal.jsx'in basit fixed-inset-0 kalıbıyla aynı.
+export default function NewExamChoiceModal({ onClose, onChooseLive, onChooseManual, onChooseAnalysisOnly }) {
   return (
     <div className="fixed inset-0 bg-page-dark/50 flex items-center justify-center z-[999] p-4" onClick={onClose}>
       <div
@@ -33,6 +33,18 @@ export default function NewExamChoiceModal({ onClose, onChooseLive, onChooseManu
             <span>
               <span className="block font-nunito font-bold text-sm text-page-navy">Geçmiş Deneme Ekle</span>
               <span className="block font-nunito text-xs text-[#64748b]">Daha önce çözdüm.</span>
+            </span>
+          </button>
+          <button
+            onClick={onChooseAnalysisOnly}
+            className="flex items-center gap-3 text-left p-4 rounded-2xl border border-[#e2e8f0] hover:border-brand hover:bg-brand-light/40 transition-colors"
+          >
+            <span className="w-10 h-10 rounded-xl bg-[#f1f5f9] flex items-center justify-center flex-shrink-0 text-[#475569]">
+              <FaClipboardList size={14} />
+            </span>
+            <span>
+              <span className="block font-nunito font-bold text-sm text-page-navy">Deneme Analizi Yap</span>
+              <span className="block font-nunito text-xs text-[#64748b]">Bilmediğim soruları not edeyim.</span>
             </span>
           </button>
         </div>
