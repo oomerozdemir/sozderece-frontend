@@ -4,7 +4,9 @@ import WeekDayStrip from "./WeekDayStrip";
 import SelectedDayPanel from "./SelectedDayPanel";
 import WeeklyProgressSummary from "./WeeklyProgressSummary";
 import WeeklyGridView from "./WeeklyGridView";
+import WeekProgressBar from "./WeekProgressBar";
 import { toMonday, toISO, fmtRange, groupTasksByDay, getWeekStats, getDefaultSelectedDay } from "./programHelpers";
+import { playLevelUpSound } from "../../../../utils/sound";
 
 // "Haftalık Rotam" — eski collapse-edilmiş Pazartesi→Pazar dikey listenin
 // yerine geçiyor. Her zaman görünür (K1); state tek bu component'te:
@@ -19,6 +21,16 @@ export default function WeeklyProgramSection({ plan, planWeekStartISO, weekStart
 
   const weekDays = useMemo(() => groupTasksByDay(plan?.items), [plan]);
   const weekStats = useMemo(() => getWeekStats(weekDays), [weekDays]);
+  const prevPercentageRef = useRef(weekStats.percentage);
+
+  // Hafta ilk kez %100'e ulaştığında (daha düşükten) kutlama sesi — "tamamlama
+  // hissi" barın dolmasıyla aynı anda hem görsel hem işitsel pekiştiriliyor.
+  useEffect(() => {
+    if (weekStats.total > 0 && weekStats.percentage >= 100 && prevPercentageRef.current < 100) {
+      playLevelUpSound();
+    }
+    prevPercentageRef.current = weekStats.percentage;
+  }, [weekStats.percentage, weekStats.total]);
 
   // K4: yalnızca gösterilen plan, istenen haftaya aitse (ve yüklenme
   // bitmişse) default günü çöz — eski haftanın verisiyle yanlış gün
@@ -66,6 +78,15 @@ export default function WeeklyProgramSection({ plan, planWeekStartISO, weekStart
           </button>
         </div>
       </div>
+
+      {/* Haftalık seviye barı — tikler arttıkça dolan, "tamamlama hissi"
+          yaratan tek bir gösterge (header'ın hemen altında, order-1'i
+          paylaşıp DOM sırasıyla ondan sonra gelir). */}
+      {!weekLoading && weekStats.total > 0 && (
+        <div className="order-1">
+          <WeekProgressBar percentage={weekStats.percentage} />
+        </div>
+      )}
 
       {/* Haftalık çizelge — masaüstünde 7 günü aynı anda gösteren ek özet
           (gün-strip + tek-gün-paneli ikilisinin YANINA, yerine değil; o ikili
