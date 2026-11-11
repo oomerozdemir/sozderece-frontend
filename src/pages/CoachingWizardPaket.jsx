@@ -333,6 +333,7 @@ export default function CoachingWizardPaket() {
                   <PackagePrice pkg={selected} activePlan={activePlan} />
                 </motion.div>
               </AnimatePresence>
+              <p className="font-nunito text-xs mt-1 text-[#94a3b8]">KDV Dahildir</p>
 
               <div className="font-nunito font-bold text-sm mt-3 text-[#64748b]">
                 {selected.subtitle || "Kişiye özel koçluk programı"}

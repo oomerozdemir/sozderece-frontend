@@ -67,6 +67,7 @@ function Amount({ amount, duration }) {
         )}
       </div>
       {dur && !inline && <div className="font-nunito font-bold text-xs mt-1.5 text-[#94a3b8]">{dur}</div>}
+      <div className="font-nunito text-[11px] mt-1 text-[#94a3b8]">KDV Dahildir</div>
     </div>
   );
 }

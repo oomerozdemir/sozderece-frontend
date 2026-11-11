@@ -655,6 +655,7 @@ export default function DenemeKampiPage() {
                         <span className="text-5xl font-black text-brand-navy">{plan.price}₺</span>
                         <span className="text-[#64748b] text-sm font-semibold">{plan.priceText}</span>
                       </div>
+                      <p className="text-[#9ca3af] text-xs mt-1">KDV Dahildir</p>
                       {plan.desc && <p className="text-[#64748b] text-sm mt-1.5">{plan.desc}</p>}
                     </div>
                     <ul className="space-y-2 mb-6 flex-grow">
@@ -691,6 +692,7 @@ export default function DenemeKampiPage() {
                         <span className="text-5xl font-black text-white">{plan.price}₺</span>
                         <span className="text-white/50 text-sm font-semibold">{plan.priceText}</span>
                       </div>
+                      <p className="text-white/30 text-xs mt-1">KDV Dahildir</p>
                       {plan.desc && <p className="text-white/50 text-sm mt-1.5">{plan.desc}</p>}
                     </div>
                     <ul className="space-y-2 mb-6 flex-grow">

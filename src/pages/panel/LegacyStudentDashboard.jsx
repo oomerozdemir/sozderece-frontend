@@ -342,7 +342,7 @@ function OrdersList({ loading, orders }) {
               <span className={`text-xs font-bold px-3 py-1 rounded-full border flex-shrink-0 ${meta.cls}`}>{meta.label}</span>
             </div>
             <div className="flex items-center gap-4 flex-wrap text-xs font-nunito text-[#475569] pt-3 border-t border-[#f1f5f9]">
-              <span><strong className="text-[#0f172a]">Tutar:</strong> {typeof o.amountTL === "number" ? `${o.amountTL.toLocaleString("tr-TR")} ₺` : "—"}</span>
+              <span><strong className="text-[#0f172a]">Tutar:</strong> {typeof o.amountTL === "number" ? `${o.amountTL.toLocaleString("tr-TR")} ₺ (KDV Dahil)` : "—"}</span>
               {o.endDate && <span><strong className="text-[#0f172a]">Bitiş:</strong> {fmtDate(o.endDate)}</span>}
             </div>
           </div>

@@ -160,10 +160,12 @@ const CartPage = () => {
               <p className="text-[1.5rem] font-bold">
                 <strong>Toplam:</strong> ₺{total.toFixed(2)}
               </p>
-              {hasTutoring && (
+              {hasTutoring ? (
                 <p className="text-[0.85rem] text-[#888] mt-2">
-                  Özel ders seçimleri için <strong>KDV</strong> ödeme adımında hesaplanır ve eklenir.
+                  Diğer ürünler KDV dahildir; özel ders seçimleri için <strong>KDV</strong> ödeme adımında hesaplanır ve eklenir.
                 </p>
+              ) : (
+                <p className="text-[0.85rem] text-[#888] mt-2">KDV Dahildir</p>
               )}
 
               <div className="mt-4 text-[0.9rem] flex items-center gap-2 justify-center">

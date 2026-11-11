@@ -263,7 +263,7 @@ const OrdersPage = () => {
                       </span>
                     </div>
                     <p className="font-nunito text-[#64748b] text-sm m-0 flex items-center gap-1.5">
-                      <FaCreditCard size={12} /> Aylık Tutar: <strong className="text-page-dark">₺{(sub.amount / 100).toFixed(2)}</strong>
+                      <FaCreditCard size={12} /> Aylık Tutar: <strong className="text-page-dark">₺{(sub.amount / 100).toFixed(2)}</strong> (KDV Dahil)
                       {sub.cardLast4 && <span>· •••• {sub.cardLast4}</span>}
                     </p>
                     {sub.status !== "cancelled" && (
@@ -329,6 +329,7 @@ const OrdersPage = () => {
                     {order.totalPrice != null && (
                       <p className="font-nunito text-[#64748b] text-sm m-0">
                         Toplam: <strong className="text-page-dark">₺{order.totalPrice}</strong>
+                        {!tutorPkg && " (KDV Dahil)"}
                       </p>
                     )}
                     {order.couponCode && (

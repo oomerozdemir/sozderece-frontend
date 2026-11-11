@@ -717,6 +717,7 @@ export default function LgsHazirlikPage() {
                             <span className="font-fredoka font-bold text-page-navy" style={{ fontSize: "clamp(30px,4vw,44px)" }}>₺{plan.price}</span>
                             {plan.priceText && <span className="font-nunito text-[#64748b] text-xs">{plan.priceText}</span>}
                           </div>
+                          <p className="font-nunito text-[#9ca3af] text-[11px] mt-0.5">KDV Dahildir</p>
                           {plan.desc && <p className="font-nunito text-[#64748b] text-xs mt-1">{plan.desc}</p>}
                           <p className="font-nunito font-bold text-[#166534] text-xs mt-1">✓ 7 gün içinde memnun kalmazsanız iade alırsınız</p>
                         </div>
@@ -748,6 +749,7 @@ export default function LgsHazirlikPage() {
                             <span className="font-fredoka font-bold text-white" style={{ fontSize: "clamp(30px,4vw,44px)" }}>₺{plan.price}</span>
                             {plan.priceText && <span className="font-nunito text-white/40 text-xs">{plan.priceText}</span>}
                           </div>
+                          <p className="font-nunito text-white/25 text-[11px] mt-0.5">KDV Dahildir</p>
                           {plan.desc && <p className="font-nunito text-white/40 text-xs mt-1">{plan.desc}</p>}
                           <p className="font-nunito font-bold text-xs mt-1" style={{ color: "var(--color-brand-on-dark)" }}>✓ 7 gün içinde memnun kalmazsanız iade alırsınız</p>
                         </div>
@@ -804,6 +806,7 @@ export default function LgsHazirlikPage() {
                 <div className="mb-6">
                   <div className="font-fredoka font-bold" style={{ fontSize: "clamp(34px,4vw,52px)", color: "var(--color-brand-on-dark)" }}>₺{price}</div>
                   <p className="font-nunito text-white/40 text-xs mt-1">{offer.priceLabel || "LGS'ye kadar, tek seferlik"}</p>
+                  <p className="font-nunito text-white/25 text-[11px] mt-0.5">KDV Dahildir</p>
                   <p className="font-nunito font-bold text-sm mt-1" style={{ color: "var(--color-brand-on-dark)" }}>✓ 7 gün içinde memnun kalmazsanız iade alırsınız</p>
                 </div>
                 {offer.includes?.length > 0 && (

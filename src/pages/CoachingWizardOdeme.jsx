@@ -790,6 +790,9 @@ export default function CoachingWizardOdeme() {
                       ₺{trPrice(finalCalculations.payable)}
                     </motion.span>
                   </div>
+                  {eligibleTutoringTotal === 0 && (
+                    <p className="text-[11px] text-[#94a3b8] text-right">KDV Dahildir</p>
+                  )}
                 </div>
 
                 {pkg?.noRefund ? (

@@ -563,6 +563,7 @@ export default function MomentumTeklifPage() {
                 <span className="font-fredoka font-bold leading-none" style={{ fontSize: 52 }}>1.250</span>
                 <span className="font-nunito font-bold text-sm mb-1.5" style={{ color: "rgba(255,255,255,0.6)" }}>tek çekim</span>
               </div>
+              <p className="font-nunito text-xs mb-2" style={{ color: "rgba(255,255,255,0.45)" }}>KDV Dahildir</p>
               <p className="font-nunito text-sm m-0" style={{ color: "rgba(255,255,255,0.85)" }}>
                 Program yatırımı 1.250 TL'dir ve ödeme tek çekim olarak yapılır.
               </p>
