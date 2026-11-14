@@ -124,6 +124,27 @@ const AdminCoachPage = () => {
     }
   };
 
+  // "Atanmış Öğrenciler" listesinden bir öğrenciyi kaldırır — yeni bir
+  // backend uç noktası gerekmiyor, mevcut assign-coach endpoint'i zaten
+  // coachId:null ile "koçu kaldır" anlamına geliyor (adminCoach.controller.js
+  // #assignCoachToUser). Öğrencinin kendi hesabı SİLİNMİYOR, sadece bu
+  // koçtan ayrılıyor.
+  const handleRemoveStudent = async (coach, student) => {
+    if (!window.confirm(`${student.name} adlı öğrenciyi "${coach.name}" koçundan kaldırmak istediğinize emin misiniz?`)) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "/api/admin/assign-coach",
+        { userId: student.id, coachId: null },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchCoaches();
+    } catch (error) {
+      console.error("Öğrenci kaldırma hatası:", error);
+      alert("Öğrenci kaldırılamadı.");
+    }
+  };
+
   const handleAssignCoach = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -215,7 +236,7 @@ const AdminCoachPage = () => {
         )}
         {!editingCoach && (
           <p className="text-xs text-[#64748b]">
-            Kaydedince rastgele bir geçici şifre üretilip koçun e-postasına gönderilecek.
+            Kaydedince hesap rastgele bir şifreyle oluşturulur — koça mail gönderilmez, giriş yapmak isterse "Şifremi Unuttum" akışını kullanabilir.
           </p>
         )}
         <div className="flex gap-2">
@@ -253,10 +274,17 @@ const AdminCoachPage = () => {
               {coach.assignedTo && coach.assignedTo.length > 0 && (
                 <div className="mt-3 bg-[#f8fafc] p-2.5 rounded-xl border border-[#f1f5f9]">
                   <strong className="text-xs text-[#0f172a]">Atanmış Öğrenciler:</strong>
-                  <ul className="list-disc list-inside text-xs text-[#475569] mt-1">
+                  <ul className="text-xs text-[#475569] mt-1 space-y-1">
                     {coach.assignedTo.map((student) => (
-                      <li key={student.id}>
-                        {student.name} ({student.email})
+                      <li key={student.id} className="flex items-center justify-between gap-2">
+                        <span>{student.name} ({student.email})</span>
+                        <button
+                          onClick={() => handleRemoveStudent(coach, student)}
+                          className="flex-shrink-0 text-[#dc2626] hover:underline font-bold"
+                          title="Bu öğrenciyi koçtan kaldır"
+                        >
+                          Kaldır
+                        </button>
                       </li>
                     ))}
                   </ul>
