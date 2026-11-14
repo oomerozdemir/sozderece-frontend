@@ -6,6 +6,25 @@ import { toYouTubeEmbed } from "../utils/youtube";
 const inputCls =
   "w-full px-3 py-2.5 rounded-xl border border-[#e5e7eb] outline-none text-sm text-[#0f172a] focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/10 transition-all bg-white";
 
+// Plan kampanya tarihleri (campaignStartsAt/campaignEndsAt) backend'de UTC
+// ISO string olarak saklanıyor; <input type="datetime-local"> ise yerel
+// "YYYY-MM-DDTHH:mm" bekliyor. new Date(...).toISOString()/yerel getter'lar
+// admin'in TARAYICISININ saat dilimini (Türkiye'deki bir admin için zaten
+// Europe/Istanbul) kullanıyor — bu yüzden ekstra bir istanbulTime.js
+// yardımcısına gerek kalmadan doğru UTC instant'a çevriliyor.
+const toDatetimeLocal = (isoString) => {
+  if (!isoString) return "";
+  const d = new Date(isoString);
+  if (isNaN(d.getTime())) return "";
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+const toUtcIso = (datetimeLocalValue) => {
+  if (!datetimeLocalValue) return null;
+  const d = new Date(datetimeLocalValue);
+  return isNaN(d.getTime()) ? null : d.toISOString();
+};
+
 const PACKAGE_TYPES = [
   { value: "yks",                    label: "🎓 Sadece YKS sekmesinde göster" },
   { value: "lgs",                    label: "📚 Sadece LGS sekmesinde göster" },
@@ -64,7 +83,7 @@ const AdminPackagePage = () => {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [newFeature, setNewFeature] = useState({ label: "", included: true });
-  const emptyPlan = { label: "", priceText: "", durationText: "", oldPriceText: "", unitPrice: "", badge: "", badgeColor: "green", billingCycle: "once" };
+  const emptyPlan = { label: "", priceText: "", durationText: "", oldPriceText: "", unitPrice: "", badge: "", badgeColor: "green", billingCycle: "once", campaignUnitPrice: "", campaignStartsAt: "", campaignEndsAt: "", campaignLabel: "" };
   const [newPlan, setNewPlan] = useState(emptyPlan);
   const [editingPlanIdx, setEditingPlanIdx] = useState(null);
   const [message, setMessage] = useState(null);
@@ -865,6 +884,11 @@ const AdminPackagePage = () => {
                           {plan.billingCycle === "monthly" && (
                             <span className="ml-2 bg-[#fef3c7] text-[#92400e] text-[10px] font-bold px-1.5 py-0.5 rounded-full">🔁 Aylık Abonelik</span>
                           )}
+                          {plan.campaignUnitPrice != null && plan.campaignUnitPrice !== "" && (
+                            <span className="ml-2 bg-[#e4f7f8] text-[#17252d] text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                              🗓 {plan.campaignLabel || "Kampanya"}: {(plan.campaignUnitPrice / 100).toLocaleString("tr-TR")}₺
+                            </span>
+                          )}
                         </div>
                         <div className="flex gap-1 flex-shrink-0">
                           {i > 0 && (
@@ -881,7 +905,14 @@ const AdminPackagePage = () => {
                               setForm({ ...form, plans: arr });
                             }} className="text-[#7c3aed] text-xs font-bold hover:text-[#4c1d95]">↓</button>
                           )}
-                          <button type="button" onClick={() => { setNewPlan({ ...plan }); setEditingPlanIdx(i); }}
+                          <button type="button" onClick={() => {
+                            setNewPlan({
+                              ...plan,
+                              campaignStartsAt: toDatetimeLocal(plan.campaignStartsAt),
+                              campaignEndsAt: toDatetimeLocal(plan.campaignEndsAt),
+                            });
+                            setEditingPlanIdx(i);
+                          }}
                             className="text-[#0ea5e9] text-xs font-bold hover:text-[#0284c7] ml-1">✎</button>
                           <button type="button" onClick={() => setForm({ ...form, plans: form.plans.filter((_, idx) => idx !== i) })}
                             className="text-[#ef4444] text-xs font-bold hover:text-[#dc2626] ml-1">×</button>
@@ -943,6 +974,35 @@ const AdminPackagePage = () => {
                       </select>
                     </div>
                   </div>
+                  <div className="border border-[#bfe8ea] bg-[#e4f7f8] rounded-lg p-2.5 space-y-2">
+                    <p className="text-[11px] font-black text-[#17252d]">🗓 Kampanya (opsiyonel) — doldurulursa bu planın geçici indirimli fiyatı olur</p>
+                    <div className="grid grid-cols-2 gap-2 max-[560px]:grid-cols-1">
+                      <div>
+                        <label className="block text-[10px] font-bold text-[#475569] mb-1">Kampanya Fiyatı (kuruş)</label>
+                        <input type="number" className={inputCls} placeholder="300000" value={newPlan.campaignUnitPrice}
+                          onChange={(e) => setNewPlan({ ...newPlan, campaignUnitPrice: e.target.value ? parseInt(e.target.value) : "" })} />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-[#475569] mb-1">Etiket</label>
+                        <input className={inputCls} placeholder="Kasım İndirimi" value={newPlan.campaignLabel}
+                          onChange={(e) => setNewPlan({ ...newPlan, campaignLabel: e.target.value })} />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-[#475569] mb-1">Başlangıç</label>
+                        <input type="datetime-local" className={inputCls} value={newPlan.campaignStartsAt}
+                          onChange={(e) => setNewPlan({ ...newPlan, campaignStartsAt: e.target.value })} />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-[#475569] mb-1">Bitiş</label>
+                        <input type="datetime-local" className={inputCls} value={newPlan.campaignEndsAt}
+                          onChange={(e) => setNewPlan({ ...newPlan, campaignEndsAt: e.target.value })} />
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-[#475569]">
+                      Tarihler tarayıcının yerel (Türkiye) saatiyle yorumlanıp kaydedilir. Kampanya fiyatı normal Unit
+                      Price'tan düşük olmalı, aksi halde kaydetme reddedilir.
+                    </p>
+                  </div>
                   {newPlan.billingCycle === "monthly" && (
                     <p className="text-[11px] text-[#92400e] bg-[#fffbeb] border border-[#fde68a] rounded-lg px-2.5 py-1.5">
                       ⚠️ Buradaki "Unit Price" tutarı, müşteri aboneliği seçtiğinde <strong>her ay</strong> otomatik olarak
@@ -955,13 +1015,22 @@ const AdminPackagePage = () => {
                     <button type="button"
                       onClick={() => {
                         if (!newPlan.label || !newPlan.unitPrice) return;
+                        // Kampanya tarihleri formda yerel datetime-local string olarak
+                        // tutuluyor — kaydederken UTC ISO'ya çevrilir (bkz. toUtcIso).
+                        const planToSave = {
+                          ...newPlan,
+                          campaignUnitPrice: newPlan.campaignUnitPrice ? parseInt(newPlan.campaignUnitPrice) : null,
+                          campaignStartsAt: toUtcIso(newPlan.campaignStartsAt),
+                          campaignEndsAt: toUtcIso(newPlan.campaignEndsAt),
+                          campaignLabel: newPlan.campaignLabel || null,
+                        };
                         if (editingPlanIdx !== null) {
                           const arr = [...form.plans];
-                          arr[editingPlanIdx] = { ...newPlan };
+                          arr[editingPlanIdx] = planToSave;
                           setForm({ ...form, plans: arr });
                           setEditingPlanIdx(null);
                         } else {
-                          setForm({ ...form, plans: [...form.plans, { ...newPlan }] });
+                          setForm({ ...form, plans: [...form.plans, planToSave] });
                         }
                         setNewPlan(emptyPlan);
                       }}

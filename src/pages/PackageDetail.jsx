@@ -122,9 +122,22 @@ const PackageDetail = () => {
   // Odeme) aynı formülü kullanıyoruz ki bu sayfada gösterilen fiyat, gerçek
   // ödeme ekranındakiyle birebir tutsun.
   const activePlanDynamicExam = !!(activePlan?.dynamicExamPrice && isExamPriceActive(selected));
+  // Plan-seviyesi kampanya — PricingSection.jsx#PriceDisplay ile AYNI mantık,
+  // aktiflik kararı sadece activePlan.campaignActive'e bağlı (backend'den).
+  const activePlanCampaign = !!activePlan?.campaignActive;
 
   let displayPrice, strikethroughPrice, priceBadgeText, priceBadgeStyle, durationText, planBadge, planBadgeStyle;
-  if (activePlanDynamicExam) {
+  if (activePlanCampaign) {
+    const oldPriceTL = activePlan.unitPrice != null ? Math.round(activePlan.unitPrice / 100) : null;
+    const newPriceTL = Math.round(activePlan.campaignUnitPrice / 100);
+    displayPrice = `${newPriceTL.toLocaleString("tr-TR")}₺`;
+    durationText = activePlan.durationText || "";
+    strikethroughPrice = oldPriceTL != null ? `${oldPriceTL.toLocaleString("tr-TR")}₺` : null;
+    priceBadgeText = activePlan.campaignLabel || "Kampanya";
+    priceBadgeStyle = "bg-[#17252D] text-[#E4F7F8]";
+    planBadge = activePlan.badge || null;
+    planBadgeStyle = BADGE_COLORS[activePlan.badgeColor] || BADGE_COLORS.green;
+  } else if (activePlanDynamicExam) {
     const examPrice = getExamPrice(selected);
     const daysLeft = getExamDaysLeft(selected);
     const fullPrice = Math.round((daysLeft / 30) * selected.price);
@@ -177,7 +190,9 @@ const PackageDetail = () => {
     planBadgeStyle = "";
   }
 
-  const numericPrice = activePlanDynamicExam
+  const numericPrice = activePlanCampaign
+    ? String(Math.round(activePlan.campaignUnitPrice / 100) || "0")
+    : activePlanDynamicExam
     ? String(getExamPrice(selected) || "0")
     : examActive
     ? String(getExamPrice(selected) || "0")

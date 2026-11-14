@@ -89,6 +89,30 @@ function PriceDisplay({ pkg, activePlan }) {
   if (!pkg) return null;
 
   if (activePlan) {
+    // Plan-seviyesi kampanya ("Kasım İndirimi" vb.) — aktiflik kararı
+    // SADECE backend'in verdiği activePlan.campaignActive'e bağlı, burada
+    // hiçbir Date.now() karşılaştırması yapılmıyor. Üstü çizili eski fiyat
+    // activePlan.unitPrice'tan (admin'in elle yazdığı oldPriceText'ten DEĞİL)
+    // hesaplanıyor ki her zaman matematiksel olarak doğru olsun.
+    if (activePlan.campaignActive) {
+      const oldPriceTL = activePlan.unitPrice != null ? Math.round(activePlan.unitPrice / 100) : null;
+      const newPriceTL = Math.round(activePlan.campaignUnitPrice / 100);
+      const savingsTL = oldPriceTL != null ? oldPriceTL - newPriceTL : null;
+      return (
+        <div>
+          <OldPrice text={oldPriceTL != null ? `${oldPriceTL.toLocaleString("tr-TR")}₺` : null} />
+          <Amount amount={newPriceTL.toLocaleString("tr-TR")} duration={activePlan.durationText} />
+          <span
+            className="inline-block mt-2 font-fredoka font-bold text-[11px] px-2.5 py-1 rounded-full"
+            style={{ background: "#17252D", color: "#E4F7F8" }}
+          >
+            {activePlan.campaignLabel || "Kampanya"}
+            {savingsTL > 0 ? ` · ${savingsTL.toLocaleString("tr-TR")} TL avantaj` : ""}
+          </span>
+        </div>
+      );
+    }
+
     // "Sınava Kadar" gibi bir plan sekmesi sabit bir fiyat yerine sınav
     // tarihine göre CANLI hesaplanan bir fiyat istiyorsa (plan.dynamicExamPrice)
     // — aylık fiyat × sınava kalan ay × (1-indirim%) formülünü kullanıyoruz.
@@ -219,6 +243,15 @@ function PackageCard({ pkg, index }) {
         </span>
       )}
 
+      {activePlan?.campaignActive && (
+        <span
+          className="absolute -top-3 left-7 font-fredoka font-bold text-[12px] px-3 py-1.5 rounded-full whitespace-nowrap"
+          style={{ background: "#17252D", color: "#E4F7F8", boxShadow: "0 4px 12px rgba(23,37,45,0.3)" }}
+        >
+          {activePlan.campaignLabel || "Kampanya"}
+        </span>
+      )}
+
       <h3 className="font-fredoka font-bold text-page-navy text-xl leading-snug mb-1.5 pr-2">{pkg.name}</h3>
       {pkg.subtitle && (
         <p className="font-nunito text-[#64748b] text-sm leading-snug mb-4">{pkg.subtitle}</p>
@@ -320,23 +353,33 @@ function PackageCard({ pkg, index }) {
   );
 }
 
-export default function PricingSection() {
+export default function PricingSection({ packages: packagesProp }) {
   const [tab, setTab] = useState("yks");
-  const [packages, setPackages] = useState([]);
+  const [ownPackages, setOwnPackages] = useState([]);
   const [video, setVideo] = useState(null);
 
+  // packages prop verildiyse (HomePage.jsx kendi fetch'ini yukarı çekip
+  // HomepageCampaignBanner ile paylaşıyorsa) kendi isteğini ATMA — tek
+  // /api/packages isteği olsun. Verilmezse (başka bir sayfada tek başına
+  // kullanılırsa) geriye dönük uyumlu olarak kendi içinde fetch eder.
   useEffect(() => {
+    if (packagesProp) return;
     // Tek URL kaynağı: paylaşılan axios instance (bkz. utils/axios.js) —
     // önceden burada process.env.REACT_APP_API_URL ile ham fetch kullanılıyordu,
     // repo'da bu env var'ı tanımlayan bir .env olmadığından yerel geliştirmede
     // sessizce başarısız oluyordu.
     axios.get("/api/packages")
-      .then((r) => { if (r.data.success) setPackages(r.data.packages); })
+      .then((r) => { if (r.data.success) setOwnPackages(r.data.packages); })
       .catch(() => {});
+  }, [packagesProp]);
+
+  useEffect(() => {
     axios.get("/api/settings/pricing-video")
       .then((r) => setVideo(r.data))
       .catch(() => {});
   }, []);
+
+  const packages = packagesProp || ownPackages;
 
   const activeVideo = video?.[tab === "lgs" ? "lgs" : "yks"];
   const videoEmbedUrl = activeVideo?.enabled && activeVideo?.videoUrl ? toYouTubeEmbed(activeVideo.videoUrl) : null;

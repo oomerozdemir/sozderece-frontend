@@ -28,6 +28,41 @@ const fadeUp = {
 // önceliklendirmesi), sadece açık zeminli sihirbaz kartına göre yeniden
 // biçimlendirildi. PricingSection'ın kendisine dokunulmuyor.
 function PackagePrice({ pkg, activePlan }) {
+  // Plan-seviyesi kampanya — PricingSection.jsx#PriceDisplay ile AYNI mantık:
+  // aktiflik kararı sadece activePlan.campaignActive'e bağlı (backend'den
+  // geliyor), burada Date.now() hesabı yapılmıyor.
+  if (activePlan?.campaignActive) {
+    const oldPriceTL = activePlan.unitPrice != null ? Math.round(activePlan.unitPrice / 100) : null;
+    const newPriceTL = Math.round(activePlan.campaignUnitPrice / 100);
+    return (
+      <div>
+        {oldPriceTL != null && (
+          <div className="font-nunito font-bold text-sm mb-1 text-[#94a3b8] line-through">
+            {oldPriceTL.toLocaleString("tr-TR")}₺
+          </div>
+        )}
+        <div className="flex items-start gap-1">
+          <span className="font-fredoka font-bold text-[22px] mt-2 text-accent-orange">₺</span>
+          <span
+            className="font-fredoka font-bold text-page-navy leading-none"
+            style={{ fontSize: "clamp(48px,5vw,64px)", letterSpacing: -2 }}
+          >
+            {newPriceTL.toLocaleString("tr-TR")}
+          </span>
+        </div>
+        {activePlan.durationText && (
+          <div className="font-nunito font-bold text-sm mt-1 text-[#64748b]">{activePlan.durationText}</div>
+        )}
+        <span
+          className="inline-block mt-2 font-fredoka font-bold text-[11px] px-2.5 py-1 rounded-full"
+          style={{ background: "#17252D", color: "#E4F7F8" }}
+        >
+          {activePlan.campaignLabel || "Kampanya"}
+        </span>
+      </div>
+    );
+  }
+
   if (activePlan?.dynamicExamPrice && isExamPriceActive(pkg)) {
     const price = getExamPrice(pkg);
     const days = getExamDaysLeft(pkg);

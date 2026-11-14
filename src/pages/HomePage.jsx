@@ -4,12 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Warp } from "@paper-design/shaders-react";
 import { FaWhatsapp, FaChartLine, FaUsers, FaRoute, FaTasks, FaSyncAlt, FaBoxOpen, FaClipboardList } from "react-icons/fa";
 import { scrollToId } from "../utils/scrollToId";
+import axios from "../utils/axios";
 import Seo from "../components/Seo";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
 import PricingSection from "../components/PricingSection";
 import HeroSection from "../components/HeroSection";
 import DiscountPopup from "../components/DiscountPopup";
+import HomepageCampaignBanner from "../components/HomepageCampaignBanner";
 
 const WA_LINK = "https://wa.me/905312546701?text=S%C4%B0STEM";
 
@@ -1027,6 +1029,22 @@ function StickyMobileCta() {
 // ANA SAYFA
 // ══════════════════════════════════════════════
 export default function HomePage() {
+  // Paket fetch'i buraya çekildi ki HomepageCampaignBanner ile PricingSection
+  // AYNI veriyi paylaşsın — ikisi birden /api/packages'a ayrı istek atmasın
+  // (bkz. onaylanmış Kasım İndirimi planı, revizyon maddesi 5).
+  const [packages, setPackages] = useState([]);
+
+  const fetchPackages = () => {
+    axios.get("/api/packages")
+      .then((r) => { if (r.data.success) setPackages(r.data.packages); })
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    fetchPackages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="font-nunito">
       <Seo
@@ -1035,10 +1053,11 @@ export default function HomePage() {
         canonical="/"
       />
 
+      <HomepageCampaignBanner packages={packages} onCampaignExpire={fetchPackages} />
       <Navbar />
       <DiscountPopup />
       <HeroSection />
-      <PricingSection />
+      <PricingSection packages={packages} />
       <WhyDifferentSection />
       <HowItWorksSection />
       <TestimonialsSection />

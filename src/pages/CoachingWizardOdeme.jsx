@@ -50,6 +50,10 @@ const DEFAULT_SETTINGS = {
 // fiyatın birebir aynı olmasını garanti eder — sınav/promosyon indirimi
 // gösterilip tam fiyat tahsil edilmesin diye.
 function getEffectiveUnitPrice(pkg, activePlan) {
+  // Plan-seviyesi kampanya — backend'in verdiği campaignActive'e bağlı, bu
+  // satır checkout'un GERÇEKTEN kampanya fiyatını göndermesini garanti eder.
+  // prepareOrder yine de bağımsız doğruluyor (getAllValidUnitPrices).
+  if (activePlan?.campaignActive) return Number(activePlan.campaignUnitPrice);
   // "Sınava Kadar" gibi bir plan sabit fiyat yerine sınav tarihine göre canlı
   // hesaplanan bir fiyat kullanıyorsa (dynamicExamPrice), ekranda gösterilen
   // ile burada tahsil edilen birebir aynı formülden gelsin diye plan'ın kendi
@@ -371,7 +375,20 @@ export default function CoachingWizardOdeme() {
       }
     } catch (error) {
       const detailedError = error?.response?.data;
-      if (detailedError?.error) {
+      if (detailedError?.code === "CAMPAIGN_EXPIRED") {
+        // Kampanya tam o sırada bitti — sahtekarlık/bug değil, meşru bir
+        // zamanlama durumu. Teknik hata yerine paket verisini (fiyat artık
+        // normale dönmüş haliyle) sessizce yeniden çekip kullanıcıya dostça
+        // bir mesaj veriyoruz; otomatik yeniden ödeme BAŞLATILMIYOR, kullanıcı
+        // güncel fiyatı görüp isterse tekrar "Öde"ye basar.
+        try {
+          const r = await axios.get("/api/packages?all=true");
+          if (r.data.success) setPkg(r.data.packages.find((p) => p.slug === slug) || null);
+        } catch {
+          // yeniden çekme başarısız olsa da aşağıdaki mesaj zaten gösterilecek
+        }
+        alert("Kampanya süresi doldu, fiyat güncellendi. Lütfen tekrar deneyin.");
+      } else if (detailedError?.error) {
         alert(`Sipariş hazırlık hatası: ${detailedError.error}`);
       } else {
         alert("Sipariş hazırlığı sırasında bilinmeyen bir hata oluştu.");
