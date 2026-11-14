@@ -19,6 +19,8 @@ import Footer from "../components/Footer";
 import Testimonials from "../components/Testimonials";
 import { isPromoActive, formatPromoEndDate, isExamPriceActive, getExamPrice, getExamDaysLeft, getExamDailyCost, getExamSavings } from "../utils/promoUtils";
 import { toYouTubeEmbed } from "../utils/youtube";
+import CampaignCountdown from "../components/CampaignCountdown";
+import useCampaignCountdown from "../hooks/useCampaignCountdown";
 
 const BADGE_COLORS = {
   green:  "bg-[#dcfce7] text-[#166534]",
@@ -48,15 +50,20 @@ const PackageDetail = () => {
   const [activePlanIdx, setActivePlanIdx] = useState(0);
   const [video, setVideo] = useState(null);
 
-  useEffect(() => {
+  const refetchPackages = () => {
     axios.get("/api/packages")
       .then((r) => {
         if (r.data.success) setPackages(r.data.packages);
       })
       .catch((err) => console.error("Paketler yüklenemedi:", err));
+  };
+
+  useEffect(() => {
+    refetchPackages();
     axios.get("/api/settings/pricing-video")
       .then((r) => setVideo(r.data))
       .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -73,6 +80,17 @@ const PackageDetail = () => {
   const pkgMap = Object.fromEntries(packages.map((p) => [p.slug, p]));
   const selected = pkgMap[selectedSlug] || pkgMap[defaultSlug] || packages[0];
 
+  // Rules of Hooks: hook'un her render'da çağrılması gerekiyor, aşağıdaki
+  // "if (!selected) return null"'dan ÖNCE — bu yüzden selected henüz
+  // yokken de güvenli olsun diye optional chaining ile hesaplanıyor.
+  const plans = Array.isArray(selected?.plans) ? selected.plans : [];
+  const hasPlanTabs = plans.length > 1;
+  const activePlan = hasPlanTabs ? plans[activePlanIdx] : null;
+  const countdown = useCampaignCountdown({
+    remainingSeconds: activePlan?.campaignActive ? activePlan.remainingSeconds : null,
+    onExpire: refetchPackages,
+  });
+
   if (!selected) return null;
 
   const isSpecialTutoring = selected.type === "tutoring_only" || selected.slug === "ozel-ders-paketi";
@@ -80,10 +98,6 @@ const PackageDetail = () => {
   // PricingSection'daki aynı kural: sadece type "lgs" olan paketler LGS videosunu gösterir.
   const activeVideo = video?.[selected.type === "lgs" ? "lgs" : "yks"];
   const videoEmbedUrl = activeVideo?.enabled && activeVideo?.videoUrl ? toYouTubeEmbed(activeVideo.videoUrl) : null;
-
-  const plans = Array.isArray(selected.plans) ? selected.plans : [];
-  const hasPlanTabs = plans.length > 1;
-  const activePlan = hasPlanTabs ? plans[activePlanIdx] : null;
 
   const handleContinue = () => {
     if (isSpecialTutoring) {
@@ -351,6 +365,11 @@ const PackageDetail = () => {
                   <span className={`inline-block text-xs font-fredoka font-bold px-3 py-1.5 rounded-full mt-2 ${priceBadgeStyle}`}>
                     {priceBadgeText}
                   </span>
+                )}
+                {activePlanCampaign && (
+                  <div className="mt-3">
+                    <CampaignCountdown countdown={countdown} campaignLabel={activePlan.campaignLabel} size="lg" dark />
+                  </div>
                 )}
                 {examActive && (
                   <div className="flex items-center gap-2 mt-2 flex-wrap">

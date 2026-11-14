@@ -20,6 +20,8 @@ import WizardStepBar from "../components/WizardStepBar";
 import WizardUrgencyBanner from "../components/WizardUrgencyBanner";
 import { getStoredVisitorId, getStoredSessionId } from "../components/VisitorTracker";
 import Footer from "../components/Footer";
+import CampaignCountdown from "../components/CampaignCountdown";
+import useCampaignCountdown from "../hooks/useCampaignCountdown";
 
 const WIZARD_STEPS = [{ label: "Alan" }, { label: "Paket" }, { label: "Ödeme" }];
 
@@ -198,24 +200,36 @@ export default function CoachingWizardOdeme() {
       .finally(() => setPkgLoaded(true));
   }, [isLockedFlow, lockedIdentity, navigate]);
 
-  useEffect(() => {
-    if (!slug || isLockedFlow) return;
-    // ?all=true: vitrine kapalı (hidden) paketler de dahil — sınırlı
-    // kontenjanlı/lansman tekliflerinde paket bilinçli olarak "hidden"
-    // tutuluyor (ana vitrinde/paket seçim adımında çıkmasın diye), ama
-    // doğrudan slug ile deep-link verildiğinde burada hâlâ çözülebilmeli.
-    axios.get("/api/packages?all=true")
+  // ?all=true: vitrine kapalı (hidden) paketler de dahil — sınırlı
+  // kontenjanlı/lansman tekliflerinde paket bilinçli olarak "hidden"
+  // tutuluyor (ana vitrinde/paket seçim adımında çıkmasın diye), ama
+  // doğrudan slug ile deep-link verildiğinde burada hâlâ çözülebilmeli.
+  // Üç yerden çağrılır: mount'ta, kampanya sayacının onExpire'ında (sessiz),
+  // ve handleSubmit'in CAMPAIGN_EXPIRED catch'inde (ardından dostça mesaj
+  // gösterilir) — aynı fetch kodu tekrar yazılmasın diye.
+  const refreshPkgPricing = () => {
+    if (!slug) return Promise.resolve();
+    return axios.get("/api/packages?all=true")
       .then((r) => {
         if (r.data.success) {
           setPkg(r.data.packages.find((p) => p.slug === slug) || null);
         }
       })
-      .catch(() => {})
-      .finally(() => setPkgLoaded(true));
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    if (!slug || isLockedFlow) return;
+    refreshPkgPricing().finally(() => setPkgLoaded(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, isLockedFlow]);
 
   const plans = Array.isArray(pkg?.plans) ? pkg.plans : [];
   const activePlan = planIndex !== null && plans[planIndex] ? plans[planIndex] : null;
+  const campaignCountdown = useCampaignCountdown({
+    remainingSeconds: activePlan?.campaignActive ? activePlan.remainingSeconds : null,
+    onExpire: refreshPkgPricing,
+  });
   // Süre planı (sekmeli) seçiliyse o planın billingCycle'ı; paketin hiç süre
   // planı yoksa (tek fiyatlı paket) paketin kendi billingCycle'ı kullanılır.
   const monthlyEligible = isLockedFlow ? false : activePlan ? activePlan.billingCycle === "monthly" : pkg?.billingCycle === "monthly";
@@ -381,12 +395,7 @@ export default function CoachingWizardOdeme() {
         // normale dönmüş haliyle) sessizce yeniden çekip kullanıcıya dostça
         // bir mesaj veriyoruz; otomatik yeniden ödeme BAŞLATILMIYOR, kullanıcı
         // güncel fiyatı görüp isterse tekrar "Öde"ye basar.
-        try {
-          const r = await axios.get("/api/packages?all=true");
-          if (r.data.success) setPkg(r.data.packages.find((p) => p.slug === slug) || null);
-        } catch {
-          // yeniden çekme başarısız olsa da aşağıdaki mesaj zaten gösterilecek
-        }
+        await refreshPkgPricing();
         alert("Kampanya süresi doldu, fiyat güncellendi. Lütfen tekrar deneyin.");
       } else if (detailedError?.error) {
         alert(`Sipariş hazırlık hatası: ${detailedError.error}`);
@@ -811,6 +820,20 @@ export default function CoachingWizardOdeme() {
                     <p className="text-[11px] text-[#94a3b8] text-right">KDV Dahildir</p>
                   )}
                 </div>
+
+                {activePlan?.campaignActive && (
+                  <div className="rounded-xl p-3 border" style={{ background: "#E4F7F8", borderColor: "#19A9B7" }}>
+                    <span className="inline-block font-fredoka font-bold text-[11px] px-2 py-0.5 rounded-full mb-2" style={{ background: "#17252D", color: "#E4F7F8" }}>
+                      {(activePlan.campaignLabel || "KAMPANYA").toUpperCase()} AKTİF
+                    </span>
+                    <CampaignCountdown
+                      countdown={campaignCountdown}
+                      campaignLabel={activePlan.campaignLabel}
+                      label="Bu fiyatın bitmesine"
+                      size="sm"
+                    />
+                  </div>
+                )}
 
                 {pkg?.noRefund ? (
                   // Bu paket için iade/cayma hakkı yok (ör. kısa süreli dijital

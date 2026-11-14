@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import axios from "../utils/axios";
 import CountdownPricingBanner from "./CountdownPricingBanner";
+import CampaignCountdown from "./CampaignCountdown";
+import useCampaignCountdown from "../hooks/useCampaignCountdown";
 import { toYouTubeEmbed } from "../utils/youtube";
 import {
   isPromoActive,
@@ -85,7 +87,14 @@ function durationNote(_pkg, activePlan) {
   return null;
 }
 
-function PriceDisplay({ pkg, activePlan }) {
+function PriceDisplay({ pkg, activePlan, onCampaignExpire }) {
+  // Hook, Rules of Hooks uyumu için koşulsuz en üstte çağrılıyor — kampanya
+  // aktif değilken remainingSeconds null geçiliyor, hook da null döndürüyor.
+  const countdown = useCampaignCountdown({
+    remainingSeconds: activePlan?.campaignActive ? activePlan.remainingSeconds : null,
+    onExpire: onCampaignExpire,
+  });
+
   if (!pkg) return null;
 
   if (activePlan) {
@@ -109,6 +118,9 @@ function PriceDisplay({ pkg, activePlan }) {
             {activePlan.campaignLabel || "Kampanya"}
             {savingsTL > 0 ? ` · ${savingsTL.toLocaleString("tr-TR")} TL avantaj` : ""}
           </span>
+          <div className="mt-3">
+            <CampaignCountdown countdown={countdown} campaignLabel={activePlan.campaignLabel} size="md" />
+          </div>
         </div>
       );
     }
@@ -185,7 +197,7 @@ function PriceDisplay({ pkg, activePlan }) {
   );
 }
 
-function PackageCard({ pkg, index }) {
+function PackageCard({ pkg, index, onCampaignExpire }) {
   const [activePlanIdx, setActivePlanIdx] = useState(0);
   const [expanded, setExpanded] = useState(false);
 
@@ -277,7 +289,7 @@ function PackageCard({ pkg, index }) {
         </div>
       )}
 
-      <PriceDisplay pkg={pkg} activePlan={activePlan} />
+      <PriceDisplay pkg={pkg} activePlan={activePlan} onCampaignExpire={onCampaignExpire} />
 
       {planBadgeStyle && (
         <span
@@ -353,10 +365,20 @@ function PackageCard({ pkg, index }) {
   );
 }
 
-export default function PricingSection({ packages: packagesProp }) {
+export default function PricingSection({ packages: packagesProp, onPackagesRefetch }) {
   const [tab, setTab] = useState("yks");
   const [ownPackages, setOwnPackages] = useState([]);
   const [video, setVideo] = useState(null);
+
+  // Tek URL kaynağı: paylaşılan axios instance (bkz. utils/axios.js) —
+  // önceden burada process.env.REACT_APP_API_URL ile ham fetch kullanılıyordu,
+  // repo'da bu env var'ı tanımlayan bir .env olmadığından yerel geliştirmede
+  // sessizce başarısız oluyordu.
+  const refetchOwnPackages = () => {
+    axios.get("/api/packages")
+      .then((r) => { if (r.data.success) setOwnPackages(r.data.packages); })
+      .catch(() => {});
+  };
 
   // packages prop verildiyse (HomePage.jsx kendi fetch'ini yukarı çekip
   // HomepageCampaignBanner ile paylaşıyorsa) kendi isteğini ATMA — tek
@@ -364,14 +386,15 @@ export default function PricingSection({ packages: packagesProp }) {
   // kullanılırsa) geriye dönük uyumlu olarak kendi içinde fetch eder.
   useEffect(() => {
     if (packagesProp) return;
-    // Tek URL kaynağı: paylaşılan axios instance (bkz. utils/axios.js) —
-    // önceden burada process.env.REACT_APP_API_URL ile ham fetch kullanılıyordu,
-    // repo'da bu env var'ı tanımlayan bir .env olmadığından yerel geliştirmede
-    // sessizce başarısız oluyordu.
-    axios.get("/api/packages")
-      .then((r) => { if (r.data.success) setOwnPackages(r.data.packages); })
-      .catch(() => {});
+    refetchOwnPackages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [packagesProp]);
+
+  // Kampanya sayacı 0'a inince ya da tab uzun süre arka planda kaldıktan
+  // sonra geri gelince çağrılır — packages prop'tan geliyorsa üst sayfanın
+  // (HomePage) KENDİ fetch fonksiyonunu tetikler (tek /api/packages isteği
+  // ilkesi burada da korunur), yoksa kendi iç refetch'ine düşer.
+  const refetchPackages = onPackagesRefetch || refetchOwnPackages;
 
   useEffect(() => {
     axios.get("/api/settings/pricing-video")
@@ -484,7 +507,7 @@ export default function PricingSection({ packages: packagesProp }) {
             {visible.length > 0 ? (
               <div className="pkg-grid">
                 {visible.map((pkg, i) => (
-                  <PackageCard key={pkg.slug} pkg={pkg} index={i} />
+                  <PackageCard key={pkg.slug} pkg={pkg} index={i} onCampaignExpire={refetchPackages} />
                 ))}
               </div>
             ) : (

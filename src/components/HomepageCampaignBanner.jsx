@@ -4,22 +4,40 @@ import useCampaignCountdown from "../hooks/useCampaignCountdown";
 
 const TARGET_SLUG = "yks-kocluk-paketi";
 
-const pad2 = (n) => String(n).padStart(2, "0");
+// "21 Kasım 23:59'a kadar" — İstanbul saatiyle, admin'in girdiği
+// campaignEndsAt'ten (UTC ISO) türetilir, hardcode tarih YOK.
+const endDateFormatter = new Intl.DateTimeFormat("tr-TR", {
+  timeZone: "Europe/Istanbul",
+  day: "numeric",
+  month: "long",
+  hour: "2-digit",
+  minute: "2-digit",
+});
 
 // "Kasım İndirimi" ve benzeri gelecekteki plan-seviyesi kampanyalar için
 // vitrin üstü şerit. packages prop'u PricingSection ile AYNI /api/packages
 // fetch'ini paylaşır (HomePage.jsx'te lifted) — ikinci bir istek atılmaz.
 // Aktiflik kararı SADECE backend'in verdiği plans[0].campaignActive'e
 // bağlıdır, burada hiçbir Date.now() karşılaştırması yapılmaz.
+//
+// UX kararı: PricingSection'daki paket kartı ZATEN canlı saniye-saniye
+// sayaç gösteriyor — aynı viewport'ta ikinci bir tikleyen sayaç tekrarcı
+// olur. Bu yüzden banner sadece statik bitiş tarihini gösterir; hook yine
+// de kullanılır ama SADECE süre dolunca otomatik kaybolmayı (onExpire)
+// sağlamak için — görsel rakam kutuları YOK.
 export default function HomepageCampaignBanner({ packages, onCampaignExpire }) {
   const pkg = Array.isArray(packages) ? packages.find((p) => p.slug === TARGET_SLUG) : null;
   const plan = pkg?.plans?.[0];
-  const countdown = useCampaignCountdown(plan?.campaignActive ? plan.remainingSeconds : null, onCampaignExpire);
+  useCampaignCountdown({
+    remainingSeconds: plan?.campaignActive ? plan.remainingSeconds : null,
+    onExpire: onCampaignExpire,
+  });
 
   if (!plan?.campaignActive) return null;
 
   const oldPriceTL = plan.unitPrice != null ? Math.round(plan.unitPrice / 100) : null;
   const newPriceTL = Math.round(plan.campaignUnitPrice / 100);
+  const endDateText = plan.campaignEndsAt ? endDateFormatter.format(new Date(plan.campaignEndsAt)) : null;
 
   return (
     <div
@@ -35,10 +53,9 @@ export default function HomepageCampaignBanner({ packages, onCampaignExpire }) {
         <span style={{ color: "#19A9B7" }}>{newPriceTL.toLocaleString("tr-TR")}₺</span>
       </span>
 
-      {countdown && (
-        <span className="font-nunito font-bold text-[12px] tabular-nums" style={{ color: "#F7F7F2", opacity: 0.85 }}>
-          {countdown.days > 0 ? `${countdown.days}g ` : ""}
-          {pad2(countdown.hours)}:{pad2(countdown.minutes)}:{pad2(countdown.seconds)} kaldı
+      {endDateText && (
+        <span className="font-nunito font-bold text-[12px]" style={{ color: "#F7F7F2", opacity: 0.85 }}>
+          {endDateText}'a kadar
         </span>
       )}
 

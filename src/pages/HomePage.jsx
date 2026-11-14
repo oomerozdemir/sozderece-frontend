@@ -1057,7 +1057,7 @@ export default function HomePage() {
       <Navbar />
       <DiscountPopup />
       <HeroSection />
-      <PricingSection packages={packages} />
+      <PricingSection packages={packages} onPackagesRefetch={fetchPackages} />
       <WhyDifferentSection />
       <HowItWorksSection />
       <TestimonialsSection />

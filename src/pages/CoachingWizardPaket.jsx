@@ -15,6 +15,8 @@ import {
   getExamPrice,
   getExamDaysLeft,
 } from "../utils/promoUtils";
+import CampaignCountdown from "../components/CampaignCountdown";
+import useCampaignCountdown from "../hooks/useCampaignCountdown";
 
 const WIZARD_STEPS = [{ label: "Alan" }, { label: "Paket" }, { label: "Ödeme" }];
 
@@ -27,7 +29,13 @@ const fadeUp = {
 // PricingSection.jsx'teki PriceDisplay ile aynı iş mantığı (promo/sınav/plan
 // önceliklendirmesi), sadece açık zeminli sihirbaz kartına göre yeniden
 // biçimlendirildi. PricingSection'ın kendisine dokunulmuyor.
-function PackagePrice({ pkg, activePlan }) {
+function PackagePrice({ pkg, activePlan, onCampaignExpire }) {
+  // Hook koşulsuz en üstte (Rules of Hooks) — kampanya aktif değilken null.
+  const countdown = useCampaignCountdown({
+    remainingSeconds: activePlan?.campaignActive ? activePlan.remainingSeconds : null,
+    onExpire: onCampaignExpire,
+  });
+
   // Plan-seviyesi kampanya — PricingSection.jsx#PriceDisplay ile AYNI mantık:
   // aktiflik kararı sadece activePlan.campaignActive'e bağlı (backend'den
   // geliyor), burada Date.now() hesabı yapılmıyor.
@@ -59,6 +67,9 @@ function PackagePrice({ pkg, activePlan }) {
         >
           {activePlan.campaignLabel || "Kampanya"}
         </span>
+        <div className="mt-3">
+          <CampaignCountdown countdown={countdown} campaignLabel={activePlan.campaignLabel} size="md" />
+        </div>
       </div>
     );
   }
@@ -217,13 +228,18 @@ export default function CoachingWizardPaket() {
     }
   }, [alan, navigate]);
 
-  useEffect(() => {
+  const refetchPackages = () => {
     axios.get("/api/packages")
       .then((r) => {
         if (r.data.success) setPackages(r.data.packages || []);
       })
       .catch(() => {})
       .finally(() => setLoaded(true));
+  };
+
+  useEffect(() => {
+    refetchPackages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const yksPackages = packages.filter((p) => p.type !== "lgs");
@@ -365,7 +381,7 @@ export default function CoachingWizardPaket() {
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.25 }}
                 >
-                  <PackagePrice pkg={selected} activePlan={activePlan} />
+                  <PackagePrice pkg={selected} activePlan={activePlan} onCampaignExpire={refetchPackages} />
                 </motion.div>
               </AnimatePresence>
               <p className="font-nunito text-xs mt-1 text-[#94a3b8]">KDV Dahildir</p>
