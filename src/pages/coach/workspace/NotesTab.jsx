@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaExclamationTriangle, FaMicrophone, FaStop, FaPaperPlane, FaVolumeUp, FaTrash } from "react-icons/fa";
 import axios from "../../../utils/axios";
+import usePanelAccess from "./PanelAccessContext";
 
 const inputCls =
   "w-full py-2.5 px-3 border border-[#e2e8f0] rounded-lg text-sm bg-white outline-none focus:border-page-navy transition-colors";
@@ -18,6 +19,7 @@ const isTodayIso = (iso) => {
 export default function NotesTab({ student }) {
   const token = useMemo(() => localStorage.getItem("token"), []);
   const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
+  const { apiPrefix } = usePanelAccess();
 
   const [noteHistory, setNoteHistory] = useState([]);
   const [noteHistoryLoading, setNoteHistoryLoading] = useState(false);
@@ -35,7 +37,7 @@ export default function NotesTab({ student }) {
   const loadNoteHistory = () => {
     setNoteHistoryLoading(true);
     axios
-      .get(`/api/coach/students/${student.id}/notes`, authHeaders)
+      .get(`/api/${apiPrefix}/students/${student.id}/notes`, authHeaders)
       .then((res) => setNoteHistory(res.data?.notes || []))
       .catch(() => {})
       .finally(() => setNoteHistoryLoading(false));
@@ -53,7 +55,7 @@ export default function NotesTab({ student }) {
     setNoteSending(true);
     setNoteMsg("");
     try {
-      await axios.post(`/api/coach/students/${student.id}/notes/text`, { text: noteText.trim() }, authHeaders);
+      await axios.post(`/api/${apiPrefix}/students/${student.id}/notes/text`, { text: noteText.trim() }, authHeaders);
       setNoteText("");
       setNoteMsg("Not gönderildi ✓");
       loadNoteHistory();
@@ -106,7 +108,7 @@ export default function NotesTab({ student }) {
     try {
       const form = new FormData();
       form.append("audio", recBlobRef.current, "note.webm");
-      await axios.post(`/api/coach/students/${student.id}/notes/audio`, form, authHeaders);
+      await axios.post(`/api/${apiPrefix}/students/${student.id}/notes/audio`, form, authHeaders);
       discardRecording();
       setNoteMsg("Sesli not gönderildi ✓");
       loadNoteHistory();

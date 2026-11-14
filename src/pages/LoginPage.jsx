@@ -41,6 +41,7 @@ const LoginPage = () => {
       if (t && isTokenValid(t)) {
         const role = getRoleFromToken(t);
         if (role === "admin") navigate("/admin", { replace: true });
+        else if (role === "head_coach") navigate("/head-coach/dashboard", { replace: true });
         else if (role === "coach") navigate("/coach/dashboard", { replace: true });
         else navigate("/student/dashboard", { replace: true });
         return;
@@ -73,6 +74,7 @@ const LoginPage = () => {
       localStorage.setItem("userName", res.data.user.name);
         const role = res.data.user.role;
         if (role === "admin") navigate("/admin", { replace: true });
+        else if (role === "head_coach") navigate("/head-coach/dashboard", { replace: true });
         else if (role === "coach") navigate("/coach/dashboard", { replace: true });
         else navigate("/student/dashboard", { replace: true });
       } else {
@@ -137,6 +139,7 @@ const LoginPage = () => {
 
       const role = getRoleFromToken(token) || (user?.role || "student").toLowerCase();
       if (role === "admin") navigate("/admin", { replace: true });
+      else if (role === "head_coach") navigate("/head-coach/dashboard", { replace: true });
       else if (role === "coach") navigate("/coach/dashboard", { replace: true });
       else navigate("/student/dashboard", { replace: true });
     } catch (e) {

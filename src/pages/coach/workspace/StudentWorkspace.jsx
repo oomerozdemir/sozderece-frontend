@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import useStudentContext from "./useStudentContext";
+import { PanelAccessProvider } from "./PanelAccessContext";
 import StreakBadge from "../../panel/StreakBadge";
 import OverviewTab from "./OverviewTab";
 import ProgramTab from "./ProgramTab";
@@ -23,9 +24,21 @@ const TABS = [
 // StudentPanelEditor.jsx modalının (silindi) yerini alan tam sayfa yapı
 // (bkz. plan: "Koç Paneli UX Refactor"). CoachDashboard.jsx'in "Öğrenciye
 // Git" CTA'sı buraya yönlendiriyor.
-export default function StudentWorkspace() {
+//
+// Ana Koç (head_coach) için BİREBİR AYNI component /head-coach/students/:id
+// altında da render edilir (App.jsx) — tek fark bu prop'lar: hangi API
+// prefix'i kullanılacağı ve hangi WRITE aksiyonların görünür olacağı (bkz.
+// implementasyon planı K6/K9 — deneme sonucu girme/SOS çözme/kaynak
+// yönetimi/AI program-görseli V1'de head_coach'a kapalı).
+export default function StudentWorkspace({
+  apiPrefix = "coach",
+  backTo = "/coach/dashboard",
+  canAddExamResult = true,
+  canManageResources = true,
+  canImportProgramImage = true,
+}) {
   const navigate = useNavigate();
-  const { student, loading, notFound } = useStudentContext();
+  const { student, loading, notFound } = useStudentContext(apiPrefix);
   const [tab, setTab] = useState("overview");
   const [programDirty, setProgramDirty] = useState(false);
 
@@ -40,7 +53,7 @@ export default function StudentWorkspace() {
     proceed();
   };
 
-  const goBackToList = () => guardNavigation(() => navigate("/coach/dashboard"));
+  const goBackToList = () => guardNavigation(() => navigate(backTo));
   const switchTab = (key) => guardNavigation(() => setTab(key));
 
   if (loading) {
@@ -106,14 +119,16 @@ export default function StudentWorkspace() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-5 py-6">
-        {tab === "overview" && <OverviewTab student={student} />}
-        {tab === "program" && <ProgramTab student={student} onDirtyChange={setProgramDirty} />}
-        {tab === "exams" && <ExamsTab student={student} />}
-        {tab === "tracking" && <TrackingTab student={student} />}
-        {tab === "resources" && <ResourcesTab student={student} />}
-        {tab === "notes" && <NotesTab student={student} />}
-      </div>
+      <PanelAccessProvider value={{ apiPrefix, backTo, canAddExamResult, canManageResources, canImportProgramImage }}>
+        <div className="max-w-5xl mx-auto px-5 py-6">
+          {tab === "overview" && <OverviewTab student={student} />}
+          {tab === "program" && <ProgramTab student={student} onDirtyChange={setProgramDirty} />}
+          {tab === "exams" && <ExamsTab student={student} />}
+          {tab === "tracking" && <TrackingTab student={student} />}
+          {tab === "resources" && <ResourcesTab student={student} />}
+          {tab === "notes" && <NotesTab student={student} />}
+        </div>
+      </PanelAccessProvider>
     </div>
   );
 }

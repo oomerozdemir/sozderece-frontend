@@ -3,6 +3,7 @@ import { FaExclamationTriangle } from "react-icons/fa";
 import axios from "../../../utils/axios";
 import { MASTERY_META } from "./statusMeta";
 import AiQuestionInsightsCard from "./AiQuestionInsightsCard";
+import usePanelAccess from "./PanelAccessContext";
 
 const SUB_TABS = [
   { key: "history", label: "Tarihçe" },
@@ -17,6 +18,7 @@ const SUB_TABS = [
 export default function TrackingTab({ student }) {
   const token = useMemo(() => localStorage.getItem("token"), []);
   const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
+  const { apiPrefix } = usePanelAccess();
   const [subTab, setSubTab] = useState("history");
   const [fetched, setFetched] = useState({ history: false, insights: false, mastery: false });
 
@@ -40,7 +42,7 @@ export default function TrackingTab({ student }) {
     if (subTab === "history" && !fetched.history) {
       setHistoryLoading(true);
       axios
-        .get(`/api/coach/students/${student.id}/day-reports`, authHeaders)
+        .get(`/api/${apiPrefix}/students/${student.id}/day-reports`, authHeaders)
         .then((res) => setDayReports(res.data?.reports || []))
         .catch(() => {})
         .finally(() => setHistoryLoading(false));
@@ -49,13 +51,13 @@ export default function TrackingTab({ student }) {
     if (subTab === "insights" && !fetched.insights) {
       setInsightsLoading(true);
       axios
-        .get(`/api/coach/students/${student.id}/insights`, authHeaders)
+        .get(`/api/${apiPrefix}/students/${student.id}/insights`, authHeaders)
         .then((res) => setInsights(res.data?.insights || []))
         .catch(() => {})
         .finally(() => setInsightsLoading(false));
       setAiQuestionInsightsLoading(true);
       axios
-        .get(`/api/coach/students/${student.id}/ai-question-insights`, authHeaders)
+        .get(`/api/${apiPrefix}/students/${student.id}/ai-question-insights`, authHeaders)
         .then((res) => setAiQuestionInsights(res.data))
         .catch(() => {})
         .finally(() => setAiQuestionInsightsLoading(false));
@@ -64,7 +66,7 @@ export default function TrackingTab({ student }) {
     if (subTab === "mastery" && !fetched.mastery) {
       setMasteryLoading(true);
       axios
-        .get(`/api/coach/students/${student.id}/mastery`, authHeaders)
+        .get(`/api/${apiPrefix}/students/${student.id}/mastery`, authHeaders)
         .then((res) => setMasteryTopics(res.data?.topics || []))
         .catch(() => {})
         .finally(() => setMasteryLoading(false));
@@ -76,7 +78,7 @@ export default function TrackingTab({ student }) {
   const addInsightToPlan = async (topicId) => {
     setAddingInsightId(topicId);
     try {
-      await axios.post(`/api/coach/students/${student.id}/insights/${topicId}/add-to-plan`, {}, authHeaders);
+      await axios.post(`/api/${apiPrefix}/students/${student.id}/insights/${topicId}/add-to-plan`, {}, authHeaders);
       setAddedInsightIds((prev) => [...prev, topicId]);
     } catch {
       // sessizce yut

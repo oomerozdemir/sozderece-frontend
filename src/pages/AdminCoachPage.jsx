@@ -8,6 +8,7 @@ const inputCls =
 const AdminCoachPage = () => {
   const [coaches, setCoaches] = useState([]);
   const [students, setStudents] = useState([]);
+  const [headCoaches, setHeadCoaches] = useState([]);
   const [editingCoach, setEditingCoach] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -15,6 +16,7 @@ const AdminCoachPage = () => {
     subject: "",
     description: "",
     imageFile: null,
+    headCoachUserId: "",
   });
   const [assigningCoach, setAssigningCoach] = useState(null);
   const [selectedStudentId, setSelectedStudentId] = useState("");
@@ -37,8 +39,10 @@ const AdminCoachPage = () => {
       const res = await axios.get("/api/admin/users", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const studentList = res.data.filter((user) => user.role === "student");
-      setStudents(studentList);
+      setStudents(res.data.filter((user) => user.role === "student"));
+      // Ana Koç dropdown'u için — ayrı bir backend endpoint'i gerekmiyor,
+      // zaten çekilen tüm kullanıcı listesinden client-side filtreleniyor.
+      setHeadCoaches(res.data.filter((user) => user.role === "head_coach"));
     } catch (err) {
       console.error("Öğrenci listesi alınamadı:", err);
     }
@@ -62,6 +66,10 @@ const AdminCoachPage = () => {
       if (formData.imageFile) {
         data.append("image", formData.imageFile);
       }
+      if (editingCoach) {
+        // "" (Yok seçili) backend'de headCoachUserId'yi null'a çeker.
+        data.append("headCoachUserId", formData.headCoachUserId || "");
+      }
 
       if (editingCoach) {
         await axios.put(`/api/admin/coaches/${editingCoach.id}`, data, {
@@ -81,7 +89,7 @@ const AdminCoachPage = () => {
         alert("Koç başarıyla oluşturuldu, giriş bilgileri e-postayla gönderildi.");
       }
 
-      setFormData({ name: "", email: "", subject: "", description: "", imageFile: null });
+      setFormData({ name: "", email: "", subject: "", description: "", imageFile: null, headCoachUserId: "" });
       setEditingCoach(null);
       fetchCoaches();
     } catch (err) {
@@ -98,6 +106,7 @@ const AdminCoachPage = () => {
       subject: coach.subject,
       description: coach.description,
       imageFile: null,
+      headCoachUserId: coach.headCoach?.id ? String(coach.headCoach.id) : "",
     });
   };
 
@@ -189,6 +198,21 @@ const AdminCoachPage = () => {
           onChange={(e) => setFormData({ ...formData, imageFile: e.target.files[0] })}
           className={inputCls}
         />
+        {editingCoach && (
+          <div>
+            <label className="block text-xs font-bold text-[#475569] mb-1.5">Ana Koç</label>
+            <select
+              className={inputCls}
+              value={formData.headCoachUserId}
+              onChange={(e) => setFormData({ ...formData, headCoachUserId: e.target.value })}
+            >
+              <option value="">— Yok —</option>
+              {headCoaches.map((hc) => (
+                <option key={hc.id} value={hc.id}>{hc.name}</option>
+              ))}
+            </select>
+          </div>
+        )}
         {!editingCoach && (
           <p className="text-xs text-[#64748b]">
             Kaydedince rastgele bir geçici şifre üretilip koçun e-postasına gönderilecek.
@@ -204,7 +228,7 @@ const AdminCoachPage = () => {
               variant="neutral"
               onClick={() => {
                 setEditingCoach(null);
-                setFormData({ name: "", email: "", subject: "", description: "", imageFile: null });
+                setFormData({ name: "", email: "", subject: "", description: "", imageFile: null, headCoachUserId: "" });
               }}
             >
               İptal

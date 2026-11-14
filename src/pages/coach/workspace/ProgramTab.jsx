@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FaPen, FaTrash, FaCheck } from "react-icons/fa";
 import axios from "../../../utils/axios";
 import ProgramImportPanel from "./ProgramImportPanel";
+import usePanelAccess from "./PanelAccessContext";
 
 const DAY_OPTIONS = [
   { value: 0, label: "Pazartesi" },
@@ -35,6 +36,7 @@ const isIncompleteRow = (r) => !isBlankRow(r) && (!r.subject?.trim() || r.dayOfW
 export default function ProgramTab({ student, onDirtyChange }) {
   const token = useMemo(() => localStorage.getItem("token"), []);
   const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
+  const { apiPrefix, canImportProgramImage } = usePanelAccess();
 
   const [weekStart, setWeekStart] = useState(() => toMonday(new Date()));
   const [planTitle, setPlanTitle] = useState("");
@@ -55,7 +57,7 @@ export default function ProgramTab({ student, onDirtyChange }) {
   const loadPlan = () => {
     setLoading(true);
     axios
-      .get(`/api/coach/students/${student.id}/study-plan`, { ...authHeaders, params: { weekStart: toISO(weekStart) } })
+      .get(`/api/${apiPrefix}/students/${student.id}/study-plan`, { ...authHeaders, params: { weekStart: toISO(weekStart) } })
       .then((res) => {
         const plan = res.data?.plan;
         if (plan) {
@@ -134,7 +136,7 @@ export default function ProgramTab({ student, onDirtyChange }) {
     setMsg("");
     setMsgError(false);
     try {
-      await axios.post(`/api/coach/students/${student.id}/study-plan`, { weekStart: toISO(weekStart), title: planTitle, items: validRows }, authHeaders);
+      await axios.post(`/api/${apiPrefix}/students/${student.id}/study-plan`, { weekStart: toISO(weekStart), title: planTitle, items: validRows }, authHeaders);
       setMsg("Program kaydedildi ✓");
       setDirty(false);
       setImportBanner(0);
@@ -188,9 +190,11 @@ export default function ProgramTab({ student, onDirtyChange }) {
           <span className="text-xs font-bold text-[#475569]">Hafta: {toISO(weekStart)}</span>
           <button onClick={() => goToWeek(1)} className="text-xs font-bold text-page-navy px-2 py-1">Sonraki Hafta ›</button>
         </div>
-        <button onClick={() => setDrawerOpen(true)} className="text-xs font-black text-white bg-brand-navy px-4 py-2.5 rounded-full">
-          ✨ AI ile Program Aktar
-        </button>
+        {canImportProgramImage && (
+          <button onClick={() => setDrawerOpen(true)} className="text-xs font-black text-white bg-brand-navy px-4 py-2.5 rounded-full">
+            ✨ AI ile Program Aktar
+          </button>
+        )}
       </div>
 
       <input className={inputCls} placeholder="Program başlığı (opsiyonel, ör. 12. Hafta)" value={planTitle} onChange={(e) => { setPlanTitle(e.target.value); setDirty(true); }} />

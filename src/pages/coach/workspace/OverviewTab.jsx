@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FaBrain, FaClock } from "react-icons/fa";
 import axios from "../../../utils/axios";
 import { STATUS_META } from "./statusMeta";
+import usePanelAccess from "./PanelAccessContext";
 
 // Genel Bakış — operasyon odaklı, büyük bir CRM ekranı değil (bkz. plan §2).
 // İçerik önceliği: 1) bugünkü durum (durum pili + streak, workspace header'ında
@@ -11,6 +12,7 @@ import { STATUS_META } from "./statusMeta";
 export default function OverviewTab({ student }) {
   const token = useMemo(() => localStorage.getItem("token"), []);
   const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
+  const { apiPrefix } = usePanelAccess();
 
   const [todayItems, setTodayItems] = useState([]);
   const [actualStudyMinutesToday, setActualStudyMinutesToday] = useState(0);
@@ -19,7 +21,7 @@ export default function OverviewTab({ student }) {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`/api/coach/students/${student.id}/today`, authHeaders)
+      .get(`/api/${apiPrefix}/students/${student.id}/today`, authHeaders)
       .then((res) => {
         setTodayItems(res.data?.items || []);
         setActualStudyMinutesToday(res.data?.actualStudyMinutesToday || 0);
@@ -27,7 +29,7 @@ export default function OverviewTab({ student }) {
       .catch(() => {})
       .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [student.id]);
+  }, [student.id, apiPrefix]);
 
   const latestOrder = student.orders?.[0];
 

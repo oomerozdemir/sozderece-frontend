@@ -40,9 +40,10 @@ ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 const MONTH_LABELS = ["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"];
 
 const ROLE_META = {
-  admin:   { label: "Admin",    bg: "bg-[#fef2f2]", text: "text-[#991b1b]",  dot: "bg-[#ef4444]" },
-  coach:   { label: "Koç",      bg: "bg-[#ecfdf5]", text: "text-[#065f46]",  dot: "bg-[#10b981]" },
-  student: { label: "Öğrenci",  bg: "bg-[#eff6ff]", text: "text-[#1d4ed8]",  dot: "bg-[#3b82f6]" },
+  admin:      { label: "Admin",    bg: "bg-[#fef2f2]", text: "text-[#991b1b]",  dot: "bg-[#ef4444]" },
+  head_coach: { label: "Ana Koç",  bg: "bg-[#fff7ed]", text: "text-[#c2410c]",  dot: "bg-[#f97316]" },
+  coach:      { label: "Koç",      bg: "bg-[#ecfdf5]", text: "text-[#065f46]",  dot: "bg-[#10b981]" },
+  student:    { label: "Öğrenci",  bg: "bg-[#eff6ff]", text: "text-[#1d4ed8]",  dot: "bg-[#3b82f6]" },
 };
 
 const RoleBadge = ({ role }) => {
@@ -1260,6 +1261,7 @@ const AdminDashboard = () => {
                     <option value="all">Tüm Roller</option>
                     <option value="student">Öğrenci</option>
                     <option value="coach">Koç</option>
+                    <option value="head_coach">Ana Koç</option>
                     <option value="admin">Admin</option>
                   </select>
                 </div>
@@ -1312,6 +1314,7 @@ const AdminDashboard = () => {
                 <input className={inputCls} placeholder="Şifre" type="password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
                 <select className={inputCls} value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
                   <option value="student">Öğrenci</option>
+                  <option value="head_coach">Ana Koç</option>
                   <option value="admin">Admin</option>
                 </select>
                 <div className="col-span-2 max-[640px]:col-span-1">
@@ -1375,6 +1378,7 @@ const AdminDashboard = () => {
                 <select className={inputCls} value={editingUser?.role} onChange={(e) => updateUserField("role", e.target.value)}>
                   <option value="student">Öğrenci</option>
                   <option value="coach">Koç</option>
+                  <option value="head_coach">Ana Koç</option>
                   <option value="admin">Admin</option>
                 </select>
               </div>

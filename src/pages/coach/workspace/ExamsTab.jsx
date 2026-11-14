@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { FaPlus, FaTrash, FaBolt } from "react-icons/fa";
 import axios from "../../../utils/axios";
+import usePanelAccess from "./PanelAccessContext";
 
 const DIFFICULTY_REASON_LABELS = {
   bilgi_eksikligi: "Bilgi eksikliği", sure_yetmedi: "Süre yetişmedi", dikkat_hatasi: "Dikkat hatası",
@@ -22,6 +23,7 @@ const inputCls =
 export default function ExamsTab({ student }) {
   const token = useMemo(() => localStorage.getItem("token"), []);
   const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
+  const { apiPrefix, canAddExamResult } = usePanelAccess();
 
   const [examDate, setExamDate] = useState("");
   const [examName, setExamName] = useState("");
@@ -38,7 +40,7 @@ export default function ExamsTab({ student }) {
 
   const loadExams = () => {
     axios
-      .get(`/api/coach/students/${student.id}/exam-results`, authHeaders)
+      .get(`/api/${apiPrefix}/students/${student.id}/exam-results`, authHeaders)
       .then((res) => setPastExams(res.data?.results || []))
       .catch(() => {});
   };
@@ -46,11 +48,11 @@ export default function ExamsTab({ student }) {
   useEffect(() => {
     loadExams();
     axios
-      .get(`/api/coach/students/${student.id}/topics`, authHeaders)
+      .get(`/api/${apiPrefix}/students/${student.id}/topics`, authHeaders)
       .then((res) => setTopics(res.data?.topics || []))
       .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [student.id]);
+  }, [student.id, apiPrefix]);
 
   const updateSubjectNet = (i, field, value) => setSubjectNets((prev) => prev.map((s, idx) => (idx === i ? { ...s, [field]: value } : s)));
   const addSubjectNet = () => setSubjectNets((prev) => [...prev, { subject: "", net: "", wrongTopicIds: [] }]);
@@ -83,7 +85,7 @@ export default function ExamsTab({ student }) {
     setExamMsg("");
     try {
       await axios.post(
-        `/api/coach/students/${student.id}/exam-results`,
+        `/api/${apiPrefix}/students/${student.id}/exam-results`,
         {
           examDate,
           examName,
@@ -110,6 +112,8 @@ export default function ExamsTab({ student }) {
 
   return (
     <div className="bg-white rounded-2xl border border-[#f1f5f9] p-5 space-y-4">
+      {canAddExamResult && (
+      <>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <input className={inputCls} type="date" value={examDate} onChange={(e) => setExamDate(e.target.value)} />
         <select className={inputCls} value={examType} onChange={(e) => setExamType(e.target.value)}>
@@ -177,6 +181,8 @@ export default function ExamsTab({ student }) {
       <button onClick={saveExam} disabled={examSaving} className="w-full py-3 bg-brand-navy text-white rounded-xl text-sm font-black disabled:opacity-60">
         {examSaving ? "Kaydediliyor…" : "Deneme Sonucunu Ekle"}
       </button>
+      </>
+      )}
 
       {pastExams.length > 0 && (
         <div className="pt-3 border-t border-[#f1f5f9]">

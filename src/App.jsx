@@ -19,6 +19,10 @@ const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
 const CoachDashboard = lazy(() => import("./pages/CoachDashboard"));
 const StudentWorkspace = lazy(() => import("./pages/coach/workspace/StudentWorkspace"));
+const HeadCoachDashboard = lazy(() => import("./pages/headCoach/HeadCoachDashboard"));
+const HeadCoachCoachesList = lazy(() => import("./pages/headCoach/CoachesList"));
+const HeadCoachCoachDetail = lazy(() => import("./pages/headCoach/CoachDetail"));
+const HeadCoachStudentsList = lazy(() => import("./pages/headCoach/StudentsList"));
 const StudentDashboard = lazy(() => import("./pages/StudentDashboard"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
@@ -134,6 +138,28 @@ function App() {
             {/* Korunan sayfalar */}
             <Route path="/coach/dashboard" element={<RoleRoute allowedRoles={["coach"]}><CoachDashboard /></RoleRoute>} />
             <Route path="/coach/students/:studentId" element={<RoleRoute allowedRoles={["coach"]}><StudentWorkspace /></RoleRoute>} />
+
+            {/* ANA KOÇ (head_coach) — V1 kapsamı: Genel Bakış/Koçlarım/Öğrenciler +
+                öğrenci workspace'i (StudentWorkspace reuse, apiPrefix="head-coach").
+                Ayrı "Atamalar"/"Takip" sayfası YOK (plan V1 sadeleştirmesi). */}
+            <Route path="/head-coach/dashboard" element={<RoleRoute allowedRoles={["head_coach"]}><HeadCoachDashboard /></RoleRoute>} />
+            <Route path="/head-coach/coaches" element={<RoleRoute allowedRoles={["head_coach"]}><HeadCoachCoachesList /></RoleRoute>} />
+            <Route path="/head-coach/coaches/:coachId" element={<RoleRoute allowedRoles={["head_coach"]}><HeadCoachCoachDetail /></RoleRoute>} />
+            <Route path="/head-coach/students" element={<RoleRoute allowedRoles={["head_coach"]}><HeadCoachStudentsList /></RoleRoute>} />
+            <Route
+              path="/head-coach/students/:studentId"
+              element={
+                <RoleRoute allowedRoles={["head_coach"]}>
+                  <StudentWorkspace
+                    apiPrefix="head-coach"
+                    backTo="/head-coach/students"
+                    canAddExamResult={false}
+                    canManageResources={false}
+                    canImportProgramImage={false}
+                  />
+                </RoleRoute>
+              }
+            />
             <Route path="/student/dashboard" element={<RoleRoute allowedRoles={["student"]}><StudentDashboard /></RoleRoute>} />
             {/* Satın alma sonrası onboarding — sadece giriş yapmış öğrenci, veriler sunucuda token'dan çözülür */}
             <Route path="/onboarding/hos-geldin" element={<RoleRoute allowedRoles={["student", "admin"]}><OnboardingWelcome /></RoleRoute>} />

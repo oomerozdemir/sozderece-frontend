@@ -3,10 +3,11 @@ import { FaPlus, FaEllipsisH } from "react-icons/fa";
 import axios from "../../../utils/axios";
 import { RESOURCE_EXAM_TYPES, TYPE_META } from "./resourceMeta";
 import ResourceFormDrawer from "./ResourceFormDrawer";
+import usePanelAccess from "./PanelAccessContext";
 
 const FILTER_OPTIONS = [{ value: "all", label: "Tümü" }, ...RESOURCE_EXAM_TYPES.map((et) => ({ value: et, label: et }))];
 
-function ResourceCard({ resource, onEdit, onArchive }) {
+function ResourceCard({ resource, onEdit, onArchive, canManage }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmingRemove, setConfirmingRemove] = useState(false);
   const meta = TYPE_META[resource.type] || TYPE_META.OTHER;
@@ -44,7 +45,7 @@ function ResourceCard({ resource, onEdit, onArchive }) {
             <button onClick={() => onArchive(resource.id)} className="flex-1 py-2 rounded-lg text-xs font-bold text-white bg-[#dc2626]">Kaldır</button>
           </div>
         </div>
-      ) : (
+      ) : canManage ? (
         <div className="mt-3.5 pt-3.5 border-t border-[#f1f5f9] flex items-center justify-between relative">
           <button onClick={() => onEdit(resource)} className="font-nunito font-bold text-xs text-brand">Düzenle</button>
           <button onClick={() => setMenuOpen((v) => !v)} className="text-[#94a3b8] p-1.5 rounded-lg hover:bg-[#f8fafc]"><FaEllipsisH size={13} /></button>
@@ -62,7 +63,7 @@ function ResourceCard({ resource, onEdit, onArchive }) {
             </>
           )}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -78,10 +79,11 @@ export default function ResourcesTab({ student }) {
 
   const token = useMemo(() => localStorage.getItem("token"), []);
   const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
+  const { apiPrefix, canManageResources } = usePanelAccess();
 
   const loadResources = () => {
     axios
-      .get(`/api/coach/students/${student.id}/resources`, authHeaders)
+      .get(`/api/${apiPrefix}/students/${student.id}/resources`, authHeaders)
       .then((res) => setResources(res.data?.resources || []))
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -101,7 +103,7 @@ export default function ResourcesTab({ student }) {
   const handleArchive = async (resourceId) => {
     setResources((prev) => prev.filter((r) => r.id !== resourceId));
     try {
-      await axios.patch(`/api/coach/students/${student.id}/resources/${resourceId}/archive`, {}, authHeaders);
+      await axios.patch(`/api/${apiPrefix}/students/${student.id}/resources/${resourceId}/archive`, {}, authHeaders);
     } catch {
       loadResources(); // başarısızsa gerçek durumu geri çek
     }
@@ -118,12 +120,14 @@ export default function ResourcesTab({ student }) {
           <p className="font-fredoka font-bold text-page-navy text-base">Kaynaklar</p>
           <p className="font-nunito text-xs text-[#64748b] mt-0.5">Öğrencinin çalıştığı kitap, deneme ve diğer kaynakları buradan yönet.</p>
         </div>
-        <button
-          onClick={() => setDrawerState("add")}
-          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-brand-navy flex-shrink-0"
-        >
-          <FaPlus size={11} /> Kaynak Ekle
-        </button>
+        {canManageResources && (
+          <button
+            onClick={() => setDrawerState("add")}
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-brand-navy flex-shrink-0"
+          >
+            <FaPlus size={11} /> Kaynak Ekle
+          </button>
+        )}
       </div>
 
       {resources.length > 0 && (
@@ -147,9 +151,11 @@ export default function ResourcesTab({ student }) {
       {resources.length === 0 ? (
         <div className="bg-white border border-dashed border-[#e2e8f0] rounded-2xl p-10 text-center">
           <p className="font-nunito text-sm text-[#94a3b8] mb-4">Bu öğrenciye henüz kaynak eklenmemiş.</p>
-          <button onClick={() => setDrawerState("add")} className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-brand-navy">
-            <FaPlus size={11} /> İlk Kaynağı Ekle
-          </button>
+          {canManageResources && (
+            <button onClick={() => setDrawerState("add")} className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-brand-navy">
+              <FaPlus size={11} /> İlk Kaynağı Ekle
+            </button>
+          )}
         </div>
       ) : visibleResources.length === 0 ? (
         <div className="bg-white border border-dashed border-[#e2e8f0] rounded-2xl p-10 text-center">
@@ -158,7 +164,7 @@ export default function ResourcesTab({ student }) {
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {visibleResources.map((r) => (
-            <ResourceCard key={r.id} resource={r} onEdit={setDrawerState} onArchive={handleArchive} />
+            <ResourceCard key={r.id} resource={r} onEdit={setDrawerState} onArchive={handleArchive} canManage={canManageResources} />
           ))}
         </div>
       )}
