@@ -82,7 +82,6 @@ function durationNote(_pkg, activePlan) {
   // özelliklerinde yazıyor, buradan farklı bir şey söylenmemeli.
   if (!activePlan) return null;
   const src = `${activePlan.durationText || ""} ${activePlan.label || ""}`;
-  if (/hafta/i.test(src)) return "Koçluğa sınava kadar devam edebilirsin.";
   if (/kadar/i.test(src)) return "Tek ödemeyle sınava kadar koçluk.";
   return null;
 }
