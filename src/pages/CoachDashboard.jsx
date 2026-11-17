@@ -2,9 +2,10 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import StreakBadge from "./panel/StreakBadge";
+import CoachTour from "./coach/tour/CoachTour";
 import {
   FaExclamationTriangle, FaClock, FaBrain, FaUsers,
-  FaLifeRing, FaSignOutAlt, FaBars, FaTimes,
+  FaLifeRing, FaSignOutAlt, FaBars, FaTimes, FaCompass,
 } from "react-icons/fa";
 
 const readCoachName = () => {
@@ -34,6 +35,11 @@ const CoachDashboard = () => {
   const [sosAlerts, setSosAlerts] = useState([]);
   const [resolvingId, setResolvingId] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // undefined = henüz yüklenmedi (Koç Paneli Turu bu alan gelene kadar hiçbir
+  // karar vermemeli — bkz. useCoachTour.js init effect'i), null/0/1 = gerçek
+  // backend durumu (bkz. plan K3/K6).
+  const [coachTourCompletedVersion, setCoachTourCompletedVersion] = useState(undefined);
+  const [tourRestartSignal, setTourRestartSignal] = useState(0);
   const coachName = useMemo(readCoachName, []);
 
   useEffect(() => {
@@ -53,12 +59,23 @@ const CoachDashboard = () => {
           return score(b) - score(a);
         });
         setStudents(sorted);
+        setCoachTourCompletedVersion(res.data.coachTourCompletedVersion ?? null);
       } catch (err) {
         console.error("Öğrenciler alınamadı:");
       }
     };
 
     fetchStudents();
+  }, []);
+
+  const persistTourStage = useCallback(async (stage) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.patch("/api/coach/me/tour-completed", { stage }, { headers: { Authorization: `Bearer ${token}` } });
+    } catch {
+      // ağ hatası paneli bloklamaz — UI zaten güncellendi, bir sonraki
+      // girişte backend hâlâ eski değeri dönerse tur tekrar teklif edilir.
+    }
   }, []);
 
   const fetchSosAlerts = useCallback(async () => {
@@ -143,6 +160,12 @@ const CoachDashboard = () => {
             <FaLifeRing size={15} /> Yardım
           </a>
           <button
+            onClick={() => setTourRestartSignal((n) => n + 1)}
+            className="flex items-center gap-3 font-nunito font-bold text-sm px-3.5 py-2.5 rounded-xl text-white/55 hover:text-white hover:bg-white/5 text-left transition-colors"
+          >
+            <FaCompass size={15} /> Panel Turunu Tekrar Başlat
+          </button>
+          <button
             onClick={handleLogout}
             className="flex items-center gap-3 font-nunito font-bold text-sm px-3.5 py-2.5 rounded-xl text-white/55 hover:text-white hover:bg-white/5 text-left transition-colors"
           >
@@ -224,7 +247,7 @@ const CoachDashboard = () => {
           <h2 className="font-fredoka font-bold text-page-navy text-xl mb-5">Atanmış Öğrenciler</h2>
 
           {students.length > 0 && (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+            <div data-tour="coach-status-cards" className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
               <TriageTile value={triage.struggling} label="Bugün Zorlandı" emoji="😓" color="#dc2626" bg={triage.struggling > 0 ? "#fef2f2" : "#ffffff"} />
               <TriageTile value={triage.partial} label="Yarıda Kaldı" emoji="⏳" color="#c2410c" bg={triage.partial > 0 ? "#fff7ed" : "#ffffff"} />
               <TriageTile value={triage.inactive3Days} label="Seri Yok / Pasif" emoji="💤" color="#475569" bg={triage.inactive3Days > 0 ? "#f8fafc" : "#ffffff"} />
@@ -233,8 +256,8 @@ const CoachDashboard = () => {
           )}
 
           {students.length > 0 ? (
-            <div className="flex flex-col gap-3">
-              {students.map((student) => {
+            <div data-tour="coach-student-list" className="flex flex-col gap-3">
+              {students.map((student, index) => {
                 const progress = student.todayProgress || { done: 0, total: 0 };
 
                 return (
@@ -287,6 +310,7 @@ const CoachDashboard = () => {
                     </div>
 
                     <button
+                      data-tour={index === 0 ? "open-student" : undefined}
                       onClick={() => navigate(`/coach/students/${student.id}`, { state: { student } })}
                       className="flex-shrink-0 px-5 py-2.5 rounded-full font-fredoka font-bold text-xs text-white bg-brand-navy transition-transform hover:scale-[1.02]"
                     >
@@ -332,6 +356,14 @@ const CoachDashboard = () => {
               <span className="font-nunito font-bold text-sm">Yardım</span>
             </a>
             <button
+              onClick={() => { setMobileMenuOpen(false); setTourRestartSignal((n) => n + 1); }}
+              className="w-full flex items-center gap-2.5 rounded-2xl px-4 py-3.5 mb-2 text-left"
+              style={{ background: "#f8fafc", color: "#334155" }}
+            >
+              <FaCompass size={15} className="flex-shrink-0" />
+              <span className="font-nunito font-bold text-sm">Panel Turunu Tekrar Başlat</span>
+            </button>
+            <button
               onClick={handleLogout}
               className="w-full flex items-center gap-2.5 rounded-2xl px-4 py-3.5 text-left"
               style={{ background: "#fef2f2", color: "#b91c1c" }}
@@ -341,6 +373,20 @@ const CoachDashboard = () => {
             </button>
           </div>
         </div>
+      )}
+
+      {coachTourCompletedVersion !== undefined && (
+        <CoachTour
+          page="dashboard"
+          hasStudents={students.length > 0}
+          onNavigateToStudent={() => {
+            const first = students[0];
+            if (first) navigate(`/coach/students/${first.id}`, { state: { student: first } });
+          }}
+          coachTourCompletedVersion={coachTourCompletedVersion}
+          onPersistStage={persistTourStage}
+          manualStartSignal={tourRestartSignal}
+        />
       )}
 
     </div>

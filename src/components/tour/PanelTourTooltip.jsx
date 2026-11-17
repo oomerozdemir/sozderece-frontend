@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { FaTimes } from "react-icons/fa";
-import Button from "../../../components/ui/Button";
+import Button from "../ui/Button";
 import useFocusTrap from "./useFocusTrap";
 
 const PADDING = 10; // spotlight hedefin etrafındaki boşluk (8-12px aralığında)
@@ -30,6 +30,7 @@ export default function PanelTourTooltip({
   onPrev,
   onNext,
   onClose,
+  nextLabel, // opsiyonel — verilmezse "İleri" (ör. koç turunda "Öğrenciyi Aç")
 }) {
   const tooltipRef = useRef(null);
   const [targetRect, setTargetRect] = useState(null);
@@ -100,7 +101,7 @@ export default function PanelTourTooltip({
           </Button>
         )}
         <Button variant="primary" size="sm" onClick={onNext}>
-          {isLast ? "Bitir" : "İleri"}
+          {isLast ? "Bitir" : nextLabel || "İleri"}
         </Button>
       </div>
     </div>

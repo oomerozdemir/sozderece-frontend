@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
+import axios from "../../../utils/axios";
 import useStudentContext from "./useStudentContext";
 import { PanelAccessProvider } from "./PanelAccessContext";
 import StreakBadge from "../../panel/StreakBadge";
+import CoachTour from "../tour/CoachTour";
 import OverviewTab from "./OverviewTab";
 import ProgramTab from "./ProgramTab";
 import ExamsTab from "./ExamsTab";
@@ -41,6 +43,22 @@ export default function StudentWorkspace({
   const { student, loading, notFound } = useStudentContext(apiPrefix);
   const [tab, setTab] = useState("overview");
   const [programDirty, setProgramDirty] = useState(false);
+
+  // Koç Paneli Turu SADECE coach için var (head_coach kendi ayrı turunu
+  // isteyebilir ama bu V1 kapsamında değil, bkz. plan). "Öğrenciye Git"ten
+  // router state'le geldiyse useStudentContext hiç fetch YAPMIYOR (yukarıda) —
+  // bu yüzden koçun KENDİ tur aşaması için küçük, ayrı bir fetch gerekiyor
+  // (ör. öğrenci günler sonra atanınca, tur hiç çalışmadan doğrudan bu
+  // sayfaya gelindiğinde devam edebilmesi için — bkz. plan K6).
+  const [coachTourCompletedVersion, setCoachTourCompletedVersion] = useState(undefined);
+  useEffect(() => {
+    if (apiPrefix !== "coach") return;
+    const token = localStorage.getItem("token");
+    axios
+      .get("/api/coach/my-students", { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => setCoachTourCompletedVersion(res.data?.coachTourCompletedVersion ?? null))
+      .catch(() => setCoachTourCompletedVersion(null));
+  }, [apiPrefix]);
 
   // Kaydedilmemiş değişiklik koruması (plan §11): Program sekmesi dirty iken
   // başka bir sekmeye ya da öğrenci listesine geçilmek istenirse onay istenir.
@@ -121,14 +139,32 @@ export default function StudentWorkspace({
 
       <PanelAccessProvider value={{ apiPrefix, backTo, canAddExamResult, canManageResources, canImportProgramImage }}>
         <div className="max-w-5xl mx-auto px-5 py-6">
-          {tab === "overview" && <OverviewTab student={student} />}
-          {tab === "program" && <ProgramTab student={student} onDirtyChange={setProgramDirty} />}
-          {tab === "exams" && <ExamsTab student={student} />}
-          {tab === "tracking" && <TrackingTab student={student} />}
-          {tab === "resources" && <ResourcesTab student={student} />}
-          {tab === "notes" && <NotesTab student={student} />}
+          {tab === "overview" && <div data-tour="student-overview"><OverviewTab student={student} /></div>}
+          {tab === "program" && <div data-tour="student-program"><ProgramTab student={student} onDirtyChange={setProgramDirty} /></div>}
+          {tab === "exams" && <div data-tour="student-exams"><ExamsTab student={student} /></div>}
+          {tab === "tracking" && <div data-tour="student-tracking"><TrackingTab student={student} /></div>}
+          {tab === "resources" && <div data-tour="student-resources"><ResourcesTab student={student} /></div>}
+          {tab === "notes" && <div data-tour="student-notes"><NotesTab student={student} /></div>}
         </div>
       </PanelAccessProvider>
+
+      {apiPrefix === "coach" && coachTourCompletedVersion !== undefined && (
+        <CoachTour
+          page="workspace"
+          hasStudents
+          tab={tab}
+          setTab={setTab}
+          coachTourCompletedVersion={coachTourCompletedVersion}
+          onPersistStage={async (stage) => {
+            try {
+              const token = localStorage.getItem("token");
+              await axios.patch("/api/coach/me/tour-completed", { stage }, { headers: { Authorization: `Bearer ${token}` } });
+            } catch {
+              // ağ hatası sayfayı bloklamaz
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

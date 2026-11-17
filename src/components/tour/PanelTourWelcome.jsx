@@ -1,4 +1,4 @@
-import Button from "../../../components/ui/Button";
+import Button from "../ui/Button";
 import useFocusTrap from "./useFocusTrap";
 
 // ADIM 1 (karşılama) ve Bitiş ekranı için ortak, tam ekran/merkezi modal.

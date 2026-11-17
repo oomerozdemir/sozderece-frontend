@@ -1,6 +1,6 @@
 import usePanelTour from "./usePanelTour";
-import PanelTourWelcome from "./PanelTourWelcome";
-import PanelTourTooltip from "./PanelTourTooltip";
+import PanelTourWelcome from "../../../components/tour/PanelTourWelcome";
+import PanelTourTooltip from "../../../components/tour/PanelTourTooltip";
 import { WELCOME_STEP, FINISH_STEP } from "./panelTourSteps";
 
 // Orkestratör — StudentPanel.jsx içine render edilir, panelin zaten var olan
