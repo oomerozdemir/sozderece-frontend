@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "../../../../utils/axios";
 import Button from "../../../../components/ui/Button";
 import SubjectNetRows from "./SubjectNetRows";
-import { validateSubjectRows } from "./examHelpers";
+import { validateSubjectRows, isBlankSubjectRow } from "./examHelpers";
 
 // LIVE akışında "Denemeyi Bitir"den sonraki adım: ders bazlı sonuç girişi.
 // PATCH .../results — sunucu netleri yeniden hesaplar, client'ın net
@@ -31,7 +31,7 @@ export default function ExamResultForm({ exam, student, onSubmitted }) {
   };
 
   const handleSubmit = async () => {
-    const rows = subjectNets.filter((r) => r.subject.trim());
+    const rows = subjectNets.filter((r) => !isBlankSubjectRow(r));
     if (rows.length === 0) {
       setError("En az bir ders sonucu girmelisin.");
       return;

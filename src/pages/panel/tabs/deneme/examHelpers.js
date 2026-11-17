@@ -37,6 +37,7 @@ export function computeBlank(questionCount, correct, wrong) {
 // validateExamResultPayload ile aynı kuralları uygular — otorite yine de
 // backend'dedir, bu yalnızca erken/anlık geri bildirim içindir.
 export function subjectRowError(row) {
+  if (!row.subject || !row.subject.trim()) return "Ders adı girilmeli.";
   const qc = row.questionCount !== "" && row.questionCount != null ? Number(row.questionCount) : null;
   if (qc == null || !Number.isFinite(qc) || qc < 0) return "Soru sayısı girilmeli.";
   const c = Number(row.correct) || 0;
@@ -50,9 +51,29 @@ export function subjectRowError(row) {
 export function validateSubjectRows(rows) {
   for (const r of rows) {
     const err = subjectRowError(r);
-    if (err) return { valid: false, message: `${r.subject}: ${err}` };
+    if (err) return { valid: false, message: r.subject ? `${r.subject}: ${err}` : err };
   }
   return { valid: true, message: null };
+}
+
+// Gerçekten BOŞ bırakılmış bir satır (ör. "+ Ders Ekle"ye basılıp hiçbir
+// şey girilmeden vazgeçilmiş) — bu satırlar sessizce submit'ten çıkarılır.
+// ÖNEMLİ: subject adı boş AMA correct/wrong/questionCount'tan biri
+// girilmişse bu satır "boş" SAYILMAZ — aksi halde öğrenci ders adını
+// yazmayı unutursa o satır sessizce silinir, geri kalan derslerin toplamı
+// "Toplam Soru Sayısı" ile tutarsız görünür ve kullanıcı gerçek sebebi
+// (ders adı eksik) hiç göremeden kafa karıştırıcı bir "toplam uyuşmuyor"
+// hatası alırdı (canlı örnek: 4 ders girilip 3'üne ad yazılmayınca sadece
+// 1 satır submit ediliyor, soru sayısı toplamı yanlışlıkla 1 satırınkine
+// eşitleniyordu). Ad eksik ama veri doluysa satır KORUNUR, subjectRowError
+// "Ders adı girilmeli." ile açıkça uyarır.
+export function isBlankSubjectRow(row) {
+  return (
+    !row.subject.trim() &&
+    (row.correct === "" || row.correct == null) &&
+    (row.wrong === "" || row.wrong == null) &&
+    (row.questionCount === "" || row.questionCount == null)
+  );
 }
 
 // Eksik/legacy veri kuralı: null/undefined değerler "0" değil "—" olarak

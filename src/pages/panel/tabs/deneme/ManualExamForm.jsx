@@ -3,7 +3,7 @@ import axios from "../../../../utils/axios";
 import Button from "../../../../components/ui/Button";
 import SubjectNetRows from "./SubjectNetRows";
 import { EXAM_TYPE_LABELS, EXAM_TYPE_DEFAULTS, DIFFICULTY_REASON_OPTIONS } from "./examConfig";
-import { validateSubjectRows } from "./examHelpers";
+import { validateSubjectRows, isBlankSubjectRow } from "./examHelpers";
 
 const inputCls =
   "w-full py-2.5 px-3 border border-[#e2e8f0] rounded-lg text-sm bg-white outline-none focus:border-brand transition-colors font-nunito";
@@ -44,7 +44,7 @@ export default function ManualExamForm({ student, onSubmitted, onCancel }) {
   const handleSubmit = async () => {
     if (!examName.trim()) return setError("Deneme adı zorunlu.");
     if (examType === "BRANS" && !branch) return setError("Branş denemesi için bir ders seçmelisin.");
-    const rows = subjectNets.filter((r) => r.subject.trim());
+    const rows = subjectNets.filter((r) => !isBlankSubjectRow(r));
     if (rows.length === 0) return setError("En az bir ders sonucu girmelisin.");
     const validation = validateSubjectRows(rows);
     if (!validation.valid) return setError(validation.message);
