@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "../../utils/axios";
 import {
   FaHome, FaCalendarWeek, FaChartLine, FaBookOpen, FaBullhorn, FaUserTie, FaBoxOpen, FaTree,
-  FaLifeRing, FaSignOutAlt, FaEllipsisH, FaTimes, FaWhatsapp, FaRobot, FaCompass, FaLock,
+  FaLifeRing, FaSignOutAlt, FaEllipsisH, FaTimes, FaWhatsapp, FaRobot, FaCompass, FaLock, FaUserCircle,
 } from "react-icons/fa";
 import GenelBakis from "./tabs/GenelBakis";
 import HaftalikProgram from "./tabs/HaftalikProgram";
@@ -13,6 +13,7 @@ import Kaynaklarim from "./tabs/Kaynaklarim";
 import Gundem from "./tabs/Gundem";
 import Kocum from "./tabs/Kocum";
 import Siparislerim from "./tabs/Siparislerim";
+import Hesabim from "./tabs/Hesabim";
 import AiAsistan from "./tabs/ai-asistan/AiAsistan";
 import StreakBadge from "./StreakBadge";
 import CoachAvatar from "./CoachAvatar";
@@ -34,6 +35,7 @@ const TABS = [
   { key: "gundem", label: "Gündem", icon: FaBullhorn, Component: Gundem },
   { key: "kocum", label: "Koçum", icon: FaUserTie, Component: Kocum },
   { key: "siparisler", label: "Siparişlerim", icon: FaBoxOpen, Component: Siparislerim },
+  { key: "hesabim", label: "Hesabım", icon: FaUserCircle, Component: Hesabim },
 ];
 
 // Mobil alt sekme çubuğuna sığan öncelikli 4 sekme + "Diğer" sayfası.
@@ -215,7 +217,7 @@ export default function StudentPanel() {
         </header>
 
         <main className="px-4 md:px-9 py-5 md:py-7 max-w-[1200px] mx-auto">
-          <ActiveComponent student={student} onNavigate={setTab} />
+          <ActiveComponent student={student} onNavigate={setTab} onStudentUpdate={(patch) => setStudent((s) => ({ ...s, ...patch }))} />
         </main>
       </div>
 
