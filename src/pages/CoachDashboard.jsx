@@ -1,10 +1,10 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import StreakBadge from "./panel/StreakBadge";
 import CoachTour from "./coach/tour/CoachTour";
 import {
-  FaExclamationTriangle, FaClock, FaBrain, FaUsers,
+  FaExclamationTriangle, FaClock, FaBrain, FaUsers, FaUserCircle,
   FaLifeRing, FaSignOutAlt, FaBars, FaTimes, FaCompass,
 } from "react-icons/fa";
 
@@ -148,6 +148,12 @@ const CoachDashboard = () => {
             <FaUsers size={15} style={{ color: "var(--color-brand-on-dark)", flexShrink: 0 }} />
             Öğrencilerim
           </div>
+          <Link
+            to="/coach/account"
+            className="flex items-center gap-3 font-nunito font-bold text-sm px-3.5 py-2.5 rounded-xl text-white/55 hover:text-white hover:bg-white/5 no-underline transition-colors"
+          >
+            <FaUserCircle size={15} /> Hesabım
+          </Link>
         </nav>
 
         <div className="px-3 pb-5 pt-3 border-t border-white/10 flex flex-col gap-1 flex-shrink-0">
@@ -345,6 +351,15 @@ const CoachDashboard = () => {
                 <FaTimes size={13} />
               </button>
             </div>
+            <Link
+              to="/coach/account"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2.5 rounded-2xl px-4 py-3.5 mb-2 no-underline"
+              style={{ background: "#f8fafc", color: "#334155" }}
+            >
+              <FaUserCircle size={15} className="flex-shrink-0" />
+              <span className="font-nunito font-bold text-sm">Hesabım</span>
+            </Link>
             <a
               href="https://wa.me/905312546701"
               target="_blank"

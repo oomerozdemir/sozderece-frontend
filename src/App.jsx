@@ -18,6 +18,7 @@ import "slick-carousel/slick/slick-theme.css";
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
 const CoachDashboard = lazy(() => import("./pages/CoachDashboard"));
+const CoachAccountPage = lazy(() => import("./pages/coach/AccountPage"));
 const StudentWorkspace = lazy(() => import("./pages/coach/workspace/StudentWorkspace"));
 const HeadCoachDashboard = lazy(() => import("./pages/headCoach/HeadCoachDashboard"));
 const HeadCoachCoachesList = lazy(() => import("./pages/headCoach/CoachesList"));
@@ -137,6 +138,7 @@ function App() {
 
             {/* Korunan sayfalar */}
             <Route path="/coach/dashboard" element={<RoleRoute allowedRoles={["coach"]}><CoachDashboard /></RoleRoute>} />
+            <Route path="/coach/account" element={<RoleRoute allowedRoles={["coach"]}><CoachAccountPage /></RoleRoute>} />
             <Route path="/coach/students/:studentId" element={<RoleRoute allowedRoles={["coach"]}><StudentWorkspace /></RoleRoute>} />
 
             {/* ANA KOÇ (head_coach) — V1 kapsamı: Genel Bakış/Koçlarım/Öğrenciler +
