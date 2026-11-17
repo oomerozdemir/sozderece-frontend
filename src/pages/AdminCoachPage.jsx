@@ -53,40 +53,40 @@ const AdminCoachPage = () => {
     fetchStudents();
   }, []);
 
+  // Yeni koç oluştururken isim/email/branş/açıklama/fotoğraf gerekiyor (hesap
+  // o anda kuruluyor). Mevcut bir koçu DÜZENLERKEN artık SADECE Ana Koç
+  // atanabiliyor — isim/email/branş/açıklama/fotoğraf koçun kendi "Hesabım"
+  // sayfasından kendi kendine yönettiği alanlar (admin'in bu alanları
+  // düzenleme yetkisi bilinçli olarak kaldırıldı, backend de bunu
+  // uyguluyor — bkz. adminCoach.controller.js#updateCoach).
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
 
     try {
-      const data = new FormData();
-      data.append("name", formData.name);
-      data.append("email", formData.email);
-      data.append("subject", formData.subject);
-      data.append("description", formData.description);
-      if (formData.imageFile) {
-        data.append("image", formData.imageFile);
-      }
       if (editingCoach) {
-        // "" (Yok seçili) backend'de headCoachUserId'yi null'a çeker.
-        data.append("headCoachUserId", formData.headCoachUserId || "");
-      }
-
-      if (editingCoach) {
-        await axios.put(`/api/admin/coaches/${editingCoach.id}`, data, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        alert("Koç başarıyla güncellendi.");
+        await axios.put(
+          `/api/admin/coaches/${editingCoach.id}`,
+          { headCoachUserId: formData.headCoachUserId || "" },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        alert("Ana Koç ataması güncellendi.");
       } else {
+        const data = new FormData();
+        data.append("name", formData.name);
+        data.append("email", formData.email);
+        data.append("subject", formData.subject);
+        data.append("description", formData.description);
+        if (formData.imageFile) {
+          data.append("image", formData.imageFile);
+        }
         await axios.post("/api/admin/coaches", data, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
         });
-        alert("Koç başarıyla oluşturuldu, giriş bilgileri e-postayla gönderildi.");
+        alert("Koç başarıyla oluşturuldu, giriş bilgileri e-postayla gönderilmedi (rastgele şifre, Şifremi Unuttum akışı kullanılabilir).");
       }
 
       setFormData({ name: "", email: "", subject: "", description: "", imageFile: null, headCoachUserId: "" });
@@ -101,10 +101,10 @@ const AdminCoachPage = () => {
   const handleEdit = (coach) => {
     setEditingCoach(coach);
     setFormData({
-      name: coach.name,
-      email: coach.email,
-      subject: coach.subject,
-      description: coach.description,
+      name: "",
+      email: "",
+      subject: "",
+      description: "",
       imageFile: null,
       headCoachUserId: coach.headCoach?.id ? String(coach.headCoach.id) : "",
     });
@@ -177,67 +177,73 @@ const AdminCoachPage = () => {
 
   return (
     <div className="p-1">
-      <h2 className="text-lg font-black text-[#0f172a] mb-4">{editingCoach ? "Koçu Düzenle" : "Yeni Koç Ekle"}</h2>
+      <h2 className="text-lg font-black text-[#0f172a] mb-4">{editingCoach ? `${editingCoach.name} — Ana Koç Ata` : "Yeni Koç Ekle"}</h2>
 
       <form
         onSubmit={handleSubmit}
         className="space-y-3 mb-6 bg-white p-5 rounded-2xl border border-[#f1f5f9] shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
         encType="multipart/form-data"
       >
-        <input
-          type="text"
-          placeholder="Kullanıcı Adı (Ad Soyad)"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className={inputCls}
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          className={inputCls}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Branş (Matematik vb.)"
-          value={formData.subject}
-          onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-          className={inputCls}
-        />
-        <textarea
-          placeholder="Açıklama"
-          value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          className={inputCls}
-        />
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setFormData({ ...formData, imageFile: e.target.files[0] })}
-          className={inputCls}
-        />
-        {editingCoach && (
-          <div>
-            <label className="block text-xs font-bold text-[#475569] mb-1.5">Ana Koç</label>
-            <select
+        {editingCoach ? (
+          <>
+            <p className="text-xs text-[#64748b]">
+              İsim, e-posta, branş, açıklama ve fotoğrafı artık koç kendi "Hesabım" sayfasından kendi düzenliyor — buradan sadece Ana Koç ataması değiştirilebilir.
+            </p>
+            <div>
+              <label className="block text-xs font-bold text-[#475569] mb-1.5">Ana Koç</label>
+              <select
+                className={inputCls}
+                value={formData.headCoachUserId}
+                onChange={(e) => setFormData({ ...formData, headCoachUserId: e.target.value })}
+              >
+                <option value="">— Yok —</option>
+                {headCoaches.map((hc) => (
+                  <option key={hc.id} value={hc.id}>{hc.name}</option>
+                ))}
+              </select>
+            </div>
+          </>
+        ) : (
+          <>
+            <input
+              type="text"
+              placeholder="Kullanıcı Adı (Ad Soyad)"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className={inputCls}
-              value={formData.headCoachUserId}
-              onChange={(e) => setFormData({ ...formData, headCoachUserId: e.target.value })}
-            >
-              <option value="">— Yok —</option>
-              {headCoaches.map((hc) => (
-                <option key={hc.id} value={hc.id}>{hc.name}</option>
-              ))}
-            </select>
-          </div>
-        )}
-        {!editingCoach && (
-          <p className="text-xs text-[#64748b]">
-            Kaydedince hesap rastgele bir şifreyle oluşturulur — koça mail gönderilmez, giriş yapmak isterse "Şifremi Unuttum" akışını kullanabilir.
-          </p>
+              required
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className={inputCls}
+              required
+            />
+            <input
+              type="text"
+              placeholder="Branş (Matematik vb.)"
+              value={formData.subject}
+              onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+              className={inputCls}
+            />
+            <textarea
+              placeholder="Açıklama"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className={inputCls}
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setFormData({ ...formData, imageFile: e.target.files[0] })}
+              className={inputCls}
+            />
+            <p className="text-xs text-[#64748b]">
+              Kaydedince hesap rastgele bir şifreyle oluşturulur — koça mail gönderilmez, giriş yapmak isterse "Şifremi Unuttum" akışını kullanabilir.
+            </p>
+          </>
         )}
         <div className="flex gap-2">
           <Button type="submit" variant="secondary">
@@ -267,7 +273,7 @@ const AdminCoachPage = () => {
               <p className="text-sm text-[#475569] mb-1">{coach.subject}</p>
               <p className="text-xs text-[#64748b] mb-3">{coach.description}</p>
               <div className="flex flex-wrap justify-end gap-2">
-                <Button onClick={() => handleEdit(coach)} variant="info" size="sm">Düzenle</Button>
+                <Button onClick={() => handleEdit(coach)} variant="info" size="sm">Ana Koç Ata</Button>
                 <Button onClick={() => handleDelete(coach)} variant="danger" size="sm">Sil</Button>
                 <Button onClick={() => setAssigningCoach(coach)} variant="success" size="sm">Öğrenciye Ata</Button>
               </div>
