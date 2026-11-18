@@ -24,7 +24,16 @@ const toMonday = (date) => {
   d.setHours(0, 0, 0, 0);
   return d;
 };
-const toISO = (d) => d.toISOString().slice(0, 10);
+// d.toISOString() UTC'ye çevirir — İstanbul (+3) yerel gece yarısı bir
+// önceki güne kayar, backend'deki toMondayStart o günü PAZAR sanıp bir
+// önceki haftanın pazartesine yuvarlıyordu (bkz. istanbulTime.js). Koç
+// kaydettiği programı KENDİ panelinde doğru görüyordu çünkü GET'i de aynı
+// kaymış tarihle çağırıyordu — ama öğrenci panelinin kendi toISO'su
+// (panel/tabs/program/programHelpers.js) zaten doğru hafta pazartesini
+// gönderdiği için öğrenci "o hafta" hiçbir program bulamıyordu. Öğrenci
+// panelindekiyle BİREBİR aynı, yerel takvim bileşenlerinden string kurma
+// yöntemine geçildi.
+const toISO = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
 const isBlankRow = (r) => !r.subject?.trim() && !r.topic?.trim() && !String(r.durationMin ?? "").trim();
 const isIncompleteRow = (r) => !isBlankRow(r) && (!r.subject?.trim() || r.dayOfWeek === null || r.dayOfWeek === undefined);
