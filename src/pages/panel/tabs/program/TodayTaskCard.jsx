@@ -154,10 +154,11 @@ function ReasonPrompt({ onSubmit, onCancel }) {
 }
 
 export default function TodayTaskCard({
-  item, isActive, elapsedSeconds, disabledStart,
+  item, isActive, elapsedSeconds, disabledStart, pending,
   onStart, onCancelActive, onFinishActive, onDirectComplete,
   feelingOpen, onSubmitFeeling, onSkipFeeling,
   reasonOpen, onOpenReason, onSubmitReason, onCancelReason,
+  onUndo,
 }) {
   const { celebrate, strikeOn } = useCelebration(item.status);
   const feelingMeta = item.feeling ? FEELING_META[item.feeling] : null;
@@ -262,6 +263,19 @@ export default function TodayTaskCard({
         {item.status === "pending" && !isActive && !feelingOpen && !reasonOpen && (
           <button type="button" onClick={() => onOpenReason(item)} className="font-nunito text-[11px] text-[#cbd5e1] hover:text-[#94a3b8] underline mt-2.5">
             Bugün yapamadım
+          </button>
+        )}
+
+        {/* Geri alma — SADECE bu açık, düşük-vurgulu metin-aksiyonuyla çalışır;
+            kartın/ikonun geri kalanı tıklanamaz (bkz. onaylı plan Rev.2 §4). */}
+        {item.status !== "pending" && !feelingOpen && !reasonOpen && (
+          <button
+            type="button"
+            onClick={() => onUndo(item)}
+            disabled={pending}
+            className="font-nunito text-[11px] text-[#cbd5e1] hover:text-[#94a3b8] underline mt-2.5 disabled:opacity-50 disabled:no-underline"
+          >
+            Durumu Geri Al
           </button>
         )}
       </div>

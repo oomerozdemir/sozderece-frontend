@@ -79,11 +79,12 @@ export default function GenelBakis({ onNavigate }) {
   const {
     today, loading: todayLoading,
     activeSession, elapsedSeconds,
-    feelingPromptId, reasonPromptId,
+    feelingPromptId, reasonPromptId, pendingItemId,
     handleStart, handleCancelActive, handleFinishActive, handleDirectComplete,
     handleSubmitFeeling, handleSkipFeeling,
     handleOpenReason, handleCancelReason, handleSubmitReason,
     handleStartFocusTimer, handleStopFocusTimer, handleQuickComplete,
+    handleUndo,
   } = useTodayTasks();
   const todayItems = today?.items || [];
 
@@ -186,6 +187,7 @@ export default function GenelBakis({ onNavigate }) {
                 isActive={activeSession?.studyPlanItemId === item.id}
                 elapsedSeconds={elapsedSeconds}
                 disabledStart={!!activeSession && activeSession.studyPlanItemId !== item.id}
+                pending={pendingItemId === item.id}
                 onStart={handleStart}
                 onCancelActive={handleCancelActive}
                 onFinishActive={handleFinishActive}
@@ -197,6 +199,7 @@ export default function GenelBakis({ onNavigate }) {
                 onOpenReason={handleOpenReason}
                 onSubmitReason={handleSubmitReason}
                 onCancelReason={handleCancelReason}
+                onUndo={handleUndo}
               />
             ))}
           </div>

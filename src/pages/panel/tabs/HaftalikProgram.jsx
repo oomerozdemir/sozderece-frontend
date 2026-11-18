@@ -76,11 +76,12 @@ export default function HaftalikProgram({ student }) {
   const {
     today, loading,
     activeSession, elapsedSeconds,
-    feelingPromptId, reasonPromptId,
+    feelingPromptId, reasonPromptId, pendingItemId,
     loadToday,
     handleStart, handleCancelActive, handleFinishActive, handleDirectComplete,
     handleSubmitFeeling, handleSkipFeeling,
     handleOpenReason, handleCancelReason, handleSubmitReason,
+    handleUndo,
   } = useTodayTasks();
 
   const [weekStart, setWeekStart] = useState(() => toMonday(new Date()));
@@ -245,6 +246,7 @@ export default function HaftalikProgram({ student }) {
                 isActive={activeSession?.studyPlanItemId === it.id}
                 elapsedSeconds={elapsedSeconds}
                 disabledStart={!!activeSession && activeSession.studyPlanItemId !== it.id}
+                pending={pendingItemId === it.id}
                 onStart={handleStart}
                 onCancelActive={handleCancelActive}
                 onFinishActive={handleFinishActive}
@@ -256,6 +258,7 @@ export default function HaftalikProgram({ student }) {
                 onOpenReason={handleOpenReason}
                 onSubmitReason={handleSubmitReason}
                 onCancelReason={handleCancelReason}
+                onUndo={handleUndo}
               />
             ))}
           </div>

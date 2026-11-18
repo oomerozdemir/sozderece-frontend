@@ -15,6 +15,11 @@ export default function useTodayTasks() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [feelingPromptId, setFeelingPromptId] = useState(null);
   const [reasonPromptId, setReasonPromptId] = useState(null);
+  // Bir status PATCH'i beklerken o item'ın aksiyon alanı (tamamlama VEYA
+  // geri-al) kısa süreliğine devre dışı kalır — hızlı çift tıklamada
+  // true/false/true yarışını engellemenin en basit yolu, ayrı bir mutation
+  // queue kurmadan (bkz. onaylı plan Rev.2).
+  const [pendingItemId, setPendingItemId] = useState(null);
   const hydratedRef = useRef(false);
   const prevReportIdRef = useRef(undefined);
 
@@ -104,15 +109,23 @@ export default function useTodayTasks() {
 
   // İyimser güncelleme + gerçek veriyi (Z-Raporu oluşmuş olabilir) tekrar çek.
   const setStatus = async (itemId, status, extra = {}) => {
+    setPendingItemId(itemId);
     setToday((prev) => (prev ? { ...prev, items: prev.items.map((it) => (it.id === itemId ? { ...it, status, ...extra } : it)) } : prev));
     try {
       await axios.patch(`/api/v1/ogrenci/me/study-plan/items/${itemId}/status`, { status, ...extra }, { headers });
     } catch {
       // sessizce yut, aşağıdaki refetch gerçek durumu geri getirir
     } finally {
-      loadToday();
+      await loadToday();
+      setPendingItemId(null);
     }
   };
+
+  // "Durumu Geri Al" — tamamlanmış/yarıda/zorlandı bir görevi açıkça
+  // "pending"e döndürür. Backend zaten statusAt/feeling/notCompletedReason'ı
+  // temizliyor (bkz. setStudyPlanItemStatus) — burada ekstra extra alanı
+  // GÖNDERMİYORUZ, backend'in kendi "pending" dalı zaten hepsini sıfırlıyor.
+  const handleUndo = (item) => setStatus(item.id, "pending");
 
   const handleSubmitFeeling = (item, feeling, note) => {
     setFeelingPromptId(null);
@@ -169,11 +182,12 @@ export default function useTodayTasks() {
   return {
     today, loading, headers,
     activeSession, elapsedSeconds,
-    feelingPromptId, reasonPromptId,
+    feelingPromptId, reasonPromptId, pendingItemId,
     loadToday,
     handleStart, handleCancelActive, handleFinishActive, handleDirectComplete,
     handleSubmitFeeling, handleSkipFeeling,
     handleOpenReason, handleCancelReason, handleSubmitReason,
     handleStartFocusTimer, handleStopFocusTimer, handleQuickComplete,
+    handleUndo,
   };
 }

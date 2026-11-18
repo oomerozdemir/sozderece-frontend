@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FaPen, FaTrash, FaCheck } from "react-icons/fa";
 import axios from "../../../utils/axios";
 import ProgramImportPanel from "./ProgramImportPanel";
 import usePanelAccess from "./PanelAccessContext";
+import DayColumn from "./program/DayColumn";
 
 const DAY_OPTIONS = [
   { value: 0, label: "Pazartesi" },
@@ -13,6 +14,7 @@ const DAY_OPTIONS = [
   { value: 5, label: "Cumartesi" },
   { value: 6, label: "Pazar" },
 ];
+const DAY_LABELS_SHORT = ["PZT", "SAL", "ÇAR", "PER", "CUM", "CMT", "PAZ"];
 
 const inputCls =
   "w-full py-2.5 px-3 border border-[#e2e8f0] rounded-lg text-sm bg-white outline-none focus:border-page-navy transition-colors";
@@ -58,6 +60,13 @@ export default function ProgramTab({ student, onDirtyChange }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [importBanner, setImportBanner] = useState(0); // AI'dan aktarılan satır sayısı, bilgilendirme şeridi için
+  const columnRefs = useRef({});
+  const scrollToDay = (dayValue) => {
+    const el = columnRefs.current[dayValue];
+    if (!el) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView({ behavior: reduced ? "auto" : "smooth", inline: "center", block: "nearest" });
+  };
 
   useEffect(() => {
     onDirtyChange?.(dirty);
@@ -71,7 +80,7 @@ export default function ProgramTab({ student, onDirtyChange }) {
         const plan = res.data?.plan;
         if (plan) {
           setPlanTitle(plan.title || "");
-          setRows(plan.items.map((it) => ({ dayOfWeek: it.dayOfWeek, subject: it.subject, topic: it.topic || "", durationMin: it.durationMin || "" })));
+          setRows(plan.items.map((it) => ({ id: it.id, dayOfWeek: it.dayOfWeek, subject: it.subject, topic: it.topic || "", durationMin: it.durationMin || "" })));
         } else {
           setPlanTitle("");
           setRows([]);
@@ -149,9 +158,9 @@ export default function ProgramTab({ student, onDirtyChange }) {
       setMsg("Program kaydedildi ✓");
       setDirty(false);
       setImportBanner(0);
-    } catch {
+    } catch (err) {
       setMsgError(true);
-      setMsg("Kaydedilemedi, tekrar dene.");
+      setMsg(err?.response?.data?.message || "Kaydedilemedi, tekrar dene.");
     } finally {
       setSaving(false);
     }
@@ -160,11 +169,16 @@ export default function ProgramTab({ student, onDirtyChange }) {
   const indexedRows = rows.map((r, idx) => ({ ...r, _idx: idx }));
   const undatedRows = indexedRows.filter((r) => r.dayOfWeek === null || r.dayOfWeek === undefined);
 
+  // Kolonlar artık dar (220-260px) olduğu için düzenleme formu YATAY 5
+  // sütunlu ızgaradan DİKEY yığına döndü — mantık (updateRow/removeRow/
+  // editingIdx) AYNEN korunuyor, sadece yerleşim kompakt kolona uyarlandı.
+  // Gün seçici KORUNDU: koç bir görevi düzenlerken başka bir güne taşıyabilsin
+  // diye (drag&drop V1 kapsamında değil, bu tek alternatif yol).
   const renderRow = (r) => {
     const incomplete = isIncompleteRow(r);
     if (editingIdx === r._idx) {
       return (
-        <div key={r._idx} className="grid grid-cols-[100px_1fr_1fr_70px_auto] gap-1.5 items-center max-[560px]:grid-cols-2 py-1.5">
+        <div key={r._idx} className="flex flex-col gap-1.5 p-2 rounded-lg border border-[#e2e8f0] bg-[#f8fafc]">
           <select className={inputCls} value={r.dayOfWeek === null || r.dayOfWeek === undefined ? "" : r.dayOfWeek} onChange={(e) => updateRow(r._idx, "dayOfWeek", e.target.value === "" ? null : parseInt(e.target.value))}>
             <option value="" disabled>— seç —</option>
             {DAY_OPTIONS.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}
@@ -172,21 +186,24 @@ export default function ProgramTab({ student, onDirtyChange }) {
           <input className={inputCls} placeholder="Ders (Matematik)" value={r.subject} onChange={(e) => updateRow(r._idx, "subject", e.target.value)} />
           <input className={inputCls} placeholder="Nokta atışı görev" value={r.topic} onChange={(e) => updateRow(r._idx, "topic", e.target.value)} />
           <input className={inputCls} type="number" placeholder="dk" value={r.durationMin} onChange={(e) => updateRow(r._idx, "durationMin", e.target.value)} />
-          <div className="flex gap-1">
-            <button onClick={() => setEditingIdx(null)} className="text-[#059669] p-2"><FaCheck size={12} /></button>
-            <button onClick={() => removeRow(r._idx)} className="text-[#ef4444] p-2"><FaTrash size={12} /></button>
+          <div className="flex justify-end gap-1">
+            <button onClick={() => setEditingIdx(null)} className="text-[#059669] p-1.5"><FaCheck size={12} /></button>
+            <button onClick={() => removeRow(r._idx)} className="text-[#ef4444] p-1.5"><FaTrash size={12} /></button>
           </div>
         </div>
       );
     }
     return (
-      <div key={r._idx} className={`flex items-center justify-between gap-2 py-2 px-2.5 rounded-lg cursor-pointer hover:bg-[#f8fafc] ${incomplete ? "bg-[#fef2f2]" : ""}`} onClick={() => setEditingIdx(r._idx)}>
-        <div className="min-w-0 flex items-center gap-2 flex-wrap">
-          <p className="text-sm font-bold text-[#0f172a] truncate">{r.subject || <span className="italic text-[#94a3b8]">(ders girilmemiş)</span>}{r.durationMin ? `, ${r.durationMin} dk` : ""}</p>
-          {r.topic && <p className="text-xs text-[#64748b] truncate">— {r.topic}</p>}
-          {incomplete && <span className="text-[10px] font-bold text-[#dc2626]">⚠ eksik</span>}
+      <div key={r._idx} className={`flex items-start justify-between gap-1.5 py-2 px-2.5 rounded-lg cursor-pointer hover:bg-[#f8fafc] ${incomplete ? "bg-[#fef2f2]" : ""}`} onClick={() => setEditingIdx(r._idx)}>
+        <div className="min-w-0">
+          <p className="text-xs font-bold text-[#0f172a] truncate">{r.subject || <span className="italic text-[#94a3b8]">(ders girilmemiş)</span>}</p>
+          {r.topic && <p className="text-[11px] text-[#64748b] truncate">{r.topic}</p>}
+          <div className="flex items-center gap-1.5 mt-0.5">
+            {r.durationMin && <span className="text-[10px] font-bold text-[#94a3b8]">{r.durationMin} dk</span>}
+            {incomplete && <span className="text-[10px] font-bold text-[#dc2626]">⚠ eksik</span>}
+          </div>
         </div>
-        <button onClick={(e) => { e.stopPropagation(); setEditingIdx(r._idx); }} className="text-[#94a3b8] p-1.5 flex-shrink-0"><FaPen size={11} /></button>
+        <button onClick={(e) => { e.stopPropagation(); setEditingIdx(r._idx); }} className="text-[#94a3b8] p-1 flex-shrink-0"><FaPen size={10} /></button>
       </div>
     );
   };
@@ -217,29 +234,55 @@ export default function ProgramTab({ student, onDirtyChange }) {
       {loading ? (
         <p className="text-xs text-[#94a3b8]">Yükleniyor…</p>
       ) : (
-        <div className="bg-white rounded-2xl border border-[#f1f5f9] divide-y divide-[#f1f5f9]">
-          {undatedRows.length > 0 && (
-            <div className="p-4">
-              <p className="text-xs font-black text-[#dc2626] uppercase mb-2">Gün Belirsiz · {undatedRows.length} görev</p>
-              <div className="space-y-1">{undatedRows.map(renderRow)}</div>
+        <div>
+          {/* Mobil/orta ekran gün-pili seçici — board zaten kendi başına
+              kaydırılabilir, bu sadece doğrudan bir güne atlama kolaylığı. */}
+          <div className="lg:hidden flex gap-1.5 overflow-x-auto pb-2 -mx-1 px-1">
+            {DAY_OPTIONS.map((day, i) => (
+              <button
+                key={day.value}
+                onClick={() => scrollToDay(day.value)}
+                className="flex-shrink-0 font-fredoka font-bold text-[11px] px-3 py-1.5 rounded-full border"
+                style={{ borderColor: "#E4F7F8", background: "#F7F7F2", color: "#17252D" }}
+              >
+                {DAY_LABELS_SHORT[i]}
+              </button>
+            ))}
+          </div>
+
+          {/* Board — TEK sarmalayıcı, breakpoint'e göre mod DEĞİŞTİRMEZ: her
+              kolon min 220px, container overflow-x-auto. Geniş ekranda 7
+              kolon (+ varsa "Gün Belirsiz") sığar, dar ekranda doğal olarak
+              kayar; mobilde snap ile ~1 kolon odakta durur. */}
+          <div className="overflow-x-auto pb-2">
+            <div
+              className="grid grid-flow-col gap-3 auto-cols-[minmax(220px,1fr)] max-[480px]:auto-cols-[85%] snap-x snap-mandatory"
+            >
+              {undatedRows.length > 0 && (
+                <DayColumn
+                  label="Gün Belirsiz"
+                  count={undatedRows.length}
+                  rows={undatedRows}
+                  renderRow={renderRow}
+                  highlight
+                />
+              )}
+              {DAY_OPTIONS.map((day) => {
+                const dayRows = indexedRows.filter((r) => r.dayOfWeek === day.value);
+                return (
+                  <DayColumn
+                    key={day.value}
+                    ref={(el) => { columnRefs.current[day.value] = el; }}
+                    label={day.label}
+                    count={dayRows.length}
+                    rows={dayRows}
+                    renderRow={renderRow}
+                    onAddRow={() => addRowForDay(day.value)}
+                  />
+                );
+              })}
             </div>
-          )}
-          {DAY_OPTIONS.map((day) => {
-            const dayRows = indexedRows.filter((r) => r.dayOfWeek === day.value);
-            return (
-              <div key={day.value} className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs font-black text-page-navy uppercase">{day.label} · {dayRows.length} görev</p>
-                  <button onClick={() => addRowForDay(day.value)} className="text-xs font-bold text-page-navy">+ Görev Ekle</button>
-                </div>
-                {dayRows.length === 0 ? (
-                  <p className="text-xs text-[#94a3b8]">Henüz görev yok.</p>
-                ) : (
-                  <div className="space-y-1">{dayRows.map(renderRow)}</div>
-                )}
-              </div>
-            );
-          })}
+          </div>
         </div>
       )}
 
