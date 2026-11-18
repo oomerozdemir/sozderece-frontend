@@ -24,7 +24,8 @@ const COACH_WHATSAPP = "905312546701";
 // Yeni öğrenci paneli — kendi kabuğu olan, ayrı bir "uygulama" gibi hissettiren
 // tam ekran shell (sabit sol menü + üst app-bar). Sitenin Navbar/Footer'ı
 // bilinçli olarak burada YOK — öğrenci panele girdiğinde ayrı bir yere geçtiğini
-// hissetmeli. Artık her öğrenciye açık (bkz. ../StudentDashboard.jsx).
+// hissetmeli. Varsayılan olarak herkese açık, admin panelinden öğrenci
+// bazında kapatılabilir (bkz. ../StudentDashboard.jsx seçicisi).
 const TABS = [
   { key: "genel", label: "Genel Bakış", icon: FaHome, Component: GenelBakis },
   { key: "program", label: "Programım", icon: FaCalendarWeek, Component: HaftalikProgram },

@@ -1426,7 +1426,7 @@ const AdminDashboard = () => {
                       className="w-4 h-4 accent-brand-navy"
                     />
                     <label htmlFor="panel-beta-toggle" className="text-xs font-bold text-[#475569] cursor-pointer">
-                      🧪 Yeni Öğrenci Paneli (Beta) — sadece bu öğrenci görsün
+                      Yeni Öğrenci Paneline Erişim — kapatırsan bu öğrenci eski panele döner
                     </label>
                   </div>
                 </div>
