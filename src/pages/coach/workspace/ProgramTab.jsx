@@ -36,6 +36,15 @@ const toMonday = (date) => {
 // panelindekiyle BİREBİR aynı, yerel takvim bileşenlerinden string kurma
 // yöntemine geçildi.
 const toISO = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+// Öğrenci panelindeki programHelpers.js'teki fmtRange ile birebir aynı mantık
+// — iki ağaç birbirine import etmiyor (bkz. toISO'nun üstündeki not), bu yüzden
+// bağımsız kopyalanıyor.
+const fmtRange = (monday) => {
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  const opts = { day: "numeric", month: "long" };
+  return `${monday.toLocaleDateString("tr-TR", opts)} — ${sunday.toLocaleDateString("tr-TR", opts)}`;
+};
 
 const isBlankRow = (r) => !r.subject?.trim() && !r.topic?.trim() && !String(r.durationMin ?? "").trim();
 const isIncompleteRow = (r) => !isBlankRow(r) && (!r.subject?.trim() || r.dayOfWeek === null || r.dayOfWeek === undefined);
@@ -196,8 +205,8 @@ export default function ProgramTab({ student, onDirtyChange }) {
     return (
       <div key={r._idx} className={`flex items-start justify-between gap-1.5 py-2 px-2.5 rounded-lg cursor-pointer hover:bg-[#f8fafc] ${incomplete ? "bg-[#fef2f2]" : ""}`} onClick={() => setEditingIdx(r._idx)}>
         <div className="min-w-0">
-          <p className="text-xs font-bold text-[#0f172a] truncate">{r.subject || <span className="italic text-[#94a3b8]">(ders girilmemiş)</span>}</p>
-          {r.topic && <p className="text-[11px] text-[#64748b] truncate">{r.topic}</p>}
+          <p className="text-xs font-bold text-[#0f172a] line-clamp-2">{r.subject || <span className="italic text-[#94a3b8]">(ders girilmemiş)</span>}</p>
+          {r.topic && <p className="text-[11px] text-[#64748b] line-clamp-2">{r.topic}</p>}
           <div className="flex items-center gap-1.5 mt-0.5">
             {r.durationMin && <span className="text-[10px] font-bold text-[#94a3b8]">{r.durationMin} dk</span>}
             {incomplete && <span className="text-[10px] font-bold text-[#dc2626]">⚠ eksik</span>}
@@ -213,7 +222,7 @@ export default function ProgramTab({ student, onDirtyChange }) {
       <div className="flex items-center justify-between gap-2 flex-wrap bg-white rounded-2xl border border-[#f1f5f9] p-4">
         <div className="flex items-center gap-2">
           <button onClick={() => goToWeek(-1)} className="text-xs font-bold text-page-navy px-2 py-1">‹ Önceki Hafta</button>
-          <span className="text-xs font-bold text-[#475569]">Hafta: {toISO(weekStart)}</span>
+          <span className="text-xs font-bold text-[#475569]">{fmtRange(weekStart)}</span>
           <button onClick={() => goToWeek(1)} className="text-xs font-bold text-page-navy px-2 py-1">Sonraki Hafta ›</button>
         </div>
         {canImportProgramImage && (
@@ -251,12 +260,12 @@ export default function ProgramTab({ student, onDirtyChange }) {
           </div>
 
           {/* Board — TEK sarmalayıcı, breakpoint'e göre mod DEĞİŞTİRMEZ: her
-              kolon min 220px, container overflow-x-auto. Geniş ekranda 7
+              kolon min 280px, container overflow-x-auto. Geniş ekranda 7
               kolon (+ varsa "Gün Belirsiz") sığar, dar ekranda doğal olarak
               kayar; mobilde snap ile ~1 kolon odakta durur. */}
           <div className="overflow-x-auto pb-2">
             <div
-              className="grid grid-flow-col gap-3 auto-cols-[minmax(220px,1fr)] max-[480px]:auto-cols-[85%] snap-x snap-mandatory"
+              className="grid grid-flow-col gap-3 auto-cols-[minmax(280px,1fr)] max-[480px]:auto-cols-[85%] snap-x snap-mandatory"
             >
               {undatedRows.length > 0 && (
                 <DayColumn

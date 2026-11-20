@@ -61,11 +61,18 @@ export default function WeeklyGridView({ weekStart, weekDays, todayDate, onToggl
                     >
                       {item.status === "done" && <FaCheck size={7} className="text-white" />}
                     </span>
-                    <span
-                      className="font-nunito text-[11px] font-bold leading-tight"
-                      style={{ color: item.status === "done" ? "#059669" : "#334155", textDecoration: item.status === "done" ? "line-through" : "none" }}
-                    >
-                      {item.subject}
+                    <span className="min-w-0">
+                      <span
+                        className="block font-nunito text-[11px] font-bold leading-tight"
+                        style={{ color: item.status === "done" ? "#059669" : "#334155", textDecoration: item.status === "done" ? "line-through" : "none" }}
+                      >
+                        {item.subject}
+                      </span>
+                      {item.topic && (
+                        <span className="block font-nunito text-[10px] text-[#94a3b8] leading-tight mt-0.5 line-clamp-2">
+                          {item.topic}
+                        </span>
+                      )}
                     </span>
                   </button>
                 ))

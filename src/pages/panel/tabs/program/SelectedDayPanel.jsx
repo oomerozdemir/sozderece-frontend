@@ -87,7 +87,7 @@ export default function SelectedDayPanel({ weekStart, selectedDay, items, active
                     </span>
                     <span className="flex-1 min-w-0">
                       <span className="block font-nunito font-bold text-sm text-[#0f172a] truncate">{item.subject}</span>
-                      {item.topic && <span className="block font-nunito text-xs text-[#64748b] truncate">{item.topic}</span>}
+                      {item.topic && <span className="block font-nunito text-xs text-[#64748b] line-clamp-2">{item.topic}</span>}
                     </span>
                     {isActive && (
                       <span className="font-nunito font-bold text-[10px] px-2 py-1 rounded-full text-white flex-shrink-0" style={{ background: "var(--color-brand)" }}>

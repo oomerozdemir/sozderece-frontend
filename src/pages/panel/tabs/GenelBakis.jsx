@@ -50,7 +50,7 @@ function TodayChecklist({ items, onComplete }) {
               {done && <FaCheck size={8} className="text-white" />}
             </span>
             <span
-              className="font-nunito font-bold text-xs truncate"
+              className="font-nunito font-bold text-xs line-clamp-2"
               style={{ color: done ? "#94a3b8" : "#334155", textDecoration: done ? "line-through" : "none" }}
             >
               {item.subject}{item.topic ? ` — ${item.topic}` : ""}
