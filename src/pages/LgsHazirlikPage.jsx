@@ -143,6 +143,17 @@ export default function LgsHazirlikPage() {
   }
 
   const price = String(lgsPackage?.price || content.offer?.price || "2500");
+  // YksYolculuguPage.jsx ile aynı düzeltme: CMS içeriğine (offer.plans) elle
+  // indirimli fiyat girilmez — kampanya AdminPackagePage'de yönetilir,
+  // /api/packages zaten campaignActive/campaignUnitPrice'ı hesaplayıp
+  // döndürür; bu sayfa da oradan okuyarak kampanya bitince kendiliğinden
+  // eski fiyata döner.
+  const campaignPlan = lgsPackage?.plans?.[0];
+  const campaignActive = !!campaignPlan?.campaignActive;
+  const campaignPriceNum = campaignActive ? Math.round(campaignPlan.campaignUnitPrice / 100) : null;
+  const normalPriceNum = campaignPlan?.unitPrice ? Math.round(campaignPlan.unitPrice / 100) : Number(price) || null;
+  const displayPrice = campaignPriceNum != null ? String(campaignPriceNum) : price;
+  const displayOldPrice = campaignPriceNum != null ? String(normalPriceNum) : null;
   const remaining = quota.remainingQuota;
   const hero = content.hero || {};
   const painPoints = content.painPoints || {};
@@ -150,7 +161,15 @@ export default function LgsHazirlikPage() {
   const socialProof = content.socialProof || {};
   const offer = content.offer || {};
   const formContent = content.form || {};
-  const plans = Array.isArray(offer.plans) ? offer.plans : [];
+  const rawPlans = Array.isArray(offer.plans) ? offer.plans : [];
+  // Index 0, paket verisi gelir gelmez HER ZAMAN canlı fiyattan okunur —
+  // sadece kampanya aktifken değil, aksi halde kampanya bitince CMS'teki
+  // eski indirimli metin ("3000") kalıcı olarak takılı kalırdı.
+  const plans = rawPlans.map((p, i) =>
+    i === 0 && campaignPlan
+      ? { ...p, price: String(campaignPriceNum ?? normalPriceNum), oldPrice: campaignPriceNum != null ? String(normalPriceNum) : "" }
+      : p
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -804,7 +823,8 @@ export default function LgsHazirlikPage() {
             <div className="grid grid-cols-2 gap-8 max-[768px]:grid-cols-1">
               <motion.div {...fadeUp} className="rounded-3xl p-8 flex flex-col border" style={{ background: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.11)", backdropFilter: "blur(8px)" }}>
                 <div className="mb-6">
-                  <div className="font-fredoka font-bold" style={{ fontSize: "clamp(34px,4vw,52px)", color: "var(--color-brand-on-dark)" }}>₺{price}</div>
+                  {displayOldPrice && <p className="line-through text-white/25 text-sm font-nunito">₺{displayOldPrice}</p>}
+                  <div className="font-fredoka font-bold" style={{ fontSize: "clamp(34px,4vw,52px)", color: "var(--color-brand-on-dark)" }}>₺{displayPrice}</div>
                   <p className="font-nunito text-white/40 text-xs mt-1">{offer.priceLabel || "LGS'ye kadar, tek seferlik"}</p>
                   <p className="font-nunito text-white/25 text-[11px] mt-0.5">KDV Dahildir</p>
                   <p className="font-nunito font-bold text-sm mt-1" style={{ color: "var(--color-brand-on-dark)" }}>✓ 7 gün içinde memnun kalmazsanız iade alırsınız</p>
@@ -895,7 +915,7 @@ export default function LgsHazirlikPage() {
           <div className="max-w-lg mx-auto flex items-center justify-between gap-4">
             <div className="font-nunito font-bold text-sm text-white flex items-center gap-2">
               {remaining !== null && remaining > 0 && <span style={{ color: "#ef4444" }}>🔥 {remaining} yer kaldı ·</span>}
-              <span className="text-white/45">₺{price} / LGS'ye kadar</span>
+              <span className="text-white/45">₺{displayPrice} / LGS'ye kadar</span>
             </div>
             <button onClick={scrollToOffer} className="font-fredoka font-bold text-sm px-6 py-2.5 rounded-full transition-all hover:scale-105 whitespace-nowrap" style={{ background: "var(--color-brand)", color: "#FFFFFF", boxShadow: "0 4px 12px rgba(14,124,136,0.35)" }}>
               {hero.navbarCta || "⚡ Yerimi Ayırt →"}
